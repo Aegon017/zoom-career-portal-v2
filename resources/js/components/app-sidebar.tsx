@@ -24,7 +24,7 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <Link href="/dashboard" prefetch>
+                        <Link href="/dashboard">
                             <AppLogo />
                         </Link>
                     </SidebarMenuItem>
