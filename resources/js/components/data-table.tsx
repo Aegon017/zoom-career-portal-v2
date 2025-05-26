@@ -54,6 +54,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center justify-between">
                 <div className="flex items-center py-4">
                     <Input
+                        name="search"
                         placeholder="Search ..."
                         value={globalFilter}
                         onChange={(e) => setGlobalFilter(e.target.value)}
