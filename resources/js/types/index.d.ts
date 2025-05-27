@@ -42,3 +42,21 @@ export interface User {
     updated_at: string;
     [key: string]: unknown;
 }
+
+export interface Company {
+    id: number;
+    company_name: string;
+    company_logo: string;
+    industry: string;
+    company_website: string;
+    company_description: string;
+    company_address: string;
+    public_phone: string;
+    public_email: string;
+    company_size: string;
+    company_type: string;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
+}
+

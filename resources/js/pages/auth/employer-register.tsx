@@ -26,7 +26,7 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('register'), {
+        post(route('employer.register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -54,7 +54,7 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email">Work email address</Label>
                         <Input
                             id="email"
                             type="email"

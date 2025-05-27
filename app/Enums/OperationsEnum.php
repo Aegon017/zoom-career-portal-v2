@@ -2,8 +2,12 @@
 
 namespace App\Enums;
 
+use App\Enums\Traits\EnumHelpers;
+
 enum OperationsEnum: string
 {
+    use EnumHelpers;
+
     case Create = 'Create';
     case Edit = 'Edit';
 

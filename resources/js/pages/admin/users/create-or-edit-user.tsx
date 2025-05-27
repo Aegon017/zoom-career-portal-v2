@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { User, type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { FormEvent, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, operation: string, operationLabel: string }) => {
@@ -33,31 +33,25 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
 
     const { handleSubmit, control, setError } = form;
 
-    useEffect(() => {
-        if (errors && typeof errors === 'object') {
-            Object.entries(errors).forEach(([field, message]) => {
-                setError(field as string, {
-                    type: 'server',
-                    message: message as string,
-                });
-            });
-        }
-    }, [errors, setError]);
-
     const onSubmit = (data: any) => {
-        switch (operation) {
-            case "Create":
-                router.post(route('users.store'), data);
-                break;
+        const handleErrors = (errors: any) => {
+            if (errors && typeof errors === 'object') {
+                Object.entries(errors).forEach(([field, message]) => {
+                    setError(field as string, {
+                        type: 'server',
+                        message: message as string,
+                    });
+                });
+            }
+        };
 
-            case "Edit":
-                router.put(route('users.update', user.id), data);
-                break;
+        const routes = {
+            Create: () => router.post(route('users.store'), data, { onError: handleErrors }),
+            Edit: () => router.put(route('users.update', user.id), data, { onError: handleErrors }),
+        };
 
-            default:
-                break;
-        }
-    }
+        routes[operation as keyof typeof routes]?.();
+    };
 
     const handleDelete = (id: number) => {
         router.delete(route('users.destroy', id));
@@ -78,6 +72,7 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
                                 <>
                                     <Button variant="destructive" onClick={(e) => { e.preventDefault(); setAlertOpen(true) }}>Delete</Button>
                                     <DeleteAlert
+                                        key={user.id}
                                         alertOpen={alertOpen}
                                         setAlertOpen={setAlertOpen}
                                         onDelete={() => handleDelete(user.id)}
