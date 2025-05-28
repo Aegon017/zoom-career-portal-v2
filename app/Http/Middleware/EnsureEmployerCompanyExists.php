@@ -19,12 +19,14 @@ class EnsureEmployerCompanyExists
         $employer = $user?->employer;
         $company = $employer?->company;
 
-        if (!$company && !$request->routeIs('company.register')) {
-            return to_route('company.register');
-        }
+        if ($employer) {
+            if (!$company && !$request->routeIs('company.register')) {
+                return to_route('company.register');
+            }
 
-        if ($company && $request->routeIs('company.register')) {
-            return to_route('dashboard');
+            if ($company && $request->routeIs('company.register')) {
+                return to_route('dashboard');
+            }
         }
 
         return $next($request);

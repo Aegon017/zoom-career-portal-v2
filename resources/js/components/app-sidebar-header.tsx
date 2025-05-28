@@ -6,10 +6,12 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 import { Link, usePage } from '@inertiajs/react';
 import { Button } from './ui/button';
+import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationData {
+    type: string;
     title: string;
-    description: string;
+    message: string;
     link: string;
 }
 
@@ -17,10 +19,15 @@ interface Notification {
     id: string;
     data: NotificationData;
     read_at: string | null;
+    created_at: string;
 }
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const { notifications } = usePage<{ notifications: Notification[] }>().props;
+
+    const markNotificationAsRead = (notificationId: string) => {
+        console.log(notificationId);
+    }
 
     return (
         <header className="border-sidebar-border/50 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
@@ -41,7 +48,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         )}
                     </div>
                 </PopoverTrigger>
-                <PopoverContent className='w-md'>
+                <PopoverContent className='w-sm md:w-md p-0'>
                     <div className="border-b px-4 py-3">
                         <h4 className="font-semibold">Notifications</h4>
                     </div>
@@ -50,43 +57,63 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         {notifications.length > 0 ? (
                             <div className="grid md:grid-cols-1 gap-1 p-2">
                                 {notifications.map((notification) => {
-                                    const { title, description, link } = notification.data;
+                                    const { type, title, message, link } = notification.data;
                                     const isUnread = !notification.read_at;
-
+                                    const createdAt = new Date(notification.created_at);
                                     return (
-                                        <Link
-                                            onClick={() => markNotificationAsRead(notification.id)}
-                                            href={link}
-                                            key={notification.id ?? title}
-                                            className={`flex items-start gap-3 rounded-lg p-4 transition-colors ${isUnread ? 'bg-muted hover:bg-muted/70' : 'hover:bg-accent'
-                                                }`}
+                                        <div
+                                            key={notification.id}
+                                            className="relative flex flex-col sm:flex-row items-start gap-3 rounded-xl border p-3 sm:p-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-md bg-background border-primary/30 group overflow-hidden"
                                         >
-                                            <div className="flex-1">
-                                                <p className="text-sm font-semibold text-foreground">
-                                                    {title}
+                                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                                            <div className="flex-1 space-y-1.5 relative z-10 w-full">
+                                                <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-1 sm:gap-2">
+                                                    <p className="text-sm font-semibold text-foreground">{title}</p>
+                                                    <span className="text-xs text-muted-foreground italic">
+                                                        {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+                                                    </span>
+                                                </div>
+
+                                                <p className="text-xs text-muted-foreground leading-snug line-clamp-3">
+                                                    {message}
                                                 </p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {description}
-                                                </p>
-                                                <p className="text-xs text-muted-foreground mt-1">
-                                                </p>
-                                                <Button variant="link" className='p-0'
-                                                    onClick={() => markNotificationAsRead(notification.id)}
-                                                >Mark as read</Button>
+
+                                                <div className="flex gap-3 pt-1">
+                                                    <Button
+                                                        variant="link"
+                                                        size="sm"
+                                                        className="text-xs p-0 h-auto text-primary font-medium hover:underline"
+                                                        onClick={() => markNotificationAsRead(notification.id)}
+                                                    >
+                                                        Mark as read
+                                                    </Button>
+                                                    <Link
+                                                        href={link}
+                                                        className="text-xs p-0 h-auto text-muted-foreground hover:underline underline-offset-4 font-medium transition-colors"
+                                                    >
+                                                        View details
+                                                    </Link>
+                                                </div>
                                             </div>
+
                                             {isUnread && (
-                                                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                                                <div className="absolute top-3 right-3 flex items-center gap-1">
+                                                    <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
+                                                    <span className="h-2 w-2 rounded-full bg-primary/80" />
+                                                </div>
                                             )}
-                                        </Link>
+                                        </div>
                                     );
                                 })}
                             </div>
                         ) : (
                             <div className="flex h-[300px] items-center justify-center">
-                                <p className="text-sm text-muted-foreground">No notifications</p>
+                                <p className="text-xs text-muted-foreground">No notifications</p>
                             </div>
                         )}
                     </ScrollArea>
+
                 </PopoverContent>
             </Popover>
         </header>

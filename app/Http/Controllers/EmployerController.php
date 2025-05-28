@@ -36,7 +36,7 @@ class EmployerController extends Controller
      */
     public function show(Employer $employer)
     {
-        //
+        dd($employer);
     }
 
     /**

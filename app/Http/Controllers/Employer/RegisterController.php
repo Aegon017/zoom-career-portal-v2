@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Empoloyer;
+namespace App\Http\Controllers\Employer;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;

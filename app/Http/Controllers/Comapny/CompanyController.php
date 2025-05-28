@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Comapny;
 use App\Enums\CompanySizeEnum;
 use App\Enums\CompanyTypeEnum;
 use App\Enums\VerificationStatusEnum;
+use App\Events\EmployerRegisteredEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\StoreCompanyRequest;
 use App\Models\Company;
-use Illuminate\Http\Request;
+use App\Models\Employer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,9 +33,12 @@ class CompanyController extends Controller
         $data =  $storeCompanyRequest->validated();
         $data['verification_status'] = VerificationStatusEnum::Pending->value;
         $company = Company::create($data);
-        Auth::user()->employer()->update([
-            "company_id" => $company->id
-        ]);
+        $employer = Auth::user()->employer;
+        $employer->company_id = $company->id;
+        $employer->update();
+
+        event(new EmployerRegisteredEvent($employer));
+
         return to_route('dashboard')->with('success', 'Company registered successfully');
     }
 }
