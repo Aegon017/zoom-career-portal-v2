@@ -55,7 +55,8 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn() => $request->session()->get('success'),
                 'error'   => fn() => $request->session()->get('error'),
             ],
-            'notifications' => fn() => $request->user()?->unreadNotifications
+            'notifications' => fn() => $request->user()?->unreadNotifications,
+            'url' => fn() => request()->getRequestUri(),
         ];
     }
 }

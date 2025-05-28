@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Comapny\CompanyController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -16,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/employer/register/company', [CompanyController::class, 'store'])->name('company.register');
         Route::resource('/employers', EmployerController::class);
     });
+    Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
 
 require __DIR__ . '/settings.php';

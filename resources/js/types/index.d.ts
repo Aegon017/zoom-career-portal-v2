@@ -60,3 +60,17 @@ export interface Company {
     [key: string]: unknown;
 }
 
+interface NotificationData {
+    type: string;
+    title: string;
+    message: string;
+    link: string;
+}
+
+export interface Notification {
+    id: string;
+    data: NotificationData;
+    read_at: string | null;
+    created_at: string;
+}
+

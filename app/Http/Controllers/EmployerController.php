@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Employer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class EmployerController extends Controller
 {
@@ -34,9 +36,9 @@ class EmployerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Employer $employer)
+    public function show(Employer $employer): Response
     {
-        dd($employer);
+        return Inertia::render('employer/profile');
     }
 
     /**

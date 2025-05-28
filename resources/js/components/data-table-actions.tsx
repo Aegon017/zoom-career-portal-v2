@@ -25,7 +25,7 @@ const DataTableActions = ({ onEdit, onDelete }: DataTableActionsProps) => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => onEdit()}>Edit</DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer mb-1" onClick={() => onEdit()}>Edit</DropdownMenuItem>
                     <DropdownMenuItem className="bg-red-600 focus:bg-red-500 dark:focus:bg-red-700 focus:text-white dark:focus:text-black text-white dark:text-black cursor-pointer" onClick={() => setTimeout(() => setAlertOpen(true), 0)}>Delete</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu >
