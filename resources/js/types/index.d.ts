@@ -74,3 +74,8 @@ export interface Notification {
     created_at: string;
 }
 
+export interface Skill {
+    id: number,
+    name: string
+}
+

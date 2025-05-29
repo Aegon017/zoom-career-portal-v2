@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Comapny\CompanyController;
 use App\Http\Controllers\EmployerController;
@@ -13,6 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['ensure.employer.company.exists'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/users', UserController::class);
+        Route::resource('/skills', SkillController::class);
         Route::get('/employer/register/company', [CompanyController::class, 'create'])->name('company.register');
         Route::post('/employer/register/company', [CompanyController::class, 'store'])->name('company.register');
         Route::resource('/employers', EmployerController::class);

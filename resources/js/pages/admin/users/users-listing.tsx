@@ -15,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 const listingName = "user";
 const createUrl = route('users.create');
 
-export default function Dashboard({ users }: { users: User[] }) {
+export default function UsersListing({ users }: { users: User[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Users" />

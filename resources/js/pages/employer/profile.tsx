@@ -58,19 +58,12 @@ export default function CompanyProfilePage() {
                     <main className="w-full">
                         <div className="w-full">
                             {/* Banner */}
-                            <div className="w-full h-[360px] relative bg-gradient-to-r from-primary/5 to-primary/10">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 w-full">
-                                        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground max-w-2xl">
-                                            Make an Impact.
-                                            <span className="block mt-3 text-xl md:text-2xl font-normal text-muted-foreground">Your Own Way.</span>
-                                        </h1>
-                                    </div>
-                                </div>
+                            <div className="w-full h-full relative bg-gradient-to-r from-primary/5 to-primary/10">
+                                <img className="h-auto" src="https://static.vecteezy.com/system/resources/previews/000/701/690/non_2x/abstract-polygonal-banner-background-vector.jpg" alt="" />
                             </div>
 
                             {/* Profile Card */}
-                            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 relative -mt-20">
+                            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 relative pt-8 md:pt-0 md:-mt-20">
                                 <div className="bg-background rounded-lg p-6 md:p-8 border shadow-sm">
                                     <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                                         <Avatar className="w-20 h-20 border-4 border-background">
