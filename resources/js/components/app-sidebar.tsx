@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { CodeXml, LayoutGrid, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, CodeXml, LayoutGrid, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { Separator } from './ui/separator';
 
@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         title: 'Skills',
         href: route('skills.index'),
         icon: CodeXml,
+    },
+    {
+        title: 'Jobs',
+        href: route('jobs.index'),
+        icon: BriefcaseBusiness,
     }
 ];
 

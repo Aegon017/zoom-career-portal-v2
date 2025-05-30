@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\JobPosting;
 use App\Models\Skill;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(1000)->create();
-        Skill::factory(100)->create();
+        // Skill::factory(100)->create();
+        JobPosting::factory(100)->create();
     }
 }

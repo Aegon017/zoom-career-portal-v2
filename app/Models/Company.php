@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CompanySizeEnum;
 use App\Enums\CompanyTypeEnum;
 use App\Enums\VerificationStatusEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Company extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'company_name',
         'company_logo',
@@ -38,5 +41,10 @@ class Company extends Model
     public function employers(): HasMany
     {
         return $this->hasMany(Employer::class);
+    }
+
+    public function jobPostings(): HasMany
+    {
+        return $this->hasMany(jobPosting::class);
     }
 }

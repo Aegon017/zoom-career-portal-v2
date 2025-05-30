@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('employment_type');
             $table->string('work_model');
             $table->longText('description');
-            $table->json('required_skills');
             $table->decimal('salary_min', 10, 2)->nullable();
             $table->decimal('salary_max', 10, 2)->nullable();
             $table->string('salary_unit')->nullable();
@@ -30,7 +29,7 @@ return new class extends Migration
             $table->timestamp('published_at');
             $table->timestamp('expires_at');
             $table->string('status');
-            $table->string('moderation_status');
+            $table->string('verification_status');
             $table->timestamps();
         });
     }

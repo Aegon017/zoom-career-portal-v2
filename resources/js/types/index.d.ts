@@ -79,3 +79,26 @@ export interface Skill {
     name: string
 }
 
+export interface JobPosting {
+    id: number;
+    company_id: number;
+    employer_id: number;
+    title: string;
+    employment_type: string;
+    work_model: string;
+    description: string;
+    salary_min: number;
+    salary_max: number;
+    salary_unit: string;
+    currency: string;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    published_at: string;
+    expires_at: string;
+    status: string;
+    moderation_status: string;
+    created_at: string;
+    updated_at: string;
+}
+
