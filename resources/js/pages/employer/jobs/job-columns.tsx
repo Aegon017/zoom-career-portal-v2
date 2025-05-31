@@ -33,48 +33,16 @@ export const columns: ColumnDef<JobPosting>[] = [
         header: "Work Model",
     },
     {
-        accessorKey: "salary_min",
-        header: "Salary Min",
-    },
-    {
-        accessorKey: "salary_max",
-        header: "Salary Max",
-    },
-    {
-        accessorKey: "salary_unit",
-        header: "Salary Unit",
-    },
-    {
-        accessorKey: "currency",
-        header: "Currency",
-    },
-    {
-        accessorKey: "city",
-        header: "City",
-    },
-    {
-        accessorKey: "state",
-        header: "State",
-    },
-    {
-        accessorKey: "country",
-        header: "Country",
-    },
-    {
-        accessorKey: "published_at",
-        header: "Published",
-    },
-    {
-        accessorKey: "expires_at",
-        header: "Expires",
-    },
-    {
         accessorKey: "status",
         header: "Status",
     },
     {
         accessorKey: "verification_status",
         header: "Verification status",
+    },
+    {
+        accessorKey: "published_at",
+        header: "Published at",
     }, {
         id: "actions",
         cell: ({ row }) => {
