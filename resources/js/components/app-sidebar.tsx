@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Jobs',
-        href: route('jobs.index'),
+        href: route('job-postings.index'),
         icon: BriefcaseBusiness,
     }
 ];

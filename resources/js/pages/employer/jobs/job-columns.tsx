@@ -6,11 +6,11 @@ import { router } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table"
 
 const handleEdit = (id: number) => {
-    router.get(route("jobs.edit", id));
+    router.get(route("job-postings.edit", id));
 };
 
 const handleDelete = (id: number) => {
-    router.delete(route("jobs.destroy", id), { preserveScroll: true });
+    router.delete(route("job-postings.destroy", id), { preserveScroll: true });
 };
 
 export const columns: ColumnDef<JobPosting>[] = [
@@ -73,8 +73,8 @@ export const columns: ColumnDef<JobPosting>[] = [
         header: "Status",
     },
     {
-        accessorKey: "moderation_status",
-        header: "Moderation",
+        accessorKey: "verification_status",
+        header: "Verification status",
     }, {
         id: "actions",
         cell: ({ row }) => {
@@ -84,7 +84,6 @@ export const columns: ColumnDef<JobPosting>[] = [
                     onDelete={() => handleDelete(row.original.id)}
                 />
             )
-
         }
     }
 ]

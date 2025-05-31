@@ -13,6 +13,7 @@ class Employer extends Model
     use HasFactory;
 
     protected $fillable = [
+        'profile_image',
         'user_id',
         'company_id',
         'verification_status'

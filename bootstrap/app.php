@@ -30,6 +30,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "ensure.employer.company.exists" => EnsureEmployerCompanyExists::class
         ]);
+
+        $middleware->validateCsrfTokens(
+            except: [
+                'location/states',
+                'location/cities',
+                'employer/profile/image-upload',
+                'employer/profile/image-remove'
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

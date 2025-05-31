@@ -35,6 +35,7 @@ class CompanyController extends Controller
         $company = Company::create($data);
         $employer = Auth::user()->employer;
         $employer->company_id = $company->id;
+        $employer->profile_image = $data['profile_image'];
         $employer->update();
 
         event(new EmployerRegisteredEvent($employer));

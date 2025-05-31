@@ -6,6 +6,7 @@ use App\Enums\CurrencyEnum;
 use App\Enums\EmploymentTypeEnum;
 use App\Enums\JobStatusEnum;
 use App\Enums\ModerationStatusEnum;
+use App\Enums\VerificationStatusEnum;
 use App\Enums\WorkModelEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -28,8 +29,8 @@ class StoreJobPostingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_id'        => 'required|exists:companies,id',
-            'employer_id'       => 'required|exists:employers,id',
+            'company_id'        => 'exists:companies,id',
+            'employer_id'       => 'exists:employers,id',
             'title'             => 'required|string|max:255',
             'employment_type'   => ['required', Rule::enum(EmploymentTypeEnum::class)],
             'work_model'        => ['required', Rule::enum(WorkModelEnum::class)],
@@ -41,10 +42,11 @@ class StoreJobPostingRequest extends FormRequest
             'city'              => 'nullable|string|max:100',
             'state'             => 'nullable|string|max:100',
             'country'           => 'nullable|string|max:100',
-            'published_at'      => 'required|date',
+            'published_at'      => 'date',
             'expires_at'        => 'required|date|after:published_at',
             'status'            => ['required', Rule::enum(JobStatusEnum::class)],
-            'moderation_status' => ['required', Rule::enum(ModerationStatusEnum::class)],
+            'verification_status' => [Rule::enum(VerificationStatusEnum::class)],
+            'skills'   => 'required|array',
         ];
     }
 }

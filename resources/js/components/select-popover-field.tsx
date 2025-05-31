@@ -36,6 +36,8 @@ interface SelectPopoverFieldProps {
     options: Option[];
     placeholder?: string;
     rules?: Record<string, any>;
+    disabled?: boolean;
+    onChange?: (value: string) => void;
 }
 
 export const SelectPopoverField = ({
@@ -44,7 +46,9 @@ export const SelectPopoverField = ({
     label,
     options,
     placeholder,
-    rules
+    rules,
+    disabled = false,
+    onChange
 }: SelectPopoverFieldProps) => {
     const [open, setOpen] = useState(false);
 
@@ -57,7 +61,7 @@ export const SelectPopoverField = ({
                 <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
+                        <PopoverTrigger asChild disabled={disabled}>
                             <FormControl>
                                 <Button
                                     variant="outline"

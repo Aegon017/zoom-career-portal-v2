@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('country')->nullable();
-            $table->timestamp('published_at');
+            $table->timestamp('published_at')->nullable();
             $table->timestamp('expires_at');
             $table->string('status');
             $table->string('verification_status');

@@ -45,6 +45,7 @@ export interface User {
 
 export interface Company {
     id: number;
+    profile_image: string;
     company_name: string;
     company_logo: string;
     industry: string;
@@ -95,10 +96,11 @@ export interface JobPosting {
     state: string | null;
     country: string | null;
     published_at: string;
-    expires_at: string;
+    expires_at: Date;
     status: string;
     moderation_status: string;
     created_at: string;
     updated_at: string;
+    skills: string[]
 }
 

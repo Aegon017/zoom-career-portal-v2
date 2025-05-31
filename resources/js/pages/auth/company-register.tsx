@@ -1,4 +1,5 @@
 import { AppHeader } from "@/components/app-header"
+import ProfileImageUpload from "@/components/ProfileImageUpload";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ type CompanyOption = {
 const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: CompanyOption[], companyTypes: CompanyOption[] }) => {
     const form = useForm<Company>({
         defaultValues: {
+            profile_image: "",
             company_name: "",
             company_logo: "",
             industry: "",
@@ -48,6 +50,10 @@ const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: Company
         });
     }
 
+    const setData = (name: string, value: string): void => {
+        form.setValue(name, value);
+    };
+
     return (
         <>
             <Head title="Company register" />
@@ -61,6 +67,23 @@ const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: Company
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="space-y-6">
                                     <div className="grid md:grid-cols-1 gap-6">
+                                        <FormField
+                                            control={control}
+                                            name="profile_image"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Profile image (Optional)</FormLabel>
+                                                    <FormControl>
+                                                        <ProfileImageUpload
+                                                            uploadUrl={route('employer.profile.image.upload')}
+                                                            removeUrl={route('employer.profile.image.remove')}
+                                                            onUploaded={(url) => setData('profile_image', url)}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                         <FormField
                                             control={control}
                                             name="company_name"
