@@ -31,6 +31,8 @@ Route::post('/location/states', [LocationController::class, 'getStates'])->name(
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
 Route::post('/employer/profile/image-upload', [ProfileController::class, 'uploadImage'])->name('employer.profile.image.upload');
 Route::post('/employer/profile/image-remove', [ProfileController::class, 'removeImage'])->name('employer.profile.image.remove');
+Route::post('/company/profile/logo-upload', [CompanyController::class, 'uploadLogo'])->name('company.profile.logo.upload');
+Route::post('/company/profile/logo-remove', [CompanyController::class, 'removeLogo'])->name('company.profile.logo.remove');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

@@ -36,7 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 'location/states',
                 'location/cities',
                 'employer/profile/image-upload',
-                'employer/profile/image-remove'
+                'employer/profile/image-remove',
+                'company/profile/logo-upload',
+                'company/profile/logo-remove'
             ]
         );
     })

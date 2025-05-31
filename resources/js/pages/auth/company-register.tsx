@@ -75,6 +75,7 @@ const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: Company
                                                     <FormLabel>Profile image (Optional)</FormLabel>
                                                     <FormControl>
                                                         <ProfileImageUpload
+                                                            placeholder={`Drag & Drop your profile image or <span class="filepond--label-action">Browse</span>`}
                                                             uploadUrl={route('employer.profile.image.upload')}
                                                             removeUrl={route('employer.profile.image.remove')}
                                                             onUploaded={(url) => setData('profile_image', url)}
@@ -92,6 +93,24 @@ const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: Company
                                                     <FormLabel>Company name</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field} autoComplete="company" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={control}
+                                            name="company_logo"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Company logo (Optional)</FormLabel>
+                                                    <FormControl>
+                                                        <ProfileImageUpload
+                                                            placeholder={`Drag & Drop your company logo or <span class="filepond--label-action">Browse</span>`}
+                                                            uploadUrl={route('company.profile.logo.upload')}
+                                                            removeUrl={route('company.profile.logo.remove')}
+                                                            onUploaded={(url) => setData('company_logo', url)}
+                                                        />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>

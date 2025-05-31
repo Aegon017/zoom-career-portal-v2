@@ -8,7 +8,6 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 
 import { useState } from 'react';
-import { on } from 'events';
 
 registerPlugin(
     FilePondPluginImagePreview,
@@ -17,13 +16,14 @@ registerPlugin(
 );
 
 interface Props {
+    placeholder: string;
     initialImageUrl?: string;
     uploadUrl: string;
     removeUrl: string;
     onUploaded: (url: string) => void;
 }
 
-const ProfileImageUpload: React.FC<Props> = ({ initialImageUrl, uploadUrl, removeUrl, onUploaded }) => {
+const ProfileImageUpload: React.FC<Props> = ({ placeholder, initialImageUrl, uploadUrl, removeUrl, onUploaded }) => {
     const [files, setFiles] = useState<any[]>([]);
 
     return (
@@ -59,7 +59,7 @@ const ProfileImageUpload: React.FC<Props> = ({ initialImageUrl, uploadUrl, remov
             }}
             acceptedFileTypes={['image/*']}
             name="file"
-            labelIdle='Drag & Drop your profile image or <span class="filepond--label-action">Browse</span>'
+            labelIdle={placeholder}
         />
     );
 };

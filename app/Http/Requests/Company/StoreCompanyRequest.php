@@ -24,7 +24,7 @@ class StoreCompanyRequest extends FormRequest
         return [
             'profile_image' => 'nullable|string',
             'company_name' => 'required|string|max:255',
-            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'company_logo' => 'nullable|string',
             'industry' => 'required|string|max:100',
             'company_website' => 'required|url|max:255',
             'company_description' => 'required|string|max:1000',
