@@ -45,7 +45,7 @@ class UpdateJobPostingRequest extends FormRequest
             'expires_at'        => 'sometimes|required|date|after:published_at',
             'status'            => ['sometimes', 'required', Rule::enum(JobStatusEnum::class)],
             'verification_status' => ['sometimes', Rule::enum(VerificationStatusEnum::class)],
-            'required_skills'   => 'sometimes|required|array',
+            'skills'   => 'sometimes|required|array',
         ];
     }
 }

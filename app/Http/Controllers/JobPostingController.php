@@ -123,6 +123,8 @@ class JobPostingController extends Controller
         if ($data['status'] === JobStatusEnum::Published->value) {
             $data['published_at'] = now();
         }
+        $skills = $data['skills'];
+        $jobPosting->skills()->sync($skills);
         $jobPosting->update($data);
 
         return back()->with('success', 'Job record updated successfully');
