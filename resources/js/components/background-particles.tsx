@@ -1,4 +1,4 @@
-import bg from "../assets/split-background.png";
+import bg from "../assets/images/split-background.png";
 
 const JobSearchVisual = () => {
     return (

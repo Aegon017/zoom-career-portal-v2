@@ -76,7 +76,7 @@ class JobPostingController extends Controller
         $data['verification_status'] = VerificationStatusEnum::Pending->value;
         $jobPosting = JobPosting::create($data);
         $skills = $data['skills'];
-        $jobPosting->skills()->attach($skills);
+        $jobPosting->skills()->sync($skills);
         return to_route('job-postings.edit', $jobPosting->id)->with('success', 'Job record created successfully');
     }
 
@@ -120,12 +120,12 @@ class JobPostingController extends Controller
     public function update(UpdateJobPostingRequest $updateJobPostingRequest, JobPosting $jobPosting)
     {
         $data = $updateJobPostingRequest->validated();
-        if ($jobPosting->status === JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
+        if ($jobPosting->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
             $data['published_at'] = now();
         }
-        $jobPosting->update($data);
         $skills = $data['skills'];
         $jobPosting->skills()->sync($skills);
+        $jobPosting->update($data);
 
         return back()->with('success', 'Job record updated successfully');
     }

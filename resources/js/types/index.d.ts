@@ -101,6 +101,7 @@ export interface JobPosting {
     moderation_status: string;
     created_at: string;
     updated_at: string;
-    skills: string[]
+    skills: Skill[];
+    company: Company
 }
 

@@ -34,10 +34,13 @@ class CompanyController extends Controller
     {
         $data =  $storeCompanyRequest->validated();
         $data['verification_status'] = VerificationStatusEnum::Pending->value;
+        if ($data['company_logo']) {
+            $data['company_logo'] = asset(Storage::url($data['company_logo']));
+        }
         $company = Company::create($data);
         $employer = Auth::user()->employer;
         $employer->company_id = $company->id;
-        $employer->profile_image = $data['profile_image'];
+        $employer->profile_image = asset(Storage::url($data['profile_image']));
         $employer->update();
 
         event(new EmployerRegisteredEvent($employer));

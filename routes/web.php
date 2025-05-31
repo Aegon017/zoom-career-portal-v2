@@ -7,6 +7,8 @@ use App\Http\Controllers\Comapny\CompanyController;
 use App\Http\Controllers\employer\ProfileController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\JobPostingController;
+use App\Http\Controllers\JobSeeker\DashboardController as JobSeekerDashboardController;
+use App\Http\Controllers\JobSeeker\JobController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/employers', EmployerController::class);
     });
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::get('/jobseeker/dashboard', [JobSeekerDashboardController::class, 'index'])->name('jobseeker.dashboard.index');
+    Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
 });
 
 Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');
