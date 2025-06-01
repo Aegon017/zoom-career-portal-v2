@@ -33,8 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
 
     Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
+    Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
 
-    Route::delete('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
+    Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
+    Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
 });
 
 Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');

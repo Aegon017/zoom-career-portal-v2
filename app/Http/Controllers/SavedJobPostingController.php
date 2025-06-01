@@ -14,7 +14,7 @@ class SavedJobPostingController extends Controller
 
         $jobseeker->savedJobPostings()->syncWithoutDetaching([$jobPosting->id]);
 
-        return back();
+        return back()->with('success', 'Job saved successfully.');
     }
 
     public function unsave(JobPosting $jobPosting)
@@ -23,6 +23,6 @@ class SavedJobPostingController extends Controller
 
         $jobseeker->savedJobPostings()->detach($jobPosting->id);
 
-        return back();
+        return back()->with('success', 'Job unsaved successfully.');
     }
 }

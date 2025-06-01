@@ -1,7 +1,7 @@
 import { JobPosting } from "@/types";
 import { Link } from "@inertiajs/react";
 import { formatDistanceToNow } from "date-fns";
-import BookmarkButton from "../bookmark-button";
+import BookmarkButton from "./bookmark-button";
 
 const JobItem = ({ job }: { job: JobPosting }) => {
     return (

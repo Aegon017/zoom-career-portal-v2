@@ -4,14 +4,14 @@ namespace App\Http\Controllers\JobSeeker;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPosting;
-use App\Traits\Traits\JobSaveStatus;
+use App\Traits\JobHelpers;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    use JobSaveStatus;
+    use JobHelpers;
 
     public function index(): Response
     {

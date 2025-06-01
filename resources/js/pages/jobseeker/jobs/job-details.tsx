@@ -1,11 +1,11 @@
-import BookmarkButton from "@/components/bookmark-button"
+import ApplyButton from "@/components/jobseeker/apply-button"
+import BookmarkButton from "@/components/jobseeker/bookmark-button"
 import AppLayout from "@/layouts/jobseeker-layout"
 import { JobPosting } from "@/types"
 import { Head } from "@inertiajs/react"
 import { format, formatDistanceToNow } from "date-fns"
 
 const JobDetails = ({ job }: { job: JobPosting }) => {
-    console.log(job);
     return (
         <AppLayout>
             <Head title="Job details" />
@@ -32,7 +32,7 @@ const JobDetails = ({ job }: { job: JobPosting }) => {
                             </div>
                             <div className="job-action">
                                 <BookmarkButton jobId={job.id} isSaved={job.is_saved} hasText={true} />
-                                <button className="zc-btn zc-btn-primary">Apply</button>
+                                <ApplyButton jobId={job.id} hasApplied={job.has_applied} status={job.application_status} />
                                 <button className="zc-btn zc-btn-secondary">follow Employer</button>
                             </div>
                         </div>

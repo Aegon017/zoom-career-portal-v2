@@ -109,5 +109,7 @@ export interface JobPosting {
     skills: Skill[];
     company: Company;
     is_saved: boolean;
+    has_applied: boolean;
+    application_status: string;
 }
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jobseeker extends Model
 {
@@ -21,5 +22,17 @@ class Jobseeker extends Model
     public function savedJobPostings(): BelongsToMany
     {
         return $this->belongsToMany(JobPosting::class)->withTimestamps();
+    }
+
+    public function jobApplications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+
+    public function appliedJobs(): BelongsToMany
+    {
+        return $this->belongsToMany(JobPosting::class, 'job_applications')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }
