@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-use App\Enums\Traits\EnumHelpers;
+use App\Traits\EnumHelpers;
 
 enum OperationsEnum: string
 {

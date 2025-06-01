@@ -111,5 +111,17 @@ export interface JobPosting {
     is_saved: boolean;
     has_applied: boolean;
     application_status: string;
+    pivot: Record<string, string>;
+}
+
+interface Application {
+    id: number;
+    job_posting_id: number;
+    jobseeker_id: number;
+    status: string;
+    cover_letter: string;
+    resume: string;
+    created_at: string;
+    updated_at: string;
 }
 

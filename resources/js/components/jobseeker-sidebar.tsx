@@ -37,10 +37,9 @@ export function AppSidebar() {
                         </a>
                         {activeItem === 'jobs' && (
                             <ul className="sub-menu">
-                                <li><a href="jobs.php">All Jobs</a></li>
+                                <li><Link href={route('jobseeker.jobs.index')}>All Jobs</Link></li>
                                 <li><Link href={route('jobseeker.saved-jobs.index')}>Saved Jobs</Link></li>
-                                <li><a href="applied-jobs.php">Applied Jobs</a></li>
-                                <li><a href="job-details.php">Job Details</a></li>
+                                <li><Link href={route('jobseeker.applied-jobs.index')}>Applied Jobs</Link></li>
                             </ul>
                         )}
                     </li>

@@ -37,4 +37,15 @@ class DashboardController extends Controller
             'jobs' => $jobs->load('company')
         ]);
     }
+
+    public function appliedJobsList(): Response
+    {
+        $jobseeker = Auth::user()->jobseeker;
+
+        $jobs = $jobseeker->appliedJobs;
+
+        return Inertia::render('jobseeker/jobs/applied-jobs-listing', [
+            'jobs' => $jobs->load('company')
+        ]);
+    }
 }

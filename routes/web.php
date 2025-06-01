@@ -30,11 +30,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/jobseeker/explore', [JobSeekerDashboardController::class, 'index'])->name('jobseeker.explore');
     Route::get('/jobseeker/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('jobseeker.saved-jobs.index');
+    Route::get('/jobseeker/jobs', [JobController::class, 'index'])->name('jobseeker.jobs.index');
     Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
 
     Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
     Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
 
+    Route::get('/jobseeker/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('jobseeker.applied-jobs.index');
     Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
     Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
 });

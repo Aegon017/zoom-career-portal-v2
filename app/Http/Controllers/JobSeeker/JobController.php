@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\JobSeeker;
 
+use App\Enums\JobApplicationStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use App\Models\JobPosting;
@@ -13,6 +15,18 @@ use Inertia\Response;
 class JobController extends Controller
 {
     use JobHelpers;
+
+    public function index(): Response
+    {
+        $jobs = JobPosting::latest()->where('status', JobStatusEnum::Published->value)->get();
+
+        $jobseeker = Auth::user()->jobseeker;
+        $jobs = $this->addSaveStatusToJobs($jobs, $jobseeker);
+
+        return Inertia::render('jobseeker/jobs/jobs-listing', [
+            'jobs' => $jobs->load('company')
+        ]);
+    }
 
     public function show(string $jobId): Response
     {
@@ -38,7 +52,7 @@ class JobController extends Controller
                 'job_posting_id' => $jobPosting->id,
             ],
             [
-                'status' => 'applied',
+                'status' => JobApplicationStatusEnum::Pending->value,
             ]
         );
 

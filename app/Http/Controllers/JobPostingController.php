@@ -120,12 +120,16 @@ class JobPostingController extends Controller
     public function update(UpdateJobPostingRequest $updateJobPostingRequest, JobPosting $jobPosting)
     {
         $data = $updateJobPostingRequest->validated();
+
+        $jobPosting->update($data);
+
         if ($jobPosting->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
-            $data['published_at'] = now();
+            $jobPosting->published_at = now();
+            $jobPosting->save();
         }
+
         $skills = $data['skills'];
         $jobPosting->skills()->syncWithoutDetaching($skills);
-        $jobPosting->update($data);
 
         return back()->with('success', 'Job record updated successfully');
     }
