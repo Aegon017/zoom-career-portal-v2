@@ -52,4 +52,9 @@ class JobPosting extends Model
     {
         return $this->belongsToMany(Skill::class);
     }
+
+    public function savedByJobseekers(): BelongsToMany
+    {
+        return $this->belongsToMany(Jobseeker::class)->withTimestamps();
+    }
 }

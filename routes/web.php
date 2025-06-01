@@ -11,6 +11,7 @@ use App\Http\Controllers\JobSeeker\DashboardController as JobSeekerDashboardCont
 use App\Http\Controllers\JobSeeker\JobController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SavedJobPostingController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -26,8 +27,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/employers', EmployerController::class);
     });
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::get('/jobseeker/dashboard', [JobSeekerDashboardController::class, 'index'])->name('jobseeker.dashboard.index');
+
+    Route::get('/jobseeker/explore', [JobSeekerDashboardController::class, 'index'])->name('jobseeker.explore');
+    Route::get('/jobseeker/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('jobseeker.saved-jobs.index');
     Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
+
+    Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
+
+    Route::delete('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
 });
 
 Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');

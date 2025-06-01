@@ -16,14 +16,14 @@ export function AppSidebar() {
         <nav id="zc-sidebar" className="sidebar zc-sidebar">
             <div className="sidebar-content">
                 <div className="sidebar-brand">
-                    <Link href={route('dashboard')}>
+                    <Link href={route('jobseeker.explore')}>
                         <img src={logo} alt="Zoom Career" />
                     </Link>
                 </div>
 
                 <ul className="sidebar-nav">
                     <li className="sidebar-item active">
-                        <Link href={route('dashboard')}>
+                        <Link href={route('jobseeker.explore')}>
                             <ExploreIcon />
                             <span>Explore</span>
                         </Link>
@@ -38,7 +38,7 @@ export function AppSidebar() {
                         {activeItem === 'jobs' && (
                             <ul className="sub-menu">
                                 <li><a href="jobs.php">All Jobs</a></li>
-                                <li><a href="saved-jobs.php">Saved Jobs</a></li>
+                                <li><Link href={route('jobseeker.saved-jobs.index')}>Saved Jobs</Link></li>
                                 <li><a href="applied-jobs.php">Applied Jobs</a></li>
                                 <li><a href="job-details.php">Job Details</a></li>
                             </ul>

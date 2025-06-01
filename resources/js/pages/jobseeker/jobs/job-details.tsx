@@ -1,3 +1,4 @@
+import BookmarkButton from "@/components/bookmark-button"
 import AppLayout from "@/layouts/jobseeker-layout"
 import { JobPosting } from "@/types"
 import { Head } from "@inertiajs/react"
@@ -15,7 +16,7 @@ const JobDetails = ({ job }: { job: JobPosting }) => {
                             <div className="company-info">
                                 <a href="#">
                                     <div className="logo mb-2">
-                                        <img src="assets/images/logo.png" />
+                                        <img src={job.company.company_logo} />
                                     </div>
                                     <div className="details mb-2">
                                         <h3>{job.company.company_name}</h3>
@@ -30,7 +31,7 @@ const JobDetails = ({ job }: { job: JobPosting }) => {
                                 </p>
                             </div>
                             <div className="job-action">
-                                <button className="zc-btn zc-btn-primary zc-btn-outline zc-btn-icon"><i className="fa-regular fa-bookmark"></i>Save</button>
+                                <BookmarkButton jobId={job.id} isSaved={job.is_saved} hasText={true} />
                                 <button className="zc-btn zc-btn-primary">Apply</button>
                                 <button className="zc-btn zc-btn-secondary">follow Employer</button>
                             </div>

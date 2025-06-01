@@ -19,7 +19,9 @@ export default function Explore({ jobs }: { jobs: JobPosting[] }) {
                     <div className="zc-jobs-by-interest-list">
                         <div className="row">
                             {jobs.map((job) => (
-                                <JobItem key={job.id} job={job} />
+                                <div className="col-lg-4 col-md-6 col-sm-12 mb-3" key={job.id}>
+                                    <JobItem job={job} />
+                                </div>
                             ))}
                         </div>
                     </div>

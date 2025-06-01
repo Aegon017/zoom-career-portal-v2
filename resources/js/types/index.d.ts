@@ -107,6 +107,7 @@ export interface JobPosting {
     created_at: string;
     updated_at: string;
     skills: Skill[];
-    company: Company
+    company: Company;
+    is_saved: boolean;
 }
 

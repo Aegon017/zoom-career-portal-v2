@@ -124,7 +124,7 @@ class JobPostingController extends Controller
             $data['published_at'] = now();
         }
         $skills = $data['skills'];
-        $jobPosting->skills()->sync($skills);
+        $jobPosting->skills()->syncWithoutDetaching($skills);
         $jobPosting->update($data);
 
         return back()->with('success', 'Job record updated successfully');
