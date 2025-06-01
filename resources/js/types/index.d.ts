@@ -41,6 +41,11 @@ export interface User {
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
+    profile: Profile
+}
+
+export interface Profile {
+    image: string
 }
 
 export interface Company {

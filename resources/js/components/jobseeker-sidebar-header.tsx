@@ -1,6 +1,11 @@
+import { usePage } from '@inertiajs/react';
 import logo from '../assets/images/logo.png'
+import { SharedData } from '@/types';
 
 export function AppSidebarHeader() {
+    const page = usePage<SharedData>();
+    const { profile } = page.props.auth.user;
+    const avatar = profile.image ? profile.image : '/images/avatar.png';
     return (
         <div className="zc-main-top-nav">
             <a href="#" className="zc-sidebar-toggle" id="zc-sidebar-toggle">
@@ -88,7 +93,7 @@ export function AppSidebarHeader() {
                 </li>
                 <li className="zc-nav-item zc-dropdown user-nav">
                     <a href="#" className="zc-dropdown-btn">
-                        {/* <img src={avatar} /> */}
+                        <img src={avatar} />
                     </a>
                     <div className="zc-dropdown-menu">
                         <a href="#" className="zc-dropdown-item">
