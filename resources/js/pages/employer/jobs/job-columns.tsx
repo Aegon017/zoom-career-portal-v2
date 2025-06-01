@@ -4,6 +4,7 @@ import DataTableActions from "@/components/data-table-actions";
 import { JobPosting } from "@/types"
 import { router } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table"
+import { format } from "date-fns";
 
 const handleEdit = (id: number) => {
     router.get(route("job-postings.edit", id));
@@ -43,6 +44,9 @@ export const columns: ColumnDef<JobPosting>[] = [
     {
         accessorKey: "published_at",
         header: "Published at",
+        cell: ({ row }) => {
+            return format(new Date(row.getValue("published_at")), "dd MMM yyyy");
+        }
     }, {
         id: "actions",
         cell: ({ row }) => {
