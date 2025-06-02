@@ -1,6 +1,14 @@
+import { Link, router } from '@inertiajs/react';
 import logo from '../assets/images/logo.png'
+import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 
 export function AppSidebarHeader() {
+    const cleanup = useMobileNavigation();
+
+    const handleLogout = () => {
+        cleanup();
+        router.flushAll();
+    };
     const avatar = '/images/avatar.png';
     return (
         <div className="zc-main-top-nav">
@@ -108,6 +116,10 @@ export function AppSidebarHeader() {
                             <i className="fas fa-user"></i>
                             My Career Interests
                         </a>
+                        <Link className="zc-dropdown-item" method="post" href={route('logout')} as="button" onClick={handleLogout}>
+                            <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                            Logout
+                        </Link>
                     </div>
                 </li>
             </ul>

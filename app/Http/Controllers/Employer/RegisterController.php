@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
@@ -36,6 +37,9 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+
+        Role::firstOrCreate(['name' => 'employer']);
+        $user->assignRole('employer');
 
         event(new Registered($user));
 

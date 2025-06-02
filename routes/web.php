@@ -19,7 +19,7 @@ use App\Http\Controllers\LocationController;
 Route::redirect('/', '/login');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::middleware(['ensure.employer.company.exists'])->group(function () {
+    Route::middleware(['ensure.employer.company.exists', 'role:super_admin', 'role:employer'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/users', UserController::class);
         Route::resource('/skills', SkillController::class);
@@ -38,18 +38,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
-    Route::prefix('jobseeker')->name('jobseeker.')->group(function () {
+    Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobSeekerDashboardController::class, 'index'])->name('explore');
         Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
         Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
         Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
     });
 
-    Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
-    Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
-    Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
-    Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
-    Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
+    Route::middleware(['auth', 'role:jobseeker'])->group(function () {
+        Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
+        Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
+        Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
+        Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
+        Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
+    });
 });
 
 Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');
