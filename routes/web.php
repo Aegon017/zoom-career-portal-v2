@@ -19,7 +19,7 @@ use App\Http\Controllers\LocationController;
 Route::redirect('/', '/login');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::middleware(['ensure.employer.company.exists', 'role:super_admin', 'role:employer'])->group(function () {
+    Route::middleware(['ensure.employer.company.exists', 'role:super_admin|employer'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/users', UserController::class);
         Route::resource('/skills', SkillController::class);
