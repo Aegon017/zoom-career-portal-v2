@@ -19,7 +19,7 @@ class RemoteLoginController extends Controller
         if (Auth::attempt($credentials)) {
             Session::regenerate();
             if (Auth::user()->jobseeker && Auth::user()->email !== 'admin@zoomgroup.com') {
-                return redirect()->intended(route('jobseeker.dashboard.index', absolute: false));
+                return redirect()->intended(route('jobseeker.explore', absolute: false));
             }
             return redirect()->intended(route('dashboard', absolute: false));
         }
@@ -44,7 +44,7 @@ class RemoteLoginController extends Controller
             Auth::login($localUser);
             Session::regenerate();
             if (Auth::user()->jobseeker && Auth::user()->email !== 'admin@zoomgroup.com') {
-                return redirect()->intended(route('jobseeker.dashboard.index', absolute: false));
+                return redirect()->intended(route('jobseeker.explore', absolute: false));
             }
             return redirect()->intended(route('dashboard', absolute: false));
         }
