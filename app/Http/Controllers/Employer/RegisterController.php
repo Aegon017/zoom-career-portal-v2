@@ -74,6 +74,13 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function joinCompanyPending(Company $company): Response
+    {
+        return Inertia::render('auth/join-company-request-pending', [
+            'company' => $company
+        ]);
+    }
+
     public function companyVerify(Request $request)
     {
         $data =   $request->validate([
@@ -88,5 +95,7 @@ class RegisterController extends Controller
                 'company' => $company
             ]);
         }
+
+        return to_route('employer.join.company.pending', $company);
     }
 }

@@ -12,8 +12,8 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Employer } from "@/types";
-import { Head, router } from "@inertiajs/react";
+import { Employer, SharedData, User } from "@/types";
+import { Head, router, usePage } from "@inertiajs/react";
 import { useForm } from "react-hook-form";
 
 const types_of_candidates = [
@@ -43,6 +43,8 @@ const job_titles = [
 ];
 
 const EmployerProfileCreate = () => {
+    const user: User = usePage<SharedData>().props.auth.user;
+
     const form = useForm<Employer>({
         defaultValues: {
             profile_image: "",
@@ -79,7 +81,7 @@ const EmployerProfileCreate = () => {
             <div className="flex flex-1 justify-center p-8">
                 <div className="md:w-xl">
                     <h1 className="text-2xl font-bold text-center">
-                        Complete your profile, Mariam Crawford!
+                        Complete your profile, {user.name}
                     </h1>
                     <p className="text-gray-500 text-center mt-2 text-sm">
                         Double your candidate engagement when you complete your user profile.

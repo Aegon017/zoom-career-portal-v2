@@ -32,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/employer/user-profile-create', [RegisterController::class, 'profileCreate'])->name('employer.user-profile.create');
     Route::post('/employer/user-profile-create', [RegisterController::class, 'profileStore'])->name('employer.user-profile.create');
     Route::get('/employer/join/company', [RegisterController::class, 'joinCompany'])->name('employer.join.company');
+    Route::get('/employer/join/company/{company}/pending', [RegisterController::class, 'joinCompanyPending'])->name('employer.join.company.pending');
     Route::post('/employer/company/verify', [RegisterController::class, 'companyVerify'])->name('employer.company.verify');
 
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
