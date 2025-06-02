@@ -1,8 +1,8 @@
 import AppLayout from '@/layouts/jobseeker-layout';
 import { Head } from '@inertiajs/react';
-import profile from '../../../assets/images/uf.webp';
 import { useState } from 'react';
 export default function Profile() {
+    const profile = "https://www.w3schools.com/howto/img_avatar.png";
     const candidateData = {
         name: "Rohan Mehta",
         profileImage: profile,

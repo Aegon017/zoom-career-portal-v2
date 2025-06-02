@@ -13,6 +13,7 @@ use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\SavedJobPostingController;
 use App\Http\Controllers\JobSeeker\DashboardController as JobSeekerDashboardController;
 use App\Http\Controllers\JobSeeker\JobController;
+use App\Http\Controllers\JobSeekerProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LocationController;
 
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
         Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
         Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+        Route::resource('/profile', JobSeekerProfileController::class);
     });
 
     Route::middleware(['auth', 'role:jobseeker'])->group(function () {
