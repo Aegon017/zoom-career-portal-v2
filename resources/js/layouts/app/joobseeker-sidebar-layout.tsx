@@ -2,14 +2,16 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/jobseeker-sidebar';
 import { AppSidebarHeader } from '@/components/jobseeker-sidebar-header';
+import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 import { type PropsWithChildren } from 'react';
 
 export default function AppSidebarLayout({ children }: PropsWithChildren) {
+    const sidebarToggle = useSidebarToggle();
     return (
         <AppShell variant="sidebar">
-            <AppSidebar />
+            <AppSidebar sidebarToggle={sidebarToggle} />
             <AppContent variant="sidebar">
-                <AppSidebarHeader />
+                <AppSidebarHeader sidebarToggle={sidebarToggle} />
                 {children}
             </AppContent>
         </AppShell>

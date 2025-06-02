@@ -8,6 +8,7 @@ import { NavFooter } from "./nav-footer";
 import { Separator } from "./ui/separator";
 import { NavUser } from "./nav-user";
 import useRoles from "@/hooks/use-roles";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 export function AppSidebar() {
     const { isEmployer, isJobSeeker, isSuperAdmin } = useRoles();

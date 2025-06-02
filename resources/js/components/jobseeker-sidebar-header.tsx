@@ -2,8 +2,9 @@ import { Link, router } from '@inertiajs/react';
 import logo from '../assets/images/logo.png';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import useDropdown from '@/hooks/use-dropdown';
+import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 
-export function AppSidebarHeader() {
+export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const cleanup = useMobileNavigation();
     const handleLogout = () => {
         cleanup();
@@ -16,12 +17,15 @@ export function AppSidebarHeader() {
     const avatar = "https://www.w3schools.com/howto/img_avatar.png";
     return (
         <div className="zc-main-top-nav">
-            <a href="#" className="zc-sidebar-toggle" id="zc-sidebar-toggle">
+            <button className="zc-sidebar-toggle" id="zc-sidebar-toggle"
+                ref={sidebarToggle.toggleRef}
+                onClick={() => sidebarToggle.toggle()}
+            >
                 <i className="fa-solid fa-bars"></i>
-            </a>
-            <a href="#" className="brand-logo">
+            </button>
+            <Link href={route('jobseeker.explore')} className="brand-logo">
                 <img src={logo} alt="Zoom Career" />
-            </a>
+            </Link>
             <ul className="zc-top-nav-bar">
                 <li className="zc-nav-item zc-dropdown user-notification" ref={notificationNav.dropdownRef}>
                     <button className="zc-dropdown-btn" onClick={() => {

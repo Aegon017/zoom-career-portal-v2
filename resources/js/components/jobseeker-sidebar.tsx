@@ -3,8 +3,9 @@ import logo from '../assets/images/logo.png';
 import JobsIcon from '@/icons/jobs-icon';
 import ExploreIcon from '@/icons/explore-icon';
 import { Link } from '@inertiajs/react';
+import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 
-export function AppSidebar() {
+export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const handleDropdownToggle = (itemName: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
         setActiveItem(prev =>
@@ -13,7 +14,7 @@ export function AppSidebar() {
     };
 
     return (
-        <nav id="zc-sidebar" className="sidebar zc-sidebar">
+        <nav id="zc-sidebar" className={`sidebar zc-sidebar ${sidebarToggle.collapsed ? 'collapsed' : ''}`} ref={sidebarToggle.sidebarRef}>
             <div className="sidebar-content">
                 <div className="sidebar-brand">
                     <Link href={route('jobseeker.explore')}>
@@ -30,7 +31,7 @@ export function AppSidebar() {
                     </li>
 
                     <li className={`sidebar-item has-childern ${activeItem === 'jobs' ? 'active' : ''}`}>
-                        <a href='#' onClick={handleDropdownToggle('jobs')}>
+                        <a onClick={handleDropdownToggle('jobs')}>
                             <JobsIcon />
                             <span>Jobs</span>
                             <i className="fa-solid fa-angle-down dropdown-icon"></i>
