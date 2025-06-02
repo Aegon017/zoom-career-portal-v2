@@ -1,7 +1,7 @@
 import { AppHeader } from "@/components/app-header"
 import type { Company } from "@/types"
 import { Head } from "@inertiajs/react"
-import { LoaderPinwheel, Building2, Mail, Clock, X } from "lucide-react"
+import { LoaderPinwheel, Building2, Mail, Clock } from "lucide-react"
 
 const RequestPending = ({ company }: { company: Company }) => {
     return (
