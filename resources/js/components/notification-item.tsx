@@ -9,10 +9,8 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
     }
     return (
         <div
-            className="relative flex flex-col sm:flex-row items-start gap-3 rounded-xl border p-3 sm:p-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-md bg-background border-primary/30 group overflow-hidden"
+            className="relative flex flex-col sm:flex-row items-start gap-3 rounded-xl border p-3 sm:p-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-md bg-background group overflow-hidden"
         >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
             <div className="flex-1 space-y-1.5 relative z-10 w-full">
                 <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-1 sm:gap-2">
                     <p className="text-sm font-semibold text-foreground">{notification.data.title}</p>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Employer;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Employer;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -35,14 +37,56 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        $user->employer()->create([
-            'verification_status' => VerificationStatusEnum::Pending->value
-        ]);
-
         event(new Registered($user));
 
         Auth::login($user);
 
-        return to_route('company.register', $user);
+        return to_route('employer.user-profile.create');
+    }
+
+    public function profileCreate(): Response
+    {
+        return Inertia::render('auth/employer-profile-create');
+    }
+
+    public function profileStore(Request $request): RedirectResponse
+    {
+
+        $data = $request->validate([
+            'profile_image' => 'nullable|string',
+            'job_title' => 'required|string',
+            'types_of_candidates' => 'required|array',
+            'phone' => 'required|string',
+        ]);
+
+        $data['verification_status'] = VerificationStatusEnum::Pending->value;
+
+        Auth::user()->employer()->create($data);
+
+        return to_route('employer.join.company');
+    }
+
+    public function joinCompany(): Response
+    {
+        $companies = Company::orderBy('company_name', 'asc')->get();
+        return Inertia::render('auth/create-or-join-company', [
+            'companies' => $companies
+        ]);
+    }
+
+    public function companyVerify(Request $request)
+    {
+        $data =   $request->validate([
+            'company' => 'required|string',
+            'isNewCompany' => 'nullable|boolean'
+        ]);
+
+        [$company, $isNewCompany] = array_values($data);
+
+        if ($isNewCompany) {
+            return to_route('company.register', [
+                'company' => $company
+            ]);
+        }
     }
 }

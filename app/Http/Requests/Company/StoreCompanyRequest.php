@@ -22,7 +22,6 @@ class StoreCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'profile_image' => 'nullable|string',
             'company_name' => 'required|string|max:255',
             'company_logo' => 'nullable|string',
             'industry' => 'required|string|max:100',

@@ -15,11 +15,10 @@ type CompanyOption = {
     label: string;
 }
 
-const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: CompanyOption[], companyTypes: CompanyOption[] }) => {
+const CompanyRegister = ({ companySizes, companyTypes, company_name }: { companySizes: CompanyOption[], companyTypes: CompanyOption[], company_name: string }) => {
     const form = useForm<Company>({
         defaultValues: {
-            profile_image: "",
-            company_name: "",
+            company_name: company_name,
             company_logo: "",
             industry: "",
             company_website: "",
@@ -67,24 +66,6 @@ const CompanyRegister = ({ companySizes, companyTypes }: { companySizes: Company
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="space-y-6">
                                     <div className="grid md:grid-cols-1 gap-6">
-                                        <FormField
-                                            control={control}
-                                            name="profile_image"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Profile image (Optional)</FormLabel>
-                                                    <FormControl>
-                                                        <ProfileImageUpload
-                                                            placeholder={`Drag & Drop your profile image or <span class="filepond--label-action">Browse</span>`}
-                                                            uploadUrl={route('employer.profile.image.upload')}
-                                                            removeUrl={route('employer.profile.image.remove')}
-                                                            onUploaded={(url) => setData('profile_image', url)}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
                                         <FormField
                                             control={control}
                                             name="company_name"

@@ -13,18 +13,19 @@ class Employer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'profile_image',
         'user_id',
         'company_id',
+        'profile_image',
+        'job_title',
+        'types_of_candidates',
+        'phone',
         'verification_status'
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'verification_status' => VerificationStatusEnum::class
-        ];
-    }
+    protected $casts = [
+        'types_of_candidates' => 'array',
+        'verification_status' => VerificationStatusEnum::class
+    ];
 
     public function user(): BelongsTo
     {
@@ -34,6 +35,11 @@ class Employer extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function educations(): HasMany
+    {
+        return $this->hasMany(Education::class);
     }
 
     public function jobPostings(): HasMany

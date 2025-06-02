@@ -50,7 +50,6 @@ export interface Profile {
 
 export interface Company {
     id: number;
-    profile_image: string;
     company_name: string;
     company_logo: string;
     industry: string;
@@ -125,3 +124,22 @@ interface Application {
     updated_at: string;
 }
 
+interface Employer {
+    id: number;
+    user_id: number;
+    company_id: number;
+    profile_image: string;
+    job_title: string;
+    types_of_candidates: string[];
+    phone: string;
+    verification_status: string;
+    educations: Education[];
+}
+
+interface Education {
+    id: number;
+    employer_id: number;
+    jobseeker_id: number;
+    school_name: string;
+    graduation_year: number;
+}

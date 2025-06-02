@@ -247,10 +247,9 @@ const CreateOrEditJob = ({
                                         <FormLabel>Required skills</FormLabel>
                                         <FormControl>
                                             <MultiSelect
-                                                {...field}
                                                 options={skillOptions}
-                                                onValueChange={(values) => field.onChange(values)}
-                                                defaultValue={field.value.map((v: any) => String(v.id))}
+                                                value={field.value.map((v: any) => String(v.id))}
+                                                onValueChange={(values) => field.onChange(values.map(id => ({ id: parseInt(id) })))}
                                                 placeholder="Select skills required"
                                                 variant="inverted"
                                                 animation={2}

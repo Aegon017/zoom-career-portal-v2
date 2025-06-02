@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('employers', function (Blueprint $table) {
             $table->id();
-            $table->string('profile_image')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('company_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('profile_image')->nullable();
+            $table->string('job_title');
+            $table->json('types_of_candidates');
+            $table->string('phone');
             $table->string('verification_status');
             $table->timestamps();
         });

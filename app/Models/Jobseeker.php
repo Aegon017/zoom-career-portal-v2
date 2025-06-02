@@ -19,6 +19,11 @@ class Jobseeker extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function educations(): HasMany
+    {
+        return $this->hasMany(Education::class);
+    }
+
     public function savedJobPostings(): BelongsToMany
     {
         return $this->belongsToMany(JobPosting::class)->withTimestamps();

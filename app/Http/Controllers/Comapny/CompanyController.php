@@ -19,12 +19,14 @@ use Inertia\Response;
 
 class CompanyController extends Controller
 {
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        $company = $request->company;
         $companySizes = CompanySizeEnum::options();
         $companyTypes = CompanyTypeEnum::options();
 
         return Inertia::render('auth/company-register', [
+            'company_name' => $company,
             'companySizes' => $companySizes,
             'companyTypes' => $companyTypes
         ]);
@@ -40,7 +42,6 @@ class CompanyController extends Controller
         $company = Company::create($data);
         $employer = Auth::user()->employer;
         $employer->company_id = $company->id;
-        $employer->profile_image = asset(Storage::url($data['profile_image']));
         $employer->update();
 
         event(new EmployerRegisteredEvent($employer));
