@@ -81,7 +81,12 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function companyVerify(Request $request)
+    public function createCompanyPending(): Response
+    {
+        return Inertia::render('auth/create-company-request-pending');
+    }
+
+    public function companyVerify(Request $request): RedirectResponse
     {
         $data =   $request->validate([
             'company' => 'required|string',

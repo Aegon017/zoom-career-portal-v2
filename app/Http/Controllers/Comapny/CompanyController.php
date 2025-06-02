@@ -46,7 +46,7 @@ class CompanyController extends Controller
 
         event(new EmployerRegisteredEvent($employer));
 
-        return to_route('dashboard')->with('success', 'Company registered successfully');
+        return to_route('employer.create.company.pending')->with('success', 'Company registered successfully');
     }
     public function uploadLogo(Request $request)
     {

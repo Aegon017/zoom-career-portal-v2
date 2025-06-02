@@ -1,6 +1,6 @@
 import { AppHeader } from '@/components/app-header'
 import { CreatableCombobox, Option } from '@/components/creatable-combobox'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
     Form,
     FormControl,
@@ -115,17 +115,18 @@ const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
                                     </div>
 
                                     {selectedCompany && (
-                                        <Card>
-                                            <div className="flex items-center gap-4 px-8 py-4">
-                                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                                                    <Building2 className="text-primary/80" />
+                                        <Card className="w-full overflow-hidden rounded-lg border border-muted/50 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
+                                            <CardHeader className="h-10 bg-gray-400 p-0" />
+
+                                            <CardContent className="flex items-center gap-5 px-8 py-4">
+                                                <div className="flex size-14 items-center justify-center rounded-lg bg-orange-100 text-orange-600 shadow-sm ring-2 ring-orange-200 transition-all duration-300 hover:bg-orange-200 hover:text-orange-700">
+                                                    <Building2 className="size-6" />
                                                 </div>
+
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">
-                                                        {selectedCompany.label}
-                                                    </h3>
+                                                    <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">{selectedCompany.label}</h1>
                                                 </div>
-                                            </div>
+                                            </CardContent>
                                         </Card>
                                     )}
                                 </div>

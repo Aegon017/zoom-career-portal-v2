@@ -93,7 +93,7 @@ export function CreatableCombobox({
                     />
                     {filteredOptions.length === 0 && input.trim() ? (
                         <CommandEmpty>
-                            <div className="flex items-center justify-between px-2 py-1">
+                            <div className="flex items-center justify-between px-8">
                                 <span>No results.</span>
                                 <Button
                                     variant="ghost"
