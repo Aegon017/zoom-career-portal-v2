@@ -22,7 +22,7 @@ class RemoteLoginController extends Controller
             return $this->handleSuccessfulLogin(Auth::user());
         }
 
-        $remoteUser = DB::connection('remoteMysql')
+        $remoteUser = DB::connection('remote_mysql')
             ->table('users')
             ->where('email', $credentials['email'])
             ->first();

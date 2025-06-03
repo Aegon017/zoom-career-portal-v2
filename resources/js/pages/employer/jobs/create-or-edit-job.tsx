@@ -56,6 +56,7 @@ const CreateOrEditJob = ({
         label: skill.name,
         value: String(skill.id),
     }));
+
     const [countries, setCountries] = useState<Location[]>([]);
     const [states, setStates] = useState<Record<string, Location[]>>({});
     const [cities, setCities] = useState<Record<string, Location[]>>({});
@@ -248,6 +249,7 @@ const CreateOrEditJob = ({
                                         <FormControl>
                                             <MultiSelect
                                                 options={skillOptions}
+                                                defaultValue={field.value.map((v: any) => String(v.id))}
                                                 value={field.value.map((v: any) => String(v.id))}
                                                 onValueChange={(values) => field.onChange(values.map(id => ({ id: parseInt(id) })))}
                                                 placeholder="Select skills required"

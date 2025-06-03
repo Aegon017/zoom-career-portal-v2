@@ -42,8 +42,7 @@ class CompanyController extends Controller
         $company = Company::create($data);
         $employer = Auth::user()->employer;
         $employer->company_id = $company->id;
-        $employer->update();
-
+        $employer->save();
         event(new EmployerRegisteredEvent($employer));
 
         return to_route('employer.create.company.pending')->with('success', 'Company registered successfully');

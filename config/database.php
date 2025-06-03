@@ -62,7 +62,7 @@ return [
             ]) : [],
         ],
 
-        'remoteMysql' => [
+        'remote_mysql' => [
             'driver' => 'mysql',
             'url' => env('REMOTE_DB_URL'),
             'host' => env('REMOTE_DB_HOST', '127.0.0.1'),

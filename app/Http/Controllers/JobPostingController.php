@@ -75,7 +75,7 @@ class JobPostingController extends Controller
         $data['company_id'] = $company->id;
         $data['verification_status'] = VerificationStatusEnum::Pending->value;
         $jobPosting = JobPosting::create($data);
-        $skills = $data['skills'];
+        $skills = array_column($data['skills'], 'id');
         $jobPosting->skills()->sync($skills);
         return to_route('job-postings.edit', $jobPosting->id)->with('success', 'Job record created successfully');
     }
@@ -128,8 +128,8 @@ class JobPostingController extends Controller
             $jobPosting->save();
         }
 
-        $skills = $data['skills'];
-        $jobPosting->skills()->syncWithoutDetaching($skills);
+        $skills = array_column($data['skills'], 'id');
+        $jobPosting->skills()->sync($skills);
 
         return back()->with('success', 'Job record updated successfully');
     }

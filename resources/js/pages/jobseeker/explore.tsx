@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/jobseeker-layout';
 import { Head } from '@inertiajs/react';
-import JobItem from '@/components/jobseeker/job-item';
 import { JobPosting } from '@/types';
+import JobItem from '@/components/jobSeeker/job-item';
 
 export default function Explore({ jobs }: { jobs: JobPosting[] }) {
     return (
@@ -19,7 +19,7 @@ export default function Explore({ jobs }: { jobs: JobPosting[] }) {
                     <div className="zc-jobs-by-interest-list">
                         <div className="row">
                             {jobs.map((job) => (
-                                <div className="col-lg-4 col-md-6 col-sm-12 mb-3" key={job.id}>
+                                <div className="col-lg-4 col-md-6 col-sm-12 mb-3 p-0" key={job.id}>
                                     <JobItem job={job} />
                                 </div>
                             ))}

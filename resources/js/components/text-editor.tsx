@@ -48,7 +48,7 @@ const TextEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
             <style>{`
         .ql-toolbar {
           border-radius: 0.75rem 0.75rem 0 0;
-          background-color: #27272a;
+          background-color: #f6f6f6;
           border: none !important;
           padding: 0.5rem;
         }
