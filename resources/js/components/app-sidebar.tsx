@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BriefcaseBusiness, CodeXml, LayoutGrid, Users2 } from "lucide-react";
+import { BriefcaseBusiness, CodeXml, LayoutGrid, Shield, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -21,25 +21,34 @@ export function AppSidebar() {
         },
         ...(isSuperAdmin ? [
             {
-                title: 'Users',
-                href: route('users.index'),
+                title: 'User Management',
+                href: '',
                 icon: Users2,
+                items: [
+                    {
+                        title: 'Users',
+                        href: '/users',
+                    }, {
+                        title: 'Roles',
+                        href: '',
+                    },
+                ]
             },
             {
                 title: 'Skills',
-                href: route('skills.index'),
+                href: '/skills',
                 icon: CodeXml,
             },
             {
                 title: 'Jobs',
-                href: route('job-postings.index'),
+                href: '/job-postings',
                 icon: BriefcaseBusiness,
             }
         ] : []),
         ...(isEmployer ? [
             {
                 title: 'Jobs',
-                href: route('job-postings.index'),
+                href: '/job-postings',
                 icon: BriefcaseBusiness,
             }
         ] : [])
