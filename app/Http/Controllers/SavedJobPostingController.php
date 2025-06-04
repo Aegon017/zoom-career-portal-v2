@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class SavedJobPostingController extends Controller
+final class SavedJobPostingController extends Controller
 {
     public function save(JobPosting $jobPosting)
     {

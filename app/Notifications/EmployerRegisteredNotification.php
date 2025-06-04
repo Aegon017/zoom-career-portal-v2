@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use App\Models\Company;
-use App\Models\Employer;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EmployerRegisteredNotification extends Notification
+final class EmployerRegisteredNotification extends Notification
 {
     use Queueable;
 
     private int $employerId;
+
     private string $companyName;
+
     private string $userName;
 
     /**
@@ -59,7 +60,7 @@ class EmployerRegisteredNotification extends Notification
             'type' => 'employer_registered',
             'title' => 'New employer registered.',
             'message' => "New employer {$this->userName} registered from company {$this->companyName}",
-            'link' => route('employers.show', $this->employerId)
+            'link' => route('employers.show', $this->employerId),
         ];
     }
 }

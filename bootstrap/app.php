@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Middleware\AuthEmployer;
+declare(strict_types=1);
+
 use App\Http\Middleware\EnsureEmployerCompanyExists;
-use App\Http\Middleware\EnsureNoCompany;
-use App\Http\Middleware\GuestEmployer;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\HasCompany;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,8 +13,8 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -29,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            "ensure.employer.company.exists" => EnsureEmployerCompanyExists::class,
+            'ensure.employer.company.exists' => EnsureEmployerCompanyExists::class,
             'role' => RoleMiddleware::class,
         ]);
 
@@ -40,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'employer/profile/image-upload',
                 'employer/profile/image-remove',
                 'company/profile/logo-upload',
-                'company/profile/logo-remove'
+                'company/profile/logo-remove',
             ]
         );
     })

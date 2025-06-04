@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\JobSeeker;
 
 use App\Http\Controllers\Controller;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     use JobHelpers;
 
@@ -34,7 +36,7 @@ class DashboardController extends Controller
         $jobs = $this->addSaveStatusToJobs($jobs, $jobseeker);
 
         return Inertia::render('jobseeker/jobs/saved-jobs-listing', [
-            'jobs' => $jobs->load('company')
+            'jobs' => $jobs->load('company'),
         ]);
     }
 
@@ -45,7 +47,7 @@ class DashboardController extends Controller
         $jobs = $jobseeker->appliedJobs;
 
         return Inertia::render('jobseeker/jobs/applied-jobs-listing', [
-            'jobs' => $jobs->load('company')
+            'jobs' => $jobs->load('company'),
         ]);
     }
 }

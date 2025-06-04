@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 trait EnumHelpers
@@ -7,9 +9,9 @@ trait EnumHelpers
     public static function options(): array
     {
         return array_map(
-            fn($case) => [
+            fn ($case) => [
                 'value' => $case->value,
-                'label' => method_exists($case, 'label') ? $case->label() : ucfirst($case->value)
+                'label' => method_exists($case, 'label') ? $case->label() : ucfirst($case->value),
             ],
             self::cases()
         );

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use App\Traits\EnumHelpers;
@@ -15,7 +17,7 @@ enum OperationsEnum: string
     {
         return match ($this) {
             self::Create => 'Save',
-            self::Edit   => 'Update',
+            self::Edit => 'Update',
         };
     }
 }

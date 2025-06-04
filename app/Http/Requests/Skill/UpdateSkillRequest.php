@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Skill;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -7,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * @property Skill $skill
  */
-class UpdateSkillRequest extends FormRequest
+final class UpdateSkillRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +27,7 @@ class UpdateSkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' =>  "required|string|max:255|unique:skills,name,{$this->skill->id}"
+            'name' => "required|string|max:255|unique:skills,name,{$this->skill->id}",
         ];
     }
 }

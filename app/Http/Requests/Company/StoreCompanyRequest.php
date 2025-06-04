@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCompanyRequest extends FormRequest
+final class StoreCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,7 +33,7 @@ class StoreCompanyRequest extends FormRequest
             'public_phone' => 'nullable|string|max:20',
             'public_email' => 'nullable|email|max:255',
             'company_size' => 'required|string|max:50',
-            'company_type' => 'required|string|max:50'
+            'company_type' => 'required|string|max:50',
         ];
     }
 }

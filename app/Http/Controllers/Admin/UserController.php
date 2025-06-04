@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -8,13 +10,12 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
-class UserController extends Controller
+final class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,7 +25,7 @@ class UserController extends Controller
         $users = UserResource::collection(User::latest()->get());
 
         return Inertia::render('admin/users/users-listing', [
-            "users" => $users
+            'users' => $users,
         ]);
     }
 
@@ -37,7 +38,7 @@ class UserController extends Controller
 
         return Inertia::render('admin/users/create-or-edit-user', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -54,7 +55,7 @@ class UserController extends Controller
         return to_route('users.edit', [
             'user' => UserResource::make($user),
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ])->with('success', 'User record created successfully.');
     }
 
@@ -76,7 +77,7 @@ class UserController extends Controller
         return Inertia::render('admin/users/create-or-edit-user', [
             'user' => UserResource::make($user),
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -91,9 +92,10 @@ class UserController extends Controller
         }
         try {
             $user->update($data);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return back()->with('error', 'Something went wrong. Please try again.');
         }
+
         return back()->with('success', 'User record updated successfully');
     }
 
@@ -104,9 +106,10 @@ class UserController extends Controller
     {
         try {
             $user->delete();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return back()->with('error', 'Something went wrong. Please try again.');
         }
+
         return to_route('users.index')->with('success', 'User record delted successfully');
     }
 }

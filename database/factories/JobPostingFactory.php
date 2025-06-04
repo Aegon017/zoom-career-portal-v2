@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\CurrencyEnum;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\JobPosting>
  */
-class JobPostingFactory extends Factory
+final class JobPostingFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -41,7 +43,7 @@ class JobPostingFactory extends Factory
             'published_at' => fake()->dateTimeBetween('-1 month', 'now'),
             'expires_at' => fake()->dateTimeBetween('now', '+2 months'),
             'status' => fake()->randomElement(JobStatusEnum::values()),
-            'moderation_status' => fake()->randomElement(ModerationStatusEnum::values())
+            'moderation_status' => fake()->randomElement(ModerationStatusEnum::values()),
         ];
     }
 }

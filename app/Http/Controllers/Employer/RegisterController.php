@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Employer;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Employer;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
 
-class RegisterController extends Controller
+final class RegisterController extends Controller
 {
     public function create(): Response
     {
@@ -28,14 +29,14 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         Role::firstOrCreate(['name' => 'employer']);
@@ -73,15 +74,16 @@ class RegisterController extends Controller
     public function joinCompany(): Response
     {
         $companies = Company::orderBy('company_name', 'asc')->get();
+
         return Inertia::render('auth/create-or-join-company', [
-            'companies' => $companies
+            'companies' => $companies,
         ]);
     }
 
     public function joinCompanyPending(Company $company): Response
     {
         return Inertia::render('auth/join-company-request-pending', [
-            'company' => $company
+            'company' => $company,
         ]);
     }
 
@@ -92,16 +94,16 @@ class RegisterController extends Controller
 
     public function companyVerify(Request $request): RedirectResponse
     {
-        $data =   $request->validate([
+        $data = $request->validate([
             'company' => 'required|string',
-            'isNewCompany' => 'nullable|boolean'
+            'isNewCompany' => 'nullable|boolean',
         ]);
 
         [$company, $isNewCompany] = array_values($data);
 
         if ($isNewCompany) {
             return to_route('company.register', [
-                'company' => $company
+                'company' => $company,
             ]);
         }
 

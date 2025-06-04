@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
 use App\Events\EmployerRegisteredEvent;
 use App\Models\User;
 use App\Notifications\EmployerRegisteredNotification;
-use Illuminate\Support\Facades\Log;
 
-class SendEmployerVerifyNotification
+final class SendEmployerVerifyNotification
 {
     /**
      * Create the event listener.

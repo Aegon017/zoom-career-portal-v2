@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\JobSeekerProfile;
@@ -7,7 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class JobSeekerProfileController extends Controller
+final class JobSeekerProfileController extends Controller
 {
     /**
      * Display a listing of the resource.

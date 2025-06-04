@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\CompanySizeEnum;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Company>
  */
-class CompanyFactory extends Factory
+final class CompanyFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -30,7 +32,7 @@ class CompanyFactory extends Factory
             'public_email' => fake()->companyEmail(),
             'company_size' => fake()->randomElement(CompanySizeEnum::values()),
             'company_type' => fake()->randomElement(CompanyTypeEnum::values()),
-            'verification_status' => fake()->randomElement(VerificationStatusEnum::values())
+            'verification_status' => fake()->randomElement(VerificationStatusEnum::values()),
         ];
     }
 }

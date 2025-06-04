@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use App\Models\JobApplication;
@@ -8,15 +10,6 @@ use App\Models\Jobseeker;
 
 trait JobHelpers
 {
-    protected function addSaveStatusToJob(JobPosting $job, ?Jobseeker $jobseeker): JobPosting
-    {
-        $job->is_saved = $jobseeker
-            ? $jobseeker->savedJobPostings()->where('job_posting_id', $job->id)->exists()
-            : false;
-
-        return $job;
-    }
-
     public function addSaveStatusToJobs($jobs, $jobseeker)
     {
         $savedIds = $jobseeker
@@ -37,7 +30,7 @@ trait JobHelpers
             : collect();
 
         $application = $applications->get($job->id);
-        $job->has_applied = !is_null($application);
+        $job->has_applied = ! is_null($application);
         $job->application_status = $application?->status;
 
         return $job;
@@ -51,10 +44,19 @@ trait JobHelpers
 
         foreach ($jobs as $job) {
             $application = $applications->get($job->id);
-            $job->has_applied = !is_null($application);
+            $job->has_applied = ! is_null($application);
             $job->application_status = $application?->status;
         }
 
         return $jobs;
+    }
+
+    protected function addSaveStatusToJob(JobPosting $job, ?Jobseeker $jobseeker): JobPosting
+    {
+        $job->is_saved = $jobseeker
+            ? $jobseeker->savedJobPostings()->where('job_posting_id', $job->id)->exists()
+            : false;
+
+        return $job;
     }
 }

@@ -1,21 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+declare(strict_types=1);
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Comapny\CompanyController;
+use App\Http\Controllers\Employer\ProfileController;
 use App\Http\Controllers\Employer\RegisterController;
 use App\Http\Controllers\EmployerController;
-use App\Http\Controllers\Employer\ProfileController;
-use App\Http\Controllers\Comapny\CompanyController;
 use App\Http\Controllers\JobPostingController;
-use App\Http\Controllers\SavedJobPostingController;
 use App\Http\Controllers\JobSeeker\DashboardController as JobSeekerDashboardController;
 use App\Http\Controllers\JobSeeker\JobController;
 use App\Http\Controllers\JobSeekerProfileController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SavedJobPostingController;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
@@ -65,5 +66,5 @@ Route::post('/employer/profile/image-remove', [ProfileController::class, 'remove
 Route::post('/company/profile/logo-upload', [CompanyController::class, 'uploadLogo'])->name('company.profile.logo.upload');
 Route::post('/company/profile/logo-remove', [CompanyController::class, 'removeLogo'])->name('company.profile.logo.remove');
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

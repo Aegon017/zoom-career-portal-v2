@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\CurrencyEnum;
@@ -13,15 +15,13 @@ use App\Http\Requests\JobPosting\StoreJobPostingRequest;
 use App\Http\Requests\JobPosting\UpdateJobPostingRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\JobPosting;
-use App\Models\JobPostingSkill;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class JobPostingController extends Controller
+final class JobPostingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,8 +29,9 @@ class JobPostingController extends Controller
     public function index(): Response
     {
         $jobs = JobPosting::latest()->get();
+
         return Inertia::render('employer/jobs/jobs-listing', [
-            'jobs' => $jobs
+            'jobs' => $jobs,
         ]);
     }
 
@@ -55,7 +56,7 @@ class JobPostingController extends Controller
             'salaryUnits' => $salaryUnits,
             'currencies' => $currencies,
             'jobStatuses' => $jobStatuses,
-            'skills' => $skills
+            'skills' => $skills,
         ]);
     }
 
@@ -77,6 +78,7 @@ class JobPostingController extends Controller
         $jobPosting = JobPosting::create($data);
         $skills = array_column($data['skills'], 'id');
         $jobPosting->skills()->sync($skills);
+
         return to_route('job-postings.edit', $jobPosting->id)->with('success', 'Job record created successfully');
     }
 
@@ -110,7 +112,7 @@ class JobPostingController extends Controller
             'salaryUnits' => $salaryUnits,
             'currencies' => $currencies,
             'jobStatuses' => $jobStatuses,
-            'skills' => $skills
+            'skills' => $skills,
         ]);
     }
 

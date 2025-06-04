@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use App\Traits\EnumHelpers;
@@ -16,8 +18,8 @@ enum WorkModelEnum: string
     {
         return match ($this) {
             self::Remote => 'Remote',
-            self::OnSite   => 'On-site',
-            self::Hybrid   => 'Hybrid',
+            self::OnSite => 'On-site',
+            self::Hybrid => 'Hybrid',
         };
     }
 }

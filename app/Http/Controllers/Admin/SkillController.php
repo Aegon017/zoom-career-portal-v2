@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -9,11 +11,10 @@ use App\Http\Requests\Skill\UpdateSkillRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SkillController extends Controller
+final class SkillController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,7 +24,7 @@ class SkillController extends Controller
         $skills = SkillResource::collection(Skill::latest()->get());
 
         return Inertia::render('admin/skills/skills-listing', [
-            "skills" => $skills
+            'skills' => $skills,
         ]);
     }
 
@@ -36,7 +37,7 @@ class SkillController extends Controller
 
         return Inertia::render('admin/skills/create-or-edit-skill', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -53,7 +54,7 @@ class SkillController extends Controller
         return to_route('skills.edit', [
             'skill' => SkillResource::make($skill),
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ])->with('success', 'Skill record created successfully.');
     }
 
@@ -75,7 +76,7 @@ class SkillController extends Controller
         return Inertia::render('admin/skills/create-or-edit-skill', [
             'skill' => SkillResource::make($skill),
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 

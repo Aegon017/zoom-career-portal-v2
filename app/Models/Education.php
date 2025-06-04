@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Education extends Model
+final class Education extends Model
 {
     protected $fillable = [
         'employer_id',
         'jobseeker_id',
         'school_name',
-        'graduation_year'
+        'graduation_year',
     ];
 
     protected $casts = [
-        'graduation_year' => 'integer'
+        'graduation_year' => 'integer',
     ];
 
     public function employer(): BelongsTo

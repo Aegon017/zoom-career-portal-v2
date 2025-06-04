@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\JobSeeker;
 
 use App\Enums\JobApplicationStatusEnum;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class JobController extends Controller
+final class JobController extends Controller
 {
     use JobHelpers;
 
@@ -24,7 +26,7 @@ class JobController extends Controller
         $jobs = $this->addSaveStatusToJobs($jobs, $jobseeker);
 
         return Inertia::render('jobseeker/jobs/jobs-listing', [
-            'jobs' => $jobs->load('company')
+            'jobs' => $jobs->load('company'),
         ]);
     }
 
@@ -38,7 +40,7 @@ class JobController extends Controller
         $job = $this->addApplicationStatusToJob($job, $jobseeker);
 
         return Inertia::render('jobseeker/jobs/job-details', [
-            'job' => $job
+            'job' => $job,
         ]);
     }
 

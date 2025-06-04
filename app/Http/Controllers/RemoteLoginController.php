@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,25 +13,38 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
-class RemoteLoginController extends Controller
+final class RemoteLoginController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $loginRequest)
     {
-        $credentials = $request->safe()->only('email', 'password');
+        $credentials = $loginRequest->safe()->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return $this->handleSuccessfulLogin(Auth::user());
+            Session::regenerate();
+
+            return redirect($this->redirectToDashboard(Auth::user()));
         }
 
-        $remoteUser = DB::connection('remote_mysql')
+        $remote_user = DB::connection('remote_mysql')
             ->table('users')
             ->where('email', $credentials['email'])
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->select('users.*', 'roles.name as role_name')
             ->first();
 
-        if ($remoteUser && Hash::check($credentials['password'], $remoteUser->password)) {
-            $localUser = $this->syncRemoteUserToLocal($remoteUser, $credentials['password']);
-            Auth::login($localUser);
-            return $this->handleSuccessfulLogin($localUser);
+        if ($remote_user && Hash::check($credentials['password'], $remote_user->password)) {
+            $role_name = $remote_user->role_name;
+            if ($role_name !== 'super_admin') {
+                $role_name = 'jobseeker';
+            }
+            $role = Role::findOrCreate($role_name);
+            $user = $this->saveUser($remote_user);
+            $user->assignRole($role);
+            Auth::login($user);
+            Session::regenerate();
+
+            return redirect($this->redirectToDashboard($user));
         }
 
         throw ValidationException::withMessages([
@@ -38,50 +52,27 @@ class RemoteLoginController extends Controller
         ]);
     }
 
-    private function handleSuccessfulLogin(User $user)
+    private function saveUser($user)
     {
-        Session::regenerate();
-
-        $isAdmin = $user->email === 'admin@zoomgroup.com';
-
-        if ($user->jobseeker && !$isAdmin) {
-            return redirect()->intended(route('jobseeker.explore', absolute: false));
-        }
-
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
-
-    private function syncRemoteUserToLocal(object $remoteUser, string $plainPassword): User
-    {
-        $isAdmin = $remoteUser->email === 'admin@zoomgroup.com';
-
-        $localUser = User::updateOrCreate(
-            ['email' => $remoteUser->email],
+        return $user = User::updateOrCreate(
+            ['email' => $user->email],
             [
-                'name' => $remoteUser->name,
-                'password' => Hash::make($plainPassword),
+                'name' => $user->name,
+                'password' => $user->password,
+                'email_verified_at' => $user->email_verified_at,
             ]
         );
-
-        if ($isAdmin) {
-            $this->assignRoleIfNotExists($localUser, 'super_admin');
-            $localUser->email_verified_at = now();
-            $localUser->save();
-        } else {
-            $this->assignRoleIfNotExists($localUser, 'jobseeker');
-            $localUser->jobseeker()->firstOrCreate(); // Avoid duplicate
-            event(new Registered($localUser));
-        }
-
-        return $localUser;
     }
 
-    private function assignRoleIfNotExists(User $user, string $role)
+    private function redirectToDashboard(User $user)
     {
-        Role::firstOrCreate(['name' => $role]);
+        $role = $user->getRoleNames()->first();
 
-        if (!$user->hasRole($role)) {
-            $user->assignRole($role);
-        }
+        return match ($role) {
+            'super_admin' => route('dashboard'),
+            'jobseeker' => route('jobseeker.explore'),
+            'employer' => route('employer.dashboard'),
+            default => '/'
+        };
     }
 }

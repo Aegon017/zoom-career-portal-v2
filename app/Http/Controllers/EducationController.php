@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Education;
 use Illuminate\Http\Request;
 
-class EducationController extends Controller
+final class EducationController extends Controller
 {
     /**
      * Display a listing of the resource.

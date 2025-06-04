@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\VerificationStatusEnum;
@@ -8,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Employer extends Model
+final class Employer extends Model
 {
     use HasFactory;
 
@@ -19,12 +21,12 @@ class Employer extends Model
         'job_title',
         'types_of_candidates',
         'phone',
-        'verification_status'
+        'verification_status',
     ];
 
     protected $casts = [
         'types_of_candidates' => 'array',
-        'verification_status' => VerificationStatusEnum::class
+        'verification_status' => VerificationStatusEnum::class,
     ];
 
     public function user(): BelongsTo
