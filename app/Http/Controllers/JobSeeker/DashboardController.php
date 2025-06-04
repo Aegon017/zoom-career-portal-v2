@@ -31,7 +31,7 @@ final class DashboardController extends Controller
     {
         $jobseeker = Auth::user()->jobseeker;
 
-        $jobs = $jobseeker->savedJobPostings;
+        $jobs = $jobseeker?->savedJobPostings;
 
         $jobs = $this->addSaveStatusToJobs($jobs, $jobseeker);
 
@@ -44,7 +44,7 @@ final class DashboardController extends Controller
     {
         $jobseeker = Auth::user()->jobseeker;
 
-        $jobs = $jobseeker->appliedJobs;
+        $jobs = $jobseeker?->appliedJobs;
 
         return Inertia::render('jobseeker/jobs/applied-jobs-listing', [
             'jobs' => $jobs->load('company'),

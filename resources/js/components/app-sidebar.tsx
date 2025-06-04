@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BriefcaseBusiness, CodeXml, LayoutGrid, Shield, Users2 } from "lucide-react";
+import { BriefcaseBusiness, ChartBar, CodeXml, LayoutGrid, Shield, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -8,7 +8,6 @@ import { NavFooter } from "./nav-footer";
 import { Separator } from "./ui/separator";
 import { NavUser } from "./nav-user";
 import useRoles from "@/hooks/use-roles";
-import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 export function AppSidebar() {
     const { isEmployer, isJobSeeker, isSuperAdmin } = useRoles();
@@ -38,6 +37,16 @@ export function AppSidebar() {
                 title: 'Skills',
                 href: '/skills',
                 icon: CodeXml,
+            },
+            {
+                title: 'Job Titles',
+                href: route('admin.job-titles.index'),
+                icon: ChartBar,
+            },
+            {
+                title: 'Talent Profiles',
+                href: route('admin.talent-profiles.index'),
+                icon: ChartBar,
             },
             {
                 title: 'Jobs',

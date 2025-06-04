@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\auth\RegisteredEmployerController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Employer\RegisterController;
@@ -15,11 +16,13 @@ use App\Http\Controllers\RemoteLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    Route::prefix('employer')->name('employer.')->group(function () {
+        Route::get('register', [RegisteredEmployerController::class, 'create'])->name('register');
+        Route::post('register', [RegisteredEmployerController::class, 'store'])->name('register');
+    });
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
-
-    Route::get('/employer/register', [RegisterController::class, 'create'])->name('employer.register');
-    Route::post('/employer/register', [RegisterController::class, 'store'])->name('employer.register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 

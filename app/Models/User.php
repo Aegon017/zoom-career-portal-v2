@@ -38,6 +38,11 @@ final class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    public function employerOnBording(): HasOne
+    {
+        return $this->hasOne(EmployerOnBoarding::class);
+    }
+
     public function employer(): HasOne
     {
         return $this->hasOne(Employer::class);

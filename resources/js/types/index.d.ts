@@ -147,3 +147,13 @@ interface Education {
     school_name: string;
     graduation_year: number;
 }
+
+interface JobTitle {
+    id: number,
+    name: string;
+}
+
+interface TalentProfile {
+    id: number;
+    name: string;
+}
