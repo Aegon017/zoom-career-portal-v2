@@ -2,14 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JobTitleController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\Comapny\CompanyController;
-use App\Http\Controllers\Employer\ProfileController;
-use App\Http\Controllers\Employer\RegisterController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\EmployerOnBoardingController;
 use App\Http\Controllers\JobPostingController;
@@ -20,98 +16,72 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SavedJobPostingController;
 use App\Http\Controllers\TalentProfileController;
+use App\Http\Controllers\TempUploadController;
 use App\Models\EmployerDasboardController;
 use Illuminate\Support\Facades\Route;
 
+// Home route
 Route::redirect('/', '/login');
 
+// temporary file upload routes
+Route::post('/temp-upload', [TempUploadController::class, 'store']);
+Route::post('/temp-upload/remove', [TempUploadController::class, 'destroy']);
+
+// location api routes
+Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');
+Route::post('/location/states', [LocationController::class, 'getStates'])->name('getStates');
+Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
+
 Route::middleware(['auth', 'verified'])->group(function () {
+    // notification routes
+    Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
     // employer routes
-    Route::prefix('employer')->name('employer.')->group(function () {
+    Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function () {
         Route::get('/dashboard', [EmployerDasboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
         // on-boarding routes
-        Route::prefix('/on-boarding')->name('on-boarding.')->group(function () {
-            Route::get('/profile-setup', [EmployerOnBoardingController::class, 'profileSetup'])->name('profile.setup');
+        Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function () {
+            // profile and company setup
+            Route::prefix('setup')->name('setup.')->group(function () {
+                Route::get('/profile', [EmployerOnBoardingController::class, 'setupProfile'])->name('profile');
+                Route::post('/profile', [EmployerOnBoardingController::class, 'storeProfile'])->name('profile.store');
+                Route::get('/company/new', [EmployerOnBoardingController::class, 'setupCompany'])->name('company');
+                Route::post('/company', [EmployerOnBoardingController::class, 'storeCompany'])->name('company.store');
+                Route::get('/company/verification-pending', [EmployerOnBoardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
+            });
+            Route::prefix('company')->name('company.')->group(function () {
+                Route::get('/create-or-join', [EmployerOnBoardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
+                Route::post('/create-or-join', [EmployerOnBoardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
+                Route::get('/verification-pending', [EmployerOnBoardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
+            });
         });
     });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('/job-titles', JobTitleController::class);
-        Route::resource('/talent-profiles', TalentProfileController::class);
-    });
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::middleware(['ensure.employer.company.exists', 'role:super_admin|employer'])->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::resource('/users', UserController::class);
-        Route::resource('/skills', SkillController::class);
-        Route::resource('/job-postings', JobPostingController::class);
-        Route::resource('/employers', EmployerController::class);
-        Route::get('/employer/register/company', [CompanyController::class, 'create'])->name('company.register');
-        Route::post('/employer/register/company', [CompanyController::class, 'store'])->name('company.register');
-    });
-
-    Route::get('/employer/user-profile-create', [RegisterController::class, 'profileCreate'])->name('employer.user-profile.create');
-    Route::post('/employer/user-profile-create', [RegisterController::class, 'profileStore'])->name('employer.user-profile.create');
-    Route::get('/employer/join/company', [RegisterController::class, 'joinCompany'])->name('employer.join.company');
-    Route::get('/employer/join/company/{company}/pending', [RegisterController::class, 'joinCompanyPending'])->name('employer.join.company.pending');
-    Route::get('/employer/create/company/pending', [RegisterController::class, 'createCompanyPending'])->name('employer.create.company.pending');
-    Route::post('/employer/company/verify', [RegisterController::class, 'companyVerify'])->name('employer.company.verify');
-
-    Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-
-    Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
+    // jobseeker routes
+    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobSeekerDashboardController::class, 'index'])->name('explore');
         Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
         Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
         Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
         Route::resource('/profile', JobSeekerProfileController::class);
-    });
-
-    Route::middleware(['auth', 'role:jobseeker'])->group(function () {
-        Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobseeker.jobs.show');
+        Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobs.show');
         Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
         Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
         Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
         Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
     });
+
+    // admin routes
+    Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('/users', UserController::class);
+        Route::resource('/job-titles', JobTitleController::class);
+        Route::resource('/talent-profiles', TalentProfileController::class);
+        Route::resource('/skills', SkillController::class);
+        Route::resource('/job-postings', JobPostingController::class);
+        Route::resource('/employers', EmployerController::class);
+    });
 });
 
-Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');
-Route::post('/location/states', [LocationController::class, 'getStates'])->name('getStates');
-Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
-
-Route::post('/employer/profile/image-upload', [ProfileController::class, 'uploadImage'])->name('employer.profile.image.upload');
-Route::post('/employer/profile/image-remove', [ProfileController::class, 'removeImage'])->name('employer.profile.image.remove');
-Route::post('/company/profile/logo-upload', [CompanyController::class, 'uploadLogo'])->name('company.profile.logo.upload');
-Route::post('/company/profile/logo-remove', [CompanyController::class, 'removeLogo'])->name('company.profile.logo.remove');
-
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

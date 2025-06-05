@@ -82,9 +82,9 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Job title name</FormLabel>
+                                            <FormLabel>Job title</FormLabel>
                                             <FormControl>
-                                                <Input type="text" {...field} autoComplete="name" />
+                                                <Input type="text" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

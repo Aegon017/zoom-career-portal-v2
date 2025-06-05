@@ -254,7 +254,6 @@ const CreateOrEditJob = ({
                                                 onValueChange={(values) => field.onChange(values.map(id => ({ id: parseInt(id) })))}
                                                 placeholder="Select skills required"
                                                 variant="inverted"
-                                                animation={2}
                                                 maxCount={3}
                                             />
                                         </FormControl>

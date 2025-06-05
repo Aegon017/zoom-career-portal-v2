@@ -10,14 +10,15 @@ use App\Enums\VerificationStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-final class Company extends Model
+final class Company extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'company_name',
-        'company_logo',
         'industry',
         'company_website',
         'company_description',
@@ -29,22 +30,26 @@ final class Company extends Model
         'verification_status',
     ];
 
-    public function employers(): HasMany
+    protected $casts = [
+        'company_size' => CompanySizeEnum::class,
+        'company_type' => CompanyTypeEnum::class,
+        'verification_status' => VerificationStatusEnum::class,
+    ];
+
+    public function registerMediaCollections(): void
     {
-        return $this->hasMany(Employer::class);
+        $this->addMediaCollection('company_logo')->singleFile();
+    }
+
+    public function employers()
+    {
+        return $this->belongsToMany(User::class, 'company_user')
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     public function jobPostings(): HasMany
     {
         return $this->hasMany(jobPosting::class);
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'company_size' => CompanySizeEnum::class,
-            'company_type' => CompanyTypeEnum::class,
-            'verification_status' => VerificationStatusEnum::class,
-        ];
     }
 }

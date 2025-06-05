@@ -38,31 +38,35 @@ final class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
     public function employerOnBording(): HasOne
     {
         return $this->hasOne(EmployerOnBoarding::class);
     }
 
-    public function employer(): HasOne
+    public function employerProfile(): HasOne
     {
-        return $this->hasOne(Employer::class);
+        return $this->hasOne(EmployerProfile::class);
+    }
+
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'company_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function getRoleForCompany(Company $company): ?string
+    {
+        return $this->companies()->where('company_id', $company->id)->first()?->pivot?->role;
     }
 
     public function jobseeker(): HasOne
     {
         return $this->hasOne(Jobseeker::class);
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
     }
 }

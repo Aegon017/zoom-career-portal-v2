@@ -11,7 +11,6 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\auth\RegisteredEmployerController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Employer\RegisterController;
 use App\Http\Controllers\RemoteLoginController;
 use Illuminate\Support\Facades\Route;
 

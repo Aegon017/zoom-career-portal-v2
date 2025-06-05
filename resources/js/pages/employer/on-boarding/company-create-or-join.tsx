@@ -9,68 +9,84 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-import { Company, SharedData } from '@/types'
-import { Head, router, usePage } from '@inertiajs/react'
+import { Company } from '@/types'
+import { Head, router } from '@inertiajs/react'
 import { Building2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 
-const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
-    const [companyOptions, setCompanyOptions] = useState<Option[]>(
-        companies.map((company) => ({
-            label: company.company_name,
-            value: company.id.toString(),
-        }))
-    );
+interface CompanyCreateOrJoinProps {
+    companies: Company[]
+    is_new?: boolean
+}
 
-    const form = useForm<{ company: string; isNewCompany?: boolean }>({
+type FormValues = {
+    company: string
+    is_new: boolean
+}
+
+const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
+    const initialOptions = useMemo<Option[]>(
+        () =>
+            companies.map((company) => ({
+                label: company.company_name,
+                value: company.id.toString(),
+            })),
+        [companies]
+    )
+
+    const [companyOptions, setCompanyOptions] = useState<Option[]>(initialOptions)
+
+    const form = useForm<FormValues>({
         defaultValues: {
             company: '',
-            isNewCompany: false,
+            is_new: false,
         },
-    });
+    })
 
     const { control, setError, handleSubmit, setValue, watch } = form
 
     const selectedCompanyId = watch('company')
-    const isNewCompany = watch('isNewCompany')
 
-    const selectedCompany = companyOptions.find(
-        (opt) => opt.value === selectedCompanyId
-    );
+    const selectedCompany = useMemo(
+        () => companyOptions.find((opt) => opt.value === selectedCompanyId),
+        [companyOptions, selectedCompanyId]
+    )
 
-    const handleCompanyChange = (newValue: string, isNew?: boolean) => {
-        if (isNew) {
-            const newOption = {
-                label: newValue,
-                value: newValue,
+    const handleCompanyChange = useCallback(
+        (newValue: string, isNew?: boolean) => {
+            if (isNew) {
+                const newOption = { label: newValue, value: newValue }
+                setCompanyOptions((prev) => [...prev, newOption])
+                setValue('company', newOption.value)
+                setValue('is_new', true)
+            } else {
+                setValue('company', newValue)
+                setValue('is_new', false)
             }
+        },
+        [setValue]
+    )
 
-            setCompanyOptions((prev) => [...prev, newOption])
-            setValue('company', newOption.value)
-            setValue('isNewCompany', true)
-        } else {
-            setValue('company', newValue)
-            setValue('isNewCompany', false)
-        }
-    }
-
-    const onSubmit = (data: any) => {
-        router.post(route('employer.company.verify'), data, {
-            onError: (errors) => {
-                if (errors && typeof errors === 'object') {
-                    Object.entries(errors).forEach(([field, message]) => {
-                        setError(field as 'company', {
-                            type: 'server',
-                            message: message as string,
+    const onSubmit = useCallback(
+        (data: FormValues) => {
+            router.post(route('employer.on-boarding.company.create-or-join.handle'), data, {
+                onError: (errors) => {
+                    if (errors && typeof errors === 'object') {
+                        Object.entries(errors).forEach(([field, message]) => {
+                            setError(field as keyof FormValues, {
+                                type: 'server',
+                                message: message as string,
+                            })
                         })
-                    })
-                }
-            },
-            preserveScroll: true,
-        })
-    }
+                    }
+                },
+                preserveScroll: true,
+            })
+        },
+        [setError]
+    )
 
     return (
         <>
@@ -78,9 +94,7 @@ const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
             <AppHeader />
             <div className="flex flex-1 justify-center p-8">
                 <div className="md:w-xl">
-                    <h1 className="text-2xl font-bold text-center">
-                        Create or Join Your Company
-                    </h1>
+                    <h1 className="text-2xl font-bold text-center">Create or Join Your Company</h1>
                     <p className="text-gray-500 text-center mt-2 text-sm">
                         Join or create a company to get started.
                     </p>
@@ -107,9 +121,8 @@ const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
                                                 </FormItem>
                                             )}
                                         />
-                                        {isNewCompany && (
-                                            <input type="hidden" name="isNewCompany" value={isNewCompany ? 'true' : 'false'} />
-                                        )}
+                                        {/* Hidden field for is_new to submit form data */}
+                                        <input type="hidden" {...form.register('is_new')} />
                                     </div>
 
                                     {selectedCompany && (
@@ -122,14 +135,18 @@ const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
                                                 </div>
 
                                                 <div>
-                                                    <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">{selectedCompany.label}</h1>
+                                                    <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+                                                        {selectedCompany.label}
+                                                    </h1>
                                                 </div>
                                             </CardContent>
                                         </Card>
                                     )}
                                 </div>
-                                <div className=" flex justify-end mt-8">
-                                    <Button type="submit" variant="default">Continue</Button>
+                                <div className="flex justify-end mt-8">
+                                    <Button type="submit" variant="default">
+                                        Continue
+                                    </Button>
                                 </div>
                             </form>
                         </Form>
@@ -140,4 +157,4 @@ const CreateOrJoinCompany = ({ companies }: { companies: Company[] }) => {
     )
 }
 
-export default CreateOrJoinCompany
+export default CompanyCreateOrJoin

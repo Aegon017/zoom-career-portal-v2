@@ -1,21 +1,28 @@
-import { AppHeader } from "@/components/app-header"
-import ProfileImageUpload from "@/components/ProfileImageUpload";
+import { AppHeader } from "@/components/app-header";
+import FileUpload from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Company } from "@/types";
 import { Head, router } from "@inertiajs/react";
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
 
-type CompanyOption = {
-    value: string;
-    label: string;
+interface CompanySetupProps {
+    company_name: string;
+    company_sizes: {
+        value: string;
+        label: string;
+    }[];
+    company_types: {
+        value: string;
+        label: string;
+    }[];
 }
 
-const CompanyRegister = ({ companySizes, companyTypes, company_name }: { companySizes: CompanyOption[], companyTypes: CompanyOption[], company_name: string }) => {
+const CompanySetup = ({ company_name, company_sizes, company_types }: CompanySetupProps) => {
     const form = useForm<Company>({
         defaultValues: {
             company_name: company_name,
@@ -31,10 +38,10 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
         }
     });
 
-    const { handleSubmit, control, setError } = form;
+    const { handleSubmit, control, setError, setValue } = form;
 
     const onSubmit = (data: any) => {
-        router.post(route("company.register"), data, {
+        router.post(route('employer.on-boarding.setup.company.store'), data, {
             onError: (errors) => {
                 if (errors && typeof errors === 'object') {
                     Object.entries(errors).forEach(([field, message]) => {
@@ -49,13 +56,9 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
         });
     }
 
-    const setData = (name: string, value: string): void => {
-        form.setValue(name, value);
-    };
-
     return (
         <>
-            <Head title="Company register" />
+            <Head title="Setup Company" />
             <AppHeader />
             <div className="flex flex-1 justify-center p-8">
                 <div className="md:w-xl">
@@ -73,7 +76,7 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
                                                 <FormItem>
                                                     <FormLabel>Company name</FormLabel>
                                                     <FormControl>
-                                                        <Input type="text" {...field} autoComplete="company" />
+                                                        <Input type="text" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -86,11 +89,10 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
                                                 <FormItem>
                                                     <FormLabel>Company logo (Optional)</FormLabel>
                                                     <FormControl>
-                                                        <ProfileImageUpload
-                                                            placeholder={`Drag & Drop your company logo or <span class="filepond--label-action">Browse</span>`}
-                                                            uploadUrl={route('company.profile.logo.upload')}
-                                                            removeUrl={route('company.profile.logo.remove')}
-                                                            onUploaded={(url) => setData('company_logo', url)}
+                                                        <FileUpload
+                                                            placeholder="Drag & Drop your company logo"
+                                                            name="profile_image"
+                                                            onUploaded={(tempPath) => setValue('company_logo', tempPath)}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -197,7 +199,7 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
                                                             onValueChange={field.onChange}
                                                             className="flex flex-wrap gap-x-1 gap-y-4 mt-2"
                                                         >
-                                                            {companySizes.map((size, index) => {
+                                                            {company_sizes.map((size, index) => {
                                                                 const id = `size-${index}`;
                                                                 const isSelected = field.value === size.value;
 
@@ -235,7 +237,7 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
                                                             onValueChange={field.onChange}
                                                             className="flex flex-wrap gap-x-1 gap-y-4 mt-2"
                                                         >
-                                                            {companyTypes.map((type, index) => {
+                                                            {company_types.map((type, index) => {
                                                                 const id = `type-${index}`;
                                                                 const isSelected = field.value === type.value;
 
@@ -273,4 +275,4 @@ const CompanyRegister = ({ companySizes, companyTypes, company_name }: { company
     )
 }
 
-export default CompanyRegister
+export default CompanySetup

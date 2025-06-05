@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\OperationsEnum;
@@ -8,7 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class TalentProfileController extends Controller
+final class TalentProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +20,7 @@ class TalentProfileController extends Controller
         $talent_profiles = TalentProfile::query()->orderBy('name')->get();
 
         return Inertia::render('admin/talent-profiles/talent-profiles-listing', [
-            'talent_profiles' => $talent_profiles
+            'talent_profiles' => $talent_profiles,
         ]);
     }
 
@@ -31,7 +33,7 @@ class TalentProfileController extends Controller
 
         return Inertia::render('admin/talent-profiles/create-or-edit-talent-profile', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -41,13 +43,13 @@ class TalentProfileController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:talent_profiles,name'
+            'name' => 'required|string|max:255|unique:talent_profiles,name',
         ]);
 
         $talent_profile = TalentProfile::create($data);
 
         return to_route('admin.talent-profiles.edit', [
-            'talent_profile' => $talent_profile
+            'talent_profile' => $talent_profile,
         ])->with('success', 'Talent profile record created successfully');
     }
 
@@ -69,7 +71,7 @@ class TalentProfileController extends Controller
         return Inertia::render('admin/talent-profiles/create-or-edit-talent-profile', [
             'talent_profile' => $talentProfile,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -79,7 +81,7 @@ class TalentProfileController extends Controller
     public function update(Request $request, TalentProfile $talentProfile)
     {
         $data = $request->validate([
-            'name' => "required|string|max:255|unique:talent_profiles,name,{$talentProfile->id}"
+            'name' => "required|string|max:255|unique:talent_profiles,name,{$talentProfile->id}",
         ]);
 
         $talentProfile->update($data);

@@ -1,12 +1,12 @@
 import { AppHeader } from "@/components/app-header"
-import type { Company } from "@/types"
+import { Company } from "@/types"
 import { Head } from "@inertiajs/react"
-import { LoaderPinwheel, Building2, Mail, Clock } from "lucide-react"
+import { Building2, Clock, LoaderPinwheel, Mail } from "lucide-react"
 
-const RequestPending = ({ company }: { company: Company }) => {
+const JoinCompanyVerificationPending = (company: Company) => {
     return (
         <>
-            <Head title="Company Request Pending" />
+            <Head title="Join company verification pending" />
             <AppHeader />
             <div className="flex flex-col items-center justify-center min-h-screen px-6 py-16 bg-gradient-to-br from-slate-50 via-white to-blue-50">
                 <div className="w-full max-w-4xl space-y-10 text-center">
@@ -92,4 +92,4 @@ const RequestPending = ({ company }: { company: Company }) => {
     )
 }
 
-export default RequestPending
+export default JoinCompanyVerificationPending

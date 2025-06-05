@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum EmployerOnBoardingEnum: int
@@ -8,7 +10,7 @@ enum EmployerOnBoardingEnum: int
     case COMPANY_CREATE_OR_JOIN = 2;
     case COMPANY_JOIN_VERIFICATION = 3;
     case COMPANY_SETUP = 4;
-    case ACCOUNT_VERIFICATION = 5;
+    case COMPANY_SETUP_VERIFICATION = 5;
 
     public function label(): string
     {
@@ -17,7 +19,7 @@ enum EmployerOnBoardingEnum: int
             self::COMPANY_CREATE_OR_JOIN => 'Create or Join a Company',
             self::COMPANY_JOIN_VERIFICATION => 'Company Join Verification',
             self::COMPANY_SETUP => 'Company Setup',
-            self::ACCOUNT_VERIFICATION => 'Account Verification',
+            self::COMPANY_SETUP_VERIFICATION => 'Company Setup Verification',
         };
     }
 }

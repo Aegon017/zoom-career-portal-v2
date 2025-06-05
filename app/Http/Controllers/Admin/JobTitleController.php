@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -10,7 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class JobTitleController extends Controller
+final class JobTitleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +22,7 @@ class JobTitleController extends Controller
         $job_titles = JobTitle::query()->orderBy('name')->get();
 
         return Inertia::render('admin/job-titles/job-titles-listing', [
-            'job_titles' => $job_titles
+            'job_titles' => $job_titles,
         ]);
     }
 
@@ -33,7 +35,7 @@ class JobTitleController extends Controller
 
         return Inertia::render('admin/job-titles/create-or-edit-job-title', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -43,7 +45,7 @@ class JobTitleController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:job_titles,name'
+            'name' => 'required|string|max:255|unique:job_titles,name',
         ]);
 
         $job_title = JobTitle::create($data);
@@ -71,7 +73,7 @@ class JobTitleController extends Controller
         return Inertia::render('admin/job-titles/create-or-edit-job-title', [
             'job_title' => $jobTitle,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -81,7 +83,7 @@ class JobTitleController extends Controller
     public function update(Request $request, JobTitle $jobTitle)
     {
         $data = $request->validate([
-            'name' => "required|string|max:255|unique:job_titles,name,{$jobTitle->id}"
+            'name' => "required|string|max:255|unique:job_titles,name,{$jobTitle->id}",
         ]);
 
         $jobTitle->update($data);

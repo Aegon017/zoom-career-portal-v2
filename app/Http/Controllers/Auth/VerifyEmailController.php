@@ -16,8 +16,18 @@ final class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        if ($request->user()->hasRole('super_admin')) {
+            $redirect = 'admin.dashboard';
+        } elseif ($request->user()->hasRole('employer')) {
+            $redirect = 'employer.dashboard';
+        } elseif ($request->user()->hasRole('jobseeker')) {
+            $redirect = 'jobseeker.dashboard';
+        } else {
+            $redirect = '/';
+        }
+
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->intended(route($redirect, absolute: false).'?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
@@ -27,6 +37,6 @@ final class VerifyEmailController extends Controller
             event(new Verified($user));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        return redirect()->intended(route($redirect, absolute: false).'?verified=1');
     }
 }

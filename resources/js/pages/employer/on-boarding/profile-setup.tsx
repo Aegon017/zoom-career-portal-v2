@@ -1,4 +1,5 @@
 import { AppHeader } from "@/components/app-header";
+import FileUpload from "@/components/file-upload";
 import { MultiSelect } from "@/components/multi-select";
 import ProfileImageUpload from "@/components/ProfileImageUpload";
 import { SelectPopoverField } from "@/components/select-popover-field";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { User } from "@/types";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { useForm } from "react-hook-form";
 
 interface ProfileSetup {
@@ -26,19 +27,19 @@ const profileSetup = (props: ProfileSetup) => {
     const form = useForm({
         defaultValues: {
             profile_image: "",
-            job_title: "",
+            job_title_id: "",
             types_of_candidates: [],
             phone: ""
         }
     });
-    const { handleSubmit, control } = form;
+    const { handleSubmit, control, setValue } = form;
 
-    const onSubmit = () => {
-
+    const onSubmit = (data: any) => {
+        router.post(route('employer.on-boarding.setup.profile.store'), data);
     }
     return (
         <>
-            <Head title="Employer profile setup" />
+            <Head title="Setup profile" />
             <AppHeader />
             <div className="flex flex-1 justify-center p-8">
                 <div className="md:w-xl">
@@ -60,11 +61,10 @@ const profileSetup = (props: ProfileSetup) => {
                                                 <FormItem>
                                                     <FormLabel>Profile image (Optional)</FormLabel>
                                                     <FormControl>
-                                                        <ProfileImageUpload
-                                                            placeholder={`Drag & Drop your profile image or <span class="filepond--label-action">Browse</span>`}
-                                                            uploadUrl={route("employer.profile.image.upload")}
-                                                            removeUrl={route("employer.profile.image.remove")}
-                                                            onUploaded={field.onChange}
+                                                        <FileUpload
+                                                            placeholder="Drag & drop your image or click"
+                                                            name="profile_image"
+                                                            onUploaded={(tempPath) => setValue('profile_image', tempPath)}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -74,10 +74,10 @@ const profileSetup = (props: ProfileSetup) => {
                                         <div className="md:col-span-2">
                                             <SelectPopoverField
                                                 options={job_titles.map((job_title) => ({
-                                                    value: job_title.name,
+                                                    value: String(job_title.id),
                                                     label: job_title.name
                                                 }))}
-                                                name="job_title"
+                                                name="job_title_id"
                                                 control={control}
                                                 label="Job title"
                                                 placeholder="Select options"
@@ -98,7 +98,6 @@ const profileSetup = (props: ProfileSetup) => {
                                                             }))}
                                                             value={field.value}
                                                             onValueChange={field.onChange}
-                                                            animation={2}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />

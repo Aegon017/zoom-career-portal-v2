@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\EmployerOnBoardingEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EmployerOnBoarding extends Model
+final class EmployerOnBoarding extends Model
 {
     protected $fillable = [
         'user_id',
         'step',
-        'is_completed'
+        'is_completed',
     ];
 
     protected $casts = [
         'is_completed' => 'boolean',
-        'step' => EmployerOnBoardingEnum::class
+        'step' => EmployerOnBoardingEnum::class,
     ];
 
     public function user(): BelongsTo
