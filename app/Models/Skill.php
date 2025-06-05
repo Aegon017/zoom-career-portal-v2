@@ -14,8 +14,8 @@ final class Skill extends Model
 
     protected $fillable = ['name'];
 
-    public function jobPostings(): BelongsToMany
+    public function opening(): BelongsToMany
     {
-        return $this->belongsToMany(JobPosting::class);
+        return $this->belongsToMany(Opening::class);
     }
 }

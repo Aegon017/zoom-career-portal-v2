@@ -15,7 +15,7 @@ export function AppSidebar() {
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',
-            href: '/dashboard',
+            href: '/admin/dashboard',
             icon: LayoutGrid,
         },
         ...(isSuperAdmin ? [
@@ -26,7 +26,7 @@ export function AppSidebar() {
                 items: [
                     {
                         title: 'Users',
-                        href: '/users',
+                        href: '/admin/users',
                     }, {
                         title: 'Roles',
                         href: '',
@@ -40,24 +40,19 @@ export function AppSidebar() {
             },
             {
                 title: 'Job Titles',
-                href: route('admin.job-titles.index'),
+                href: '/admin/job-titles',
                 icon: ChartBar,
             },
             {
                 title: 'Talent Profiles',
-                href: route('admin.talent-profiles.index'),
+                href: '/admin/talent-profiles',
                 icon: ChartBar,
             },
-            {
-                title: 'Jobs',
-                href: '/job-postings',
-                icon: BriefcaseBusiness,
-            }
         ] : []),
         ...(isEmployer ? [
             {
                 title: 'Jobs',
-                href: '/job-postings',
+                href: '/employer/jobs',
                 icon: BriefcaseBusiness,
             }
         ] : [])

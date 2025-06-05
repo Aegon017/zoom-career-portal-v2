@@ -33,6 +33,11 @@ final class RedirectIfEmployerOnboardingIncomplete
         );
 
         $currentStep = $onboarding->step->value;
+        $isCompleted = $onboarding->is_completed;
+
+        if ($isCompleted) {
+            return to_route('employer.dashboard');
+        }
         $routeName = $request->route()?->getName();
 
         $excludedRoutes = [

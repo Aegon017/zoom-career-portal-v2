@@ -29,8 +29,8 @@ class Opening extends Model
     ];
 
     protected $casts = [
-        'salary_min' => 'decimal',
-        'salary_max' => 'decimal',
+        'salary_min' => 'decimal:2',
+        'salary_max' => 'decimal:2',
         'published_at' => 'datetime',
         'expires_at' => 'datetime',
     ];

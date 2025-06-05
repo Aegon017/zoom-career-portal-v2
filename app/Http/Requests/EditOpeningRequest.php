@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace App\Http\Requests\JobPosting;
+namespace App\Http\Requests;
 
 use App\Enums\CurrencyEnum;
 use App\Enums\EmploymentTypeEnum;
@@ -12,7 +10,7 @@ use App\Enums\WorkModelEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class UpdateJobPostingRequest extends FormRequest
+class EditOpeningRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,8 +28,6 @@ final class UpdateJobPostingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_id' => 'sometimes|exists:companies,id',
-            'employer_id' => 'sometimes|exists:employers,id',
             'title' => 'sometimes|required|string|max:255',
             'employment_type' => ['sometimes', 'required', Rule::enum(EmploymentTypeEnum::class)],
             'work_model' => ['sometimes', 'required', Rule::enum(WorkModelEnum::class)],
