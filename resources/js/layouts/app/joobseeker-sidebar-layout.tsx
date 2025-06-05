@@ -1,7 +1,7 @@
 import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
-import { AppSidebar } from '@/components/jobSeeker/jobseeker-sidebar';
-import { AppSidebarHeader } from '@/components/jobSeeker/jobseeker-sidebar-header';
+import { AppSidebar } from '@/components/jobseeker/jobseeker-sidebar';
+import { AppSidebarHeader } from '@/components/jobseeker/jobseeker-sidebar-header';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 import { type PropsWithChildren } from 'react';
 

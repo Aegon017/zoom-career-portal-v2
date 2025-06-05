@@ -1,5 +1,5 @@
 import { DataTable } from '@/components/data-table';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/employer-layout';
 import { Opening, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { columns } from './job-columns';

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\OpeningController;
@@ -74,7 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/talent-profiles', TalentProfileController::class);
         Route::resource('/skills', SkillController::class);
-        // // Route::resource('/users', UserController::class);
+        Route::resource('/users', UserController::class);
         // Route::resource('/employers', EmployerController::class);
     });
 });

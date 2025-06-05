@@ -11,7 +11,7 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/employer-layout';
 import { Opening, Skill, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';

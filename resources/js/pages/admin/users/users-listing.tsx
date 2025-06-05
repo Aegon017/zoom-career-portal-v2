@@ -8,12 +8,12 @@ import { columns } from './user-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Users',
-        href: route('users.index'),
+        href: route('admin.users.index'),
     },
 ];
 
 const listingName = "user";
-const createUrl = route('users.create');
+const createUrl = route('admin.users.create');
 
 export default function UsersListing({ users }: { users: User[] }) {
     return (

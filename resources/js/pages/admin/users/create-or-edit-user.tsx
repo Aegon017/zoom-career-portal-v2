@@ -15,7 +15,7 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Users',
-            href: route('users.index'),
+            href: route('admin.users.index'),
         },
         {
             title: operation,
@@ -46,15 +46,15 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
         };
 
         const routes = {
-            Create: () => router.post(route('users.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('users.update', user.id), data, { onError: handleErrors }),
+            Create: () => router.post(route('admin.users.store'), data, { onError: handleErrors }),
+            Edit: () => router.put(route('admin.users.update', user.id), data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('users.destroy', id));
+        router.delete(route('admin.users.destroy', id));
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -125,7 +125,7 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('users.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.users.index'))}>Cancel</Button>
                         </div>
                     </form>
                 </Form>
