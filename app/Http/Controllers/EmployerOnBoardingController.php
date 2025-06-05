@@ -114,16 +114,6 @@ final class EmployerOnBoardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $user = Auth::user();
-        if (! $request->company_name) {
-            $user->employerOnBording()->update([
-                'step' => EmployerOnBoardingEnum::COMPANY_CREATE_OR_JOIN->value,
-                'is_completed' => false,
-            ]);
-
-            return to_route('employer.on-boarding.company.create-or-join');
-        }
-
         return Inertia::render('employer/on-boarding/company-setup', [
             'company_name' => $request->company_name,
             'company_sizes' => CompanySizeEnum::options(),
