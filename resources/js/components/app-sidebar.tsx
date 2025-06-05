@@ -35,7 +35,7 @@ export function AppSidebar() {
             },
             {
                 title: 'Skills',
-                href: '/skills',
+                href: '/admin/skills',
                 icon: CodeXml,
             },
             {

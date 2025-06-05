@@ -7,7 +7,7 @@ import { columns } from './skill-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Skills',
-        href: route('skills.index'),
+        href: route('admin.skills.index'),
     },
 ];
 
@@ -16,7 +16,7 @@ export default function SkillsListing({ skills }: { skills: Skill[] }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Skills" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={skills} listingName="skill" createUrl={route('skills.create')} />
+                <DataTable columns={columns} data={skills} listingName="skill" createUrl={route('admin.skills.create')} />
             </div>
         </AppLayout>
     );

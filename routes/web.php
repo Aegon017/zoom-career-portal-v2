@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\OpeningTitleController;
+use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
@@ -69,8 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/talent-profiles', TalentProfileController::class);
+        Route::resource('/skills', SkillController::class);
         // // Route::resource('/users', UserController::class);
-        // // Route::resource('/skills', SkillController::class);
         // Route::resource('/job-postings', JobPostingController::class);
         // Route::resource('/employers', EmployerController::class);
     });

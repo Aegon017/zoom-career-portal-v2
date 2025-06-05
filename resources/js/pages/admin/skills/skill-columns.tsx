@@ -6,11 +6,11 @@ import { router } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table"
 
 const handleEdit = (id: number) => {
-    router.get(route("skills.edit", id));
+    router.get(route("admin.skills.edit", id));
 };
 
 const handleDelete = (id: number) => {
-    router.delete(route("skills.destroy", id), { preserveScroll: true });
+    router.delete(route("admin.skills.destroy", id), { preserveScroll: true });
 };
 
 export const columns: ColumnDef<Skill>[] = [
