@@ -91,7 +91,7 @@ export interface Skill {
 export interface Opening {
     id: number;
     company_id: number;
-    employer_id: number;
+    user_id: number;
     title: string;
     employment_type: string;
     work_model: string;

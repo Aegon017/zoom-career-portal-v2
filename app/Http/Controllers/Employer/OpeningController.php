@@ -17,7 +17,6 @@ use App\Http\Resources\SkillResource;
 use App\Models\Opening;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,7 +28,7 @@ class OpeningController extends Controller
      */
     public function index(): Response
     {
-        $jobs = Opening::latest()->get();
+        $jobs = Opening::where('user_id', Auth::id())->latest()->get();
 
         return Inertia::render('employer/jobs/jobs-listing', [
             'jobs' => $jobs,
