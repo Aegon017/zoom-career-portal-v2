@@ -38,7 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employer routes
     Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function () {
-        Route::get('/dashboard', [EmployerDasboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
+        // Route::get('/dashboard', [EmployerDasboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
         // on-boarding routes
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function () {
             // profile and company setup
@@ -83,5 +83,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
