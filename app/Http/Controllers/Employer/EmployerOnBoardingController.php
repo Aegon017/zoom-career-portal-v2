@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employer;
 
 use App\Actions\CreateCompanyAction;
 use App\Actions\CreateEmployerProfileAction;
@@ -10,6 +10,7 @@ use App\Enums\CompanySizeEnum;
 use App\Enums\CompanyTypeEnum;
 use App\Enums\EmployerOnBoardingEnum;
 use App\Enums\VerificationStatusEnum;
+use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\JobTitle;
 use App\Models\TalentProfile;
@@ -54,7 +55,7 @@ final class EmployerOnBoardingController extends Controller
         $employerProfile = $this->createEmployerProfileAction->handle($data, $user);
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $employerProfile->addMedia(storage_path('app/public/'.$data['profile_image']))
+            $employerProfile->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_image');
         }
@@ -143,7 +144,7 @@ final class EmployerOnBoardingController extends Controller
         $company = $this->createCompanyAction->handle($data, $verification_status);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $company->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $company->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logo');
         }

@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import logo from '../assets/images/logo.png';
+import logo from '../../assets/images/logo.png';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import useDropdown from '@/hooks/use-dropdown';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';

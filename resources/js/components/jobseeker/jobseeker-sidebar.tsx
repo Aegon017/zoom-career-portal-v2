@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import logo from '../assets/images/logo.png';
-import JobsIcon from '@/icons/jobs-icon';
+import logo from '../../assets/images/logo.png';
 import ExploreIcon from '@/icons/explore-icon';
 import { Link } from '@inertiajs/react';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
@@ -30,7 +29,7 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
                         </Link>
                     </li>
 
-                    <li className={`sidebar-item has-childern ${activeItem === 'jobs' ? 'active' : ''}`}>
+                    {/* <li className={`sidebar-item has-childern ${activeItem === 'jobs' ? 'active' : ''}`}>
                         <a onClick={handleDropdownToggle('jobs')}>
                             <JobsIcon />
                             <span>Jobs</span>
@@ -43,7 +42,7 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
                                 <li><Link href={route('jobseeker.applied-jobs.index')}>Applied Jobs</Link></li>
                             </ul>
                         )}
-                    </li>
+                    </li> */}
                 </ul>
             </div>
         </nav>

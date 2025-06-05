@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Opening extends Model
+{
+    protected $fillable = [
+        'company_id',
+        'user_id',
+        'title',
+        'employment_type',
+        'work_model',
+        'description',
+        'salary_min',
+        'salary_max',
+        'salary_unit',
+        'currency',
+        'city',
+        'state',
+        'country',
+        'published_at',
+        'expires_at',
+        'status',
+        'verification_status',
+    ];
+
+    protected $casts = [
+        'salary_min' => 'decimal',
+        'salary_max' => 'decimal',
+        'published_at' => 'datetime',
+        'expires_at' => 'datetime',
+    ];
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class);
+    }
+}

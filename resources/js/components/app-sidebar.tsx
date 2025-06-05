@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BriefcaseBusiness, ChartBar, CodeXml, LayoutGrid, Shield, Users2 } from "lucide-react";
+import { BriefcaseBusiness, ChartBar, CodeXml, LayoutGrid, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link } from "@inertiajs/react";
 import AppLogo from "./app-logo";

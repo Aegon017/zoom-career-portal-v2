@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { JobTitle, type BreadcrumbItem } from '@/types';
+import { OpeningTItle, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_title: JobTitle, operation: string, operationLabel: string }) => {
+const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_title: OpeningTItle, operation: string, operationLabel: string }) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Job Titles',
@@ -21,7 +21,7 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
         },
     ];
 
-    const form = useForm<JobTitle>({
+    const form = useForm<OpeningTItle>({
         defaultValues: {
             name: job_title?.name ?? "",
         }
@@ -33,7 +33,7 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
         const handleErrors = (errors: any) => {
             if (errors && typeof errors === 'object') {
                 Object.entries(errors).forEach(([field, message]) => {
-                    setError(field as keyof JobTitle, {
+                    setError(field as keyof OpeningTItle, {
                         type: 'server',
                         message: message as string,
                     });

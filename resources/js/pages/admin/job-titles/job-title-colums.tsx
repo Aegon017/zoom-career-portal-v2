@@ -1,7 +1,7 @@
 "use client"
 
 import DataTableActions from "@/components/data-table-actions";
-import { JobTitle } from "@/types";
+import { OpeningTItle } from "@/types";
 import { router } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table"
 
@@ -13,7 +13,7 @@ const handleDelete = (id: number) => {
     router.delete(route("admin.job-titles.destroy", id), { preserveScroll: true });
 };
 
-export const columns: ColumnDef<JobTitle>[] = [
+export const columns: ColumnDef<OpeningTItle>[] = [
     {
         accessorFn: (row, index) => index + 1,
         header: "S.No.",

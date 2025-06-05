@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Jobseeker;
 
-use App\Models\EmployerProfile;
+use App\Http\Controllers\Controller;
+use App\Models\JobseekerProfile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 
-final class EmployerProfileController extends Controller
+final class JobseekerProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
-        //
+        return Inertia::render('jobseeker/profile');
     }
 
     /**
@@ -29,12 +31,15 @@ final class EmployerProfileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(Request $request)
+    {
+        //
+    }
 
     /**
      * Display the specified resource.
      */
-    public function show(EmployerProfile $employerProfile)
+    public function show(JobseekerProfile $jobseekerProfile)
     {
         //
     }
@@ -42,7 +47,7 @@ final class EmployerProfileController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(EmployerProfile $employerProfile)
+    public function edit(JobseekerProfile $jobseekerProfile)
     {
         //
     }
@@ -50,7 +55,7 @@ final class EmployerProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, EmployerProfile $employerProfile)
+    public function update(Request $request, JobseekerProfile $jobseekerProfile)
     {
         //
     }
@@ -58,7 +63,7 @@ final class EmployerProfileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EmployerProfile $employerProfile)
+    public function destroy(JobseekerProfile $jobseekerProfile)
     {
         //
     }

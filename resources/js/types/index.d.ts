@@ -88,7 +88,7 @@ export interface Skill {
     name: string
 }
 
-export interface JobPosting {
+export interface Opening {
     id: number;
     company_id: number;
     employer_id: number;
@@ -148,7 +148,7 @@ interface Education {
     graduation_year: number;
 }
 
-interface JobTitle {
+interface OpeningTItle {
     id: number,
     name: string;
 }

@@ -2,22 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\JobTitleController;
-use App\Http\Controllers\Admin\SkillController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\EmployerController;
-use App\Http\Controllers\EmployerOnBoardingController;
-use App\Http\Controllers\JobPostingController;
-use App\Http\Controllers\JobSeeker\DashboardController as JobSeekerDashboardController;
-use App\Http\Controllers\JobSeeker\JobController;
-use App\Http\Controllers\JobSeekerProfileController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\OpeningTitleController;
+use App\Http\Controllers\Admin\TalentProfileController;
+use App\Http\Controllers\Employer\EmployerDashboardController;
+use App\Http\Controllers\Employer\EmployerOnBoardingController;
+use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\SavedJobPostingController;
-use App\Http\Controllers\TalentProfileController;
 use App\Http\Controllers\TempUploadController;
-use App\Models\EmployerDasboardController;
 use Illuminate\Support\Facades\Route;
 
 // Home route
@@ -38,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employer routes
     Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function () {
-        // Route::get('/dashboard', [EmployerDasboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
+        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
         // on-boarding routes
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function () {
             // profile and company setup
@@ -59,27 +52,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
-        Route::get('/explore', [JobSeekerDashboardController::class, 'index'])->name('explore');
-        Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
-        Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
-        Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
-        Route::resource('/profile', JobSeekerProfileController::class);
-        Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobs.show');
-        Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
-        Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
-        Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
-        Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
+        Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
+        // Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
+        // Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
+        // // Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+        // // Route::resource('/profile', JobSeekerProfileController::class);
+        // // Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobs.show');
+        // // Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
+        // // Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
+        // Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
+        // Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
     });
 
     // admin routes
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('/users', UserController::class);
-        Route::resource('/job-titles', JobTitleController::class);
+        Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/talent-profiles', TalentProfileController::class);
-        Route::resource('/skills', SkillController::class);
-        Route::resource('/job-postings', JobPostingController::class);
-        Route::resource('/employers', EmployerController::class);
+        // // Route::resource('/users', UserController::class);
+        // // Route::resource('/skills', SkillController::class);
+        // Route::resource('/job-postings', JobPostingController::class);
+        // Route::resource('/employers', EmployerController::class);
     });
 });
 

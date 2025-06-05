@@ -1,6 +1,6 @@
 import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
-import { JobTitle, type BreadcrumbItem } from '@/types';
+import { OpeningTItle, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { columns } from './job-title-colums';
 
@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function SkillsListing({ job_titles }: { job_titles: JobTitle[] }) {
+export default function SkillsListing({ job_titles }: { job_titles: OpeningTItle[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Job titles" />

@@ -1,25 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
-use App\Models\JobTitle;
+use App\Models\OpeningTitle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class JobTitleController extends Controller
+class OpeningTitleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $job_titles = JobTitle::query()->orderBy('name')->get();
+        $job_titles = OpeningTitle::query()->orderBy('name')->get();
 
         return Inertia::render('admin/job-titles/job-titles-listing', [
             'job_titles' => $job_titles,
@@ -45,20 +43,20 @@ final class JobTitleController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:job_titles,name',
+            'name' => 'required|string|max:255|unique:opening_titles,name',
         ]);
 
-        $job_title = JobTitle::create($data);
+        $opening_title = OpeningTitle::create($data);
 
         return to_route('admin.job-titles.edit', [
-            'job_title' => $job_title,
+            'job_title' => $opening_title,
         ])->with('success', 'Job title record created successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(JobTitle $jobTitle)
+    public function show(OpeningTitle $jobTitle)
     {
         //
     }
@@ -66,7 +64,7 @@ final class JobTitleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobTitle $jobTitle)
+    public function edit(OpeningTitle $jobTitle)
     {
         $operation = OperationsEnum::Edit;
 
@@ -80,10 +78,10 @@ final class JobTitleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobTitle $jobTitle)
+    public function update(Request $request, OpeningTitle $jobTitle)
     {
         $data = $request->validate([
-            'name' => "required|string|max:255|unique:job_titles,name,{$jobTitle->id}",
+            'name' => "required|string|max:255|unique:opening_titles,name,{$jobTitle->id}",
         ]);
 
         $jobTitle->update($data);
@@ -94,7 +92,7 @@ final class JobTitleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobTitle $jobTitle)
+    public function destroy(OpeningTitle $jobTitle)
     {
         $jobTitle->delete();
 

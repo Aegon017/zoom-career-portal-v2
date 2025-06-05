@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employer;
 
-use App\Models\Education;
+use App\Http\Controllers\Controller;
+use App\Models\EmployerProfile;
 use Illuminate\Http\Request;
 
-final class EducationController extends Controller
+final class EmployerProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,15 +29,12 @@ final class EducationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
      */
-    public function show(Education $education)
+    public function show(EmployerProfile $employerProfile)
     {
         //
     }
@@ -44,7 +42,7 @@ final class EducationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Education $education)
+    public function edit(EmployerProfile $employerProfile)
     {
         //
     }
@@ -52,7 +50,7 @@ final class EducationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Education $education)
+    public function update(Request $request, EmployerProfile $employerProfile)
     {
         //
     }
@@ -60,7 +58,7 @@ final class EducationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Education $education)
+    public function destroy(EmployerProfile $employerProfile)
     {
         //
     }
