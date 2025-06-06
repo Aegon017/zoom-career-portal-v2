@@ -4,11 +4,11 @@ import { Link, usePage } from '@inertiajs/react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { ChevronRight, Dot } from 'lucide-react';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
+export function NavMain({ items = [], groupName }: { items: NavItem[], groupName: string }) {
     const page = usePage();
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
+            <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     item.items ? (

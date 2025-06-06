@@ -37,7 +37,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems} groupName="Employer Panel" />
             </SidebarContent>
 
             <SidebarFooter>

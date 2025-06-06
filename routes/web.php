@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // Home route
 Route::redirect('/', '/login');
+Route::redirect('/admin', '/admin/dashboard');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
