@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
+use App\Http\Controllers\Employer\InboxController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\LocationController;
@@ -35,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employer routes
     Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function () {
-        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
         Route::resource('/jobs', OpeningController::class);
 
         // on-boarding routes
@@ -53,6 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/create-or-join', [EmployerOnBoardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
                 Route::get('/verification-pending', [EmployerOnBoardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
+        });
+        Route::prefix('inbox')->name('inbox.')->group(function () {
+            Route::get('/', [InboxController::class, 'index'])->name('index');
         });
     });
 

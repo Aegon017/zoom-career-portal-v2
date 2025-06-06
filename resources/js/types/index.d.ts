@@ -157,3 +157,15 @@ interface TalentProfile {
     id: number;
     name: string;
 }
+
+interface Message {
+    id: string
+    name: string
+    title: string
+    company: string
+    preview: string
+    date: string
+    avatar?: string
+    initials?: string
+    isUnread?: boolean
+}

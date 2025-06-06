@@ -13,8 +13,6 @@ final class RedirectIfEmployerOnboardingIncomplete
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  Closure(Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next)
     {
@@ -35,15 +33,18 @@ final class RedirectIfEmployerOnboardingIncomplete
         $currentStep = $onboarding->step->value;
         $isCompleted = $onboarding->is_completed;
 
-        if ($isCompleted) {
-            return to_route('employer.dashboard');
-        }
         $routeName = $request->route()?->getName();
 
         $excludedRoutes = [
+            // Allowed steps even if onboarding is incomplete
+            'employer.on-boarding.setup.profile',
             'employer.on-boarding.setup.profile.store',
+            'employer.on-boarding.setup.company',
             'employer.on-boarding.setup.company.store',
+            'employer.on-boarding.setup.company.verification.pending',
+            'employer.on-boarding.company.create-or-join',
             'employer.on-boarding.company.create-or-join.handle',
+            'employer.on-boarding.company.join.verification.pending',
         ];
 
         $stepToRoute = [
@@ -56,12 +57,14 @@ final class RedirectIfEmployerOnboardingIncomplete
 
         $expectedRoute = $stepToRoute[$currentStep] ?? null;
 
-        // Allow access if on the correct step or in an excluded route
+        if ($isCompleted) {
+            return $next($request);
+        }
+
         if (in_array($routeName, $excludedRoutes, true) || $routeName === $expectedRoute) {
             return $next($request);
         }
 
-        // Special case: if company_name is missing during COMPANY_SETUP step, fallback to create/join
         if (
             $expectedRoute === 'employer.on-boarding.setup.company' &&
             ! $request->filled('company_name')
@@ -74,7 +77,6 @@ final class RedirectIfEmployerOnboardingIncomplete
             return redirect()->route('employer.on-boarding.company.create-or-join');
         }
 
-        // Redirect to the expected step (add company_name only if needed)
         return redirect()->route(
             $expectedRoute,
             $expectedRoute === 'employer.on-boarding.setup.company'

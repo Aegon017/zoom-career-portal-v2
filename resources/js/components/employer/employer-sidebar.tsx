@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BriefcaseBusiness, LayoutGrid } from "lucide-react";
+import { BriefcaseBusiness, LayoutGrid, MailOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
 import { Link } from "@inertiajs/react";
 import AppLogo from "../app-logo";
@@ -19,6 +19,11 @@ export function AppSidebar() {
             title: 'Jobs',
             href: '/employer/jobs',
             icon: BriefcaseBusiness,
+        },
+        {
+            title: 'Inbox',
+            href: '/employer/inbox',
+            icon: MailOpen,
         }
     ];
 

@@ -1,7 +1,6 @@
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/employer/employer-header";
 import FileUpload from "@/components/file-upload";
 import { MultiSelect } from "@/components/multi-select";
-import ProfileImageUpload from "@/components/ProfileImageUpload";
 import { SelectPopoverField } from "@/components/select-popover-field";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";

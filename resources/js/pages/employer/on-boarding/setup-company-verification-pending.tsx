@@ -1,4 +1,4 @@
-import { AppHeader } from '@/components/app-header'
+import { AppHeader } from "@/components/employer/employer-header"
 import { Head } from '@inertiajs/react'
 import { CheckCircle2, Clock, LoaderPinwheel } from 'lucide-react'
 

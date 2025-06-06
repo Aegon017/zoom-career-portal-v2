@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\auth;
 
+use App\Events\EmployerRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterEmployerRequest;
 use App\Models\User;
@@ -34,7 +35,7 @@ final class RegisteredEmployerController extends Controller
         $role = Role::findOrCreate('employer');
 
         $user->assignRole($role);
-
+        EmployerRegistered::dispatch($user);
         event(new Registered($user));
 
         Auth::login($user);

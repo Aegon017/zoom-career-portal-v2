@@ -1,4 +1,4 @@
-import { AppHeader } from "@/components/app-header"
+import { AppHeader } from "@/components/employer/employer-header"
 import { Company } from "@/types"
 import { Head } from "@inertiajs/react"
 import { Building2, Clock, LoaderPinwheel, Mail } from "lucide-react"
