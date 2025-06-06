@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AppLayout from "@/layouts/employer-layout"
 import { BreadcrumbItem, Message } from "@/types"
 import { Head } from "@inertiajs/react"
-import { Send } from "lucide-react"
+import { Mail, Mails, Send } from "lucide-react"
 import { useState } from "react"
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -70,8 +70,8 @@ const MessagesListing = ({ messages }: MessagesListingProps) => {
                 <div className="flex-1 flex items-center justify-center rounded-xl">
                     <div className="text-center max-w-md px-6">
                         <div className="mb-8 flex justify-center relative">
-                            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 shadow-inner">
-                                <Send className="h-12 w-12 text-white" />
+                            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary/40 shadow-inner">
+                                <Mails className="h-16 w-16 text-primary" />
                             </div>
                         </div>
                         <h2 className="text-2xl font-semibold text-foreground mb-3">Message anyone</h2>
