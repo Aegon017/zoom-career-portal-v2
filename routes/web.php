@@ -66,6 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
+        Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
+        Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
     });
 
     // jobseeker routes

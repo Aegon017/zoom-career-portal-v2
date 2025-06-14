@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import AppLayout from "@/layouts/employer-layout";
 import { Head, router } from "@inertiajs/react";
-import { BreadcrumbItem, Company, WorkExperience } from "@/types";
+import { BreadcrumbItem, Company, User, WorkExperience } from "@/types";
 import { useState } from "react";
 import EditBannerModal from "@/components/edit-banner-modal";
 import EditProfileModal from "@/components/edit-profile-modal";
@@ -55,8 +55,8 @@ const handleShare = async () => {
     }
 };
 
-export default function ManageProfile({ work_experiences, companies }: { work_experiences: WorkExperience[], companies: Company[] }) {
-    const [bannerTheme, setBannerTheme] = useState("magician");
+export default function ManageProfile({ work_experiences, companies, user }: { work_experiences: WorkExperience[], companies: Company[], user: User }) {
+    const [bannerTheme, setBannerTheme] = useState(user.banner);
     const [showModal, setShowModal] = useState(false);
     const [showEditProfile, setShowEditProfile] = useState(false);
     const [showWorkModal, setShowWorkModal] = useState(false);
@@ -69,7 +69,7 @@ export default function ManageProfile({ work_experiences, companies }: { work_ex
                 <div className="container relative">
                     {/* Banner */}
                     <div className="relative mb-6 overflow-hidden">
-                        <div className={`h-64 ${bannerThemes[bannerTheme]}`} />
+                        <div className={`h-64 ${bannerThemes[bannerTheme || 'magician']}`} />
                         <Button
                             variant="outline"
                             size="sm"
@@ -81,7 +81,17 @@ export default function ManageProfile({ work_experiences, companies }: { work_ex
                         <EditBannerModal
                             open={showModal}
                             onClose={() => setShowModal(false)}
-                            onSave={(theme) => setBannerTheme(theme)}
+                            onSave={(theme) => {
+                                setBannerTheme(theme);
+                                router.put(route('employer.profile.banner.update'), {
+                                    banner: theme,
+                                }, {
+                                    preserveScroll: true,
+                                    onError: () => {
+                                        toast.error('Failed to update banner');
+                                    },
+                                });
+                            }}
                         />
                     </div>
 
@@ -91,21 +101,29 @@ export default function ManageProfile({ work_experiences, companies }: { work_ex
                             <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
                                 <div className="md:flex gap-4">
                                     <Avatar className="w-24 h-24 border-4 border-white shadow-md">
-                                        <a href="https://github.com/shadcn.png" target="_blank" rel="noopener noreferrer">
-                                            <AvatarImage src="https://github.com/shadcn.png" alt="ShadCN" />
+                                        <a href={user.profile_image} target="_blank" rel="noopener noreferrer">
+                                            <AvatarImage src={user.profile_image} alt="ShadCN" />
                                         </a>
-                                        <AvatarFallback className="bg-muted text-white text-xl font-semibold">TN</AvatarFallback>
+                                        <AvatarFallback className="bg-muted text-gray-600 text-xl font-semibold">
+                                            {user.name.split(' ').map(n => n[0]).join('')}
+                                        </AvatarFallback>
                                     </Avatar>
 
                                     <div className="mt-2 space-y-1">
                                         <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-                                            Tasneem Noble <Badge className="text-xs">She/her</Badge>
+                                            {user.name} {user.pronouns && (
+                                                <Badge className="text-xs">{user.pronouns}</Badge>
+                                            )}
                                         </h1>
-                                        <p className="text-muted-foreground">The New School</p>
+                                        {user.headline && (
+                                            <p className="text-muted-foreground">{user.headline}</p>
+                                        )}
                                         <p className="text-sm text-muted-foreground">1 follower • 6 following</p>
-                                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                            <MapPin className="w-4 h-4" /> New York, NY
-                                        </div>
+                                        {user.location && (
+                                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                                <MapPin className="w-4 h-4" /> {user.location}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -117,7 +135,13 @@ export default function ManageProfile({ work_experiences, companies }: { work_ex
                                     <EditProfileModal
                                         open={showEditProfile}
                                         onClose={() => setShowEditProfile(false)}
-                                        onSave={(data) => console.log("Saved data:", data)}
+                                        user={user}
+                                        onSave={(data) => {
+                                            router.patch(route("employer.dashboard.profile.update"), data, {
+                                                preserveScroll: true,
+                                                onError: () => toast.error("Failed to update profile"),
+                                            });
+                                        }}
                                     />
                                 </div>
                             </div>

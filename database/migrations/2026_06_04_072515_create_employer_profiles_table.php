@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('opening_title_id')->nullable()->constrained()->nullOnDelete();
             $table->string('phone');
+            $table->string('banner');
             $table->timestamps();
         });
     }

@@ -42,16 +42,22 @@ export interface User {
     email: string;
     avatar?: string;
     password?: string,
+    headline?: string,
+    pronouns?: string,
+    location?: string,
+    profile_image?: string,
+    banner?: string,
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
-    profile: Profile
 }
 
-export interface Profile {
-    image: string
-}
+// export interface EmployerProfile {
+//     profile_image: string,
+//     // banner: string
+// }
+
 
 export interface Company {
     id: number;

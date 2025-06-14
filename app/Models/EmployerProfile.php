@@ -18,15 +18,16 @@ final class EmployerProfile extends Model implements HasMedia
 
     protected $fillable = [
         'user_id',
-        'profile_image',
         'opening_title_id',
         'phone',
+        'banner'
     ];
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_image')->singleFile();
     }
+
 
     public function user(): BelongsTo
     {

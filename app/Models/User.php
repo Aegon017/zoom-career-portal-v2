@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-final class User extends Authenticatable implements MustVerifyEmail
+final class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +28,10 @@ final class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'email_verified_at',
+        'headline',
+        'pronouns',
+        'location',
+        'banner',
     ];
 
     /**
@@ -42,6 +48,13 @@ final class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $appends = ['profile_image'];
+
+    public function getProfileImageAttribute()
+    {
+        return $this->getFirstMediaUrl('profile_image');
+    }
 
     public function employerOnBording(): HasOne
     {
@@ -68,5 +81,10 @@ final class User extends Authenticatable implements MustVerifyEmail
     public function workExperiences()
     {
         return $this->hasMany(WorkExperience::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile_image')->singleFile();
     }
 }

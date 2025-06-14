@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\WorkExperience;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -24,12 +25,36 @@ class EmployerManageProfileController extends Controller
                 ->get()
         );
 
+
         $companies = Company::query()->orderBy('company_name')->get();
 
         return Inertia::render('employer/manage-profile/index', [
             'work_experiences' => $work_experiences,
-            'companies' => $companies
+            'companies' => $companies,
+            'user' => $user
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'headline' => 'nullable|string|max:255',
+            'pronouns' => 'nullable|string|max:50',
+            'location' => 'nullable|string|max:255',
+            'profile_image' => 'nullable|string|max:255'
+        ]);
+
+        $user = Auth::user();
+        $user->update($validated);
+
+        if (! empty($validated['profile_image']) && Storage::disk('public')->exists($validated['profile_image'])) {
+            $user->addMedia(storage_path('app/public/' . $validated['profile_image']))
+                ->preservingOriginal()
+                ->toMediaCollection('profile_image');
+        }
+
+        return back()->with('success', 'Profile updated.');
     }
 
     public function storeExperience(CreateWorkExperienceRequest $request)
@@ -47,5 +72,20 @@ class EmployerManageProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'Work experience added successfully.');
+    }
+
+    public function updateBanner(Request $request)
+    {
+        $request->validate([
+            'banner' => ['required', 'string'],
+        ]);
+
+        $user = Auth::user();
+
+        $user->update([
+            'banner' => $request->banner,
+        ]);
+
+        return back()->with('success', 'Banner theme updated successfully.');
     }
 }
