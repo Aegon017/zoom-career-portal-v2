@@ -108,7 +108,7 @@ final class EmployerOnBoardingController extends Controller
 
         $company = Company::find($data['company']);
 
-        $company->employers()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
+        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_JOIN_VERIFICATION->value,
@@ -156,7 +156,7 @@ final class EmployerOnBoardingController extends Controller
                 ->toMediaCollection('company_logo');
         }
 
-        $company->employers()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
+        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_SETUP_VERIFICATION->value,

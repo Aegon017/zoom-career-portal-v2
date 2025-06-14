@@ -179,3 +179,19 @@ export interface Notification {
     url: string;
     type: 'new_employer' | string;
 }
+
+export interface WorkExperience {
+    id: number;
+    user_id?: number;
+    company_id?: number;
+    company_name: string;
+    title: string;
+    start_date: string;
+    end_date?: string;
+    is_current?: boolean;
+    company_logo?: string;
+    created_at?: string;
+    updated_at?: string;
+    company: Company;
+}
+

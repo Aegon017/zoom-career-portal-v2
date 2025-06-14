@@ -11,7 +11,7 @@ interface UserMenuContentProps {
 }
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
-    const { isSuperAdmin } = useRoles();
+    const { isSuperAdmin, isEmployer, isJobSeeker } = useRoles();
 
     const profileLink = isSuperAdmin ? route('profile.edit') : route('employer.profile.edit');
 
@@ -30,6 +30,18 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {
+                isEmployer && (
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                            <Link className="block w-full" href={route('employer.manage-profile.index')} as="button" prefetch onClick={cleanup}>
+                                <Settings className="mr-2" />
+                                Manage profile
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                )
+            }
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                     <Link className="block w-full" href={profileLink} as="button" prefetch onClick={cleanup}>

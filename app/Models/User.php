@@ -64,4 +64,9 @@ final class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->companies()->where('company_id', $company->id)->first()?->pivot?->role;
     }
+
+    public function workExperiences()
+    {
+        return $this->hasMany(WorkExperience::class);
+    }
 }

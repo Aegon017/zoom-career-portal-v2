@@ -13,6 +13,7 @@ use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\InboxController;
 use App\Http\Controllers\Employer\OpeningController;
+use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('inbox')->name('inbox.')->group(function () {
             Route::get('/', [InboxController::class, 'index'])->name('index');
         });
+
+        Route::resource('/manage-profile', EmployerManageProfileController::class);
+        Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
     });
 
     // jobseeker routes

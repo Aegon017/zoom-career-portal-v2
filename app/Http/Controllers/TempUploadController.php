@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -12,8 +13,9 @@ final class TempUploadController extends Controller
 {
     public function store(Request $request)
     {
-        $file = $request->file('profile_image');
-        $tempPath = $file->storeAs('temp', Str::uuid().'.'.$file->getClientOriginalExtension(), 'public');
+        $file = $request->file('file');
+        Log::info($request->all());
+        $tempPath = $file->storeAs('temp', Str::uuid() . '.' . $file->getClientOriginalExtension(), 'public');
 
         return response()->json([
             'temp_path' => $tempPath,
