@@ -7,6 +7,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -17,7 +19,7 @@ final class EmployerProfile extends Model implements HasMedia
     protected $fillable = [
         'user_id',
         'profile_image',
-        'job_title_id',
+        'opening_title_id',
         'phone',
     ];
 
@@ -34,5 +36,10 @@ final class EmployerProfile extends Model implements HasMedia
     public function talentProfiles(): BelongsToMany
     {
         return $this->belongsToMany(TalentProfile::class);
+    }
+
+    public function OpeningTitle(): BelongsTo
+    {
+        return $this->belongsTo(OpeningTitle::class);
     }
 }

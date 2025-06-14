@@ -1,7 +1,8 @@
+import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 
 export default function useRoles() {
-    const { auth } = usePage().props as any;
+    const { auth } = usePage<SharedData>().props;
     const roles = auth.roles || [];
 
     return {

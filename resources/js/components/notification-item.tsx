@@ -13,14 +13,14 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
         >
             <div className="flex-1 space-y-1.5 relative z-10 w-full">
                 <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-1 sm:gap-2">
-                    <p className="text-sm font-semibold text-foreground">{notification.data.title}</p>
+                    <p className="text-sm font-semibold text-foreground">{notification.employer_name}</p>
                     <span className="text-xs text-muted-foreground italic">
-                        {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(notification.registered_at), { addSuffix: true })}
                     </span>
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-snug line-clamp-3">
-                    {notification.data.message}
+                    {notification.message}
                 </p>
 
                 <div className="flex gap-3 pt-1">
@@ -33,7 +33,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
                         Mark as read
                     </Button>
                     <Link
-                        href={notification.data.link}
+                        href={notification.url}
                         className="text-xs p-0 h-auto text-muted-foreground hover:underline underline-offset-4 font-medium transition-colors"
                     >
                         View details

@@ -126,16 +126,16 @@ const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
                                     </div>
 
                                     {selectedCompany && (
-                                        <Card className="w-full overflow-hidden rounded-lg border border-muted/50 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
-                                            <CardHeader className="h-10 bg-gray-400 p-0" />
+                                        <Card className="w-full overflow-hidden dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-none shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
+                                            <CardHeader className="h-12 bg-gradient-to-r from-orange-100 to-orange-200 p-0" />
 
-                                            <CardContent className="flex items-center gap-5 px-8 py-4">
-                                                <div className="flex size-14 items-center justify-center rounded-lg bg-orange-100 text-orange-600 shadow-sm ring-2 ring-orange-200 transition-all duration-300 hover:bg-orange-200 hover:text-orange-700">
-                                                    <Building2 className="size-6" />
+                                            <CardContent className="flex items-center gap-6 p-6">
+                                                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600 shadow-sm ring-2 ring-orange-100 transition-all duration-300 hover:bg-orange-100 hover:text-orange-700">
+                                                    <Building2 className="h-8 w-8" />
                                                 </div>
 
-                                                <div>
-                                                    <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+                                                <div className="min-w-0 flex-1">
+                                                    <h1 className="truncate text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                                         {selectedCompany.label}
                                                     </h1>
                                                 </div>

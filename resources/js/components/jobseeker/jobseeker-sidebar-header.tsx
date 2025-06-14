@@ -58,10 +58,10 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                     </button>
                     {userNav.isOpen && (
                         <div className="zc-dropdown-menu show">
-                            <Link href={route('jobseeker.profile.index')} className="zc-dropdown-item">
+                            {/* <Link href={route('jobseeker.profile.index')} className="zc-dropdown-item">
                                 <i className="fas fa-user"></i>
                                 Profile
-                            </Link>
+                            </Link> */}
                             <a href="#" className="zc-dropdown-item">
                                 <i className="fas fa-user"></i>
                                 My Jobs

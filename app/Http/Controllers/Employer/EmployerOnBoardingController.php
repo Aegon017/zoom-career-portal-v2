@@ -13,10 +13,15 @@ use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\JobTitle;
+use App\Models\OpeningTitle;
 use App\Models\TalentProfile;
+use App\Models\User;
+use App\Notifications\EmployerRegisteredNotification;
+use App\Notifications\EmployerVerifyNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,7 +37,7 @@ final class EmployerOnBoardingController extends Controller
     {
         $user = Auth::user();
         $talent_profiles = TalentProfile::query()->get();
-        $job_titles = JobTitle::query()->get();
+        $job_titles = OpeningTitle::query()->get();
 
         return Inertia::render('employer/on-boarding/profile-setup', [
             'user' => $user,
@@ -47,7 +52,7 @@ final class EmployerOnBoardingController extends Controller
 
         $data = $request->validate([
             'profile_image' => 'nullable|string',
-            'job_title_id' => 'required|exists:job_titles,id',
+            'job_title_id' => 'required|exists:opening_titles,id',
             'types_of_candidates' => 'nullable|array',
             'phone' => 'required|string|max:20',
         ]);
@@ -103,12 +108,14 @@ final class EmployerOnBoardingController extends Controller
 
         $company = Company::find($data['company']);
 
-        $company->employers()->attach($user->id, ['role' => 'recruiter']);
+        $company->employers()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_JOIN_VERIFICATION->value,
             'is_completed' => false,
         ]);
+
+        $this->sendNotification($user, $company);
 
         return to_route('employer.on-boarding.company.join.verification.pending');
     }
@@ -149,21 +156,21 @@ final class EmployerOnBoardingController extends Controller
                 ->toMediaCollection('company_logo');
         }
 
-        $company->employers()->attach($user->id, ['role' => 'recruiter']);
+        $company->employers()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_SETUP_VERIFICATION->value,
             'is_completed' => false,
         ]);
 
+        $this->sendNotification($user, $company);
+
         return to_route('employer.on-boarding.setup.company.verification.pending');
     }
 
     public function joinVerificationPending(): Response
     {
-        $user = Auth::user();
-
-        $company = $user->companies()->latest()->first();
+        $company = Auth::user()?->companies()->latest()->first();
 
         return Inertia::render('employer/on-boarding/join-company-verification-pending', [
             'company' => $company,
@@ -173,5 +180,12 @@ final class EmployerOnBoardingController extends Controller
     public function setupVerificationPending(): Response
     {
         return Inertia::render('employer/on-boarding/setup-company-verification-pending');
+    }
+
+    public function sendNotification(User $user, Company $company): void
+    {
+        $admins = User::role('super_admin')->get();
+
+        Notification::send($admins, new EmployerVerifyNotification($user, $company));
     }
 }

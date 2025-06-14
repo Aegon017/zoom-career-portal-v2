@@ -79,9 +79,9 @@ final class RedirectIfEmployerOnboardingIncomplete
 
         return redirect()->route(
             $expectedRoute,
-            $expectedRoute === 'employer.on-boarding.setup.company'
-                ? ['company_name' => $request->company_name]
-                : []
+            // $expectedRoute === 'employer.on-boarding.setup.company'
+            //     ? ['company_name' => $request->company_name]
+            //     : []
         );
     }
 }

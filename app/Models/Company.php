@@ -47,9 +47,4 @@ final class Company extends Model implements HasMedia
             ->withPivot('role')
             ->withTimestamps();
     }
-
-    public function jobPostings(): HasMany
-    {
-        return $this->hasMany(jobPosting::class);
-    }
 }

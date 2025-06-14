@@ -1,32 +1,26 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Notifications;
 
+use App\Models\Company;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-final class EmployerRegisteredNotification extends Notification
+class EmployerVerifyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    private int $employerId;
-
-    private string $companyName;
-
-    private string $userName;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(int $employerId, string $companyName, string $userName)
-    {
-        $this->employerId = $employerId;
-        $this->companyName = $companyName;
-        $this->userName = $userName;
-    }
+    public function __construct(
+        public User $user,
+        public Company $company
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -35,7 +29,7 @@ final class EmployerRegisteredNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -57,10 +51,22 @@ final class EmployerRegisteredNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'type' => 'employer_registered',
-            'title' => 'New employer registered.',
-            'message' => "New employer {$this->userName} registered from company {$this->companyName}",
-            'link' => route('employers.show', $this->employerId),
+            'message' => "New employer registered: {$this->user->name}",
+            'employer_name' => $this->user->name,
+            'company_name' => $this->company->company_name,
+            'registered_at' => $this->user->employerProfile->created_at,
+            'url' => route('admin.employers.show', $this->company->id),
+            'type' => 'new_employer',
         ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage($this->toArray($notifiable));
+    }
+
+    public function broadcastType(): string
+    {
+        return 'new-employer.registered';
     }
 }

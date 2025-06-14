@@ -3,7 +3,7 @@ import { Company } from "@/types"
 import { Head } from "@inertiajs/react"
 import { Building2, Clock, LoaderPinwheel, Mail } from "lucide-react"
 
-const JoinCompanyVerificationPending = (company: Company) => {
+const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
     return (
         <>
             <Head title="Join company verification pending" />
@@ -59,7 +59,7 @@ const JoinCompanyVerificationPending = (company: Company) => {
 
                         <div className="rounded-xl border border-green-200 bg-green-50 p-4">
                             <p className="text-green-700 text-sm md:text-base text-left">
-                                <span className="mb-2 flex gap-2 font-semibold">
+                                <span className="mb-2 flex gap-2 font-semibold items-center">
                                     <Mail className="w-4 h-4" />
                                     What happens next?
                                 </span>
@@ -69,7 +69,7 @@ const JoinCompanyVerificationPending = (company: Company) => {
 
                         <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
                             <p className="text-blue-700 text-sm md:text-base text-left">
-                                <span className="mb-2 flex gap-2 font-semibold">
+                                <span className="mb-2 flex gap-2 font-semibold items-center">
                                     <Clock className="w-4 h-4" />
                                     Review Timeline:
                                 </span>

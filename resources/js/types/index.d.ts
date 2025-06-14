@@ -3,6 +3,7 @@ import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
+    roles: string[];
 }
 
 export interface BreadcrumbItem {
@@ -168,4 +169,13 @@ interface Message {
     avatar?: string
     initials?: string
     isUnread?: boolean
+}
+
+export interface Notification {
+    message: string;
+    employer_name: string;
+    company_name: string;
+    registered_at: string;
+    url: string;
+    type: 'new_employer' | string;
 }

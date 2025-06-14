@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamp('verified_at')->nullable();
+            $table->string('status');
             $table->string('role');
             $table->timestamps();
         });

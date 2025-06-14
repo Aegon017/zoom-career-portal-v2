@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('employer_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('job_title_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('opening_title_id')->nullable()->constrained()->nullOnDelete();
             $table->string('phone');
             $table->timestamps();
         });
