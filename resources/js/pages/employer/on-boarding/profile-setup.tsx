@@ -62,7 +62,7 @@ const profileSetup = (props: ProfileSetup) => {
                                                     <FormControl>
                                                         <FileUpload
                                                             placeholder="Drag & drop your image or click"
-                                                            name="profile_image"
+                                                            name="file"
                                                             onUploaded={(tempPath) => setValue('profile_image', tempPath)}
                                                         />
                                                     </FormControl>

@@ -36,12 +36,6 @@ export default function WorkExperienceModal({ open, onClose, onSave, companies }
                         onClose()
                     }}
                 />
-
-                <DialogFooter className="mt-4">
-                    <DialogClose asChild>
-                        <Button type="button" variant="ghost">Cancel</Button>
-                    </DialogClose>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

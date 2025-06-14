@@ -4,7 +4,7 @@ import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import useRoles from '@/hooks/use-roles';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, UserPen } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -32,14 +32,18 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             {
                 isEmployer && (
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link className="block w-full" href={route('employer.manage-profile.index')} as="button" prefetch onClick={cleanup}>
-                                <Settings className="mr-2" />
-                                Manage profile
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
+                    <>
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem asChild>
+                                <Link className="block w-full" href={route('employer.manage-profile.index')} as="button" prefetch onClick={cleanup}>
+                                    <UserPen className="mr-2" />
+                                    Manage profile
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                    </>
+
                 )
             }
             <DropdownMenuGroup>

@@ -20,6 +20,7 @@ import EditBannerModal from "@/components/edit-banner-modal";
 import EditProfileModal from "@/components/edit-profile-modal";
 import WorkExperienceModal from "@/components/work-experience-modal";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Manage profile", href: "/employer/manage-profile" },
@@ -167,7 +168,10 @@ export default function ManageProfile({ work_experiences, companies, user }: { w
                                         <div>
                                             <p className="font-medium">{exp.company_name || exp.company?.company_name}</p>
                                             <p className="text-sm">{exp.title}</p>
-                                            <p className="text-xs text-muted-foreground">{exp.start_date}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {format(new Date(exp.start_date), "dd MMM yyyy")} -{" "}
+                                                {exp.end_date ? format(new Date(exp.end_date), "dd MMM yyyy") : "Present"}
+                                            </p>
                                         </div>
                                     </div>
                                 ))}

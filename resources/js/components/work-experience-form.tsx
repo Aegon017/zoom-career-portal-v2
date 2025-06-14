@@ -8,6 +8,7 @@ import { SelectPopoverField } from "@/components/select-popover-field"
 import FileUpload from "@/components/file-upload"
 import { WorkExperience, Company } from "@/types"
 import { DatePicker } from "./date-picker"
+import { DialogClose, DialogFooter } from "./ui/dialog"
 
 interface Props {
     companies: Company[]
@@ -155,7 +156,12 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                 />
 
                 <div className="flex justify-end">
-                    <Button type="submit">Save</Button>
+                    <DialogFooter className="mt-4">
+                        <DialogClose asChild>
+                            <Button type="button" variant="ghost">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit">Save</Button>
+                    </DialogFooter>
                 </div>
             </form>
         </Form>

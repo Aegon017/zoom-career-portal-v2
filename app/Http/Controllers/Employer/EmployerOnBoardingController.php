@@ -60,7 +60,7 @@ final class EmployerOnBoardingController extends Controller
         $employerProfile = $this->createEmployerProfileAction->handle($data, $user);
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $employerProfile->addMedia(storage_path('app/public/' . $data['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_image');
         }
