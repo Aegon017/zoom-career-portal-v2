@@ -14,8 +14,8 @@ const AppliedJobItem = ({ opening }: { opening: Opening }) => {
                     </div>
                 </div>
                 <div className="second-block">
-                    <div className="job-application-status mb-1">{opening.pivot.status}</div>
-                    <p className="applied-date mb-0">Applied: {formatDistanceToNow(new Date(opening.pivot.updated_at))}</p>
+                    <div className="job-application-status mb-1">{opening.application_status}</div>
+                    <p className="applied-date mb-0">Applied: {formatDistanceToNow(new Date(opening.application_created_at))}</p>
                 </div>
             </div>
             <div className="bottom">

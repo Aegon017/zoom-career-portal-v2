@@ -122,7 +122,7 @@ export interface Opening {
     is_saved: boolean;
     has_applied: boolean;
     application_status: string;
-    pivot: Record<string, string>;
+    application_created_at: string;
 }
 
 interface Application {

@@ -45,13 +45,13 @@ final class Company extends Model implements HasMedia
     }
 
     protected $appends = [
-        'profile_image',
+        'company_logo',
         'is_followed',
     ];
 
-    public function getProfileImageAttribute()
+    public function getCompanyLogoAttribute()
     {
-        return $this->getFirstMediaUrl('profile_image');
+        return $this->getFirstMediaUrl('company_logo');
     }
 
     public function users(): BelongsToMany

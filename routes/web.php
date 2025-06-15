@@ -85,6 +85,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
         Route::prefix('/jobs')->name('jobs.')->group(function () {
+            Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
+            Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');
+            Route::get('/your/applied/', [JobseekerJobController::class, 'appliedJobs'])->name('applied.index');
             Route::get('/{jobId}', [JobseekerJobController::class, 'show'])->name('show');
             Route::post('/{jobId}/save', [JobSaveController::class, 'store'])->name('save');
             Route::post('/{jobId}/unsave', [JobSaveController::class, 'destroy'])->name('unsave');
@@ -93,7 +96,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
         // Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
         // Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
-        // // Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
         // // Route::resource('/profile', JobSeekerProfileController::class);
         // // Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
         // // Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);

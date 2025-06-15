@@ -3,6 +3,7 @@ import logo from '../../assets/images/logo.png';
 import ExploreIcon from '@/icons/explore-icon';
 import { Link } from '@inertiajs/react';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
+import JobsIcon from '@/icons/jobs-icon';
 
 export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const [activeItem, setActiveItem] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
                         </Link>
                     </li>
 
-                    {/* <li className={`sidebar-item has-childern ${activeItem === 'jobs' ? 'active' : ''}`}>
+                    <li className={`sidebar-item has-childern ${activeItem === 'jobs' ? 'active' : ''}`}>
                         <a onClick={handleDropdownToggle('jobs')}>
                             <JobsIcon />
                             <span>Jobs</span>
@@ -38,11 +39,11 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
                         {activeItem === 'jobs' && (
                             <ul className="sub-menu">
                                 <li><Link href={route('jobseeker.jobs.index')}>All Jobs</Link></li>
-                                <li><Link href={route('jobseeker.saved-jobs.index')}>Saved Jobs</Link></li>
-                                <li><Link href={route('jobseeker.applied-jobs.index')}>Applied Jobs</Link></li>
+                                <li><Link href={route('jobseeker.jobs.saved.index')}>Saved Jobs</Link></li>
+                                <li><Link href={route('jobseeker.jobs.applied.index')}>Applied Jobs</Link></li>
                             </ul>
                         )}
-                    </li> */}
+                    </li>
                 </ul>
             </div>
         </nav>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\JobApplicationStatusEnum;
+use App\Enums\VerificationStatusEnum;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
 use Illuminate\Http\Request;
@@ -24,6 +26,7 @@ class JobApplicationController extends Controller
             'user_id' => $user->id,
             'opening_id' => $jobId,
             'cover_letter' => $request->cover_letter,
+            'status' => JobApplicationStatusEnum::Pending->value
         ]);
 
         try {

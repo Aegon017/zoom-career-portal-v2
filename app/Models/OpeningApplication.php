@@ -11,7 +11,7 @@ class OpeningApplication extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['user_id', 'opening_id', 'cover_letter'];
+    protected $fillable = ['user_id', 'opening_id', 'cover_letter', 'status'];
 
     public function user(): BelongsTo
     {

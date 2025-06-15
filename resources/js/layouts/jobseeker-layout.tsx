@@ -32,7 +32,7 @@ const AppLayout = ({ children, ...props }: AppLayoutProps) => {
                     {children}
                 </div>
             </div>
-            <Toaster richColors position="top-right" closeButton={true} />
+            <Toaster richColors position="bottom-right" closeButton={true} />
         </AppLayoutTemplate >
     );
 };

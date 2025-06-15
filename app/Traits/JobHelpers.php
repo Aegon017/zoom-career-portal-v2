@@ -42,6 +42,7 @@ trait JobHelpers
         $application = $applications->get($job->id);
         $job->has_applied = !is_null($application);
         $job->application_status = $application?->status;
+        $job->application_created_at = $application?->created_at;
 
         return $job;
     }
@@ -56,6 +57,7 @@ trait JobHelpers
             $application = $applications->get($job->id);
             $job->has_applied = !is_null($application);
             $job->application_status = $application?->status;
+            $job->application_created_at = $application?->created_at;
         }
 
         return $jobs;
