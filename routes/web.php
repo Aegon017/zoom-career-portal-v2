@@ -18,6 +18,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
+use App\Http\Controllers\Jobseeker\JobseekerProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
@@ -84,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
+        Route::get('/profile', [JobseekerProfileController::class, 'index'])->name('profile.index');
         Route::prefix('/jobs')->name('jobs.')->group(function () {
             Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
             Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');
@@ -94,11 +96,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{jobId}/apply', [JobApplicationController::class, 'store'])->name('apply');
             Route::post('/{job}/withdraw', [JobApplicationController::class, 'destroy'])->name('withdraw');
         });
-        // Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
-        // Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
-        // // Route::resource('/profile', JobSeekerProfileController::class);
-        // // Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
-        // // Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
         Route::get('/resumes', [JobseekerResumeController::class, 'index'])->name('resumes.index');
         Route::get('/resumes/data', [JobseekerResumeController::class, 'data'])->name('resumes.data');
         Route::post('/resumes', [JobseekerResumeController::class, 'store'])->name('resumes.store');

@@ -21,6 +21,7 @@ import EditProfileModal from "@/components/edit-profile-modal";
 import WorkExperienceModal from "@/components/work-experience-modal";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Manage profile", href: "/employer/manage-profile" },
@@ -196,7 +197,7 @@ export default function ManageProfile({ work_experiences, companies, user }: { w
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </AppLayout >
     );
 }
 
