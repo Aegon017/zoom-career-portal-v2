@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class JobseekerResumeController extends Controller
+final class JobseekerResumeController extends Controller
 {
     public function index()
     {
@@ -22,7 +24,7 @@ class JobseekerResumeController extends Controller
         });
 
         return Inertia::render('jobseeker/my-documents', [
-            'resumes' => $resumes
+            'resumes' => $resumes,
         ]);
     }
 
@@ -49,7 +51,7 @@ class JobseekerResumeController extends Controller
         $user = Auth::user();
 
         if ($request->resume && Storage::disk('public')->exists($request->resume)) {
-            $user->addMedia(storage_path('app/public/' . $request->resume))
+            $user->addMedia(storage_path('app/public/'.$request->resume))
                 ->preservingOriginal()
                 ->toMediaCollection('resumes');
         }
@@ -63,7 +65,7 @@ class JobseekerResumeController extends Controller
 
         $media = Media::where('id', $id)->first();
 
-        if (!$user->getMedia('resumes')->contains('id', $media->id)) {
+        if (! $user->getMedia('resumes')->contains('id', $media->id)) {
             abort(403, 'Unauthorized to delete this resume.');
         }
 

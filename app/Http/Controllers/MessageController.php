@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
 
-class MessageController extends Controller
+final class MessageController extends Controller
 {
     /**
      * Display a listing of the resource.

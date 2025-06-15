@@ -50,16 +50,16 @@ final class HandleInertiaRequests extends Middleware
                 'user' => Auth::user(),
                 'roles' => Auth::check() ? Auth::user()->getRoleNames() : [],
             ],
-            'ziggy' => fn(): array => [
+            'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
-            'url' => fn() => request()->getRequestUri(),
+            'url' => fn () => request()->getRequestUri(),
         ];
     }
 }

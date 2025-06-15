@@ -34,6 +34,20 @@ export function AppSidebar() {
             ]
         },
         {
+            title: 'Employer',
+            href: '',
+            icon: Users2,
+            items: [
+                {
+                    title: 'Employee',
+                    href: '/admin/employee',
+                }, {
+                    title: 'Companies',
+                    href: '/admin/companies',
+                },
+            ]
+        },
+        {
             title: 'Skills',
             href: '/admin/skills',
             icon: CodeXml,

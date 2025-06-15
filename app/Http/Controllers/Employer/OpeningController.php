@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Employer;
 
 use App\Enums\CurrencyEnum;
@@ -12,7 +14,6 @@ use App\Enums\WorkModelEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateOpeningRequest;
 use App\Http\Requests\EditOpeningRequest;
-use App\Http\Requests\Opening\StoreOpeningRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Opening;
 use App\Models\Skill;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class OpeningController extends Controller
+final class OpeningController extends Controller
 {
     /**
      * Display a listing of the resource.

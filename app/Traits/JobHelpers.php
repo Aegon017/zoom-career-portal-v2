@@ -1,25 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
-use App\Models\JobApplication;
-use App\Models\JobPosting;
-use App\Models\Jobseeker;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
 use App\Models\User;
 
 trait JobHelpers
 {
-    protected function addSaveStatusToJob(Opening $job, ?User $user): Opening
-    {
-        $job->is_saved = $user
-            ? $user->savedOpenings()->where('opening_id', $job->id)->exists()
-            : false;
-
-        return $job;
-    }
-
     public function addSaveStatusToJobs($jobs, $user)
     {
         $savedIds = $user
@@ -40,7 +30,7 @@ trait JobHelpers
             : collect();
 
         $application = $applications->get($job->id);
-        $job->has_applied = !is_null($application);
+        $job->has_applied = ! is_null($application);
         $job->application_status = $application?->status;
         $job->application_created_at = $application?->created_at;
 
@@ -55,11 +45,20 @@ trait JobHelpers
 
         foreach ($jobs as $job) {
             $application = $applications->get($job->id);
-            $job->has_applied = !is_null($application);
+            $job->has_applied = ! is_null($application);
             $job->application_status = $application?->status;
             $job->application_created_at = $application?->created_at;
         }
 
         return $jobs;
+    }
+
+    protected function addSaveStatusToJob(Opening $job, ?User $user): Opening
+    {
+        $job->is_saved = $user
+            ? $user->savedOpenings()->where('opening_id', $job->id)->exists()
+            : false;
+
+        return $job;
     }
 }

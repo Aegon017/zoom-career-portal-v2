@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use App\Models\Company;
@@ -10,7 +12,7 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EmployerVerifyNotification extends Notification implements ShouldQueue
+final class EmployerVerifyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

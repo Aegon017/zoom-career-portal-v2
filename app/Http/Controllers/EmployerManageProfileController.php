@@ -1,19 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateWorkExperienceRequest;
 use App\Http\Resources\WorkExperienceResource;
 use App\Models\Company;
-use App\Models\WorkExperience;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class EmployerManageProfileController extends Controller
+final class EmployerManageProfileController extends Controller
 {
     public function index(): Response
     {
@@ -25,13 +25,12 @@ class EmployerManageProfileController extends Controller
                 ->get()
         );
 
-
         $companies = Company::query()->orderBy('company_name')->get();
 
         return Inertia::render('employer/manage-profile/index', [
             'work_experiences' => $work_experiences,
             'companies' => $companies,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -42,14 +41,14 @@ class EmployerManageProfileController extends Controller
             'headline' => 'nullable|string|max:255',
             'pronouns' => 'nullable|string|max:50',
             'location' => 'nullable|string|max:255',
-            'profile_image' => 'nullable|string|max:255'
+            'profile_image' => 'nullable|string|max:255',
         ]);
 
         $user = Auth::user();
         $user->update($validated);
 
         if (! empty($validated['profile_image']) && Storage::disk('public')->exists($validated['profile_image'])) {
-            $user->addMedia(storage_path('app/public/' . $validated['profile_image']))
+            $user->addMedia(storage_path('app/public/'.$validated['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_image');
         }
@@ -66,7 +65,7 @@ class EmployerManageProfileController extends Controller
         $work_experience = $user->workExperiences()->create($data);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $work_experience->addMedia(storage_path('app/public/' . $data['company_logo']))
+            $work_experience->addMedia(storage_path('app/public/'.$data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logo');
         }

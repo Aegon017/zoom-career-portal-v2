@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -9,11 +11,10 @@ use App\Http\Requests\Skill\UpdateSkillRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SkillController extends Controller
+final class SkillController extends Controller
 {
     /**
      * Display a listing of the resource.

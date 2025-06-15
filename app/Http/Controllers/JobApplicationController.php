@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\JobApplicationStatusEnum;
-use App\Enums\VerificationStatusEnum;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class JobApplicationController extends Controller
+final class JobApplicationController extends Controller
 {
     public function store(Request $request, string $jobId)
     {
@@ -26,15 +28,15 @@ class JobApplicationController extends Controller
             'user_id' => $user->id,
             'opening_id' => $jobId,
             'cover_letter' => $request->cover_letter,
-            'status' => JobApplicationStatusEnum::Pending->value
+            'status' => JobApplicationStatusEnum::Pending->value,
         ]);
 
         try {
             if ($request->filled('resume_id')) {
                 $resume = $user->getMedia('resumes')->firstWhere('id', $request->resume_id);
 
-                if (!$resume) {
-                    throw new \Exception('Resume not found or does not belong to you.');
+                if (! $resume) {
+                    throw new Exception('Resume not found or does not belong to you.');
                 }
                 $resume->copy($application, 'resumes');
             } elseif ($request->filled('resume') && Storage::disk('public')->exists($request->resume)) {
@@ -42,20 +44,20 @@ class JobApplicationController extends Controller
                     ->addMedia(storage_path("app/public/{$request->resume}"))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
-                $user->addMedia(storage_path('app/public/' . $request->resume))
+                $user->addMedia(storage_path('app/public/'.$request->resume))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
             } else {
-                throw new \Exception('No valid resume provided.');
+                throw new Exception('No valid resume provided.');
             }
 
             return back()->with('success', 'Application submitted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $application->delete();
+
             return back()->withErrors(['resume' => $e->getMessage()]);
         }
     }
-
 
     public function destroy(string $jobId)
     {
@@ -65,7 +67,7 @@ class JobApplicationController extends Controller
 
         $application = $job->applications()->where('user_id', $user->id)->first();
 
-        if (!$application) {
+        if (! $application) {
             return back()->withErrors(['application' => 'You have not applied for this job.']);
         }
 

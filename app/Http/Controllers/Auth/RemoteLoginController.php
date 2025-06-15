@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\EmployerRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
@@ -23,6 +22,7 @@ final class RemoteLoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             Session::regenerate();
+
             return redirect($this->redirectToDashboard(Auth::user()));
         }
 

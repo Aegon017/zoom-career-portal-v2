@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class OpeningTitle extends Model
+final class OpeningTitle extends Model
 {
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     public function employerProfiles(): HasMany

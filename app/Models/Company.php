@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -39,15 +38,15 @@ final class Company extends Model implements HasMedia
         'verification_status' => VerificationStatusEnum::class,
     ];
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('company_logo')->singleFile();
-    }
-
     protected $appends = [
         'company_logo',
         'is_followed',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('company_logo')->singleFile();
+    }
 
     public function getCompanyLogoAttribute()
     {
@@ -68,7 +67,9 @@ final class Company extends Model implements HasMedia
 
     public function getIsFollowedAttribute()
     {
-        if (!Auth::check()) return false;
+        if (! Auth::check()) {
+            return false;
+        }
 
         return $this->followers()->where('users.id', Auth::id())->exists();
     }

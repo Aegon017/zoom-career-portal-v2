@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use App\Enums\CurrencyEnum;
@@ -10,7 +12,7 @@ use App\Enums\WorkModelEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class EditOpeningRequest extends FormRequest
+final class EditOpeningRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

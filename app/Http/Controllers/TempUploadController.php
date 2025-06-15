@@ -15,7 +15,7 @@ final class TempUploadController extends Controller
     {
         $file = $request->file('file');
         Log::info($request->all());
-        $tempPath = $file->storeAs('temp', Str::uuid() . '.' . $file->getClientOriginalExtension(), 'public');
+        $tempPath = $file->storeAs('temp', Str::uuid().'.'.$file->getClientOriginalExtension(), 'public');
 
         return response()->json([
             'temp_path' => $tempPath,

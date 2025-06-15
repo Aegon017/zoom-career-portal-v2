@@ -7,8 +7,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -20,14 +18,13 @@ final class EmployerProfile extends Model implements HasMedia
         'user_id',
         'opening_title_id',
         'phone',
-        'banner'
+        'banner',
     ];
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_image')->singleFile();
     }
-
 
     public function user(): BelongsTo
     {

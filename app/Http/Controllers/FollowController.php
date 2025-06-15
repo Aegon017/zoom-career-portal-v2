@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
 
-class FollowController extends Controller
+final class FollowController extends Controller
 {
     public function follow(Request $request)
     {
@@ -27,7 +28,7 @@ class FollowController extends Controller
             return back()->withErrors(['Cannot follow yourself']);
         }
 
-        if (!$user->isFollowing($model)) {
+        if (! $user->isFollowing($model)) {
             $user->follows()->attach($model);
         }
 
@@ -62,8 +63,8 @@ class FollowController extends Controller
         $user = Auth::user();
 
         $followableType = match ($request->followable_type) {
-            'user' => \App\Models\User::class,
-            'company' => \App\Models\Company::class,
+            'user' => User::class,
+            'company' => Company::class,
         };
 
         $existing = $user->follows()

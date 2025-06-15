@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Events\EmployerRegistered;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AdminEmployerController;
+use App\Http\Controllers\AdminCompanyController;
+use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\InboxController;
@@ -25,7 +25,6 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Home route
@@ -109,8 +108,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/talent-profiles', TalentProfileController::class);
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
-        Route::get('/admin/employers/{id}', [AdminEmployerController::class, 'show'])->name('employers.show');
-        // Route::resource('/employers', EmployerController::class);
+        Route::resource('/employee', AdminEmployeeController::class);
+        Route::resource('/companies', AdminCompanyController::class);
     });
 });
 
@@ -118,5 +117,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

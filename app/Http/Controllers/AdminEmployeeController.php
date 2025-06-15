@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Inertia\Inertia;
 
-final class AdminEmployerController extends Controller
+final class AdminEmployeeController extends Controller
 {
     public function index()
     {

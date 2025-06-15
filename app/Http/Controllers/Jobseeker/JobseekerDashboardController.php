@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Jobseeker;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Opening;
 use App\Traits\JobHelpers;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class JobseekerDashboardController extends Controller
+final class JobseekerDashboardController extends Controller
 {
     use JobHelpers;
 
@@ -26,7 +27,7 @@ class JobseekerDashboardController extends Controller
         $jobs = $this->addSaveStatusToJobs($jobs, Auth::user());
 
         return Inertia::render('jobseeker/explore', [
-            'openings' => $jobs
+            'openings' => $jobs,
         ]);
     }
 }

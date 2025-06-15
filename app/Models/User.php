@@ -6,21 +6,19 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-final class User extends Authenticatable implements MustVerifyEmail, HasMedia
+final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable, InteractsWithMedia;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -122,7 +120,7 @@ final class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function followingUsers()
     {
-        return $this->morphedByMany(User::class, 'followable', 'follows', 'follower_id');
+        return $this->morphedByMany(self::class, 'followable', 'follows', 'follower_id');
     }
 
     public function followingCompanies()
@@ -132,6 +130,6 @@ final class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function followers()
     {
-        return $this->morphToMany(User::class, 'followable', 'follows', 'followable_id', 'follower_id');
+        return $this->morphToMany(self::class, 'followable', 'follows', 'followable_id', 'follower_id');
     }
 }
