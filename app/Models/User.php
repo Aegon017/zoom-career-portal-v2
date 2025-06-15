@@ -6,7 +6,11 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -86,5 +90,48 @@ final class User extends Authenticatable implements MustVerifyEmail, HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_image')->singleFile();
+        $this->addMediaCollection('resume');
+    }
+
+    public function savedOpenings(): HasMany
+    {
+        return $this->hasMany(SavedOpening::class);
+    }
+
+    public function openingApplications(): HasMany
+    {
+        return $this->hasMany(OpeningApplication::class);
+    }
+
+    public function openingApplicationsReceived(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            OpeningApplication::class,
+            Opening::class,
+            'user_id',
+            'opening_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function follows()
+    {
+        return $this->hasMany(Follow::class, 'follower_id');
+    }
+
+    public function followingUsers()
+    {
+        return $this->morphedByMany(User::class, 'followable', 'follows', 'follower_id');
+    }
+
+    public function followingCompanies()
+    {
+        return $this->morphedByMany(Company::class, 'followable', 'follows', 'follower_id');
+    }
+
+    public function followers()
+    {
+        return $this->morphToMany(User::class, 'followable', 'follows', 'followable_id', 'follower_id');
     }
 }

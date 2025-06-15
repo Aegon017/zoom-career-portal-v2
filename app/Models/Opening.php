@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Opening extends Model
 {
@@ -48,5 +49,15 @@ class Opening extends Model
     public function skills(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class);
+    }
+
+    public function savedByUsers(): HasMany
+    {
+        return $this->hasMany(SavedOpening::class);
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(OpeningApplication::class);
     }
 }

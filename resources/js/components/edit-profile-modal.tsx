@@ -102,6 +102,7 @@ export default function EditProfileModal({ open, onClose, onSave, user }: Props)
                                     <FormLabel>Profile image</FormLabel>
                                     <FormControl>
                                         <FileUpload
+                                            acceptedFileTypes={['image/*']}
                                             placeholder="Upload profile image"
                                             name="file"
                                             onUploaded={(url) => setValue("profile_image", url)}

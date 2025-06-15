@@ -73,6 +73,7 @@ export interface Company {
     company_type: string;
     created_at: string;
     updated_at: string;
+    is_followed: boolean;
     [key: string]: unknown;
 }
 

@@ -16,8 +16,8 @@ export default function BookmarkButton({ jobId, isSaved, hasText }: BookmarkButt
         setIsProcessing(true);
 
         const route = isSaved
-            ? `/job-postings/${jobId}/unsave`
-            : `/job-postings/${jobId}/save`;
+            ? `/jobseeker/jobs/${jobId}/unsave`
+            : `/jobseeker/jobs/${jobId}/save`;
 
         router.post(route, {}, {
             preserveScroll: true,

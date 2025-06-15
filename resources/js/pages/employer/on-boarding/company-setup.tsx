@@ -90,8 +90,9 @@ const CompanySetup = ({ company_name, company_sizes, company_types }: CompanySet
                                                     <FormLabel>Company logo (Optional)</FormLabel>
                                                     <FormControl>
                                                         <FileUpload
+                                                            acceptedFileTypes={['image/*']}
                                                             placeholder="Drag & Drop your company logo"
-                                                            name="profile_image"
+                                                            name="file"
                                                             onUploaded={(tempPath) => setValue('company_logo', tempPath)}
                                                         />
                                                     </FormControl>

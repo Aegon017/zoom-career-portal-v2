@@ -2,20 +2,31 @@
 
 namespace App\Http\Controllers\Jobseeker;
 
+use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Opening;
+use App\Traits\JobHelpers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class JobseekerDashboardController extends Controller
 {
+    use JobHelpers;
+
     public function index(): Response
     {
-        $openings = Opening::query()->latest()->get();
+        $jobs = Opening::where('verification_status', VerificationStatusEnum::Approved->value)
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->with('company')
+            ->get();
+
+        $jobs = $this->addSaveStatusToJobs($jobs, Auth::user());
 
         return Inertia::render('jobseeker/explore', [
-            'openings' => $openings
+            'openings' => $jobs
         ]);
     }
 }

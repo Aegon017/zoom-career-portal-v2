@@ -14,7 +14,12 @@ use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\InboxController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\JobSaveController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
+use App\Http\Controllers\JobseekerJobController;
+use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
@@ -36,6 +41,11 @@ Route::post('/location/states', [LocationController::class, 'getStates'])->name(
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // follow routes
+    Route::post('/follow', [FollowController::class, 'follow'])->name('follow');
+    Route::post('/unfollow', [FollowController::class, 'unfollow'])->name('unfollow');
+    Route::post('/follow/toggle', [FollowController::class, 'toggle'])->middleware('auth')->name('follow.toggle');
+
     // notification routes
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
@@ -68,20 +78,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
         Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
+        Route::get('/jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('jobs.applications');
     });
 
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
+        Route::prefix('/jobs')->name('jobs.')->group(function () {
+            Route::get('/{jobId}', [JobseekerJobController::class, 'show'])->name('show');
+            Route::post('/{jobId}/save', [JobSaveController::class, 'store'])->name('save');
+            Route::post('/{jobId}/unsave', [JobSaveController::class, 'destroy'])->name('unsave');
+            Route::post('/{jobId}/apply', [JobApplicationController::class, 'store'])->name('apply');
+            Route::post('/{job}/withdraw', [JobApplicationController::class, 'destroy'])->name('withdraw');
+        });
         // Route::get('/saved-jobs', [JobSeekerDashboardController::class, 'savedJobsList'])->name('saved-jobs.index');
         // Route::get('/applied-jobs', [JobSeekerDashboardController::class, 'appliedJobsList'])->name('applied-jobs.index');
         // // Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
         // // Route::resource('/profile', JobSeekerProfileController::class);
-        // // Route::get('/jobs/{jobId}', [JobController::class, 'show'])->name('jobs.show');
         // // Route::post('/job-postings/{jobPosting}/apply', [JobController::class, 'apply']);
         // // Route::post('/job-postings/{jobPosting}/withdraw', [JobController::class, 'withdraw']);
-        // Route::post('/job-postings/{jobPosting}/save', [SavedJobPostingController::class, 'save'])->name('job-postings.save');
-        // Route::post('/job-postings/{jobPosting}/unsave', [SavedJobPostingController::class, 'unsave'])->name('job-postings.unsave');
+        Route::get('/resumes', [JobseekerResumeController::class, 'index'])->name('resumes.index');
+        Route::get('/resumes/data', [JobseekerResumeController::class, 'data'])->name('resumes.data');
+        Route::post('/resumes', [JobseekerResumeController::class, 'store'])->name('resumes.store');
+        Route::delete('/resumes/destroy/{id}', [JobseekerResumeController::class, 'destroy'])->name('resumes.destroy');
     });
 
     // admin routes
@@ -94,10 +113,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/employers/{id}', [AdminEmployerController::class, 'show'])->name('employers.show');
         // Route::resource('/employers', EmployerController::class);
     });
-});
-
-Route::get('test', function () {
-    broadcast(new EmployerRegistered(Auth::user()))->toOthers();
 });
 
 Route::middleware('auth')->get('/notifications', function (Request $request) {

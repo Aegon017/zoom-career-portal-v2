@@ -14,9 +14,10 @@ interface Props {
     placeholder: string;
     name: string;
     onUploaded: (tempPath: string) => void;
+    acceptedFileTypes: string[];
 }
 
-const FileUpload: React.FC<Props> = ({ placeholder, name, onUploaded }) => {
+const FileUpload: React.FC<Props> = ({ placeholder, name, onUploaded, acceptedFileTypes }) => {
     const [files, setFiles] = useState<any[]>([]);
 
     return (
@@ -25,7 +26,7 @@ const FileUpload: React.FC<Props> = ({ placeholder, name, onUploaded }) => {
             files={files}
             allowMultiple={false}
             onupdatefiles={setFiles}
-            acceptedFileTypes={['image/*']}
+            acceptedFileTypes={acceptedFileTypes}
             labelIdle={placeholder}
             server={{
                 process: {

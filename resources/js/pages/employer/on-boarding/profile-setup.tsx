@@ -61,6 +61,7 @@ const profileSetup = (props: ProfileSetup) => {
                                                     <FormLabel>Profile image (Optional)</FormLabel>
                                                     <FormControl>
                                                         <FileUpload
+                                                            acceptedFileTypes={['image/*']}
                                                             placeholder="Drag & drop your image or click"
                                                             name="file"
                                                             onUploaded={(tempPath) => setValue('profile_image', tempPath)}

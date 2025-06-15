@@ -6,12 +6,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 final class LocationController extends Controller
 {
     public function getCountries()
     {
         $response = Http::get('https://countriesnow.space/api/v0.1/countries/positions');
+
+        Log::info($response->json());
 
         return response()->json($response->json());
     }

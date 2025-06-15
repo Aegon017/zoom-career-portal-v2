@@ -66,6 +66,7 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                                         <FormLabel>Company Logo</FormLabel>
                                         <FormControl>
                                             <FileUpload
+                                                acceptedFileTypes={['image/*']}
                                                 placeholder="Upload logo"
                                                 name="file"
                                                 onUploaded={(url) => setValue("company_logo", url)}

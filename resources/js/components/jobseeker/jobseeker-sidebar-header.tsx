@@ -66,10 +66,10 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                                 <i className="fas fa-user"></i>
                                 My Jobs
                             </a>
-                            <a href="#" className="zc-dropdown-item">
+                            <Link href={route('jobseeker.resumes.index')} className="zc-dropdown-item">
                                 <i className="fas fa-user"></i>
                                 My Documents
-                            </a>
+                            </Link>
                             <a href="#" className="zc-dropdown-item">
                                 <i className="fas fa-user"></i>
                                 My Career Interests
