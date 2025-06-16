@@ -1,7 +1,7 @@
-import { NavItem } from "@/types";
+import { NavItem, SharedData } from "@/types";
 import { BriefcaseBusiness, LayoutGrid, MailOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import AppLogo from "../app-logo";
 import { NavMain } from "../nav-main";
 import { NavFooter } from "../nav-footer";
@@ -9,23 +9,38 @@ import { Separator } from "../ui/separator";
 import { NavUser } from "../nav-user";
 
 export function AppSidebar() {
+    const isVerified = usePage<SharedData>().props.auth.isEmployerVerified;
+
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',
             href: '/employer/dashboard',
             icon: LayoutGrid,
         },
-        {
-            title: 'Jobs',
-            href: '/employer/jobs',
-            icon: BriefcaseBusiness,
-        },
+        ...(
+            isVerified
+                ? [
+                    {
+                        title: 'Jobs',
+                        href: '/employer/jobs',
+                        icon: BriefcaseBusiness,
+                    },
+                    {
+                        title: 'Jobseekers',
+                        href: '/employer/jobseekers',
+                        icon: BriefcaseBusiness,
+                    },
+                ]
+                : []
+        ),
+
         {
             title: 'Inbox',
             href: '/employer/inbox',
             icon: MailOpen,
-        }
+        },
     ];
+
 
     const footerNavItems: NavItem[] = [];
 

@@ -27,10 +27,15 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 // Home route
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
+
+Route::get('/account/verification/notice', function () {
+    return Inertia::render('account-verification-notice');
+})->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -52,8 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employer routes
     Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function () {
-        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware('employer.onboarding')->name('dashboard');
-        Route::resource('/jobs', OpeningController::class);
+        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware(['employer_is_verified'])->name('dashboard');
+        Route::middleware('employer_is_verified')->resource('/jobs', OpeningController::class);
 
         // on-boarding routes
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function () {

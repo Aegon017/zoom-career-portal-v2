@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\VerificationStatusEnum;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,18 +49,19 @@ final class HandleInertiaRequests extends Middleware
             'quote' => ['message' => mb_trim($message), 'author' => mb_trim($author)],
             'auth' => [
                 'user' => Auth::user(),
+                'isEmployerVerified' => Auth::user()->companies->first()?->pivot->status === VerificationStatusEnum::Verified->value,
                 'roles' => Auth::check() ? Auth::user()->getRoleNames() : [],
             ],
-            'ziggy' => fn (): array => [
+            'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error'),
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ],
-            'url' => fn () => request()->getRequestUri(),
+            'url' => fn() => request()->getRequestUri(),
         ];
     }
 }
