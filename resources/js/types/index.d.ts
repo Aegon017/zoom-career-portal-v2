@@ -73,20 +73,23 @@ export interface Company {
     company_type: string;
     created_at: string;
     updated_at: string;
+    verification_status: string;
     is_followed: boolean;
     [key: string]: unknown;
 }
 
-interface NotificationData {
-    type: string;
-    title: string;
+interface AppNotificationData {
     message: string;
-    link: string;
+    employer_name: string;
+    company_name: string;
+    registered_at: string;
+    url: string;
+    type: 'new_employer' | string;
 }
 
-export interface Notification {
+export interface AppNotification {
     id: string;
-    data: NotificationData;
+    data: AppNotificationData;
     read_at: string | null;
     created_at: string;
 }
@@ -145,6 +148,8 @@ interface Employer {
     types_of_candidates: string[];
     phone: string;
     verification_status: string;
+    talent_profiles: TalentProfile[];
+    opening_title: OpeningTItle;
     educations: Education[];
 }
 

@@ -57,8 +57,10 @@ final class EmployerOnBoardingController extends Controller
 
         $employerProfile = $this->createEmployerProfileAction->handle($data, $user);
 
+        $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));
+
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$data['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_image');
         }
@@ -110,7 +112,7 @@ final class EmployerOnBoardingController extends Controller
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_JOIN_VERIFICATION->value,
-            'is_completed' => false,
+            'is_completed' => true,
         ]);
 
         $this->sendNotification($user, $company);
@@ -149,7 +151,7 @@ final class EmployerOnBoardingController extends Controller
         $company = $this->createCompanyAction->handle($data, $verification_status);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $company->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $company->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logo');
         }
@@ -158,7 +160,7 @@ final class EmployerOnBoardingController extends Controller
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_SETUP_VERIFICATION->value,
-            'is_completed' => false,
+            'is_completed' => true,
         ]);
 
         $this->sendNotification($user, $company);

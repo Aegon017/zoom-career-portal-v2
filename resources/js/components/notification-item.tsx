@@ -1,9 +1,9 @@
-import { Notification } from '@/types'
+import { AppNotification } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from './ui/button'
 import { Link, router } from '@inertiajs/react'
 
-const NotificationItem = ({ notification }: { notification: Notification }) => {
+const NotificationItem = ({ notification }: { notification: any }) => {
     const markNotificationAsRead = (notificationId: string) => {
         router.get(route('notifications.markAsRead', notificationId));
     }

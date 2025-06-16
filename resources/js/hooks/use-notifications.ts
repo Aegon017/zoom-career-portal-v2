@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { usePage } from '@inertiajs/react';
-import { SharedData } from '@/types';
-import { useEcho, useEchoNotification, useEchoPublic } from '@laravel/echo-react';
-import { log } from 'console';
-
+import { AppNotification, SharedData } from '@/types';
+import { useEchoNotification } from '@laravel/echo-react';
 
 export default function useNotifications() {
     const { user } = usePage<SharedData>().props.auth;
 
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notifications, setNotifications] = useState<AppNotification[]>([]);
     const { listen, leaveChannel } = useEchoNotification(
         `App.Models.User.${user.id}`,
-        (e: Notification) => {
-            setNotifications((prev: Notification[]) => [e, ...prev]);
+        (e: AppNotification) => {
+            setNotifications((prev: AppNotification[]) => [e, ...prev]);
         },
         'new-employer.registered',
     );

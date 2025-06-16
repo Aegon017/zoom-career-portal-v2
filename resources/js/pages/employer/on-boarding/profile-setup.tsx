@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { User } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { useForm } from "react-hook-form";
+import { string } from "zod";
 
 interface ProfileSetup {
     user: User,
@@ -93,7 +94,7 @@ const profileSetup = (props: ProfileSetup) => {
                                                     <FormControl>
                                                         <MultiSelect
                                                             options={talent_profiles.map((talent_profile) => ({
-                                                                value: talent_profile.name,
+                                                                value: String(talent_profile.id),
                                                                 label: talent_profile.name
                                                             }))}
                                                             value={field.value}

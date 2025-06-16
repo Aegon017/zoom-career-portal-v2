@@ -57,7 +57,10 @@ final class EmployerVerifyNotification extends Notification implements ShouldQue
             'employer_name' => $this->user->name,
             'company_name' => $this->company->company_name,
             'registered_at' => $this->user->employerProfile->created_at,
-            'url' => route('admin.employers.show', $this->company->id),
+            'url' => route('admin.employer.verify', [
+                "employer" =>  $this->user->id,
+                "company" => $this->company->id
+            ]),
             'type' => 'new_employer',
         ];
     }

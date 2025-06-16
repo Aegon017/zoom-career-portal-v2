@@ -71,7 +71,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function companies()
     {
         return $this->belongsToMany(Company::class, 'company_user')
-            ->withPivot('role')
+            ->withPivot(['status', 'role', 'verified_at'])
             ->withTimestamps();
     }
 

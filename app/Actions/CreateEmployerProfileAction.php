@@ -12,8 +12,7 @@ final class CreateEmployerProfileAction
     public function handle($data, User $user): EmployerProfile
     {
         return $user->employerProfile()->create([
-            'job_title_id' => $data['job_title_id'],
-            'types_of_candidates' => json_encode($data['types_of_candidates']),
+            'opening_title_id' => $data['job_title_id'],
             'phone' => $data['phone'],
         ]);
     }

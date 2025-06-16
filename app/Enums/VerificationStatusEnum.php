@@ -11,6 +11,7 @@ enum VerificationStatusEnum: string
     use EnumHelpers;
 
     case Pending = 'pending';
+    case Verified = 'verified';
     case Approved = 'approved';
     case Rejected = 'rejected';
 
@@ -18,6 +19,7 @@ enum VerificationStatusEnum: string
     {
         return match ($this) {
             self::Pending => 'Pending',
+            self::Verified => 'Verified',
             self::Approved => 'Approved',
             self::Rejected => 'Rejected',
         };

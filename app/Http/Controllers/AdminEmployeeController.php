@@ -14,10 +14,19 @@ final class AdminEmployeeController extends Controller
         dd();
     }
 
+    public function edit(string $id)
+    {
+        $user = User::find($id);
+
+        return Inertia::render('admin/employee/edit', [
+            'user' => $user
+        ]);
+    }
+
     public function show(string $id)
     {
         $user = User::find($id);
 
-        return Inertia::render('admin/employers/show');
+        return Inertia::render('admin/employee/show',);
     }
 }
