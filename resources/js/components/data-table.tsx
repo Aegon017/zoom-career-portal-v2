@@ -28,13 +28,15 @@ interface DataTableProps<TData, TValue> {
     data: TData[],
     listingName: string,
     createUrl: string
+    createButton?: boolean
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     listingName,
-    createUrl
+    createUrl,
+    createButton = true
 }: DataTableProps<TData, TValue>) {
     const [globalFilter, setGlobalFilter] = useState("");
     const table = useReactTable({
@@ -62,11 +64,13 @@ export function DataTable<TData, TValue>({
                     />
                 </div>
 
-                <div>
-                    <Link href={createUrl}>
-                        <Button>New {listingName}</Button>
-                    </Link>
-                </div>
+                {createButton && (
+                    <div>
+                        <Link href={createUrl}>
+                            <Button>New {listingName}</Button>
+                        </Link>
+                    </div>
+                )}
             </div>
             <div className="rounded-md border">
                 <Table>

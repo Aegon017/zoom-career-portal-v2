@@ -60,7 +60,7 @@ export interface User {
 
 
 export interface Company {
-    id: number;
+    id: string;
     company_name: string;
     company_logo: string;
     industry: string;
