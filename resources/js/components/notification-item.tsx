@@ -1,12 +1,8 @@
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from './ui/button'
-import { Link, router } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 
 const NotificationItem = ({ notification }: { notification: any }) => {
-    const markNotificationAsRead = (notificationId: string) => {
-        router.get(route('notifications.markAsRead', notificationId));
-    }
-
     const goToVerifcationPage = (notificationId: string, url: string) => {
         router.get(route('notifications.markAsRead', notificationId));
         router.get(url);
@@ -29,14 +25,13 @@ const NotificationItem = ({ notification }: { notification: any }) => {
                 </p>
 
                 <div className="flex gap-3 pt-1">
-                    <Link
-                        as="button"
-                        href={notification.url}
-                        onClick={() => markNotificationAsRead(notification.id)}
-                        className="text-xs p-0 h-auto text-secondary-foreground font-medium hover:underline"
+                    <Button
+                        variant="link"
+                        onClick={() => goToVerifcationPage(notification.id, notification.data.url)}
+                        className="text-xs p-0 h-auto text-primary font-medium hover:underline"
                     >
                         View details
-                    </Link>
+                    </Button>
                 </div>
             </div>
 

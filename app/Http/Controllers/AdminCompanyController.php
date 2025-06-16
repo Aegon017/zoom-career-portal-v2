@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OperationsEnum;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,15 +23,7 @@ class AdminCompanyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $operation = OperationsEnum::Create;
-
-        return Inertia::render('admin/companies/create-or-edit-company', [
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label()
-        ]);
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -53,17 +44,7 @@ class AdminCompanyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $company = Company::find($id);
-        $operation = OperationsEnum::Edit;
-
-        return Inertia::render('admin/companies/create-or-edit-company', [
-            'company' => $company,
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label()
-        ]);
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.

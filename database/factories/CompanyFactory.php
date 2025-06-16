@@ -23,7 +23,6 @@ final class CompanyFactory extends Factory
     {
         return [
             'company_name' => fake()->company(),
-            'company_logo' => fake()->imageUrl(640, 480, 'business'),
             'industry' => fake()->randomElement(['Technology', 'Healthcare', 'Finance', 'Education', 'Manufacturing']),
             'company_website' => fake()->url(),
             'company_description' => fake()->paragraph(3),
