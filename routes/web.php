@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\InboxController;
+use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\FollowController;
@@ -85,6 +86,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
         Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
         Route::get('/jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('jobs.applications');
+
+        Route::prefix('/jobseekers')->name('jobseekers.')->group(function () {
+            Route::get('/', [JobseekerController::class, 'index'])->name('index');
+        });
     });
 
     // jobseeker routes

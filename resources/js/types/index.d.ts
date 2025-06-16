@@ -54,12 +54,6 @@ export interface User {
     [key: string]: unknown;
 }
 
-// export interface EmployerProfile {
-//     profile_image: string,
-//     // banner: string
-// }
-
-
 export interface Company {
     id: string;
     company_name: string;
@@ -197,5 +191,10 @@ export interface WorkExperience {
     created_at?: string;
     updated_at?: string;
     company: Company;
+}
+
+export interface Jobseeker {
+    id: string;
+    name: string;
 }
 

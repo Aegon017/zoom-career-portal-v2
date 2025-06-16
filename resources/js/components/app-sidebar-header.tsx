@@ -5,7 +5,6 @@ import { Bell } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 import NotificationItem from './notification-item';
-import useNotifications from '@/hooks/use-notifications';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
