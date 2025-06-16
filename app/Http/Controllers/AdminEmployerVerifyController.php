@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\VerificationStatusEnum;
+use App\Mail\Employer\VerificationUpdateMail;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class AdminEmployerVerifyController extends Controller
@@ -39,7 +43,12 @@ class AdminEmployerVerifyController extends Controller
         $company->save();
         $pivotData = $user->companies->first()?->pivot;
         $pivotData->status = $data['status'];
+        if ($pivotData->status === VerificationStatusEnum::Verified->value) {
+            $pivotData->verified_at = now();
+            Mail::to($user)->send(new VerificationUpdateMail($user, $company));
+        }
         $pivotData->save();
+
         return back()->with('success', 'Verification status updated successfully');
     }
 }

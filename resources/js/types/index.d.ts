@@ -183,15 +183,6 @@ interface Message {
     isUnread?: boolean
 }
 
-export interface Notification {
-    message: string;
-    employer_name: string;
-    company_name: string;
-    registered_at: string;
-    url: string;
-    type: 'new_employer' | string;
-}
-
 export interface WorkExperience {
     id: number;
     user_id?: number;

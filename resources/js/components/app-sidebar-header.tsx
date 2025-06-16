@@ -6,9 +6,17 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 import NotificationItem from './notification-item';
 import useNotifications from '@/hooks/use-notifications';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
-    const { notifications } = useNotifications();
+    const [notifications, setNotifications] = useState<AppNotification[]>([]);
+
+    useEffect(() => {
+        axios.get('/notifications')
+            .then((res) => setNotifications(res.data.map((n: Notification) => n)))
+            .catch((err) => console.error('Error fetching notifications', err));
+    }, []);
 
     return (
         <header className="border-sidebar-border/50 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
