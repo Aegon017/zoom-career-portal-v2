@@ -18,7 +18,7 @@ final class JobseekerDashboardController extends Controller
 
     public function index(): Response
     {
-        $jobs = Opening::where('verification_status', VerificationStatusEnum::Approved->value)
+        $jobs = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
             ->latest()
             ->with('company')

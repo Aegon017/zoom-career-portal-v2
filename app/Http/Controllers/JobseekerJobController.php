@@ -19,19 +19,19 @@ final class JobseekerJobController extends Controller
     public function index(Request $request): Response
     {
         $query = Opening::query()
-            ->where('verification_status', VerificationStatusEnum::Approved->value)
+            ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
             ->with('company');
 
         if ($request->filled('company')) {
             $query->whereHas(
                 'company',
-                fn ($q) => $q->where('company_name', 'like', '%'.$request->company.'%')
+                fn($q) => $q->where('company_name', 'like', '%' . $request->company . '%')
             );
         }
 
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%'.$request->job_title.'%');
+            $query->where('title', 'like', '%' . $request->job_title . '%');
         }
 
         if ($request->filled('employment_types')) {
@@ -61,9 +61,9 @@ final class JobseekerJobController extends Controller
         $job = $this->addSaveStatusToJob($job, $user);
         $job = $this->addApplicationStatusToJob($job, $user);
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
             ->where('id', '!=', $job->id)
-            ->where('verification_status', VerificationStatusEnum::Approved->value)
+            ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
             ->with('company')
             ->latest()

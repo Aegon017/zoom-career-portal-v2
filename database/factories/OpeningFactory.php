@@ -9,15 +9,17 @@ use App\Enums\EmploymentTypeEnum;
 use App\Enums\JobStatusEnum;
 use App\Enums\ModerationStatusEnum;
 use App\Enums\SalaryUnitEnum;
+use App\Enums\VerificationStatusEnum;
 use App\Enums\WorkModelEnum;
 use App\Models\Company;
 use App\Models\Employer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\JobPosting>
  */
-final class JobPostingFactory extends Factory
+final class OpeningFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -28,7 +30,7 @@ final class JobPostingFactory extends Factory
     {
         return [
             'company_id' => Company::factory(),
-            'employer_id' => Employer::factory(),
+            'user_id' => User::factory(),
             'title' => fake()->jobTitle(),
             'employment_type' => fake()->randomElement(EmploymentTypeEnum::values()),
             'work_model' => fake()->randomElement(WorkModelEnum::values()),
@@ -42,8 +44,8 @@ final class JobPostingFactory extends Factory
             'country' => fake()->country(),
             'published_at' => fake()->dateTimeBetween('-1 month', 'now'),
             'expires_at' => fake()->dateTimeBetween('now', '+2 months'),
-            'status' => fake()->randomElement(JobStatusEnum::values()),
-            'moderation_status' => fake()->randomElement(ModerationStatusEnum::values()),
+            'status' => 'published',
+            'verification_status' => 'verified',
         ];
     }
 }

@@ -25,7 +25,7 @@ const Explore = ({ openings }: ExploreProps) => {
                     <div className="zc-jobs-by-interest-list">
                         <div className="row">
                             {openings.map((opening) => (
-                                <div className="col-lg-4 col-md-6 col-sm-12 mb-3 p-0" key={opening.id}>
+                                <div className="col-lg-4 col-md-6 col-sm-12 mb-3" key={opening.id}>
                                     <OpeningItem opening={opening} />
                                 </div>
                             ))}
