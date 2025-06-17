@@ -199,3 +199,8 @@ export interface Jobseeker {
     name: string;
 }
 
+export interface ApplicationStatus {
+    value: string;
+    label: string;
+}
+

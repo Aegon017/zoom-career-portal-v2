@@ -1,11 +1,7 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Mail\Application;
 
-namespace App\Mail\Employer;
-
-use App\Models\Company;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-final class VerificationUpdateMail extends Mailable implements ShouldQueue
+class RejectedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,8 +17,9 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        public User $user,
-        public Company $company
+        public $name,
+        public $job_title,
+        public $company_name
     ) {}
 
     /**
@@ -31,7 +28,7 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verification Update Mail',
+            subject: "Application Update from Zoomingcareer for {$this->job_title} position at {$this->company_name}"
         );
     }
 
@@ -41,14 +38,7 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.employer.verification-update-mail',
-            with: [
-                'employer_name' => $this->user->name,
-                'status' => $this->user->companies->first()?->pivot->status,
-                'status_text' => ucfirst($this->user->companies->first()?->pivot->status),
-                'company_name' => $this->company->company_name,
-                'updated_at' => now()->format('F j, Y'),
-            ]
+            view: 'mails.application.rejected-mail',
         );
     }
 

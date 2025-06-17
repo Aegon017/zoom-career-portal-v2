@@ -28,7 +28,7 @@ final class JobApplicationController extends Controller
             'user_id' => $user->id,
             'opening_id' => $jobId,
             'cover_letter' => $request->cover_letter,
-            'status' => JobApplicationStatusEnum::Pending->value,
+            'status' => JobApplicationStatusEnum::Applied->value,
         ]);
 
         try {
@@ -44,7 +44,7 @@ final class JobApplicationController extends Controller
                     ->addMedia(storage_path("app/public/{$request->resume}"))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
-                $user->addMedia(storage_path('app/public/'.$request->resume))
+                $user->addMedia(storage_path('app/public/' . $request->resume))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
             } else {

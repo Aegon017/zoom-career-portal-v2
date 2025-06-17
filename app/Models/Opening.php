@@ -65,4 +65,14 @@ final class Opening extends Model
     {
         return $this->hasMany(OpeningApplication::class);
     }
+
+    public function shortlists(): HasMany
+    {
+        return $this->hasMany(Shortlist::class);
+    }
+
+    public function shortlistedCandidates(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'shortlists', 'opening_id', 'user_id')->withTimestamps();
+    }
 }

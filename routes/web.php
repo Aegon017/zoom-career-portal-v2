@@ -26,6 +26,7 @@ use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ShortlistController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/follow', [FollowController::class, 'follow'])->name('follow');
     Route::post('/unfollow', [FollowController::class, 'unfollow'])->name('unfollow');
     Route::post('/follow/toggle', [FollowController::class, 'toggle'])->middleware('auth')->name('follow.toggle');
+
+    Route::prefix('jobs/{job}')->name('jobs.')->group(function () {
+        Route::get('shortlists', [ShortlistController::class, 'index'])->name('shortlists.index');
+        Route::post('shortlists', [ShortlistController::class, 'store'])->name('shortlists.store');
+        Route::delete('shortlists/{jobSeeker}', [ShortlistController::class, 'destroy'])->name('shortlists');
+    });
 
     // notification routes
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
@@ -94,6 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::prefix('/applications')->name('applications.')->group(function () {
             Route::get('/', [ApplicationsController::class, 'index'])->name('index');
+            Route::post('/', [ApplicationsController::class, 'store'])->name('store');
         });
     });
 
@@ -135,5 +143,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

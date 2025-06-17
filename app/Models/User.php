@@ -137,4 +137,9 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     {
         return $this->morphToMany(self::class, 'followable', 'follows', 'followable_id', 'follower_id');
     }
+
+    public function shortlists(): HasMany
+    {
+        return $this->hasMany(Shortlist::class);
+    }
 }
