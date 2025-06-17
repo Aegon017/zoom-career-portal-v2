@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AdminCompanyController extends Controller
+final class AdminCompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +18,7 @@ class AdminCompanyController extends Controller
         $companies = Company::query()->paginate(10);
 
         return Inertia::render('admin/companies/companies-listing', [
-            'companies' => $companies
+            'companies' => $companies,
         ]);
     }
 

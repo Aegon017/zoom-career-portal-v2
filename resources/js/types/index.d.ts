@@ -125,11 +125,12 @@ export interface Opening {
 
 interface Application {
     id: number;
-    job_posting_id: number;
-    jobseeker_id: number;
+    opening_id: number;
+    user_id: number;
     status: string;
     cover_letter: string;
     resume: string;
+    user: User;
     created_at: string;
     updated_at: string;
 }

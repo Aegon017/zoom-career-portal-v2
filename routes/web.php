@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminCompanyController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\AdminEmployerVerifyController;
+use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\EmployerOnBoardingController;
 use App\Http\Controllers\Employer\InboxController;
@@ -34,7 +35,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::get('/account/verification/notice', function () {
+Route::middleware('employer.onboarding')->get('/account/verification/notice', function () {
     return Inertia::render('account-verification-notice');
 })->name('account.verification.notice');
 
@@ -90,6 +91,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function () {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
         });
+
+        Route::prefix('/applications')->name('applications.')->group(function () {
+            Route::get('/', [ApplicationsController::class, 'index'])->name('index');
+        });
     });
 
     // jobseeker routes
@@ -130,5 +135,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

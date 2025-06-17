@@ -6,13 +6,9 @@ namespace Database\Factories;
 
 use App\Enums\CurrencyEnum;
 use App\Enums\EmploymentTypeEnum;
-use App\Enums\JobStatusEnum;
-use App\Enums\ModerationStatusEnum;
 use App\Enums\SalaryUnitEnum;
-use App\Enums\VerificationStatusEnum;
 use App\Enums\WorkModelEnum;
 use App\Models\Company;
-use App\Models\Employer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

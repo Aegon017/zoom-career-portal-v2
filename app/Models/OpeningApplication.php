@@ -15,6 +15,13 @@ final class OpeningApplication extends Model implements HasMedia
 
     protected $fillable = ['user_id', 'opening_id', 'cover_letter', 'status'];
 
+    protected $appends = ['resume'];
+
+    public function getResumeAttribute()
+    {
+        return $this->getFirstMediaUrl('resume');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -27,6 +34,6 @@ final class OpeningApplication extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('resume')->singleFile();
+        $this->addMediaCollection('resumes')->singleFile();
     }
 }

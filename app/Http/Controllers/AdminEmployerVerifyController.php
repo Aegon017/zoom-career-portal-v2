@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\VerificationStatusEnum;
@@ -7,11 +9,10 @@ use App\Mail\Employer\VerificationUpdateMail;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
-class AdminEmployerVerifyController extends Controller
+final class AdminEmployerVerifyController extends Controller
 {
     public function verify(Request $request)
     {
@@ -24,7 +25,7 @@ class AdminEmployerVerifyController extends Controller
             'user' => $user,
             'employer_profile' => $employer_profile,
             'company' => $company,
-            'pivot' => $pivotData
+            'pivot' => $pivotData,
         ]);
     }
 

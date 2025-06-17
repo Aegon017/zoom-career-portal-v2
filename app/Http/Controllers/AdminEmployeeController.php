@@ -19,7 +19,7 @@ final class AdminEmployeeController extends Controller
         $user = User::find($id);
 
         return Inertia::render('admin/employee/edit', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -27,6 +27,6 @@ final class AdminEmployeeController extends Controller
     {
         $user = User::find($id);
 
-        return Inertia::render('admin/employee/show',);
+        return Inertia::render('admin/employee/show');
     }
 }

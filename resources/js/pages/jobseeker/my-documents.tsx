@@ -42,7 +42,6 @@ export default function MyDocuments({ resumes }: { resumes: Resume[] }) {
         router.post("/jobseeker/resumes", formData, {
             forceFormData: true,
             onSuccess: () => {
-                toast.success("Resume uploaded");
                 reset();
             },
             onError: () => {
