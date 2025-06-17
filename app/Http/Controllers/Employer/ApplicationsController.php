@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Employer;
 
 use App\Enums\JobApplicationStatusEnum;
-use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Mail\Application\RegectedMail;
 use App\Mail\Application\RejectedMail;
 use App\Mail\Application\ShortlistedMail;
-use App\Mail\Employer\Shortlisted;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
 use Illuminate\Http\Request;
@@ -35,7 +32,7 @@ final class ApplicationsController extends Controller
             'jobs' => $jobs,
             'applications' => $applications,
             'job' => $job,
-            'statuses' => $statuses
+            'statuses' => $statuses,
         ]);
     }
 
@@ -43,7 +40,7 @@ final class ApplicationsController extends Controller
     {
         $data = $request->validate([
             'applicationId' => ['required', 'exists:opening_applications,id'],
-            'status' => ['required', Rule::enum(JobApplicationStatusEnum::class)]
+            'status' => ['required', Rule::enum(JobApplicationStatusEnum::class)],
         ]);
 
         $application = OpeningApplication::find($data['applicationId']);

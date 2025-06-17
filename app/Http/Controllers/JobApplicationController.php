@@ -44,7 +44,7 @@ final class JobApplicationController extends Controller
                     ->addMedia(storage_path("app/public/{$request->resume}"))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
-                $user->addMedia(storage_path('app/public/' . $request->resume))
+                $user->addMedia(storage_path('app/public/'.$request->resume))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
             } else {

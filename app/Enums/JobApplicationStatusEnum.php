@@ -12,9 +12,9 @@ enum JobApplicationStatusEnum: string
 
     case Applied = 'applied';
     case Shortlisted = 'shortlisted';
-        // case UnderReview = 'under_review';
-        // case InterviewScheduled = 'interview_scheduled';
-        // case Offered = 'offered';
+    // case UnderReview = 'under_review';
+    // case InterviewScheduled = 'interview_scheduled';
+    // case Offered = 'offered';
     case Rejected = 'rejected';
 
     public function label(): string

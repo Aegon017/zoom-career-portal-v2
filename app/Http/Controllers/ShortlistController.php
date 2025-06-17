@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Opening;
 use App\Models\Shortlist;
 use Illuminate\Http\Request;
 
-class ShortlistController extends Controller
+final class ShortlistController extends Controller
 {
     public function index()
     {

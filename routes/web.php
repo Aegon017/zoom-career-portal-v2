@@ -143,5 +143,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
