@@ -59,19 +59,19 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                     {userNav.isOpen && (
                         <div className="zc-dropdown-menu show">
                             <Link href={route('jobseeker.profile.index')} className="zc-dropdown-item">
-                                <i className="fas fa-user"></i>
+                                <i className="fa-solid fa-id-badge me-2"></i>
                                 Profile
                             </Link>
                             <Link href={route('jobseeker.jobs.applied.index')} className="zc-dropdown-item">
-                                <i className="fas fa-user"></i>
+                                <i className="fa-solid fa-briefcase me-2"></i>
                                 My Jobs
                             </Link>
                             <Link href={route('jobseeker.resumes.index')} className="zc-dropdown-item">
-                                <i className="fas fa-user"></i>
+                                <i className="fa-solid fa-file me-2"></i>
                                 My Documents
                             </Link>
                             <a href="#" className="zc-dropdown-item">
-                                <i className="fas fa-user"></i>
+                                <i className="fa-solid fa-spa me-2"></i>
                                 My Career Interests
                             </a>
                             <Link
@@ -81,7 +81,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                                 as="button"
                                 onClick={handleLogout}
                             >
-                                <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                                <i className="fa-solid fa-right-from-bracket me-2"></i>
                                 Logout
                             </Link>
                         </div>
