@@ -56,7 +56,7 @@ export interface User {
 }
 
 export interface Company {
-    id: string;
+    id: number;
     company_name: string;
     company_logo: string;
     industry: string;

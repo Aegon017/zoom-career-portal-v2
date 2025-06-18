@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AdminCompanyController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\ApplicationsController;
@@ -21,7 +21,6 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
-use App\Http\Controllers\Jobseeker\JobseekerProfileController;
 use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
@@ -136,7 +135,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
         Route::resource('/employee', AdminEmployeeController::class);
-        Route::resource('/companies', AdminCompanyController::class);
+        Route::resource('/companies', CompanyController::class);
         Route::get('/employer/verify', [AdminEmployerVerifyController::class, 'verify'])->name('employer.verify');
         Route::post('/employer/verify', [AdminEmployerVerifyController::class, 'store'])->name('employer.verify.store');
     });
@@ -146,5 +145,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
