@@ -26,26 +26,6 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Model::shouldBeStrict();
-        Model::unguard();
-        Vite::useAggressivePrefetching();
         JsonResource::withoutWrapping();
-
-        RedirectIfAuthenticated::redirectUsing(function () {
-            $user = Auth::user();
-
-            if ($user) {
-                $role = $user->getRoleNames()->first();
-
-                return match ($role) {
-                    'super_admin' => route('admin.dashboard'),
-                    'jobseeker' => route('jobseeker.explore'),
-                    'employer' => route('employer.dashboard'),
-                    default => '/',
-                };
-            }
-
-            return '/';
-        });
     }
 }

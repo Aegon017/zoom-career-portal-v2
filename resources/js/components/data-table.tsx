@@ -28,7 +28,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[],
     listingName: string,
     createUrl: string
-    createButton?: boolean
+    hasCreate?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -36,7 +36,7 @@ export function DataTable<TData, TValue>({
     data,
     listingName,
     createUrl,
-    createButton = true
+    hasCreate = true
 }: DataTableProps<TData, TValue>) {
     const [globalFilter, setGlobalFilter] = useState("");
     const table = useReactTable({
@@ -64,7 +64,7 @@ export function DataTable<TData, TValue>({
                     />
                 </div>
 
-                {createButton && (
+                {hasCreate && (
                     <div>
                         <Link href={createUrl}>
                             <Button>New {listingName}</Button>

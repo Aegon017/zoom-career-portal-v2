@@ -65,6 +65,7 @@ final class RemoteLoginController extends Controller
         );
 
         $user->jobSeekerProfile()->create();
+
         return $user;
     }
 
