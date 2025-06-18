@@ -26,7 +26,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Model::shouldBeStrict();
+        // Model::shouldBeStrict();
         Model::unguard();
         Vite::useAggressivePrefetching();
         JsonResource::withoutWrapping();

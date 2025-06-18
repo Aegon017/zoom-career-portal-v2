@@ -55,6 +55,9 @@ final class EmployerOnBoardingController extends Controller
             'phone' => 'required|string|max:20',
         ]);
 
+        $user->phone = $data['phone'];
+        $user->save();
+
         $employerProfile = $this->createEmployerProfileAction->handle($data, $user);
 
         $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));

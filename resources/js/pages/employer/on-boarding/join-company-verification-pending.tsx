@@ -1,90 +1,146 @@
 import { AppHeader } from "@/components/employer/employer-header"
-import { Company } from "@/types"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { Company } from "@/types"
 import { Head } from "@inertiajs/react"
-import { Building2, Clock, LoaderPinwheel, Mail } from "lucide-react"
+import { Building2, Clock, CheckCircle, Mail, Sparkles } from "lucide-react"
 
 const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
     return (
         <>
-            <Head title="Join company verification pending" />
+            <Head title="Join Company Verification Pending" />
             <AppHeader />
-            <div className="flex flex-col items-center justify-center min-h-screen px-6 py-16 bg-gradient-to-br from-slate-50 via-white to-blue-50">
-                <div className="w-full max-w-4xl space-y-10 text-center">
+            <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-muted/40">
+                <div className="flex flex-col items-center justify-center min-h-screen px-6 py-16">
+                    <div className="w-full max-w-4xl space-y-12 text-center">
+                        {/* Animated Loader Section */}
+                        <div className="relative mx-auto w-32 h-32">
+                            {/* Outer rotating rings */}
+                            <div
+                                className="absolute inset-0 rounded-full border-4 border-muted animate-spin"
+                                style={{ animationDuration: "3s" }}
+                            />
+                            <div
+                                className="absolute inset-2 rounded-full border-2 border-dashed border-muted-foreground/30 animate-spin"
+                                style={{ animationDuration: "2s", animationDirection: "reverse" }}
+                            />
 
-                    <div className="relative mx-auto w-24 h-24">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-100 to-amber-100 animate-pulse opacity-60" />
-                        <div className="absolute inset-2 rounded-full border-2 border-orange-200" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <LoaderPinwheel className="w-8 h-8 md:w-20 md:h-20 text-orange-500 animate-spin drop-shadow-sm" />
-                        </div>
-                        <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 animate-bounce delay-300">
-                            <Building2 className="w-4 h-4 text-green-600" />
-                        </div>
-                        <div className="absolute -bottom-2 -left-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 animate-bounce delay-700">
-                            <Mail className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div className="absolute top-1/2 -left-5 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 animate-bounce delay-500">
-                            <Clock className="w-4 h-4 text-purple-700" />
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text leading-tight tracking-tight">
-                            Request Under Review
-                        </h1>
-                        <div className="mx-auto h-1 w-24 rounded-full bg-gradient-to-r from-orange-400 to-amber-400" />
-                    </div>
-
-                    <div className="space-y-6 rounded-2xl border border-white/20 bg-white/80 p-8 md:p-10 shadow-xl backdrop-blur-sm text-left max-w-2xl mx-auto">
-                        <div className="flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-orange-200 to-amber-200 flex items-center justify-center">
-                                <Building2 className="w-7 h-7 text-orange-600" />
+                            {/* Center icon */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg">
+                                    <CheckCircle className="w-8 h-8 text-primary-foreground animate-pulse" />
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900">{company.company_name}</h2>
-                                <p className="text-sm text-gray-700 uppercase tracking-wide">Company</p>
+
+                            {/* Floating icons */}
+                            <div
+                                className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 shadow-lg animate-bounce"
+                                style={{ animationDelay: "0.2s" }}
+                            >
+                                <Building2 className="w-4 h-4 text-white" />
+                            </div>
+                            <div
+                                className="absolute -bottom-3 -left-3 flex h-8 w-8 items-center justify-center rounded-full bg-violet-500 shadow-lg animate-bounce"
+                                style={{ animationDelay: "0.6s" }}
+                            >
+                                <Mail className="w-4 h-4 text-white" />
+                            </div>
+                            <div
+                                className="absolute top-1/2 -left-6 flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 shadow-lg animate-bounce"
+                                style={{ animationDelay: "0.4s" }}
+                            >
+                                <Clock className="w-4 h-4 text-white" />
+                            </div>
+                            <div
+                                className="absolute top-1/2 -right-6 flex h-8 w-8 items-center justify-center rounded-full bg-pink-500 shadow-lg animate-bounce"
+                                style={{ animationDelay: "0.8s" }}
+                            >
+                                <Sparkles className="w-4 h-4 text-white" />
                             </div>
                         </div>
-                        <div className="rounded-xl border border-orange-100 bg-gradient-to-r from-orange-50 to-amber-50 p-4">
-                            <p className="text-orange-700 font-semibold text-base">
-                                Your membership request is currently being reviewed.
-                            </p>
-                        </div>
-                    </div>
 
-                    <div className="space-y-8 max-w-3xl mx-auto text-gray-700 leading-relaxed">
-                        <p className="text-base md:text-lg font-semibold text-gray-900">
-                            Your request to join <span className="font-bold text-gray-900">{company.company_name}</span> has been submitted successfully.
-                        </p>
-
-                        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
-                            <p className="text-green-700 text-sm md:text-base text-left">
-                                <span className="mb-2 flex gap-2 font-semibold items-center">
-                                    <Mail className="w-4 h-4" />
-                                    What happens next?
-                                </span>
-                                We will notify you by email once your membership is approved by the company administrator.
+                        {/* Header Section */}
+                        <div className="space-y-6">
+                            <div className="space-y-4">
+                                <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">Request Under Review</h1>
+                                <div className="mx-auto h-1.5 w-32 rounded-full bg-primary" />
+                            </div>
+                            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                                Your membership request has been submitted successfully and is currently being processed.
                             </p>
                         </div>
 
-                        <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
-                            <p className="text-blue-700 text-sm md:text-base text-left">
-                                <span className="mb-2 flex gap-2 font-semibold items-center">
-                                    <Clock className="w-4 h-4" />
-                                    Review Timeline:
-                                </span>
-                                Most requests are reviewed within 1–3 business days.
-                            </p>
-                        </div>
-                    </div>
+                        {/* Company Card */}
+                        <div className="max-w-2xl mx-auto">
+                            <Card className="border-border/60 bg-card/80 backdrop-blur-sm shadow-xl">
+                                <CardContent className="p-8 md:p-10">
+                                    <div className="flex items-center gap-6 mb-6">
+                                        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
+                                            <Building2 className="w-8 h-8 text-primary-foreground" />
+                                        </div>
+                                        <div className="text-left">
+                                            <h2 className="text-2xl font-bold text-card-foreground mb-1">{company.company_name}</h2>
+                                            <Badge variant="secondary" className="text-xs font-medium uppercase tracking-wider">
+                                                Company
+                                            </Badge>
+                                        </div>
+                                    </div>
 
-                    <div className="flex items-center justify-center space-x-4 pt-4">
-                        <div className="flex space-x-2">
-                            <div className="h-3 w-3 animate-pulse rounded-full bg-orange-400" />
-                            <div className="h-3 w-3 animate-pulse rounded-full bg-orange-300 delay-150" />
-                            <div className="h-3 w-3 animate-pulse rounded-full bg-orange-200 delay-300" />
+                                    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+                                        <p className="text-primary font-semibold text-base leading-relaxed">
+                                            Your membership request is currently being reviewed by the company administrator.
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
-                        <span className="text-sm font-medium text-gray-500">Processing your request</span>
+
+                        {/* Information Cards */}
+                        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                            <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 shadow-lg">
+                                <CardContent className="p-6">
+                                    <div className="flex items-start gap-4 text-left">
+                                        <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                                            <Mail className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-emerald-900 dark:text-emerald-100 mb-2 text-lg">
+                                                What happens next?
+                                            </h3>
+                                            <p className="text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                                                We'll notify you by email once your membership is approved by the company administrator.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 shadow-lg">
+                                <CardContent className="p-6">
+                                    <div className="flex items-start gap-4 text-left">
+                                        <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                                            <Clock className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-amber-900 dark:text-amber-100 mb-2 text-lg">Review Timeline</h3>
+                                            <p className="text-amber-800 dark:text-amber-200 leading-relaxed">
+                                                Most requests are reviewed within 1–3 business days.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Status Indicator */}
+                        <div className="flex items-center justify-center space-x-4 pt-8">
+                            <div className="flex space-x-3">
+                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary" />
+                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/70" style={{ animationDelay: "0.2s" }} />
+                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/40" style={{ animationDelay: "0.4s" }} />
+                            </div>
+                            <span className="text-base font-medium text-muted-foreground">Processing your request</span>
+                        </div>
                     </div>
                 </div>
             </div>
