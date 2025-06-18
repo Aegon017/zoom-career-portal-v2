@@ -41,6 +41,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    phone?: string;
     avatar?: string;
     password?: string,
     headline?: string,
@@ -202,5 +203,21 @@ export interface Jobseeker {
 export interface ApplicationStatus {
     value: string;
     label: string;
+}
+
+export interface JobSeekerProfile {
+    user_id: number;
+    location: string;
+    experience: string | null;
+    notice_period: string;
+    summary: string;
+    gender: 'male' | 'female' | 'other';
+    date_of_birth: string;
+    address: string;
+    marital_status: 'single' | 'married' | 'divorced' | 'widowed';
+    work_permit: string;
+    differently_abled: boolean;
+    created_at: string,
+    updated_at: string | null
 }
 

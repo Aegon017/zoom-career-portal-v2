@@ -1,117 +1,25 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/jobseeker-layout';
-export default function Profile() {
-    const candidateData = {
-        name: "Rohan Mehta",
-        profileImage: '',
-        designation: "IT Infrastructure Specialist",
-        company: "TechNova Systems",
-        updatedDate: "15 May, 2025",
-        location: "Pune, INDIA",
-        phone: "9823456789",
-        email: "rohan.mehta@technova.com",
-        experience: "8 Years 2 Months",
-        noticePeriod: "Serving 2 weeks notice",
-        summary: "Skilled IT Infrastructure Specialist with extensive experience in managing enterprise networks, server maintenance, and IT security compliance...",
-        resume: {
-            fileName: "rohanmehta_resume.pdf",
-            uploadedDate: "May 18, 2025"
-        },
-        skills: [
-            "Network Configuration & Management",
-            "Server Virtualization",
-            "Disaster Recovery Planning",
-            "Firewall and Security Protocols",
-            "Cloud Infrastructure (AWS, Azure)",
-            "ITIL Process Management",
-            "Hardware Troubleshooting"
-        ],
-        employment: [
-            {
-                title: "IT Infrastructure Specialist",
-                company: "TechNova Systems, INDIA",
-                duration: "Feb 2020 to Present",
-                summary: "Leading infrastructure modernization projects, managing on-premise and cloud environments..."
-            },
-            {
-                title: "System Administrator",
-                company: "Infosync Pvt Ltd, INDIA",
-                duration: "Jan 2017 to Jan 2020",
-                summary: "Maintained corporate IT systems, managed internal networks and ensured cybersecurity measures..."
-            }
-        ],
-        education: [
-            {
-                course: "M.Sc. in Information Technology",
-                institution: "Symbiosis Institute of Computer Studies & Research",
-                year: "2016",
-                type: "Full Time",
-                summary: "Postgraduate degree focused on advanced IT management, data systems, and cloud computing..."
-            },
-            {
-                course: "B.Sc. in Computer Science",
-                institution: "Fergusson College, Pune",
-                year: "2014",
-                type: "Full Time",
-                summary: "Undergraduate program with focus on computer science fundamentals and programming..."
-            }
-        ],
-        certifications: [
-            {
-                name: "AWS Certified Solutions Architect – Associate",
-                validity: "Valid till Dec 2026"
-            },
-            {
-                name: "CompTIA Network+",
-                validity: "Valid till Jan 2027"
-            }
-        ],
-        personalDetails: {
-            gender: "Male",
-            dob: "22 Aug 1993",
-            address: "Model Colony, Shivajinagar, Pune - 411016, Maharashtra, India",
-            maritalStatus: "Married",
-            workPermit: "India",
-            differentlyAbled: "No"
-        },
-        languages: [
-            {
-                name: "English",
-                proficiency: "Proficient",
-                read: true,
-                write: true,
-                speak: true
-            },
-            {
-                name: "Hindi",
-                proficiency: "Fluent",
-                read: true,
-                write: true,
-                speak: true
-            },
-            {
-                name: "Marathi",
-                proficiency: "Conversational",
-                read: true,
-                write: false,
-                speak: true
-            }
-        ],
-        followers: 5,
-        following: 25
-    };
+import PopupModal from '@/components/popup-modal';
+import ProfileModal from '@/components/jobseeker/profile-modal';
+import { JobSeekerProfile, User } from '@/types';
+import { format } from 'date-fns';
+import SummaryModal from '@/components/jobseeker/summary-modal';
 
 
-    const [activePopup, setActivePopup] = useState("");
-    const handleOpen = (popup: string, e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        setActivePopup((prevPopup) => (prevPopup === popup ? "" : popup));
-    };
-    const handleClose = (e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
-        e.preventDefault();
-        setActivePopup("");
-    };
+type ModalName = 'profile' | 'summary' | 'experience' | null;
+
+interface Props {
+    user: User
+    jobseeker_profile: JobSeekerProfile
+}
+
+export default function Profile({ user, jobseeker_profile }: Props) {
+    const [activeModal, setActiveModal] = useState<ModalName>(null);
+
+    const openModal = (modal: ModalName) => setActiveModal(modal);
+    const closeModal = () => setActiveModal(null);
 
     return (
         <AppLayout>
@@ -123,49 +31,73 @@ export default function Profile() {
                             <div className="top-cover"></div>
                             <div className="candidate-basic-details d-block d-sm-flex">
                                 <div className="candidate-image p-3">
-                                    <img src={candidateData.profileImage} alt="Profile" />
+                                    <img src={user.profile_image} alt="Profile" />
                                 </div>
                                 <div className="candidate-info p-3">
                                     <div className="zc-row d-block d-md-flex justify-content-between bb-style-2 pb-3">
                                         <div className="left-col mb-2 mb-md-0">
                                             <div className="name">
-                                                <h2>{candidateData.name}</h2>
-                                                <a href="#" className="zc-btn-edit" id="cb-edit">
+                                                <h2>{user.name}</h2>
+                                                <a href="#" className="zc-btn-edit" id="cb-edit" onClick={() => openModal('profile')}>
                                                     <i className="fa-solid fa-pencil"></i>
                                                 </a>
                                             </div>
                                             <div className="d-block">
                                                 <div className="current-emp-info">
-                                                    <h4 className="designation">{candidateData.designation}</h4>
-                                                    <p className="company-name">at {candidateData.company}</p>
+                                                    <h4 className="designation">{ }</h4>
+                                                    <p className="company-name">at { }</p>
                                                 </div>
                                                 <div className="profile-updated-date">
-                                                    Profile last updated - <span className="date">{candidateData.updatedDate}</span>
+                                                    Profile last updated - <span className="date">{jobseeker_profile?.updated_at && format(new Date(jobseeker_profile.updated_at), "dd MMM yyyy")}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="right-col follower-block d-flex align-items-start gap-2">
                                             <div className="icon-text">
-                                                <a href="#"><span>{candidateData.followers}</span> followers</a>
+                                                <a href="#"><span>{0}</span> followers</a>
                                             </div>
                                             <div className="icon-text">
-                                                <a href="#"><span>{candidateData.following}</span> following</a>
+                                                <a href="#"><span>{1}</span> following</a>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="other-details">
                                         <ul>
-                                            <li><i className="fa-solid fa-location-dot"></i>{candidateData.location}</li>
-                                            <li><i className="fa-solid fa-phone"></i>{candidateData.phone}</li>
-                                            <li><i className="fa-solid fa-envelope"></i>{candidateData.email}</li>
-                                            <li><i className="fa-solid fa-briefcase"></i>{candidateData.experience}</li>
-                                            <li><i className="fa-solid fa-calendar-days"></i>{candidateData.noticePeriod}</li>
+                                            <li><i className="fa-solid fa-location-dot"></i>{user.location}</li>
+                                            <li><i className="fa-solid fa-phone"></i>{user.phone}</li>
+                                            <li><i className="fa-solid fa-envelope"></i>{user.email}</li>
+                                            <li><i className="fa-solid fa-briefcase"></i>{jobseeker_profile.experience}</li>
+                                            <li><i className="fa-solid fa-calendar-days"></i>{jobseeker_profile.notice_period}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="zc-profile-summary zc-card-style-2 mb-3">
+                            <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
+                                <h3 className="mb-0">Summary</h3>
+                                <a href="#" onClick={(e) => setActiveModal('summary')} id="zc-edit-candidate-summary" data-popup="#profile-summary-popup" className="zc-open-lightbox zc-btn-edit">
+                                    <i className="fa-solid fa-pencil"></i>
+                                </a>
+                                <a href="#" id="zc-add-candidate-summary" className="zc-btn-add d-none">
+                                    <i className="fa-solid fa-plus"></i>
+                                </a>
+                            </div>
+                            <div className="zc-card-content">
+                                {jobseeker_profile.summary}
+                            </div>
+                        </div>
+                        <ProfileModal
+                            defaultValues={{ user, jobseeker_profile }}
+                            isActive={activeModal === 'profile'}
+                            handleClose={closeModal}
+                        />
+                        <SummaryModal
+                            defaultSummary={jobseeker_profile.summary}
+                            isActive={activeModal === 'summary'}
+                            handleClose={closeModal}
+                        />
+                        {/* <div className="zc-profile-summary zc-card-style-2 mb-3">
                             <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                                 <h3 className="mb-0">Summary</h3>
                                 <a href="#" onClick={(e) => handleOpen('profile-summary-popup', e)} id="zc-edit-candidate-summary" data-popup="#profile-summary-popup" className="zc-open-lightbox zc-btn-edit">
@@ -401,39 +333,11 @@ export default function Profile() {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
-            <div id="profile-summary-popup"
-                className={`zc-lightbox prfile-summary-lightbox ${activePopup === 'profile-summary-popup' ? 'active' : ''}`}>
-                <div className="zc-lightbox-wrapper">
-                    <div className="zc-btn-pclose" onClick={(e) => handleClose(e)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                            <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
-                        </svg>
-                    </div>
-                    <div className="inner-wrapper">
-                        <form action="#">
-                            <div className="lightbox-header">
-                                <div className="title-and-btn">
-                                    <h4>Profile Summary</h4>
-                                    <a href="#"><i className="fa-regular fa-trash-can"></i></a>
-                                </div>
-                                <p className="mb-0">Give recruiters a brief overview of the highlights of your career, key achievements, and career goals to help recruiters know your profile better.</p>
-                            </div>
-                            <div className="lightbox-content py-3">
-                                <textarea id="candidate-profile-summary" value={"Experienced Leasing Property Manager with strong skills in tenant relations, lease administration, and property marketing. Proven ability to maximize occupancy, handle maintenance coordination, and ensure smooth day-to-day operations."}></textarea>
-                            </div>
-                            <div className="lightbox-footer">
-                                <a href="#" className="btn-cancel" onClick={(e) => handleClose(e)}>Cancel</a>
-                                <button>Save</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div className={`zc-lightbox profile-keyskill-lightbox ${activePopup === 'profile-keyskills-popup' ? 'active' : ''}`} id="profile-keyskills-popup">
+            {/* <div className={`zc-lightbox profile-keyskill-lightbox ${activePopup === 'profile-keyskills-popup' ? 'active' : ''}`} id="profile-keyskills-popup">
                 <div className="zc-lightbox-wrapper">
                     <div className="zc-btn-pclose" onClick={(e) => handleClose(e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
@@ -493,7 +397,7 @@ export default function Profile() {
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </AppLayout >
     );
 }

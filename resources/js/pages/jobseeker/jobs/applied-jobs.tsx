@@ -27,7 +27,7 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
         <AppLayout>
             <Head title="Jobs Applied" />
             <div className="zc-container">
-                <div className="page-title">
+                <div className="page-title px-4">
                     <h2>Jobs Applied</h2>
                 </div>
             </div>

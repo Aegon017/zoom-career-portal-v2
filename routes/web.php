@@ -22,6 +22,7 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\Jobseeker\JobseekerProfileController;
+use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
@@ -108,7 +109,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function () {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
-        Route::get('/profile', [JobseekerProfileController::class, 'index'])->name('profile.index');
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+        Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
+        Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
         Route::prefix('/jobs')->name('jobs.')->group(function () {
             Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
             Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');
@@ -143,5 +146,5 @@ Route::middleware('auth')->get('/notifications', function (Request $request) {
     return $request->user()->unreadNotifications()->latest()->get();
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

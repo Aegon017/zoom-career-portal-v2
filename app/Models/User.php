@@ -55,7 +55,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function getProfileImageAttribute()
     {
-        return $this->getFirstMediaUrl('profile_image');
+        return $this->getFirstMediaUrl('profile_images');
     }
 
     public function employerOnBording(): HasOne
@@ -68,16 +68,16 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(EmployerProfile::class);
     }
 
-    public function jobseeker(): HasOne
-    {
-        return $this->hasOne(Jobseeker::class);
-    }
-
     public function companies()
     {
         return $this->belongsToMany(Company::class, 'company_user')
             ->withPivot(['status', 'role', 'verified_at'])
             ->withTimestamps();
+    }
+
+    public function jobSeekerProfile(): HasOne
+    {
+        return $this->hasOne(JobSeekerProfile::class);
     }
 
     public function getRoleForCompany(Company $company): ?string
@@ -92,8 +92,8 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('profile_image')->singleFile();
-        $this->addMediaCollection('resume');
+        $this->addMediaCollection('profile_images')->singleFile();
+        $this->addMediaCollection('resumes');
     }
 
     public function savedOpenings(): HasMany

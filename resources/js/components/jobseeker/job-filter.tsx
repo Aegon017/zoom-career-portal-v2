@@ -124,7 +124,6 @@ const JobFilters = ({ filters }: { filters: any }) => {
                         type="text"
                         id="search_by_emptype"
                         className="dropdown-toggle"
-                        placeholder="Select employment types"
                         readOnly
                         onClick={() => {
                             setIsEmploymentDropdownOpen((prev) => !prev)
@@ -156,7 +155,6 @@ const JobFilters = ({ filters }: { filters: any }) => {
                         type="text"
                         id="search_by_industry"
                         className="dropdown-toggle"
-                        placeholder="Select industries"
                         readOnly
                         onClick={() => {
                             setIsIndustryDropdownOpen((prev) => !prev)

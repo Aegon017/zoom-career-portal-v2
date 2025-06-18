@@ -15,6 +15,17 @@ return new class extends Migration
     {
         Schema::create('jobseeker_profiles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('location')->nullable();
+            $table->string('experience')->nullable();
+            $table->string('notice_period')->nullable();
+            $table->text('summary')->nullable();
+            $table->string('gender')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('address')->nullable();
+            $table->string('marital_status')->nullable();
+            $table->string('work_permit')->nullable();
+            $table->boolean('differently_abled')->nullable();
             $table->timestamps();
         });
     }

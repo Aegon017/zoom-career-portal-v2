@@ -13,7 +13,7 @@ const Explore = ({ openings }: ExploreProps) => {
     return (
         <JobseekerLayout>
             <Head title="Explore" />
-            <div className="page-title">
+            <div className="page-title px-4">
                 <h2>Explore</h2>
             </div>
             <div className="zc-jobs-by-interest-sec">

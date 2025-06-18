@@ -48,9 +48,9 @@ final class EmployerManageProfileController extends Controller
         $user->update($validated);
 
         if (! empty($validated['profile_image']) && Storage::disk('public')->exists($validated['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$validated['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $validated['profile_image']))
                 ->preservingOriginal()
-                ->toMediaCollection('profile_image');
+                ->toMediaCollection('profile_images');
         }
 
         return back()->with('success', 'Profile updated.');
@@ -65,9 +65,9 @@ final class EmployerManageProfileController extends Controller
         $work_experience = $user->workExperiences()->create($data);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $work_experience->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $work_experience->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
-                ->toMediaCollection('company_logo');
+                ->toMediaCollection('company_logos');
         }
 
         return redirect()->back()->with('success', 'Work experience added successfully.');

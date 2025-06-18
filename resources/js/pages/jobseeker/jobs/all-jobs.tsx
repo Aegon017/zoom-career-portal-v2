@@ -39,7 +39,7 @@ const JobDetails = ({ jobs, filters }: JobDetailsProps) => {
     return (
         <AppLayout>
             <Head title="Job details" />
-            <div className="page-title">
+            <div className="page-title px-4">
                 <h2>Jobs</h2>
             </div>
             <div className="zc-main-jobs-wrapper">
