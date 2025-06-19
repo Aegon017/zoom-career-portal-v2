@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employer_profile_talent_profile', function (Blueprint $table) {
+        Schema::create('employer_profile_talent_profile', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('employer_profile_id')->constrained()->cascadeOnDelete();
             $table->foreignId('talent_profile_id')->constrained()->cascadeOnDelete();

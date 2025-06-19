@@ -61,7 +61,7 @@ final class SkillController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Skill $skill)
+    public function show(Skill $skill): void
     {
         //
     }

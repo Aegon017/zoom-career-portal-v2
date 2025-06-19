@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 final class AdminEmployeeController extends Controller
 {
-    public function index()
+    public function index(): never
     {
         dd();
     }
@@ -25,7 +25,7 @@ final class AdminEmployeeController extends Controller
 
     public function show(string $id)
     {
-        $user = User::find($id);
+        User::find($id);
 
         return Inertia::render('admin/employee/show');
     }

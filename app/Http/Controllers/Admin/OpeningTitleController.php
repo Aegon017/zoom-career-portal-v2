@@ -58,7 +58,7 @@ final class OpeningTitleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OpeningTitle $jobTitle)
+    public function show(OpeningTitle $jobTitle): void
     {
         //
     }
@@ -83,7 +83,7 @@ final class OpeningTitleController extends Controller
     public function update(Request $request, OpeningTitle $jobTitle)
     {
         $data = $request->validate([
-            'name' => "required|string|max:255|unique:opening_titles,name,{$jobTitle->id}",
+            'name' => 'required|string|max:255|unique:opening_titles,name,'.$jobTitle->id,
         ]);
 
         $jobTitle->update($data);

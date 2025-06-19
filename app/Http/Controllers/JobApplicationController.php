@@ -38,10 +38,11 @@ final class JobApplicationController extends Controller
                 if (! $resume) {
                     throw new Exception('Resume not found or does not belong to you.');
                 }
+
                 $resume->copy($application, 'resumes');
             } elseif ($request->filled('resume') && Storage::disk('public')->exists($request->resume)) {
                 $application
-                    ->addMedia(storage_path("app/public/{$request->resume}"))
+                    ->addMedia(storage_path('app/public/'.$request->resume))
                     ->preservingOriginal()
                     ->toMediaCollection('resumes');
                 $user->addMedia(storage_path('app/public/'.$request->resume))
@@ -52,10 +53,10 @@ final class JobApplicationController extends Controller
             }
 
             return back()->with('success', 'Application submitted successfully.');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $application->delete();
 
-            return back()->withErrors(['resume' => $e->getMessage()]);
+            return back()->withErrors(['resume' => $exception->getMessage()]);
         }
     }
 

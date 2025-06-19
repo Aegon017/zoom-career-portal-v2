@@ -9,9 +9,9 @@ trait EnumHelpers
     public static function options(): array
     {
         return array_map(
-            fn ($case) => [
+            fn ($case): array => [
                 'value' => $case->value,
-                'label' => method_exists($case, 'label') ? $case->label() : ucfirst($case->value),
+                'label' => method_exists($case, 'label') ? $case->label() : ucfirst((string) $case->value),
             ],
             self::cases()
         );

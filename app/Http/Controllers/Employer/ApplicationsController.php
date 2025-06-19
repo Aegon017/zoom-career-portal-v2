@@ -57,6 +57,6 @@ final class ApplicationsController extends Controller
             JobApplicationStatusEnum::Rejected->value => Mail::to($user)->send(new RejectedMail($user->name, $opening->title, $company->company_name)),
         };
 
-        return back();
+        return back()->with('success', 'Status updated successfully');
     }
 }

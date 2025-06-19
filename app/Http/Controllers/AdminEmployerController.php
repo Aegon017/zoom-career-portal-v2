@@ -9,14 +9,14 @@ use Inertia\Inertia;
 
 final class AdminEmployerController extends Controller
 {
-    public function index()
+    public function index(): never
     {
         dd();
     }
 
     public function show(string $id)
     {
-        $user = User::find($id);
+        User::find($id);
 
         return Inertia::render('admin/employers/show');
     }

@@ -15,7 +15,8 @@ use Illuminate\Queue\SerializesModels;
 
 final class VerificationUpdateMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
@@ -45,7 +46,7 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
             with: [
                 'employer_name' => $this->user->name,
                 'status' => $this->user->companies->first()?->pivot->status,
-                'status_text' => ucfirst($this->user->companies->first()?->pivot->status),
+                'status_text' => ucfirst((string) $this->user->companies->first()?->pivot->status),
                 'company_name' => $this->company->company_name,
                 'updated_at' => now()->format('F j, Y'),
             ]

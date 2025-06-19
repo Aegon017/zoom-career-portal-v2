@@ -17,8 +17,10 @@ use Spatie\Permission\Traits\HasRoles;
 
 final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
+    use HasFactory;
+    use HasRoles;
+    use InteractsWithMedia;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -53,7 +55,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     protected $appends = ['profile_image'];
 
-    public function getProfileImageAttribute()
+    public function getProfileImageAttribute(): string
     {
         return $this->getFirstMediaUrl('profile_images');
     }

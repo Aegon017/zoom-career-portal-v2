@@ -9,7 +9,7 @@ use App\Models\User;
 
 final class CreateEmployerProfileAction
 {
-    public function handle($data, User $user): EmployerProfile
+    public function handle(array $data, User $user): EmployerProfile
     {
         return $user->employerProfile()->create([
             'opening_title_id' => $data['job_title_id'],

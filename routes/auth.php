@@ -14,8 +14,8 @@ use App\Http\Controllers\Auth\RemoteLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
-    Route::prefix('employer')->name('employer.')->group(function () {
+Route::middleware('guest')->group(function (): void {
+    Route::prefix('employer')->name('employer.')->group(function (): void {
         Route::get('register', [RegisteredEmployerController::class, 'create'])->name('register');
         Route::post('register', [RegisteredEmployerController::class, 'store'])->name('register');
     });
@@ -44,7 +44,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

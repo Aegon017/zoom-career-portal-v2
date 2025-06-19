@@ -61,7 +61,7 @@ final class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $user): void
     {
         //
     }
@@ -89,6 +89,7 @@ final class UserController extends Controller
         if (empty($data['password'])) {
             unset($data['password']);
         }
+
         $user->update($data);
 
         return back()->with('success', 'User record updated successfully');

@@ -52,7 +52,7 @@ final class EmployerVerifyNotification extends Notification implements ShouldQue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "New employer registered: {$this->user->name}",
+            'message' => 'New employer registered: '.$this->user->name,
             'employer_name' => $this->user->name,
             'company_name' => $this->company->company_name,
             'registered_at' => $this->user->employerProfile->created_at,

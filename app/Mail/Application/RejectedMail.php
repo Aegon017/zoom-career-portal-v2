@@ -12,7 +12,8 @@ use Illuminate\Queue\SerializesModels;
 
 final class RejectedMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
@@ -29,7 +30,7 @@ final class RejectedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Application Update from Zoomingcareer for {$this->job_title} position at {$this->company_name}"
+            subject: sprintf('Application Update from Zoomingcareer for %s position at %s', $this->job_title, $this->company_name)
         );
     }
 

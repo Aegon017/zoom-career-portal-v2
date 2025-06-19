@@ -55,9 +55,7 @@ trait JobHelpers
 
     protected function addSaveStatusToJob(Opening $job, ?User $user): Opening
     {
-        $job->is_saved = $user
-            ? $user->savedOpenings()->where('opening_id', $job->id)->exists()
-            : false;
+        $job->is_saved = $user && $user->savedOpenings()->where('opening_id', $job->id)->exists();
 
         return $job;
     }

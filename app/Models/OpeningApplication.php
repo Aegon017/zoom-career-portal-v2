@@ -17,7 +17,7 @@ final class OpeningApplication extends Model implements HasMedia
 
     protected $appends = ['resume'];
 
-    public function getResumeAttribute()
+    public function getResumeAttribute(): string
     {
         return $this->getFirstMediaUrl('resume');
     }

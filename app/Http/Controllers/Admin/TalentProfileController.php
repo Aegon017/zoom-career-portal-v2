@@ -57,7 +57,7 @@ final class TalentProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TalentProfile $talentProfile)
+    public function show(TalentProfile $talentProfile): void
     {
         //
     }
@@ -82,7 +82,7 @@ final class TalentProfileController extends Controller
     public function update(Request $request, TalentProfile $talentProfile)
     {
         $data = $request->validate([
-            'name' => "required|string|max:255|unique:talent_profiles,name,{$talentProfile->id}",
+            'name' => 'required|string|max:255|unique:talent_profiles,name,'.$talentProfile->id,
         ]);
 
         $talentProfile->update($data);

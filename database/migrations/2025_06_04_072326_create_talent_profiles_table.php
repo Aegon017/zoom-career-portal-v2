@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('talent_profiles', function (Blueprint $table) {
+        Schema::create('talent_profiles', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->timestamps();

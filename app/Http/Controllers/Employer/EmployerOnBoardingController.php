@@ -27,8 +27,8 @@ use Inertia\Response;
 final class EmployerOnBoardingController extends Controller
 {
     public function __construct(
-        private CreateEmployerProfileAction $createEmployerProfileAction,
-        private CreateCompanyAction $createCompanyAction
+        private readonly CreateEmployerProfileAction $createEmployerProfileAction,
+        private readonly CreateCompanyAction $createCompanyAction
     ) {}
 
     public function setupProfile(): Response
@@ -80,7 +80,7 @@ final class EmployerOnBoardingController extends Controller
     {
         $companies = Company::query()->orderBy('company_name')->get();
 
-        $user = Auth::user();
+        Auth::user();
 
         return Inertia::render('employer/on-boarding/company-create-or-join', [
             'companies' => $companies,

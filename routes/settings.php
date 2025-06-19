@@ -9,7 +9,7 @@ use App\Http\Controllers\Settings\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -19,12 +19,10 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('settings/password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::get('settings/appearance', function () {
-        return Inertia::render('settings/appearance');
-    })->name('appearance');
+    Route::get('settings/appearance', fn () => Inertia::render('settings/appearance'))->name('appearance');
 });
 
-Route::middleware('auth')->prefix('employer')->name('employer.')->group(function () {
+Route::middleware('auth')->prefix('employer')->name('employer.')->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', [EmployerProfileController::class, 'edit'])->name('profile.edit');
@@ -34,7 +32,5 @@ Route::middleware('auth')->prefix('employer')->name('employer.')->group(function
     Route::get('settings/password', [EmployerPasswordController::class, 'edit'])->name('password.edit');
     Route::put('settings/password', [EmployerPasswordController::class, 'update'])->name('password.update');
 
-    Route::get('settings/appearance', function () {
-        return Inertia::render('settings/employer-appearance');
-    })->name('appearance');
+    Route::get('settings/appearance', fn () => Inertia::render('settings/employer-appearance'))->name('appearance');
 });

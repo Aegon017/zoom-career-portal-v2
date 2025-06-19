@@ -17,7 +17,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 final class Company extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'company_name',
@@ -48,7 +49,7 @@ final class Company extends Model implements HasMedia
         $this->addMediaCollection('company_logos')->singleFile();
     }
 
-    public function getCompanyLogoAttribute()
+    public function getCompanyLogoAttribute(): string
     {
         return $this->getFirstMediaUrl('company_logos');
     }

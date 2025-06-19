@@ -29,8 +29,8 @@ final class ProfileController extends Controller
 
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
-            'email' => ['required', 'email', 'max:255', "unique:users,email,{$user->id}"],
-            'phone' => ['nullable', 'string', 'max:20', "unique:users,phone,{$user->id}"],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,'.$user->id],
             'location' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
             'notice_period' => 'nullable|string|max:255',

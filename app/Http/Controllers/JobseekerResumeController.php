@@ -14,14 +14,12 @@ final class JobseekerResumeController extends Controller
 {
     public function index()
     {
-        $resumes = Auth::user()->getMedia('resumes')->map(function ($media) {
-            return [
-                'id' => $media->id,
-                'name' => $media->file_name,
-                'url' => $media->getUrl(),
-                'uploaded_at' => $media->created_at->toDateTimeString(),
-            ];
-        });
+        $resumes = Auth::user()->getMedia('resumes')->map(fn ($media): array => [
+            'id' => $media->id,
+            'name' => $media->file_name,
+            'url' => $media->getUrl(),
+            'uploaded_at' => $media->created_at->toDateTimeString(),
+        ]);
 
         return Inertia::render('jobseeker/my-documents', [
             'resumes' => $resumes,
@@ -30,14 +28,12 @@ final class JobseekerResumeController extends Controller
 
     public function data()
     {
-        $resumes = Auth::user()->getMedia('resumes')->map(function ($media) {
-            return [
-                'id' => $media->id,
-                'name' => $media->file_name,
-                'url' => $media->getUrl(),
-                'uploaded_at' => $media->created_at->toDateTimeString(),
-            ];
-        });
+        $resumes = Auth::user()->getMedia('resumes')->map(fn ($media): array => [
+            'id' => $media->id,
+            'name' => $media->file_name,
+            'url' => $media->getUrl(),
+            'uploaded_at' => $media->created_at->toDateTimeString(),
+        ]);
 
         return response()->json($resumes);
     }

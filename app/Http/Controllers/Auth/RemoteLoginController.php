@@ -39,6 +39,7 @@ final class RemoteLoginController extends Controller
             if ($role_name !== 'super_admin') {
                 $role_name = 'jobseeker';
             }
+
             $role = Role::findOrCreate($role_name);
             $user = $this->saveUser($remote_user);
             $user->assignRole($role);

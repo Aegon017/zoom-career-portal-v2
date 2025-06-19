@@ -42,12 +42,14 @@ final class AdminEmployerVerifyController extends Controller
         $company = Company::find($data['company_id']);
         $company->verification_status = $data['verification_status'];
         $company->save();
+
         $pivotData = $user->companies->first()?->pivot;
         $pivotData->status = $data['status'];
         if ($pivotData->status === VerificationStatusEnum::Verified->value) {
             $pivotData->verified_at = now();
             Mail::to($user)->send(new VerificationUpdateMail($user, $company));
         }
+
         $pivotData->save();
 
         return back()->with('success', 'Verification status updated successfully');

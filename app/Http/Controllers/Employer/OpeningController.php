@@ -71,6 +71,7 @@ final class OpeningController extends Controller
         if ($data['status'] === JobStatusEnum::Published->value) {
             $data['published_at'] = now();
         }
+
         $data['user_id'] = $user->id;
         $company = $user->companies()->latest()->first();
         $data['company_id'] = $company->id;
@@ -85,7 +86,7 @@ final class OpeningController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Opening $job)
+    public function show(Opening $job): void
     {
         //
     }
