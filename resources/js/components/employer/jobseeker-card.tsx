@@ -2,6 +2,7 @@ import { Jobseeker } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardTitle } from "../ui/card"
+import FollowButton from "../follow-button"
 
 interface jobseekerCardProps {
     jobseeker: Jobseeker
@@ -21,11 +22,11 @@ const JobseekerCard = ({ jobseeker }: jobseekerCardProps) => {
                     <span className="text-sm text-muted-foreground">thasdfaj</span>
                 </div>
 
-                <div className="ml-auto">
-                    <Button variant="outline" size="lg">
-                        Follow
+                {/* <div className="ml-auto">
+                    <Button variant="outline">
+                        <FollowButton followableId={Number(jobseeker.id)} followableType="user" isFollowing />
                     </Button>
-                </div>
+                </div> */}
             </CardContent>
         </Card>
     )
