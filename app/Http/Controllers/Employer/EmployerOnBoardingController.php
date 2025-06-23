@@ -11,6 +11,8 @@ use App\Enums\CompanyTypeEnum;
 use App\Enums\EmployerOnBoardingEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Mail\Admin\EmployerRegisteredMail as AdminEmployerRegisteredMail;
+use App\Mail\EmployerRegisteredMail;
 use App\Models\Company;
 use App\Models\OpeningTitle;
 use App\Models\TalentProfile;
@@ -19,6 +21,7 @@ use App\Notifications\EmployerVerifyNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -63,7 +66,7 @@ final class EmployerOnBoardingController extends Controller
         $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$data['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
         }
@@ -154,7 +157,7 @@ final class EmployerOnBoardingController extends Controller
         $company = $this->createCompanyAction->handle($data, $verification_status);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $company->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $company->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logos');
         }
@@ -187,7 +190,22 @@ final class EmployerOnBoardingController extends Controller
 
     public function sendNotification(User $user, Company $company): void
     {
+        $user->employerProfile()->create();
+
         $admins = User::role('super_admin')->get();
+
+        $name = $user->name;
+        $company_name = $company->company_name;
+        $review_link = route('admin.employer.verify', [
+            'employer' => $user->id,
+            'company' => $company->id,
+        ]);
+
+        Mail::to($user)->send(new EmployerRegisteredMail($name, $company_name));
+
+        foreach ($admins as $admin) {
+            Mail::to($admin)->send(new AdminEmployerRegisteredMail($name, $company_name, $review_link));
+        }
 
         Notification::send($admins, new EmployerVerifyNotification($user, $company));
     }

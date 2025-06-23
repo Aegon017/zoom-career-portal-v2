@@ -9,7 +9,7 @@ declare(strict_types=1);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Employer Verification Update</title>
+    <title>New Employer Registration</title>
     <style>
         body {
             background-color: #f5f5f5;
@@ -63,19 +63,9 @@ declare(strict_types=1);
             border-radius: 20px;
         }
 
-        .status-verified {
-            background-color: #c8e6c9;
-            color: #256029;
-        }
-
         .status-pending {
             background-color: #fff9c4;
             color: #7f6d00;
-        }
-
-        .status-rejected {
-            background-color: #ffcdd2;
-            color: #b71c1c;
         }
 
         .email-footer {
@@ -102,27 +92,29 @@ declare(strict_types=1);
         <!-- Header -->
         <div class="email-header">
             <img src="{{ asset('logo.png') }}" alt="Zoom Careers Logo" />
-            <h3>Employer Verification Update</h3>
+            <h3>Welcome to Zoomingcareer!</h3>
         </div>
 
         <!-- Body -->
         <div class="email-body">
-            <p>Hello <strong>{{ $employer_name }}</strong>,</p>
+            <p>Hello <strong>{{ $name }}</strong>,</p>
 
             <p>
-                We would like to inform you that your employer and company verification status has been updated by our
-                admin team.
+                Thank you for registering with <strong>Zoomingcareer</strong>. We’ve received your employer account
+                request and our team is currently reviewing your submission.
             </p>
 
             <p><strong>Current Verification Status:</strong></p>
-            <span class="status-badge status-{{ $status }}">{{ $status_text }}</span>
+            <span class="status-badge status-pending">Pending Review</span>
 
             <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
 
             <p><strong>Company:</strong> {{ $company_name }}</p>
-            <p><strong>Updated On:</strong> {{ $updated_at }}</p>
 
-            <p>If you have any questions or require further assistance, please contact us anytime.</p>
+            <p>
+                We’ll notify you via email once your account has been verified and approved. If you have any questions
+                in the meantime, feel free to reach out.
+            </p>
         </div>
 
         <!-- Footer -->

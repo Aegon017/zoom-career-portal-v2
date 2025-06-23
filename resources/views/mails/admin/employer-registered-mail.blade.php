@@ -9,7 +9,7 @@ declare(strict_types=1);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Employer Verification Update</title>
+    <title>New Employer Registration Alert</title>
     <style>
         body {
             background-color: #f5f5f5;
@@ -55,29 +55,6 @@ declare(strict_types=1);
             line-height: 1.6;
         }
 
-        .status-badge {
-            display: inline-block;
-            font-size: 14px;
-            padding: 6px 14px;
-            font-weight: 600;
-            border-radius: 20px;
-        }
-
-        .status-verified {
-            background-color: #c8e6c9;
-            color: #256029;
-        }
-
-        .status-pending {
-            background-color: #fff9c4;
-            color: #7f6d00;
-        }
-
-        .status-rejected {
-            background-color: #ffcdd2;
-            color: #b71c1c;
-        }
-
         .email-footer {
             background-color: #f0f0f0;
             text-align: center;
@@ -94,6 +71,21 @@ declare(strict_types=1);
         .email-footer a:hover {
             text-decoration: underline;
         }
+
+        .btn-review {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #1976d2;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .btn-review:hover {
+            background-color: #125ea3;
+        }
     </style>
 </head>
 
@@ -102,27 +94,19 @@ declare(strict_types=1);
         <!-- Header -->
         <div class="email-header">
             <img src="{{ asset('logo.png') }}" alt="Zoom Careers Logo" />
-            <h3>Employer Verification Update</h3>
+            <h3>New Employer Registration</h3>
         </div>
 
         <!-- Body -->
         <div class="email-body">
-            <p>Hello <strong>{{ $employer_name }}</strong>,</p>
+            <p>Hello Admin,</p>
 
-            <p>
-                We would like to inform you that your employer and company verification status has been updated by our
-                admin team.
-            </p>
+            <p>A new employer has registered on Zoomingcareer and is awaiting your verification.</p>
 
-            <p><strong>Current Verification Status:</strong></p>
-            <span class="status-badge status-{{ $status }}">{{ $status_text }}</span>
-
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
-
+            <p><strong>Employer Name:</strong> {{ $name }}</p>
             <p><strong>Company:</strong> {{ $company_name }}</p>
-            <p><strong>Updated On:</strong> {{ $updated_at }}</p>
 
-            <p>If you have any questions or require further assistance, please contact us anytime.</p>
+            <a href="{{ $review_link }}" class="btn-review">Review Employer</a>
         </div>
 
         <!-- Footer -->

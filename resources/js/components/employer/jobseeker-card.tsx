@@ -1,8 +1,6 @@
 import { Jobseeker } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { Button } from "../ui/button"
 import { Card, CardContent, CardTitle } from "../ui/card"
-import FollowButton from "../follow-button"
 
 interface jobseekerCardProps {
     jobseeker: Jobseeker
