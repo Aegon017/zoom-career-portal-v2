@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/jobseeker-layout';
-import PopupModal from '@/components/popup-modal';
 import ProfileModal from '@/components/jobseeker/profile-modal';
 import { JobSeekerProfile, User } from '@/types';
 import { format } from 'date-fns';
@@ -54,10 +53,10 @@ export default function Profile({ user, jobseeker_profile }: Props) {
                                         </div>
                                         <div className="right-col follower-block d-flex align-items-start gap-2">
                                             <div className="icon-text">
-                                                <a href="#"><span>{0}</span> followers</a>
+                                                <a href="#"><span>{user.followers.length}</span> followers</a>
                                             </div>
                                             <div className="icon-text">
-                                                <a href="#"><span>{1}</span> following</a>
+                                                <a href="#"><span>{(user.followingUsers?.length ?? 0) + (user.followingCompanies?.length ?? 0)}</span> following</a>
                                             </div>
                                         </div>
                                     </div>

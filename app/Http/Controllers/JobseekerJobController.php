@@ -14,8 +14,6 @@ use Inertia\Response;
 
 final class JobseekerJobController extends Controller
 {
-    use JobHelpers;
-
     public function index(Request $request): Response
     {
         $query = Opening::query()
@@ -26,12 +24,12 @@ final class JobseekerJobController extends Controller
         if ($request->filled('company')) {
             $query->whereHas(
                 'company',
-                fn ($q) => $q->where('company_name', 'like', '%'.$request->company.'%')
+                fn($q) => $q->where('company_name', 'like', '%' . $request->company . '%')
             );
         }
 
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%'.$request->job_title.'%');
+            $query->where('title', 'like', '%' . $request->job_title . '%');
         }
 
         if ($request->filled('employment_types')) {
@@ -43,8 +41,6 @@ final class JobseekerJobController extends Controller
         }
 
         $jobs = $query->latest()->get();
-
-        $jobs = $this->addSaveStatusToJobs($jobs, Auth::user());
 
         return inertia('jobseeker/jobs/all-jobs', [
             'jobs' => $jobs,
@@ -58,10 +54,7 @@ final class JobseekerJobController extends Controller
 
         $user = Auth::user();
 
-        $job = $this->addSaveStatusToJob($job, $user);
-        $job = $this->addApplicationStatusToJob($job, $user);
-
-        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
@@ -81,7 +74,6 @@ final class JobseekerJobController extends Controller
         $user = Auth::user();
         $jobs = $user->savedOpenings()->with('opening.company')->get();
         $jobs = $jobs->pluck('opening')->filter()->values();
-        $jobs = $this->addSaveStatusToJobs($jobs, $user);
 
         $jobs = $jobs->take($count);
 
@@ -98,7 +90,6 @@ final class JobseekerJobController extends Controller
         $user = Auth::user();
         $jobs = $user->openingApplications()->with('opening.company')->get();
         $jobs = $jobs->pluck('opening')->filter()->values();
-        $jobs = $this->addApplicationStatusToJobs($jobs, $user);
 
         $jobs = $jobs->take($count);
 

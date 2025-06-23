@@ -37,7 +37,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
             email: defaultValues.user.email ?? "",
             phone: defaultValues.user.phone ?? "",
             profile_image: defaultValues.user.profile_image ?? "",
-            location: defaultValues.jobseeker_profile.location ?? "",
+            location: defaultValues.user.location ?? "",
             experience: defaultValues.jobseeker_profile.experience ?? "",
             notice_period: defaultValues.jobseeker_profile.notice_period ?? "",
         }

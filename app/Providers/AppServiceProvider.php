@@ -38,7 +38,7 @@ final class AppServiceProvider extends ServiceProvider
 
                 return match ($role) {
                     'super_admin' => route('admin.dashboard'),
-                    'jobseeker' => route('jobseeker.explore'),
+                    'jobseeker' => route('jobseeker.explore.index'),
                     'employer' => route('employer.dashboard'),
                     default => '/',
                 };

@@ -37,9 +37,9 @@ export default function FollowButton({
         <button
             onClick={handleFollowToggle}
             disabled={loading}
-            className={`btn ${isFollowing ? "btn-secondary" : "btn-primary"}`}
+            className={`btn-follow`}
         >
-            {loading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
+            <i className="fa-solid fa-user-plus"></i>{loading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
         </button>
     );
 }

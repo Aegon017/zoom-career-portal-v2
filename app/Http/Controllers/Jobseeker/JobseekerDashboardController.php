@@ -14,8 +14,6 @@ use Inertia\Response;
 
 final class JobseekerDashboardController extends Controller
 {
-    use JobHelpers;
-
     public function index(): Response
     {
         $jobs = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
@@ -23,8 +21,6 @@ final class JobseekerDashboardController extends Controller
             ->latest()
             ->with('company')
             ->get();
-
-        $jobs = $this->addSaveStatusToJobs($jobs, Auth::user());
 
         return Inertia::render('jobseeker/explore', [
             'openings' => $jobs,

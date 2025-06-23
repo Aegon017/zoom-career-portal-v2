@@ -21,7 +21,9 @@ use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
+use App\Http\Controllers\Jobseeker\EmployerController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
+use App\Http\Controllers\Jobseeker\PeopleController;
 use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
@@ -36,7 +38,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -99,7 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
-        Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore');
+        Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
@@ -117,6 +119,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/resumes/data', [JobseekerResumeController::class, 'data'])->name('resumes.data');
         Route::post('/resumes', [JobseekerResumeController::class, 'store'])->name('resumes.store');
         Route::delete('/resumes/destroy/{id}', [JobseekerResumeController::class, 'destroy'])->name('resumes.destroy');
+        Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
+        Route::get('/employers', [EmployerController::class, 'index'])->name('employers.index');
+        Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
     });
 
     // admin routes
@@ -135,7 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

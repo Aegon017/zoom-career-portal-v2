@@ -23,7 +23,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
             >
                 <i className="fa-solid fa-bars"></i>
             </button>
-            <Link href={route('jobseeker.explore')} className="brand-logo">
+            <Link href={route('jobseeker.explore.index')} className="brand-logo">
                 <img src={logo} alt="Zoom Career" />
             </Link>
             <ul className="zc-top-nav-bar">

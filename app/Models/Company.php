@@ -41,17 +41,29 @@ final class Company extends Model implements HasMedia
 
     protected $appends = [
         'company_logo',
+        'banner',
         'is_followed',
     ];
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('company_logos')->singleFile();
+        $this->addMediaCollection('banner')->singleFile();
     }
 
     public function getCompanyLogoAttribute(): string
     {
         return $this->getFirstMediaUrl('company_logos');
+    }
+
+    public function getBannerAttribute(): string
+    {
+        return $this->getFirstMediaUrl('banners');
+    }
+
+    public function openings(): HasMany
+    {
+        return $this->hasMany(Opening::class);
     }
 
     public function users(): BelongsToMany

@@ -49,7 +49,11 @@ export interface User {
     location?: string,
     profile_image?: string,
     banner?: string,
+    followers: User[],
+    followingUsers: User[],
+    followingCompanies: Company[],
     email_verified_at: string | null;
+    workExperiences?: WorkExperience[];
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
@@ -59,6 +63,7 @@ export interface Company {
     id: number;
     company_name: string;
     company_logo: string;
+    banner: string;
     industry: string;
     company_website: string;
     company_description: string;
@@ -71,6 +76,9 @@ export interface Company {
     updated_at: string;
     verification_status: string;
     is_followed: boolean;
+    openings: Opening[];
+    users: User[];
+    followers: number;
     [key: string]: unknown;
 }
 
