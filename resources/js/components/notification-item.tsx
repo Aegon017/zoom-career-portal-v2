@@ -16,7 +16,7 @@ const NotificationItem = ({ notification }: { notification: any }) => {
                 <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-1 sm:gap-2">
                     <p className="text-sm font-semibold text-foreground">{notification.data.employer_name}</p>
                     <span className="text-xs text-muted-foreground italic">
-                        {formatDistanceToNow(new Date(notification.data.registered_at), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(notification.data.registered_at ?? notification.created_at), { addSuffix: true })}
                     </span>
                 </div>
 

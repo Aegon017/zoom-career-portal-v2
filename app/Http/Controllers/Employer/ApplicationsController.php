@@ -55,7 +55,7 @@ final class ApplicationsController extends Controller
         match ($application->status) {
             JobApplicationStatusEnum::Shortlisted->value => Mail::to($user)->send(new ShortlistedMail($user->name, $opening->title, $company->company_name)),
             JobApplicationStatusEnum::Rejected->value => Mail::to($user)->send(new RejectedMail($user->name, $opening->title, $company->company_name)),
-            default => "",
+            default => '',
         };
 
         return back()->with('success', 'Status updated successfully');

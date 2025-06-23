@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
@@ -35,7 +36,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -129,10 +130,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/companies', CompanyController::class);
         Route::get('/employer/verify', [AdminEmployerVerifyController::class, 'verify'])->name('employer.verify');
         Route::post('/employer/verify', [AdminEmployerVerifyController::class, 'store'])->name('employer.verify.store');
+        Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
+        Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

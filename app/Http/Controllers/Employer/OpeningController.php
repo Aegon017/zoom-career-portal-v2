@@ -17,8 +17,11 @@ use App\Http\Requests\EditOpeningRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Opening;
 use App\Models\Skill;
+use App\Models\User;
+use App\Notifications\JobPostedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -80,6 +83,8 @@ final class OpeningController extends Controller
         $skills = array_column($data['skills'], 'id');
         $job->skills()->sync($skills);
 
+        $this->sendNotification($job->user, $job);
+
         return to_route('employer.jobs.edit', $job->id)->with('success', 'Job record created successfully');
     }
 
@@ -134,6 +139,8 @@ final class OpeningController extends Controller
         $skills = array_column($data['skills'], 'id');
         $job->skills()->sync($skills);
 
+        $this->sendNotification($job->user, $job);
+
         return back()->with('success', 'Job record updated successfully');
     }
 
@@ -145,5 +152,12 @@ final class OpeningController extends Controller
         $job->delete();
 
         return to_route('employer.jobs.index')->with('success', 'Job record deleted successfully ');
+    }
+
+    private function sendNotification(User $user, Opening $opening): void
+    {
+        $admins = User::role('super_admin')->get();
+
+        Notification::send($admins, new JobPostedNotification($user, $opening));
     }
 }

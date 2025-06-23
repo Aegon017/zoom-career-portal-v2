@@ -113,7 +113,7 @@ export interface Opening {
     published_at: string;
     expires_at: Date;
     status: string;
-    moderation_status: string;
+    verification_status: string;
     created_at: string;
     updated_at: string;
     skills: Skill[];
