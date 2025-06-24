@@ -229,3 +229,13 @@ export interface JobSeekerProfile {
     updated_at: string | null
 }
 
+export interface Industry {
+    id: number;
+    name: string;
+}
+
+export interface JobFunction {
+    id: number;
+    name: string;
+}
+

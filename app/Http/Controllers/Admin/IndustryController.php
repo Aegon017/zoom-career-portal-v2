@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Industry;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class IndustryController extends Controller
 {
@@ -12,7 +15,11 @@ class IndustryController extends Controller
      */
     public function index()
     {
-        //
+        $industries = Industry::orderBy('name')->get();
+
+        return Inertia::render('admin/industries/industries-listing', [
+            'industries' => $industries
+        ]);
     }
 
     /**
@@ -20,7 +27,12 @@ class IndustryController extends Controller
      */
     public function create()
     {
-        //
+        $operation = OperationsEnum::Create;
+
+        return Inertia::render('admin/industries/create-or-edit-industry', [
+            'operation' => $operation->value,
+            'operationLabel' => $operation->label()
+        ]);
     }
 
     /**
@@ -28,7 +40,13 @@ class IndustryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data =  $request->validate([
+            'name' => 'required|string|unique:industries,name',
+        ]);
+
+        Industry::create($data);
+
+        return redirect()->route('admin.industries.index')->with('success', 'Industry record created successfully.');
     }
 
     /**
@@ -42,24 +60,38 @@ class IndustryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Industry $industry)
     {
-        //
+        $operation = OperationsEnum::Edit;
+
+        return Inertia::render('admin/industries/create-or-edit-industry', [
+            'industry' => $industry,
+            'operation' => $operation->value,
+            'operationLabel' => $operation->label()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Industry $industry)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|unique:industries,name,' . $industry->id,
+        ]);
+
+        $industry->update($data);
+
+        return redirect()->route('admin.industries.index')->with('success', 'Industry record updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Industry $industry)
     {
-        //
+        $industry->delete();
+
+        return to_route('admin.industries.index')->with('success', 'Industry record deleted successfully.');
     }
 }

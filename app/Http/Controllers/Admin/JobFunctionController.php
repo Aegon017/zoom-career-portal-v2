@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
+use App\Models\JobFunction;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class JobFunctionController extends Controller
 {
@@ -12,7 +15,11 @@ class JobFunctionController extends Controller
      */
     public function index()
     {
-        //
+        $jobFunctions = JobFunction::orderBy('name')->get();
+
+        return Inertia::render('admin/job-functions/job-functions-listing', [
+            'jobFunctions' => $jobFunctions
+        ]);
     }
 
     /**
@@ -20,7 +27,12 @@ class JobFunctionController extends Controller
      */
     public function create()
     {
-        //
+        $operation = OperationsEnum::Create;
+
+        return Inertia::render('admin/job-functions/create-or-edit-job-function', [
+            'operation' => $operation->value,
+            'operationLabel' => $operation->label()
+        ]);
     }
 
     /**
@@ -28,7 +40,13 @@ class JobFunctionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data =  $request->validate([
+            'name' => 'required|string|unique:job_functions,name',
+        ]);
+
+        JobFunction::create($data);
+
+        return redirect()->route('admin.job-functions.index')->with('success', 'Job function record created successfully.');
     }
 
     /**
@@ -42,24 +60,38 @@ class JobFunctionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JobFunction $jobFunction)
     {
-        //
+        $operation = OperationsEnum::Edit;
+
+        return Inertia::render('admin/job-functions/create-or-edit-job-function', [
+            'jobFunction' => $jobFunction,
+            'operation' => $operation->value,
+            'operationLabel' => $operation->label()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, JobFunction $jobFunction)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|unique:job_functions,name,' . $jobFunction->id,
+        ]);
+
+        $jobFunction->update($data);
+
+        return redirect()->route('admin.job-functions.index')->with('success', 'Job function record updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(JobFunction $jobFunction)
     {
-        //
+        $jobFunction->delete();
+
+        return to_route('admin.job-functions.index')->with('success', 'Job function record deleted successfully.');
     }
 }
