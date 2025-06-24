@@ -5,6 +5,7 @@ import axios from 'axios';
 import { router } from '@inertiajs/react';
 import FileUpload from '../file-upload';
 import { JobSeekerProfile, User } from '@/types';
+import { PhoneInput } from '../phone-input';
 
 interface ProfileModalProps {
     isActive: boolean;
@@ -87,6 +88,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
 
                 <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone:</label>
+                    <PhoneInput />
                     <input
                         type="tel"
                         className="form-control"

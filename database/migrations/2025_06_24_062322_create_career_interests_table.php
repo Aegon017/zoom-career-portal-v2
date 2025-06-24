@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table): void {
+        Schema::create('career_interests', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
-            $table->longText('message');
-            $table->string('status');
-            $table->timestamp('sent_at')->nullable();
+            $table->string('position_type')->nullable();
+            $table->string('post_grad_options')->nullable();
+            $table->text('how_can_we_help')->nullable();
+            $table->string('graduation_month')->nullable();
+            $table->string('graduation_year')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('career_interests');
     }
 };

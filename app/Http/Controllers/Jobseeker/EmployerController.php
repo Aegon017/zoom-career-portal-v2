@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Jobseeker;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Inertia\Inertia;
 
-class EmployerController extends Controller
+final class EmployerController extends Controller
 {
     public function index()
     {
         $companies = Company::query()->get();
 
         return Inertia::render('jobseeker/employers', [
-            'companies' => $companies
+            'companies' => $companies,
         ]);
     }
 

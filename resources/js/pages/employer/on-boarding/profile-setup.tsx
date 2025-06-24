@@ -1,6 +1,7 @@
 import { AppHeader } from "@/components/employer/employer-header";
 import FileUpload from "@/components/file-upload";
 import { MultiSelect } from "@/components/multi-select";
+import { PhoneInput } from "@/components/phone-input";
 import { SelectPopoverField } from "@/components/select-popover-field";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -113,11 +114,10 @@ const profileSetup = (props: ProfileSetup) => {
                                                 <FormItem className="md:col-span-2">
                                                     <FormLabel>Phone number</FormLabel>
                                                     <FormControl>
-                                                        <Input
+                                                        <PhoneInput
                                                             type="tel"
                                                             placeholder="Enter your phone number"
-                                                            {...field}
-                                                        />
+                                                            {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>

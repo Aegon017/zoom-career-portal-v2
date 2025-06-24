@@ -7,8 +7,6 @@ namespace App\Http\Controllers\Jobseeker;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Opening;
-use App\Traits\JobHelpers;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 

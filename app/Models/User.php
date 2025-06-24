@@ -32,6 +32,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'email',
         'password',
         'email_verified_at',
+        'phone',
         'headline',
         'pronouns',
         'location',

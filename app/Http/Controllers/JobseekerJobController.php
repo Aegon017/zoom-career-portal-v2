@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\VerificationStatusEnum;
 use App\Models\Opening;
-use App\Traits\JobHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -24,12 +23,12 @@ final class JobseekerJobController extends Controller
         if ($request->filled('company')) {
             $query->whereHas(
                 'company',
-                fn($q) => $q->where('company_name', 'like', '%' . $request->company . '%')
+                fn ($q) => $q->where('company_name', 'like', '%'.$request->company.'%')
             );
         }
 
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%' . $request->job_title . '%');
+            $query->where('title', 'like', '%'.$request->job_title.'%');
         }
 
         if ($request->filled('employment_types')) {
@@ -52,9 +51,9 @@ final class JobseekerJobController extends Controller
     {
         $job = Opening::with(['company', 'skills'])->find($jobId);
 
-        $user = Auth::user();
+        Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())

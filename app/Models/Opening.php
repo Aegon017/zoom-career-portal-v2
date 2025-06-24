@@ -48,7 +48,7 @@ final class Opening extends Model
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -59,7 +59,7 @@ final class Opening extends Model
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -70,7 +70,7 @@ final class Opening extends Model
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
@@ -83,7 +83,7 @@ final class Opening extends Model
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
@@ -91,7 +91,6 @@ final class Opening extends Model
 
         return $application?->created_at;
     }
-
 
     public function company(): BelongsTo
     {

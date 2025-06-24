@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('follows', function (Blueprint $table): void {
+        Schema::create('career_interest_job_functions', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('follower_id')->constrained('users')->cascadeOnDelete();
-            $table->morphs('followable');
+            $table->foreignId('career_interest_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('job_function_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-
-            $table->unique(['follower_id', 'followable_id', 'followable_type'], 'follows_unique');
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('follows');
+        Schema::dropIfExists('career_interest_job_functions');
     }
 };
