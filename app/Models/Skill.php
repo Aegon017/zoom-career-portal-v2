@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Skill extends Model
 {
@@ -17,5 +18,15 @@ final class Skill extends Model
     public function opening(): BelongsToMany
     {
         return $this->belongsToMany(Opening::class);
+    }
+
+    public function skillUsers(): HasMany
+    {
+        return $this->hasMany(SkillUser::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'skill_users')->withTimestamps();
     }
 }

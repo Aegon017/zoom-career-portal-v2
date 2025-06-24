@@ -1,9 +1,6 @@
 import AppLayoutTemplate from '@/layouts/app/joobseeker-sidebar-layout';
 import '../assets/css/bootstrap.min.css'
 import '../assets/css/style.css'
-// import '../assets/js/jquery.min.js'
-// import '../assets/js/bootstrap.min.js'
-// import '../assets/js/main.js'
 import { ReactNode, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner';
 import { usePage } from '@inertiajs/react';

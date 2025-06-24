@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import PopupModal from '../popup-modal';
-import axios from 'axios';
 import { router } from '@inertiajs/react';
 import FileUpload from '../file-upload';
 import { JobSeekerProfile, User } from '@/types';
-import { PhoneInput } from '../phone-input';
+import IntlTelInput from "intl-tel-input/reactWithUtils";
+import "intl-tel-input/styles";
 
 interface ProfileModalProps {
     isActive: boolean;
@@ -88,11 +88,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
 
                 <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone:</label>
-                    <PhoneInput />
-                    <input
-                        type="tel"
-                        className="form-control"
-                        {...register('phone', { required: true })}
+                    <IntlTelInput
+                        initialValue={defaultValues.user.phone}
+                        onChangeNumber={(value: string) => setValue('phone', value)}
+                        inputProps={{ className: "form-control block w-full" }}
                     />
                     {errors.phone && <p className="text-danger">Phone is required</p>}
                 </div>

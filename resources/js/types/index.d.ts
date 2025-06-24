@@ -54,6 +54,7 @@ export interface User {
     followingCompanies: Company[],
     email_verified_at: string | null;
     workExperiences?: WorkExperience[];
+    skills?: Skill[];
     created_at: string;
     updated_at: string;
     [key: string]: unknown;

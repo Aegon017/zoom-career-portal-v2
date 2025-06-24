@@ -2,19 +2,21 @@ import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/jobseeker-layout';
 import ProfileModal from '@/components/jobseeker/profile-modal';
-import { JobSeekerProfile, User } from '@/types';
+import { JobSeekerProfile, Skill, User } from '@/types';
 import { format } from 'date-fns';
 import SummaryModal from '@/components/jobseeker/summary-modal';
+import SkillsModal from '@/components/jobseeker/skills-modal';
 
 
-type ModalName = 'profile' | 'summary' | 'experience' | null;
+type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | null;
 
 interface Props {
-    user: User
-    jobseeker_profile: JobSeekerProfile
+    user: User,
+    jobseeker_profile: JobSeekerProfile,
+    skills: Skill[]
 }
 
-export default function Profile({ user, jobseeker_profile }: Props) {
+export default function Profile({ user, jobseeker_profile, skills }: Props) {
     const [activeModal, setActiveModal] = useState<ModalName>(null);
 
     const openModal = (modal: ModalName) => setActiveModal(modal);
@@ -86,6 +88,24 @@ export default function Profile({ user, jobseeker_profile }: Props) {
                                 {jobseeker_profile.summary}
                             </div>
                         </div>
+                        <div className="zc-profile-skills zc-card-style-2 mb-3">
+                            <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
+                                <h3 className="mb-0">Skills</h3>
+                                <a href="#" id="zc-edit-candidate-skillls" onClick={(e) => setActiveModal('skills')} data-popup="#profile-keyskills-popup" className="zc-open-lightbox zc-btn-edit">
+                                    <i className="fa-solid fa-pencil"></i>
+                                </a>
+                                <a href="#" id="zc-add-candidate-skills" className="zc-btn-add d-none">
+                                    <i className="fa-solid fa-plus"></i>
+                                </a>
+                            </div>
+                            <div className="zc-card-content">
+                                <ul className="zc-skills-list">
+                                    {user.skills?.map((skill) => (
+                                        <li key={skill.id}>{skill.name}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                         <ProfileModal
                             defaultValues={{ user, jobseeker_profile }}
                             isActive={activeModal === 'profile'}
@@ -96,70 +116,13 @@ export default function Profile({ user, jobseeker_profile }: Props) {
                             isActive={activeModal === 'summary'}
                             handleClose={closeModal}
                         />
-                        {/* <div className="zc-profile-summary zc-card-style-2 mb-3">
-                            <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                                <h3 className="mb-0">Summary</h3>
-                                <a href="#" onClick={(e) => handleOpen('profile-summary-popup', e)} id="zc-edit-candidate-summary" data-popup="#profile-summary-popup" className="zc-open-lightbox zc-btn-edit">
-                                    <i className="fa-solid fa-pencil"></i>
-                                </a>
-                                <a href="#" id="zc-add-candidate-summary" className="zc-btn-add d-none">
-                                    <i className="fa-solid fa-plus"></i>
-                                </a>
-                            </div>
-                            <div className="zc-card-content">
-                                {candidateData.summary}
-                            </div>
-                        </div>
-                        <div className="zc-candidate-profile-resume zc-card-style-2 mb-3">
-                            <div className="zc-card-header">
-                                <div className="text">
-                                    <h3>Resume</h3>
-                                </div>
-                            </div>
-                            <div className="zc-card-content">
-                                <div className="zc-resume-list-item d-block d-sm-flex justify-content-between align-items-center mb-2">
-                                    <div className="left mb-2">
-                                        <h4 className="file-name">{candidateData.resume.fileName}</h4>
-                                        <p className="updated-date mb-0">{candidateData.resume.uploadedDate}</p>
-                                        <div id="statusMsg"></div>
-                                    </div>
-                                    <div className="right mb-2">
-                                        <a href="#">
-                                            <i className="fa-solid fa-download"></i>
-                                        </a>
-                                        <a href="#">
-                                            <i className="fa-regular fa-trash-can"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="zc-resume-upload-wrapper">
-                                    <input type="file" name="resume-file" id="resume-file" />
-                                    <div id="progess-container">
-                                        <div id="progress-bar"></div>
-                                    </div>
-                                    <button id="btn-upload">Update Resume</button>
-                                    <p className="instruction mb-0">Supported Formats: doc, docx, rtf, pdf, upto 2 MB</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="zc-profile-skills zc-card-style-2 mb-3">
-                            <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                                <h3 className="mb-0">Skills</h3>
-                                <a href='#' onClick={(e) => handleOpen('profile-keyskills-popup', e)} id="zc-edit-candidate-skillls" data-popup="#profile-keyskills-popup" className="zc-open-lightbox zc-btn-edit">
-                                    <i className="fa-solid fa-pencil"></i>
-                                </a>
-                                <a href='#' onClick={(e) => handleOpen('profile-keyskills-popup', e)} id="zc-add-candidate-skills" className="zc-btn-add d-none">
-                                    <i className="fa-solid fa-plus"></i>
-                                </a>
-                            </div>
-                            <div className="zc-card-content">
-                                <ul className="zc-skills-list">
-                                    {candidateData.skills.map((skill, idx) => (
-                                        <li key={idx}>{skill}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                        <SkillsModal
+                            defaultValues={{ user, skills }}
+                            isActive={activeModal === 'skills'}
+                            handleClose={closeModal}
+                        />
+
+                        {/* 
                         <div className="zc-profile-employment zc-card-style-2 mb-3">
                             <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                                 <h3 className="mb-0">Employment</h3>

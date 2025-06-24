@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface Props {
     title: string;
@@ -18,7 +18,7 @@ const PopupModal = ({
     onDelete
 }: Props) => {
     return (
-        <div className={`zc-lightbox prfile-summary-lightbox ${isActive ? 'active' : ''}`}
+        <div className={`zc-lightbox profile-keyskill-lightbox ${isActive ? 'active' : ''}`}
         >
             <div className="zc-lightbox-wrapper w-100">
                 <div className="zc-btn-pclose" onClick={onClose}>
