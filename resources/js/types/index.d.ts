@@ -244,3 +244,9 @@ export interface JobType {
     name: string;
 }
 
+export interface Location {
+    id: number;
+    country: string;
+    state: string;
+    city: string;
+}

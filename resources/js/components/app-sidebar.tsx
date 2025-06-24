@@ -1,5 +1,5 @@
 import { NavItem, SharedData } from "@/types";
-import { ChartBar, CodeXml, LayoutGrid, Users2 } from "lucide-react";
+import { ChartBar, ClipboardList, CodeXml, Factory, LayoutGrid, ListTree, MapPin, TableProperties, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -60,7 +60,26 @@ export function AppSidebar() {
         {
             title: 'Talent Profiles',
             href: '/admin/talent-profiles',
-            icon: ChartBar,
+            icon: ClipboardList,
+        },
+        {
+            title: 'Industries',
+            href: '/admin/industries',
+            icon: Factory,
+        }, {
+            title: 'Job functions',
+            href: '/admin/job-functions',
+            icon: ListTree,
+        },
+        {
+            title: 'Job types',
+            href: '/admin/job-types',
+            icon: TableProperties,
+        },
+        {
+            title: 'Locations',
+            href: '/admin/locations',
+            icon: MapPin,
         },
     ];
 
