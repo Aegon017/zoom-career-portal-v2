@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { MultiSelect } from '@/components/multi-select';
+import axios from 'axios';
 
 interface Props {
     job: Opening;
@@ -63,62 +64,61 @@ const CreateOrEditJob = ({
 
     const fetchCountries = async () => {
         try {
-            const res = await fetch(route('getCountries'));
-            const json = await res.json();
+            const res = await axios.get(route('getCountries'));
+            const countries = res.data?.data || [];
 
-            if (json.data) {
-                const formatted = json.data.map((c: any) => ({
-                    value: c.name,
-                    label: c.name,
-                }));
-                setCountries(formatted);
-            }
+            const formatted = countries.map((c: string) => ({
+                value: c,
+                label: c,
+            }));
+
+            setCountries(formatted);
         } catch (error) {
             console.error('Error fetching countries:', error);
         }
     };
 
+
     const fetchStates = async (countryName: string) => {
         try {
-            const res = await fetch(route('getStates'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ country: countryName }),
+            const res = await axios.post(route('getStates'), {
+                country: countryName,
             });
-            const json = await res.json();
 
-            if (json.data?.states) {
-                const formatted = json.data.states.map((s: any) => ({
-                    value: s.name,
-                    label: s.name,
-                }));
-                setStates((prev) => ({ ...prev, [countryName]: formatted }));
-            }
+            const states = res.data?.data || [];
+
+            const formatted = states.map((s: string) => ({
+                value: s,
+                label: s,
+            }));
+
+            setStates((prev) => ({ ...prev, [countryName]: formatted }));
         } catch (error) {
             console.error('Error fetching states:', error);
         }
     };
 
+
     const fetchCities = async (countryName: string, stateName: string) => {
         try {
-            const res = await fetch(route('getCities'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ country: countryName, state: stateName }),
+            const res = await axios.post(route('getCities'), {
+                country: countryName,
+                state: stateName,
             });
-            const json = await res.json();
 
-            if (json.data) {
-                const formatted = json.data.map((city: string) => ({
-                    value: city,
-                    label: city,
-                }));
-                setCities((prev) => ({ ...prev, [stateName]: formatted }));
-            }
+            const cities = res.data?.data || [];
+
+            const formatted = cities.map((city: string) => ({
+                value: city,
+                label: city,
+            }));
+
+            setCities((prev) => ({ ...prev, [stateName]: formatted }));
         } catch (error) {
             console.error('Error fetching cities:', error);
         }
     };
+
 
     useEffect(() => {
         fetchCountries();

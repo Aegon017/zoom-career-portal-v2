@@ -239,3 +239,8 @@ export interface JobFunction {
     name: string;
 }
 
+export interface JobType {
+    id: number;
+    name: string;
+}
+

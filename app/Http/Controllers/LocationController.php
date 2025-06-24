@@ -4,34 +4,66 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 final class LocationController extends Controller
 {
     public function getCountries()
     {
-        $response = Http::get('https://countriesnow.space/api/v0.1/countries/positions');
+        $countries = Location::select('country')
+            ->distinct()
+            ->orderBy('country')
+            ->pluck('country');
 
-        return response()->json($response->json());
+        Log::info($countries);
+
+        return response()->json([
+            'success' => true,
+            'data' => $countries,
+        ]);
     }
 
     public function getStates(Request $request)
     {
-        $response = Http::post('https://countriesnow.space/api/v0.1/countries/states', [
-            'country' => $request->country,
+        $request->validate([
+            'country' => 'required|string',
         ]);
 
-        return response()->json($response->json());
+        $states = Location::where('country', $request->country)
+            ->whereNotNull('state')
+            ->select('state')
+            ->distinct()
+            ->orderBy('state')
+            ->pluck('state');
+
+        return response()->json([
+            'success' => true,
+            'data' => $states,
+        ]);
     }
+
 
     public function getCities(Request $request)
     {
-        $response = Http::post('https://countriesnow.space/api/v0.1/countries/state/cities', [
-            'country' => $request->country,
-            'state' => $request->state,
+        $request->validate([
+            'country' => 'required|string',
+            'state'   => 'required|string',
         ]);
 
-        return response()->json($response->json());
+        $cities = Location::where('country', $request->country)
+            ->where('state', $request->state)
+            ->whereNotNull('city')
+            ->select('city')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        return response()->json([
+            'success' => true,
+            'data' => $cities,
+        ]);
     }
 }

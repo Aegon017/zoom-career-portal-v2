@@ -4,22 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Industry, JobFunction, type BreadcrumbItem } from '@/types';
+import { JobType, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-    jobFunction: JobFunction,
+    jobType: JobType,
     operation: string,
     operationLabel: string
 }
 
-const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props) => {
+const CreateOrEditIndustry = ({ jobType, operation, operationLabel }: Props) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Job function',
-            href: route('admin.job-functions.index'),
+            title: 'Job type',
+            href: route('admin.job-types.index'),
         },
         {
             title: operation,
@@ -27,9 +27,9 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
         },
     ];
 
-    const form = useForm<JobFunction>({
+    const form = useForm<JobType>({
         defaultValues: {
-            name: jobFunction?.name ?? "",
+            name: jobType?.name ?? "",
         }
     });
 
@@ -39,7 +39,7 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
         const handleErrors = (errors: any) => {
             if (errors && typeof errors === 'object') {
                 Object.entries(errors).forEach(([field, message]) => {
-                    setError(field as keyof JobFunction, {
+                    setError(field as keyof JobType, {
                         type: 'server',
                         message: message as string,
                     });
@@ -48,35 +48,35 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
         };
 
         const routes = {
-            Create: () => router.post(route('admin.job-functions.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.job-functions.update', jobFunction.id), data, { onError: handleErrors }),
+            Create: () => router.post(route('admin.job-types.store'), data, { onError: handleErrors }),
+            Edit: () => router.put(route('admin.job-types.update', jobType.id), data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.job-functions.destroy', id));
+        router.delete(route('admin.job-types.destroy', id));
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${operation} job function`} />
+            <Head title={`${operation} job type`} />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <Form {...form}>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
                         <div className="flex justify-between">
-                            <h1 className="text-2xl font-bold">{operation} job function</h1>
+                            <h1 className="text-2xl font-bold">{operation} job type</h1>
                             {operation === 'Edit' && (
                                 <>
                                     <Button variant="destructive" onClick={(e) => { e.preventDefault(); setAlertOpen(true) }}>Delete</Button>
                                     <DeleteAlert
-                                        key={jobFunction.id}
+                                        key={jobType.id}
                                         alertOpen={alertOpen}
                                         setAlertOpen={setAlertOpen}
-                                        onDelete={() => handleDelete(jobFunction.id)}
+                                        onDelete={() => handleDelete(jobType.id)}
                                     />
                                 </>
                             )}
@@ -88,7 +88,7 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Job function name</FormLabel>
+                                            <FormLabel>Job type name</FormLabel>
                                             <FormControl>
                                                 <Input type="text" {...field} autoComplete="name" />
                                             </FormControl>
@@ -100,7 +100,7 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.job-functions.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.job-types.index'))}>Cancel</Button>
                         </div>
                     </form>
                 </Form>
