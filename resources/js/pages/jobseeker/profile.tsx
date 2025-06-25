@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/jobseeker-layout';
 import ProfileModal from '@/components/jobseeker/profile-modal';
@@ -18,6 +18,11 @@ interface Props {
 }
 
 export default function Profile({ user, jobseeker_profile, skills, companies }: Props) {
+    const { auth } = usePage<{ auth: { user: User } }>().props;
+    const { user: AuthUser } = auth;
+
+    const isUpdatable = user.id === AuthUser.id;
+
     const [activeModal, setActiveModal] = useState<ModalName>(null);
     const [employmentDefaultValues, setEmploymentDefaultValues] = useState<any | undefined>(undefined);
 
@@ -45,9 +50,11 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                         <div className="left-col mb-2 mb-md-0">
                                             <div className="name">
                                                 <h2>{user.name}</h2>
-                                                <a className="zc-btn-edit" onClick={() => openModal('profile')}>
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
+                                                {isUpdatable && (
+                                                    <a className="zc-btn-edit" onClick={() => openModal('profile')}>
+                                                        <i className="fa-solid fa-pencil"></i>
+                                                    </a>
+                                                )}
                                             </div>
                                             <div className="d-block">
                                                 <div className="current-emp-info">
@@ -85,9 +92,11 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                         <div className="zc-profile-summary zc-card-style-2 mb-3">
                             <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                                 <h3 className="mb-0">Summary</h3>
-                                <a onClick={() => openModal('summary')} className="zc-btn-edit">
-                                    <i className="fa-solid fa-pencil"></i>
-                                </a>
+                                {isUpdatable && (
+                                    <a onClick={() => openModal('summary')} className="zc-btn-edit">
+                                        <i className="fa-solid fa-pencil"></i>
+                                    </a>
+                                )}
                             </div>
                             <div className="zc-card-content">
                                 {jobseeker_profile.summary}
@@ -98,9 +107,11 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                         <div className="zc-profile-skills zc-card-style-2 mb-3">
                             <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                                 <h3 className="mb-0">Skills</h3>
-                                <a onClick={() => openModal('skills')} className="zc-btn-edit">
-                                    <i className="fa-solid fa-pencil"></i>
-                                </a>
+                                {isUpdatable && (
+                                    <a onClick={() => openModal('skills')} className="zc-btn-edit">
+                                        <i className="fa-solid fa-pencil"></i>
+                                    </a>
+                                )}
                             </div>
                             <div className="zc-card-content">
                                 <ul className="zc-skills-list">
@@ -115,12 +126,14 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                         <div className="zc-profile-employment zc-card-style-2 mb-3">
                             <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                                 <h3 className="mb-0">Employment</h3>
-                                <a onClick={() => {
-                                    setEmploymentDefaultValues(undefined);
-                                    openModal('employment');
-                                }} className="zc-btn-add">
-                                    <i className="fa-solid fa-plus"></i>
-                                </a>
+                                {isUpdatable && (
+                                    <a onClick={() => {
+                                        setEmploymentDefaultValues(undefined);
+                                        openModal('employment');
+                                    }} className="zc-btn-add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </a>
+                                )}
                             </div>
                             <div className="zc-card-content">
                                 <div className="employment-list">
@@ -128,12 +141,14 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                         <div key={index} className="employment-list-item">
                                             <div className="icon-text">
                                                 <h3 className="job-title">{workExperience.title}</h3>
-                                                <a onClick={() => {
-                                                    setEmploymentDefaultValues(workExperience);
-                                                    openModal('employment');
-                                                }} className="zc-btn-edit">
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
+                                                {isUpdatable && (
+                                                    <a onClick={() => {
+                                                        setEmploymentDefaultValues(workExperience);
+                                                        openModal('employment');
+                                                    }} className="zc-btn-edit">
+                                                        <i className="fa-solid fa-pencil"></i>
+                                                    </a>
+                                                )}
                                             </div>
                                             <h4 className="company-name-location">
                                                 {workExperience.company_name ?? workExperience.company?.company_name}, {workExperience.company?.company_address ?? ""}
@@ -149,6 +164,55 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                 </div>
                             </div>
                         </div>
+
+                        {/* Education section */}
+                        <div className="zc-profile-education zc-card-style-2 mb-3">
+                            <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
+                                <h3 className="mb-0">Education</h3>
+                                {isUpdatable && (
+                                    <a href="#" id="zc-add-candidate-education" className="zc-btn-add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </a>
+                                )}
+                            </div>
+                            <div className="zc-card-content">
+                                <div className="education-list">
+                                    <div className="education-list-item">
+                                        <div className="icon-text">
+                                            <h3 className="education-course-title">Master of Business Administration (MBA)</h3>
+                                            {isUpdatable && (
+                                                <a href="#" id="zc-edit-candidate-education" className="zc-btn-edit">
+                                                    <i className="fa-solid fa-pencil"></i>
+                                                </a>
+                                            )}
+                                        </div>
+                                        <h4 className="education-university-college">Hyderabad University</h4>
+                                        <div className="course-type-year d-flex align-items-center gap-1 mb-2">
+                                            <span className="year">2025</span>
+                                            <span className="divider"></span>
+                                            <span className="course-type">Full Time</span>
+                                        </div>
+                                    </div>
+                                    <div className="education-list-item">
+                                        <div className="icon-text">
+                                            <h3 className="education-course-title">Bachelor of Computer Applications</h3>
+                                            {isUpdatable && (
+                                                <a href="#" id="zc-edit-candidate-education" className="zc-btn-edit">
+                                                    <i className="fa-solid fa-pencil"></i>
+                                                </a>
+                                            )}
+                                        </div>
+                                        <h4 className="education-university-college">Acme College of Information Technology - [ACIT], Hyderabad</h4>
+                                        <div className="course-type-year d-flex align-items-center gap-1 mb-2">
+                                            <span className="year">2023</span>
+                                            <span className="divider"></span>
+                                            <span className="course-type">Full Time</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         {/* Modals */}
                         <ProfileModal

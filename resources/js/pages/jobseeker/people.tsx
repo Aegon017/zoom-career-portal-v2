@@ -149,11 +149,13 @@ const People = ({ users }: Props) => {
                                                         <h5 className="current-job">{ }</h5>
                                                     </div>
                                                     <div className="middle">
-                                                        <div className="icon-text industry"><i className="fa-solid fa-industry"></i>Marketing</div>
-                                                        <div className="icon-text location"><i className="fa-solid fa-location-dot"></i>{user.location}</div>
+                                                        {/* <div className="icon-text industry"><i className="fa-solid fa-industry"></i>{user.followingCompanies.}</div> */}
+                                                        {user.location && (
+                                                            <div className="icon-text location"><i className="fa-solid fa-location-dot"></i>{user.location}</div>
+                                                        )}
                                                     </div>
                                                     <div className="bottom">
-                                                        <Link href={route('jobseeker.profile.index', user.id)} className="btn btn-details"><i className="fa-regular fa-user"></i> View Details</Link>
+                                                        <Link href={route('jobseeker.profile.index', { user: user.id })} className="btn btn-details"><i className="fa-regular fa-user"></i> View Details</Link>
                                                         <a href="#" className="btn btn-msg"><i className="fa-regular fa-message"></i> Message</a>
                                                     </div>
                                                 </div>
@@ -166,7 +168,7 @@ const People = ({ users }: Props) => {
                     </div>
                 </div>
             </div>
-        </JobseekerLayout>
+        </JobseekerLayout >
     )
 }
 

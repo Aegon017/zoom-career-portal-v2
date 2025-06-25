@@ -8,6 +8,7 @@ use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Skill;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,9 +16,14 @@ use Inertia\Inertia;
 
 final class ProfileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user()->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
+        $user = Auth::user();
+
+        if ($request->has('user')) {
+            $user = User::find($request->user);
+        }
+        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
         $jobseeker_profile = $user->jobseekerProfile;
         $skills = Skill::get();
         $companies = Company::where('verification_status', VerificationStatusEnum::Verified->value)->orderBy('company_name')->get();
