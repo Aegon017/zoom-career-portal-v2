@@ -15,12 +15,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateOpeningRequest;
 use App\Http\Requests\EditOpeningRequest;
 use App\Http\Resources\SkillResource;
+use App\Mail\Admin\JobVerifyMail;
+use App\Mail\Employer\JobVerificationStatusMail;
 use App\Models\Opening;
 use App\Models\Skill;
 use App\Models\User;
 use App\Notifications\JobPostedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -157,6 +160,20 @@ final class OpeningController extends Controller
     private function sendNotification(User $user, Opening $opening): void
     {
         $admins = User::role('super_admin')->get();
+
+        $company_name = $opening->company->company_name;
+        $posted_by = $user->name;
+        $job_title = $opening->title;
+        $review_link = route('admin.job.verify', [
+            'job' => $opening->id,
+        ]);
+        $status = $opening->verification_status;
+
+        Mail::to($user)->send(new JobVerificationStatusMail($job_title, $status));
+
+        foreach ($admins as $admin) {
+            Mail::to($admin)->send(new JobVerifyMail($job_title, $company_name, $posted_by, $review_link));
+        }
 
         Notification::send($admins, new JobPostedNotification($user, $opening));
     }
