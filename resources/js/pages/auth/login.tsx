@@ -61,7 +61,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <div className="flex items-center">
                             <Label htmlFor="password">Password</Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                <TextLink href="/forgot-password" className="ml-auto text-sm" tabIndex={5}>
                                     Forgot password?
                                 </TextLink>
                             )}
@@ -97,7 +97,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                 <div className="text-muted-foreground text-center text-sm">
                     Are you an employer?{' '}
-                    <TextLink href={route('employer.register')} tabIndex={5}>
+                    <TextLink href="/employer/register" tabIndex={5}>
                         Register here
                     </TextLink>
                 </div>

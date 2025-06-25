@@ -20,7 +20,7 @@ export default function AuthSplitLayout({ children, title, description, instruct
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-950 to-orange-800 overflow-hidden">
                     <BackgroundWithParticles />
                 </div>
-                <Link href={route('login')} className="relative z-20 flex items-center text-lg font-medium">
+                <Link href="/login" className="relative z-20 flex items-center text-lg font-medium">
                     <AppLogoIcon className="max-w-32" />
                 </Link>
                 {quote && (
@@ -34,7 +34,7 @@ export default function AuthSplitLayout({ children, title, description, instruct
             </div>
             <div className="w-full lg:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                    <Link href={route('login')} className="relative z-20 flex items-center justify-center lg:hidden">
+                    <Link href="/login" className="relative z-20 flex items-center justify-center lg:hidden">
                         <AppLogoIcon className="h-10 fill-current text-black sm:h-12" />
                     </Link>
                     <div className="flex flex-col items-start gap-2 text-left sm:items-center sm:text-center">
