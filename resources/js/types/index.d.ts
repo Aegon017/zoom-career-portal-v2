@@ -53,7 +53,7 @@ export interface User {
     followingUsers: User[],
     followingCompanies: Company[],
     email_verified_at: string | null;
-    workExperiences?: WorkExperience[];
+    work_experiences: WorkExperience[];
     skills?: Skill[];
     created_at: string;
     updated_at: string;
@@ -196,7 +196,7 @@ export interface WorkExperience {
     company_name: string;
     title: string;
     start_date: string;
-    end_date?: string;
+    end_date: string;
     is_current?: boolean;
     company_logo?: string;
     created_at?: string;

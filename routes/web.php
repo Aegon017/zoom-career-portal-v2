@@ -110,6 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
+        Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::prefix('/jobs')->name('jobs.')->group(function (): void {
             Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
             Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Jobseeker;
 
+use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,14 +17,16 @@ final class ProfileController extends Controller
 {
     public function index()
     {
-        $user = Auth::user()->load('followers', 'followingUsers', 'followingCompanies', 'skills');
+        $user = Auth::user()->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
         $jobseeker_profile = $user->jobseekerProfile;
         $skills = Skill::get();
+        $companies = Company::where('verification_status', VerificationStatusEnum::Verified->value)->orderBy('company_name')->get();
 
         return Inertia::render('jobseeker/profile', [
             'user' => $user,
             'skills' => $skills,
             'jobseeker_profile' => $jobseeker_profile,
+            'companies' => $companies
         ]);
     }
 

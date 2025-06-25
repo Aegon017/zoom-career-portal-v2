@@ -123,6 +123,7 @@ p {
 /*** Button Style ***/
 a.zc-btn-edit i,
 a.zc-btn-add i {
+    cursor: pointer;
     color: #717b9e;
     transition: all 0.3s ease-in;
 }
@@ -1608,7 +1609,7 @@ ul.zc-certificate-list li {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 99999;
+    z-index: 10;
     display: none;
     justify-content: center;
     background: rgba(0, 0, 0, 0.5);
@@ -2507,4 +2508,5 @@ ul.zc-certificate-list li {
         gap: 0;
         align-items: center;
     }
+
 }

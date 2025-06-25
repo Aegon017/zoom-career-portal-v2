@@ -20,6 +20,11 @@ final class WorkExperience extends Model implements HasMedia
         'title',
         'start_date',
         'end_date',
+        'is_current',
+    ];
+
+    protected $appends = [
+        'company_logo',
     ];
 
     public function user(): BelongsTo
@@ -29,7 +34,12 @@ final class WorkExperience extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('company_logo')->singleFile();
+        $this->addMediaCollection('company_logos')->singleFile();
+    }
+
+    public function getCompanyLogoAttribute(): string
+    {
+        return $this->getFirstMediaUrl('company_logos');
     }
 
     public function company(): BelongsTo
