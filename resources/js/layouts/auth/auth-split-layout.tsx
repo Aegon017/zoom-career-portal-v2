@@ -2,7 +2,6 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-import bg from '../../assets/choosing-best-candidate-concept.png';
 import BackgroundWithParticles from '@/components/background-particles';
 
 interface AuthLayoutProps {
