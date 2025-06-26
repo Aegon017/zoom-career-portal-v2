@@ -7,57 +7,97 @@ import JobsIcon from '@/icons/jobs-icon';
 import PeopleIcon from '@/icons/people-icon';
 import EmployerIcon from '@/icons/employer-icon';
 
+type SidebarItem = {
+    key: string;
+    icon: React.ReactNode;
+    label: string;
+    href?: string;
+    children?: { label: string; href: string }[];
+    isActive?: boolean;
+};
+
+const sidebarItems: SidebarItem[] = [
+    {
+        key: 'explore',
+        icon: <ExploreIcon />,
+        label: 'Explore',
+        href: 'jobseeker/explore',
+        isActive: window.location.pathname === '/jobseeker/explore',
+    },
+    {
+        key: 'people',
+        icon: <PeopleIcon />,
+        label: 'People',
+        href: 'jobseeker/people',
+        isActive: window.location.pathname === 'jobseeker/people',
+    },
+    {
+        key: 'jobs',
+        icon: <JobsIcon />,
+        label: 'Jobs',
+        children: [
+            { label: 'All Jobs', href: 'jobseeker/jobs' },
+            { label: 'Saved Jobs', href: 'obseeker/jobs/your/saved' },
+            { label: 'Applied Jobs', href: 'jobseeker/jobs/your/applied' },
+        ],
+        isActive: window.location.pathname === 'jobseeker/jobs/*',
+    },
+    {
+        key: 'employers',
+        icon: <EmployerIcon />,
+        label: 'Employers',
+        href: 'jobseeker/employers',
+        isActive: window.location.pathname === '/jobseeker/employers',
+    },
+];
+
 export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const [activeItem, setActiveItem] = useState<string | null>(null);
-    const handleDropdownToggle = (itemName: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-        setActiveItem(prev =>
-            prev === itemName ? null : itemName
-        );
+
+    const handleDropdownToggle = (itemKey: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        setActiveItem(prev => (prev === itemKey ? null : itemKey));
     };
 
     return (
         <nav id="zc-sidebar" className={`sidebar zc-sidebar ${sidebarToggle.collapsed ? 'collapsed' : ''}`} ref={sidebarToggle.sidebarRef}>
             <div className="sidebar-content">
                 <div className="sidebar-brand">
-                    <Link href={route('jobseeker.explore.index')}>
+                    <Link href="jobseeker/explore">
                         <img src={logo} alt="Zoom Career" />
                     </Link>
                 </div>
-
                 <ul className="sidebar-nav">
-                    <li className={`sidebar-item${route().current('jobseeker.explore.index') ? ' active' : ''}`}>
-                        <Link href={route('jobseeker.explore.index')}>
-                            <ExploreIcon />
-                            <span>Explore</span>
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link href={route('jobseeker.people.index')}>
-                            <PeopleIcon />
-                            <span>People</span>
-                        </Link>
-                    </li>
-
-                    <li className={`sidebar-item has-children${activeItem === 'jobs' || route().current('jobseeker.jobs.*') ? ' active' : ''}`}>
-                        <a onClick={handleDropdownToggle('jobs')}>
-                            <JobsIcon />
-                            <span>Jobs</span>
-                            <i className="fa-solid fa-angle-down dropdown-icon"></i>
-                        </a>
-                        {activeItem === 'jobs' && (
-                            <ul className="sub-menu">
-                                <li><Link href={route('jobseeker.jobs.index')}>All Jobs</Link></li>
-                                <li><Link href={route('jobseeker.jobs.saved.index')}>Saved Jobs</Link></li>
-                                <li><Link href={route('jobseeker.jobs.applied.index')}>Applied Jobs</Link></li>
-                            </ul>
-                        )}
-                    </li>
-                    <li className={`sidebar-item${route().current('jobseeker.employers.index') ? ' active' : ''}`}>
-                        <Link href={route('jobseeker.employers.index')}>
-                            <EmployerIcon />
-                            <span>Employers</span>
-                        </Link>
-                    </li>
+                    {sidebarItems.map(item => (
+                        <li
+                            key={item.key}
+                            className={`sidebar-item${item.children ? ' has-children' : ''}${item.isActive || activeItem === item.key ? ' active' : ''}`}
+                        >
+                            {item.children ? (
+                                <>
+                                    <a onClick={handleDropdownToggle(item.key)} href="#">
+                                        {item.icon}
+                                        <span>{item.label}</span>
+                                        <i className="fa-solid fa-angle-down dropdown-icon"></i>
+                                    </a>
+                                    {activeItem === item.key && (
+                                        <ul className="sub-menu">
+                                            {item.children.map(child => (
+                                                <li key={child.href}>
+                                                    <Link href={child.href}>{child.label}</Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </>
+                            ) : (
+                                <Link href={item.href!}>
+                                    {item.icon}
+                                    <span>{item.label}</span>
+                                </Link>
+                            )}
+                        </li>
+                    ))}
                 </ul>
             </div>
         </nav>

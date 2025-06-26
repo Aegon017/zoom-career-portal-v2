@@ -6,7 +6,7 @@ import { Opening } from "@/types";
 const OpeningItem = ({ opening }: { opening: Opening }) => {
     return (
         <div className="zc-job-item-grid mb-3">
-            <Link href={route('jobseeker.jobs.show', opening.id)} className="btn-job--details"></Link>
+            <Link href={`/jobseeker/jobs/${opening.id}`} className="btn-job--details"></Link>
             <div className="zc-job-item-top">
                 <div className="zc-job-item-company">
                     <div className="company-logo">

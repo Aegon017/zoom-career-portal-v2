@@ -23,7 +23,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
             >
                 <i className="fa-solid fa-bars"></i>
             </button>
-            <Link href={route('jobseeker.explore.index')} className="brand-logo">
+            <Link href="/jobseeker/explore" className="brand-logo">
                 <img src={logo} alt="Zoom Career" />
             </Link>
             <ul className="zc-top-nav-bar">
@@ -58,15 +58,15 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                     </button>
                     {userNav.isOpen && (
                         <div className="zc-dropdown-menu show">
-                            <Link href={route('jobseeker.profile.index')} className="zc-dropdown-item">
+                            <Link href="/jobseeker/profile" className="zc-dropdown-item">
                                 <i className="fa-solid fa-id-badge me-2"></i>
                                 Profile
                             </Link>
-                            <Link href={route('jobseeker.jobs.applied.index')} className="zc-dropdown-item">
+                            <Link href="/jobseeker/jobs/applied" className="zc-dropdown-item">
                                 <i className="fa-solid fa-briefcase me-2"></i>
                                 My Jobs
                             </Link>
-                            <Link href={route('jobseeker.resumes.index')} className="zc-dropdown-item">
+                            <Link href="/jobseeker/resumes" className="zc-dropdown-item">
                                 <i className="fa-solid fa-file me-2"></i>
                                 My Documents
                             </Link>
@@ -77,7 +77,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                             <Link
                                 className="zc-dropdown-item"
                                 method="post"
-                                href={route('logout')}
+                                href="/logout"
                                 as="button"
                                 onClick={handleLogout}
                             >
