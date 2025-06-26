@@ -42,7 +42,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -151,7 +151,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -8,7 +10,7 @@ use App\Models\Industry;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class IndustryController extends Controller
+final class IndustryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +20,7 @@ class IndustryController extends Controller
         $industries = Industry::orderBy('name')->get();
 
         return Inertia::render('admin/industries/industries-listing', [
-            'industries' => $industries
+            'industries' => $industries,
         ]);
     }
 
@@ -31,7 +33,7 @@ class IndustryController extends Controller
 
         return Inertia::render('admin/industries/create-or-edit-industry', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -40,7 +42,7 @@ class IndustryController extends Controller
      */
     public function store(Request $request)
     {
-        $data =  $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:industries,name',
         ]);
 
@@ -52,7 +54,7 @@ class IndustryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -67,7 +69,7 @@ class IndustryController extends Controller
         return Inertia::render('admin/industries/create-or-edit-industry', [
             'industry' => $industry,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -77,7 +79,7 @@ class IndustryController extends Controller
     public function update(Request $request, Industry $industry)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,' . $industry->id,
+            'name' => 'required|string|unique:industries,name,'.$industry->id,
         ]);
 
         $industry->update($data);

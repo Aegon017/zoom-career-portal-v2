@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -9,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
-class LocationController extends Controller
+final class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +21,7 @@ class LocationController extends Controller
         $locations = Location::take(10000)->get();
 
         return Inertia::render('admin/locations/locations-listing', [
-            'locations' => $locations
+            'locations' => $locations,
         ]);
     }
 
@@ -32,24 +34,22 @@ class LocationController extends Controller
 
         return Inertia::render('admin/locations/create-or-edit-location', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
         $data = $request->validate([
-            'city'  => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
             'state' => ['nullable', 'string', 'max:255'],
-            'country'   => ['required', 'string', 'max:255'],
+            'country' => ['required', 'string', 'max:255'],
 
             Rule::unique('locations')->where(
-                fn($query) =>
-                $query->where('city', $request->city)
+                fn ($query) => $query->where('city', $request->city)
                     ->where('state', $request->state)
             ),
         ], [
@@ -64,7 +64,7 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -79,7 +79,7 @@ class LocationController extends Controller
         return Inertia::render('admin/locations/create-or-edit-location', [
             'location' => $location,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -89,16 +89,15 @@ class LocationController extends Controller
     public function update(Request $request, Location $location)
     {
         $data = $request->validate([
-            'city'  => ['required', 'string', 'max:255'],
             'state' => ['nullable', 'string', 'max:255'],
-            'country'   => ['required', 'string', 'max:20'],
+            'country' => ['required', 'string', 'max:20'],
             'city' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('locations')
-                    ->where(fn($query) => $query->where('state', $request->state))
-                    ->ignore($location->id)
+                    ->where(fn ($query) => $query->where('state', $request->state))
+                    ->ignore($location->id),
             ],
         ], [
             'city.unique' => 'This city + state combination already exists.',

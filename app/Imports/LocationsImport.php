@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Imports;
 
 use App\Models\Location;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class LocationsImport implements ToModel, WithHeadingRow, WithChunkReading, WithBatchInserts
+final class LocationsImport implements ToModel, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function model(array $row)
     {
         return new Location([
-            'city'    => $this->normalize($row['city']),
-            'state'   => $this->normalize($row['admin_name']),
+            'city' => $this->normalize($row['city']),
+            'state' => $this->normalize($row['admin_name']),
             'country' => $this->normalize($row['country']),
         ]);
     }
@@ -32,9 +34,12 @@ class LocationsImport implements ToModel, WithHeadingRow, WithChunkReading, With
 
     private function normalize($string)
     {
-        if (!$string) return null;
+        if (! $string) {
+            return null;
+        }
 
-        $plain = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
-        return \Illuminate\Support\Str::title(strtolower(trim($plain)));
+        $plain = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $string);
+
+        return Str::title(mb_strtolower(mb_trim($plain)));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -8,7 +10,7 @@ use App\Models\JobType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class JobTypeController extends Controller
+final class JobTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +20,7 @@ class JobTypeController extends Controller
         $jobTypes = JobType::orderBy('name')->get();
 
         return Inertia::render('admin/job-types/job-types-listing', [
-            'jobTypes' => $jobTypes
+            'jobTypes' => $jobTypes,
         ]);
     }
 
@@ -31,7 +33,7 @@ class JobTypeController extends Controller
 
         return Inertia::render('admin/job-types/create-or-edit-job-type', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -40,7 +42,7 @@ class JobTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $data =  $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:job_types,name',
         ]);
 
@@ -52,7 +54,7 @@ class JobTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -67,7 +69,7 @@ class JobTypeController extends Controller
         return Inertia::render('admin/job-types/create-or-edit-job-type', [
             'jobType' => $jobType,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -77,7 +79,7 @@ class JobTypeController extends Controller
     public function update(Request $request, JobType $jobType)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:job_types,name,' . $jobType->id,
+            'name' => 'required|string|unique:job_types,name,'.$jobType->id,
         ]);
 
         $jobType->update($data);

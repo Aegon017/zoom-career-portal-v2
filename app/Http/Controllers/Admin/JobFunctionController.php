@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -8,7 +10,7 @@ use App\Models\JobFunction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class JobFunctionController extends Controller
+final class JobFunctionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +20,7 @@ class JobFunctionController extends Controller
         $jobFunctions = JobFunction::orderBy('name')->get();
 
         return Inertia::render('admin/job-functions/job-functions-listing', [
-            'jobFunctions' => $jobFunctions
+            'jobFunctions' => $jobFunctions,
         ]);
     }
 
@@ -31,7 +33,7 @@ class JobFunctionController extends Controller
 
         return Inertia::render('admin/job-functions/create-or-edit-job-function', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -40,7 +42,7 @@ class JobFunctionController extends Controller
      */
     public function store(Request $request)
     {
-        $data =  $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:job_functions,name',
         ]);
 
@@ -52,7 +54,7 @@ class JobFunctionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -67,7 +69,7 @@ class JobFunctionController extends Controller
         return Inertia::render('admin/job-functions/create-or-edit-job-function', [
             'jobFunction' => $jobFunction,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -77,7 +79,7 @@ class JobFunctionController extends Controller
     public function update(Request $request, JobFunction $jobFunction)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:job_functions,name,' . $jobFunction->id,
+            'name' => 'required|string|unique:job_functions,name,'.$jobFunction->id,
         ]);
 
         $jobFunction->update($data);

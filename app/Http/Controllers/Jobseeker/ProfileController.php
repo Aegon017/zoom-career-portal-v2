@@ -27,7 +27,7 @@ final class ProfileController extends Controller
             'user' => $user,
             'skills' => $skills,
             'jobseeker_profile' => $jobseeker_profile,
-            'companies' => $companies
+            'companies' => $companies,
         ]);
     }
 
@@ -37,8 +37,8 @@ final class ProfileController extends Controller
 
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,' . $user->id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,'.$user->id],
             'location' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
             'notice_period' => 'nullable|string|max:255',
@@ -53,7 +53,7 @@ final class ProfileController extends Controller
         ]);
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
+            $user->addMedia(storage_path('app/public/'.$data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
         }

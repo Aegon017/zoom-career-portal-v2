@@ -7,7 +7,6 @@ use App\Http\Controllers\Settings\EmployerProfileController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware('auth')->group(function (): void {
     Route::redirect('settings', 'settings/profile');

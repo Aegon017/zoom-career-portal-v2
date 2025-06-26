@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 final class LocationController extends Controller
@@ -45,12 +44,11 @@ final class LocationController extends Controller
         ]);
     }
 
-
     public function getCities(Request $request)
     {
         $request->validate([
             'country' => 'required|string',
-            'state'   => 'required|string',
+            'state' => 'required|string',
         ]);
 
         $cities = Location::where('country', $request->country)
