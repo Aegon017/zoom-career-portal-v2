@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Enums\VerificationStatusEnum;
+use App\Models\SiteSetting;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,10 +54,13 @@ final class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error'),
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ],
-            'url' => fn () => request()->getRequestUri(),
+            'features' => [
+                'people_feature' => (bool) SiteSetting::where('name', 'People feature in student dashboard')->value('status'),
+            ],
+            'url' => fn() => request()->getRequestUri(),
         ];
     }
 }

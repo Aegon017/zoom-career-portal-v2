@@ -78,8 +78,6 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                     <div className="other-details">
                                         <ul>
                                             <li><i className="fa-solid fa-location-dot"></i>{user.location}</li>
-                                            <li><i className="fa-solid fa-phone"></i>{user.phone}</li>
-                                            <li><i className="fa-solid fa-envelope"></i>{user.email}</li>
                                             <li><i className="fa-solid fa-briefcase"></i>{jobseeker_profile?.experience}</li>
                                             <li><i className="fa-solid fa-calendar-days"></i>{jobseeker_profile?.notice_period}</li>
                                         </ul>

@@ -1,5 +1,5 @@
 import { NavItem, SharedData } from "@/types";
-import { ChartBar, ClipboardList, CodeXml, Factory, LayoutGrid, ListTree, MapPin, TableProperties, Users2 } from "lucide-react";
+import { ChartBar, ClipboardList, CodeXml, Factory, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -83,7 +83,13 @@ export function AppSidebar() {
         },
     ];
 
-    const footerNavItems: NavItem[] = [];
+    const footerNavItems: NavItem[] = [
+        {
+            title: 'Site settings',
+            href: '/admin/site-settings',
+            icon: Settings2,
+        }
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -102,6 +108,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
+                <Separator />
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <Separator />
                 <NavUser />

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\JobTypeController;
 use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
@@ -42,7 +43,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -148,10 +149,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('job-types', JobTypeController::class);
         Route::resource('job-functions', JobFunctionController::class);
         Route::resource('locations', AdminLocationController::class);
+
+        Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
+        Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

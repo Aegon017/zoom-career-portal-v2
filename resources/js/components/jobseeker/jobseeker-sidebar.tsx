@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import logo from '../../assets/images/logo.png';
 import ExploreIcon from '@/icons/explore-icon';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 import JobsIcon from '@/icons/jobs-icon';
 import PeopleIcon from '@/icons/people-icon';
 import EmployerIcon from '@/icons/employer-icon';
+import { SharedData } from '@/types';
 
 type SidebarItem = {
     key: string;
@@ -16,42 +17,44 @@ type SidebarItem = {
     isActive?: boolean;
 };
 
-const sidebarItems: SidebarItem[] = [
-    {
-        key: 'explore',
-        icon: <ExploreIcon />,
-        label: 'Explore',
-        href: '/jobseeker/explore',
-        isActive: window.location.pathname === '/jobseeker/explore',
-    },
-    {
-        key: 'people',
-        icon: <PeopleIcon />,
-        label: 'People',
-        href: '/jobseeker/people',
-        isActive: window.location.pathname === '/jobseeker/people',
-    },
-    {
-        key: 'jobs',
-        icon: <JobsIcon />,
-        label: 'Jobs',
-        children: [
-            { label: 'All Jobs', href: '/jobseeker/jobs' },
-            { label: 'Saved Jobs', href: '/jobseeker/jobs/your/saved' },
-            { label: 'Applied Jobs', href: '/jobseeker/jobs/your/applied' },
-        ],
-        isActive: window.location.pathname === '/jobseeker/jobs/*',
-    },
-    {
-        key: 'employers',
-        icon: <EmployerIcon />,
-        label: 'Employers',
-        href: '/jobseeker/employers',
-        isActive: window.location.pathname === '/jobseeker/employers',
-    },
-];
-
 export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
+    const { features } = usePage<SharedData>().props;
+    const sidebarItems: SidebarItem[] = [
+        {
+            key: 'explore',
+            icon: <ExploreIcon />,
+            label: 'Explore',
+            href: '/jobseeker/explore',
+            isActive: window.location.pathname === '/jobseeker/explore',
+        },
+        features.people_feature
+            ? {
+                key: 'people',
+                icon: <PeopleIcon />,
+                label: 'People',
+                href: '/jobseeker/people',
+                isActive: window.location.pathname === '/jobseeker/people',
+            }
+            : null,
+        {
+            key: 'jobs',
+            icon: <JobsIcon />,
+            label: 'Jobs',
+            children: [
+                { label: 'All Jobs', href: '/jobseeker/jobs' },
+                { label: 'Saved Jobs', href: '/jobseeker/jobs/your/saved' },
+                { label: 'Applied Jobs', href: '/jobseeker/jobs/your/applied' },
+            ],
+            isActive: window.location.pathname === '/jobseeker/jobs/*',
+        },
+        {
+            key: 'employers',
+            icon: <EmployerIcon />,
+            label: 'Employers',
+            href: '/jobseeker/employers',
+            isActive: window.location.pathname === '/jobseeker/employers',
+        },
+    ].filter(Boolean) as SidebarItem[];
     const [activeItem, setActiveItem] = useState<string | null>(null);
 
     const handleDropdownToggle = (itemKey: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {

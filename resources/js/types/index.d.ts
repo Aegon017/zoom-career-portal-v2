@@ -33,6 +33,9 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };
+    features: {
+        people_feature: boolean;
+    }
     sidebarOpen: boolean;
     [key: string]: unknown;
 }
@@ -250,4 +253,10 @@ export interface Location {
     country: string;
     state: string;
     city: string;
+}
+
+export interface Setting {
+    id: number;
+    name: string;
+    status: boolean;
 }
