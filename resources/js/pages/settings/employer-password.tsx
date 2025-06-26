@@ -31,7 +31,7 @@ export default function Password() {
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 
-        put(route('employer.password.update'), {
+        put("/employer/settings/password", {
             preserveScroll: true,
             onSuccess: () => reset(),
             onError: (errors) => {

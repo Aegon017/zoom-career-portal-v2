@@ -14,7 +14,7 @@ interface JobStatusProps {
 
 const JobStatus = ({ statuses, application }: JobStatusProps) => {
     const onSubmit = (data: any) => {
-        router.post(route('employer.applications.store'), data, {
+        router.post("/employer/applications", data, {
             preserveScroll: true
         });
     };

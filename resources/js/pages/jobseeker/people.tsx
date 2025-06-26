@@ -155,7 +155,7 @@ const People = ({ users }: Props) => {
                                                         )}
                                                     </div>
                                                     <div className="bottom">
-                                                        <Link href={route('jobseeker.profile.index', { user: user.id })} className="btn btn-details"><i className="fa-regular fa-user"></i> View Details</Link>
+                                                        <Link href={`/jobseeker/profile/${user.id}`} className="btn btn-details"><i className="fa-regular fa-user"></i> View Details</Link>
                                                         <a href="#" className="btn btn-msg"><i className="fa-regular fa-message"></i> Message</a>
                                                     </div>
                                                 </div>

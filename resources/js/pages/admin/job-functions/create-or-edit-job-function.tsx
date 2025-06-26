@@ -19,7 +19,7 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Job function',
-            href: route('admin.job-functions.index'),
+            href: "/admin/job-functions",
         },
         {
             title: operation,
@@ -48,15 +48,15 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
         };
 
         const routes = {
-            Create: () => router.post(route('admin.job-functions.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.job-functions.update', jobFunction.id), data, { onError: handleErrors }),
+            Create: () => router.post("/admin/job-functions", data, { onError: handleErrors }),
+            Edit: () => router.put(`/admin/job-functions/${jobFunction.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.job-functions.destroy', id));
+        router.delete(`/admin/job-functions/${id}`);
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -100,7 +100,7 @@ const CreateOrEditIndustry = ({ jobFunction, operation, operationLabel }: Props)
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.job-functions.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get("/admin/job-functions")}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

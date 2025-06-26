@@ -29,7 +29,7 @@ const Verify = ({ job }: Props) => {
     const { control, handleSubmit } = form;
 
     const onSubmit = (data: any) => {
-        router.post(route('admin.job.verify.store', job.id), data);
+        router.post(`/admin/job/verify/${job.id}`, data);
     }
 
     return (
@@ -166,7 +166,7 @@ const Verify = ({ job }: Props) => {
                                 </div>
 
                                 <div className="flex gap-4 justify-end mt-8">
-                                    <Button type="button" variant="outline" onClick={() => router.get(route('admin.dashboard'))}>Cancel</Button>
+                                    <Button type="button" variant="outline" onClick={() => router.get("/admin/dashboard")}>Cancel</Button>
                                     <Button type="submit">Save</Button>
                                 </div>
                             </form>

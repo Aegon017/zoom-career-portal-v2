@@ -50,7 +50,7 @@ export default function EmploymentModal({
     const is_current = watch("is_current");
 
     const onSubmit = (data: any) => {
-        router.post(route("jobseeker.profile.experience.store"), data, {
+        router.post("/jobseeker/profile/experience", data, {
             preserveScroll: true,
             onError: (errors) => {
                 toast.error("Failed to add experience.");

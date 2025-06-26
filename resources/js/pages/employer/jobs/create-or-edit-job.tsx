@@ -64,7 +64,7 @@ const CreateOrEditJob = ({
 
     const fetchCountries = async () => {
         try {
-            const res = await axios.get(route('getCountries'));
+            const res = await axios.get("/location/countries");
             const countries = res.data?.data || [];
 
             const formatted = countries.map((c: string) => ({
@@ -81,7 +81,7 @@ const CreateOrEditJob = ({
 
     const fetchStates = async (countryName: string) => {
         try {
-            const res = await axios.post(route('getStates'), {
+            const res = await axios.post("/location/states", {
                 country: countryName,
             });
 
@@ -101,7 +101,7 @@ const CreateOrEditJob = ({
 
     const fetchCities = async (countryName: string, stateName: string) => {
         try {
-            const res = await axios.post(route('getCities'), {
+            const res = await axios.post("/location/cities", {
                 country: countryName,
                 state: stateName,
             });
@@ -171,19 +171,19 @@ const CreateOrEditJob = ({
         };
 
         const routes = {
-            Create: () => router.post(route('employer.jobs.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('employer.jobs.update', job.id), data, { onError: handleErrors }),
+            Create: () => router.post("/employer/jobs", data, { onError: handleErrors }),
+            Edit: () => router.put(`/employer/jobs/${job.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('employer.jobs.destroy', id));
+        router.delete(`/employer/jobs/${id}`);
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Jobs', href: route('employer.jobs.index') },
+        { title: 'Jobs', href: "/employer/jobs" },
         { title: operation, href: '' },
     ];
 
@@ -405,7 +405,7 @@ const CreateOrEditJob = ({
 
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('employer.jobs.index'))}>
+                            <Button type="button" variant="outline" onClick={() => router.get("/employer/jobs")}>
                                 Cancel
                             </Button>
                         </div>

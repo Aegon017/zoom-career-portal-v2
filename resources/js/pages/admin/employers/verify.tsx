@@ -52,7 +52,7 @@ export default function Show({
 
     const onSubmit = (formData: any) => {
         const data = { ...formData, 'company_id': company.id, 'user_id': user.id };
-        router.post(route('admin.employer.verify.store'), data);
+        router.post("/admin/employer/verify", data);
     }
 
     const { handleSubmit, control, setError } = form;
@@ -323,7 +323,7 @@ export default function Show({
                                     </div>
                                 </div>
                                 <div className="flex gap-4 justify-end mt-8">
-                                    <Button type="button" variant="outline" onClick={() => router.get(route('admin.dashboard'))}>Cancel</Button>
+                                    <Button type="button" variant="outline" onClick={() => router.get("/admin/dashboard")}>Cancel</Button>
                                     <Button type="submit">Save</Button>
                                 </div>
                             </form>

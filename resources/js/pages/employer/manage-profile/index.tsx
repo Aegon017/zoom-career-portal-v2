@@ -84,7 +84,7 @@ export default function ManageProfile({ work_experiences, companies, user }: { w
                             onClose={() => setShowModal(false)}
                             onSave={(theme) => {
                                 setBannerTheme(theme);
-                                router.put(route('employer.profile.banner.update'), {
+                                router.put("/employer/profile/banner", {
                                     banner: theme,
                                 }, {
                                     preserveScroll: true,
@@ -138,7 +138,7 @@ export default function ManageProfile({ work_experiences, companies, user }: { w
                                         onClose={() => setShowEditProfile(false)}
                                         user={user}
                                         onSave={(data) => {
-                                            router.patch(route("employer.dashboard.profile.update"), data, {
+                                            router.patch("/employer/dashboard/profile", data, {
                                                 preserveScroll: true,
                                                 onError: () => toast.error("Failed to update profile"),
                                             });
@@ -181,7 +181,7 @@ export default function ManageProfile({ work_experiences, companies, user }: { w
                                     onClose={() => setShowWorkModal(false)}
                                     companies={companies}
                                     onSave={async (data: Record<string, any>) => {
-                                        await router.post(route("employer.profile.experience.store"), data, {
+                                        await router.post("/employer/profile/experience", data, {
                                             preserveScroll: true,
                                             onError: (errors) => {
                                                 toast.error("Failed to add experience.");

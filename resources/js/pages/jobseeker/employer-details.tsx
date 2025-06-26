@@ -15,7 +15,7 @@ const EmployerDetails = ({ company }: Props) => {
             <div className="zc-main-wrapper py-4">
                 <div className="zc-container">
                     <div className="back-btn-wrapper mb-3">
-                        <Link href={route('jobseeker.employers.index')}><i className="fa-solid fa-arrow-left"></i>Go Back</Link>
+                        <Link href="/jobseeker/employers"><i className="fa-solid fa-arrow-left"></i>Go Back</Link>
                     </div>
                     <div className="zc-employer-profile-view-wrapper bg-white">
                         <div className="zc-employer-profile-view-top">

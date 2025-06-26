@@ -25,7 +25,7 @@ const JobDetails = ({ jobs, filters }: JobDetailsProps) => {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            router.get(route('jobseeker.jobs.index'), data, { preserveState: true, replace: true })
+            router.get('/jobseeker/jobs', data, { preserveState: true, replace: true })
         }, 300)
         return () => clearTimeout(timeout)
     }, [data])

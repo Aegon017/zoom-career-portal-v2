@@ -4,7 +4,7 @@ import { router } from '@inertiajs/react'
 
 const NotificationItem = ({ notification }: { notification: any }) => {
     const goToVerifcationPage = (notificationId: string, url: string) => {
-        router.get(route('notifications.markAsRead', notificationId));
+        router.get(`/notifications/${notificationId}/markAsRead`);
         router.get(url);
     }
 

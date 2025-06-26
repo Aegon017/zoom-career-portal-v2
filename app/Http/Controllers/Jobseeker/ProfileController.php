@@ -16,13 +16,8 @@ use Inertia\Inertia;
 
 final class ProfileController extends Controller
 {
-    public function index(Request $request)
+    public function show(User $user)
     {
-        $user = Auth::user();
-
-        if ($request->has('user')) {
-            $user = User::find($request->user);
-        }
         $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
         $jobseeker_profile = $user->jobseekerProfile;
         $skills = Skill::get();

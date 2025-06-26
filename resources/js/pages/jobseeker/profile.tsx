@@ -62,7 +62,7 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                                     <p className="company-name">at {/* Optional: company name */}</p>
                                                 </div>
                                                 <div className="profile-updated-date">
-                                                    Profile last updated - <span className="date">{jobseeker_profile?.updated_at && format(new Date(jobseeker_profile.updated_at), "dd MMM yyyy")}</span>
+                                                    Profile last updated - <span className="date">{jobseeker_profile?.updated_at && format(new Date(jobseeker_profile?.updated_at), "dd MMM yyyy")}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,8 +80,8 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                             <li><i className="fa-solid fa-location-dot"></i>{user.location}</li>
                                             <li><i className="fa-solid fa-phone"></i>{user.phone}</li>
                                             <li><i className="fa-solid fa-envelope"></i>{user.email}</li>
-                                            <li><i className="fa-solid fa-briefcase"></i>{jobseeker_profile.experience}</li>
-                                            <li><i className="fa-solid fa-calendar-days"></i>{jobseeker_profile.notice_period}</li>
+                                            <li><i className="fa-solid fa-briefcase"></i>{jobseeker_profile?.experience}</li>
+                                            <li><i className="fa-solid fa-calendar-days"></i>{jobseeker_profile?.notice_period}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                                 )}
                             </div>
                             <div className="zc-card-content">
-                                {jobseeker_profile.summary}
+                                {jobseeker_profile?.summary}
                             </div>
                         </div>
 
@@ -221,7 +221,7 @@ export default function Profile({ user, jobseeker_profile, skills, companies }: 
                             handleClose={closeModal}
                         />
                         <SummaryModal
-                            defaultSummary={jobseeker_profile.summary}
+                            defaultSummary={jobseeker_profile?.summary}
                             isActive={activeModal === 'summary'}
                             handleClose={closeModal}
                         />

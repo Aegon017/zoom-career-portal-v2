@@ -27,7 +27,7 @@ const SummaryModal: React.FC<SummaryModalProps> = ({ isActive, handleClose, defa
     });
 
     const onSubmit: SubmitHandler<SummaryFormInputs> = (data: any) => {
-        router.post(route('jobseeker.profile.summary.store'), data);
+        router.post("/jobseeker/profile/summary", data);
         handleClose();
     };
 

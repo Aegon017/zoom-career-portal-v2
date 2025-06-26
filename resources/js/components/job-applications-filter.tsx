@@ -15,7 +15,7 @@ interface Props {
 const JobApplicationsFilter = ({ jobOptions }: Props) => {
 
     const onSubmit = (data: any) => {
-        router.get(route("employer.applications.index", data));
+        router.get("/employer/applications");
     };
 
     const form = useForm({

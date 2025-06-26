@@ -30,13 +30,17 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('password.store'), {
+        post("/reset-password", {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
-        <AuthLayout title="Reset password" description="Please enter your new password below">
+        <AuthLayout
+            title="Reset password"
+            description="Please enter your new password below"
+            instruction=""
+        >
             <Head title="Reset password" />
 
             <form onSubmit={submit}>

@@ -13,11 +13,15 @@ export default function VerifyEmail({ status }: { status?: string }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('verification.send'));
+        post("/email/verification-notification");
     };
 
     return (
-        <AuthLayout title="Verify email" description="Please verify your email address by clicking on the link we just emailed to you.">
+        <AuthLayout
+            title="Verify email"
+            description="Please verify your email address by clicking on the link we just emailed to you."
+            instruction=""
+        >
             <Head title="Email verification" />
 
             {status === 'verification-link-sent' && (
@@ -32,7 +36,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Resend verification email
                 </Button>
 
-                <TextLink href={route('logout')} method="post" className="mx-auto block text-sm">
+                <TextLink href="/logout" method="post" className="mx-auto block text-sm">
                     Log out
                 </TextLink>
             </form>

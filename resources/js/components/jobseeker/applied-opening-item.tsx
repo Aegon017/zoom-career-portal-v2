@@ -23,7 +23,7 @@ const AppliedJobItem = ({ opening }: { opening: Opening }) => {
                     <p className="mb-0 line-clamp-2" dangerouslySetInnerHTML={{ __html: opening.description }}></p>
                 </div>
                 <div className="second-block">
-                    <Link href={route('jobseeker.jobs.show', opening.id)}>Read More</Link>
+                    <Link href={`/jobseeker/jobs/${opening.id}`}>Read More</Link>
                 </div>
             </div>
         </div>

@@ -18,8 +18,6 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('settings/password', [PasswordController::class, 'update'])->name('password.update');
-
-    Route::get('settings/appearance', fn () => Inertia::render('settings/appearance'))->name('appearance');
 });
 
 Route::middleware('auth')->prefix('employer')->name('employer.')->group(function (): void {
@@ -31,6 +29,4 @@ Route::middleware('auth')->prefix('employer')->name('employer.')->group(function
 
     Route::get('settings/password', [EmployerPasswordController::class, 'edit'])->name('password.edit');
     Route::put('settings/password', [EmployerPasswordController::class, 'update'])->name('password.update');
-
-    Route::get('settings/appearance', fn () => Inertia::render('settings/employer-appearance'))->name('appearance');
 });

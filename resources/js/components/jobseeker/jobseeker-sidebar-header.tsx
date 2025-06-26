@@ -1,8 +1,9 @@
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import logo from '../../assets/images/logo.png';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import useDropdown from '@/hooks/use-dropdown';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
+import { SharedData } from '@/types';
 
 export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const cleanup = useMobileNavigation();
@@ -10,6 +11,8 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
         cleanup();
         router.flushAll();
     };
+    const { user } = usePage<SharedData>().props.auth;
+
 
     const userNav = useDropdown<HTMLLIElement>();
     const notificationNav = useDropdown<HTMLLIElement>();
@@ -58,7 +61,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                     </button>
                     {userNav.isOpen && (
                         <div className="zc-dropdown-menu show">
-                            <Link href="/jobseeker/profile" className="zc-dropdown-item">
+                            <Link href={`/jobseeker/profile/${user.id}`} className="zc-dropdown-item">
                                 <i className="fa-solid fa-id-badge me-2"></i>
                                 Profile
                             </Link>

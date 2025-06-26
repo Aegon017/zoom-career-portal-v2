@@ -1,19 +1,19 @@
 "use client"
 
 import DataTableActions from "@/components/data-table-actions";
-import { JobTitle } from "@/types";
+import { TalentProfile } from "@/types";
 import { router } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table"
 
 const handleEdit = (id: number) => {
-    router.get(route("admin.talent-profiles.edit", id));
+    router.get(`/admin/talent-profiles/${id}/edit`);
 };
 
 const handleDelete = (id: number) => {
-    router.delete(route("admin.talent-profiles.destroy", id), { preserveScroll: true });
+    router.delete(`/admin/talent-profiles/${id}`, { preserveScroll: true });
 };
 
-export const columns: ColumnDef<JobTitle>[] = [
+export const columns: ColumnDef<TalentProfile>[] = [
     {
         accessorFn: (row, index) => index + 1,
         header: "S.No.",

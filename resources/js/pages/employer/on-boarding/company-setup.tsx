@@ -41,7 +41,7 @@ const CompanySetup = ({ company_name, company_sizes, company_types }: CompanySet
     const { handleSubmit, control, setError, setValue } = form;
 
     const onSubmit = (data: any) => {
-        router.post(route('employer.on-boarding.setup.company.store'), data, {
+        router.post("/employer/on-boarding/setup/company", data, {
             onError: (errors) => {
                 if (errors && typeof errors === 'object') {
                     Object.entries(errors).forEach(([field, message]) => {

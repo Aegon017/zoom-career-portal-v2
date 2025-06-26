@@ -36,7 +36,7 @@ const profileSetup = (props: ProfileSetup) => {
     const { handleSubmit, control, setValue } = form;
 
     const onSubmit = (data: any) => {
-        router.post(route('employer.on-boarding.setup.profile.store'), data);
+        router.post("/employer/on-boarding/setup/profile", data);
     }
     return (
         <>

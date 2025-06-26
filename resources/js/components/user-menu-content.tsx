@@ -13,7 +13,7 @@ interface UserMenuContentProps {
 export function UserMenuContent({ user }: UserMenuContentProps) {
     const { isSuperAdmin, isEmployer, isJobSeeker } = useRoles();
 
-    const profileLink = isSuperAdmin ? route('profile.edit') : route('employer.profile.edit');
+    const profileLink = isSuperAdmin ? "/settings/profile" : "/employer/settings/profile";
 
     const cleanup = useMobileNavigation();
 
@@ -35,7 +35,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                     <>
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link className="block w-full" href={route('employer.manage-profile.index')} as="button" prefetch onClick={cleanup}>
+                                <Link className="block w-full" href="/employer/manage-profile" as="button" prefetch onClick={cleanup}>
                                     <UserPen className="mr-2" />
                                     Manage profile
                                 </Link>
@@ -56,7 +56,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link className="block w-full" method="post" href={route('logout')} as="button" onClick={handleLogout}>
+                <Link className="block w-full" method="post" href="/logout" as="button" onClick={handleLogout}>
                     <LogOut className="mr-2" />
                     Log out
                 </Link>

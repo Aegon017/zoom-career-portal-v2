@@ -106,7 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     // jobseeker routes
     Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
-        Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+        Route::get('/profile/{userId}', [ProfileController::class, 'show'])->name('profile.show');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');

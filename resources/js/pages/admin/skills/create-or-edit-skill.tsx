@@ -13,7 +13,7 @@ const CreateOrEditskill = ({ skill, operation, operationLabel }: { skill: Skill,
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Skills',
-            href: route('admin.skills.index'),
+            href: "/admin/skills",
         },
         {
             title: operation,
@@ -42,15 +42,15 @@ const CreateOrEditskill = ({ skill, operation, operationLabel }: { skill: Skill,
         };
 
         const routes = {
-            Create: () => router.post(route('admin.skills.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.skills.update', skill.id), data, { onError: handleErrors }),
+            Create: () => router.post("/admin/skills", data, { onError: handleErrors }),
+            Edit: () => router.put(`admin/skills/${skill.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.skills.destroy', id));
+        router.delete(`/admin/skills/${id}`);
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -94,7 +94,7 @@ const CreateOrEditskill = ({ skill, operation, operationLabel }: { skill: Skill,
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.skills.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get("/admin/skills")}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

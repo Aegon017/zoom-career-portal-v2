@@ -39,13 +39,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
             phone: defaultValues.user.phone ?? "",
             profile_image: defaultValues.user.profile_image ?? "",
             location: defaultValues.user.location ?? "",
-            experience: defaultValues.jobseeker_profile.experience ?? "",
-            notice_period: defaultValues.jobseeker_profile.notice_period ?? "",
+            experience: defaultValues.jobseeker_profile?.experience ?? "",
+            notice_period: defaultValues.jobseeker_profile?.notice_period ?? "",
         }
     });
 
     const onSubmit: SubmitHandler<ProfileFormInputs> = (data: any) => {
-        router.post(route('jobseeker.profile.basic-details.store'), data);
+        router.post("/jobseeker/profile/basic-details", data);
         handleClose();
     };
 

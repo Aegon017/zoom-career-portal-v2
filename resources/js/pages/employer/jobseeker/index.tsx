@@ -8,7 +8,7 @@ import { Head } from "@inertiajs/react";
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Jobseekers',
-        href: route('employer.jobseekers.index'),
+        href: "/employer/jobseekers",
     },
 ];
 

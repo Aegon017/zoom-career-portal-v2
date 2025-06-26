@@ -13,7 +13,7 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Job Titles',
-            href: route('admin.job-titles.index'),
+            href: "/admin/job-titles",
         },
         {
             title: operation,
@@ -42,15 +42,15 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
         };
 
         const routes = {
-            Create: () => router.post(route('admin.job-titles.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.job-titles.update', job_title.id), data, { onError: handleErrors }),
+            Create: () => router.post("/admin/job-titles", data, { onError: handleErrors }),
+            Edit: () => router.put(`/admin/job-titles/${job_title.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.job-titles.destroy', id));
+        router.delete(`/admin/job-titles/${id}`);
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -94,7 +94,7 @@ const CreateOrEditJobTitle = ({ job_title, operation, operationLabel }: { job_ti
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.job-titles.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get("/admin/job-titles")}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

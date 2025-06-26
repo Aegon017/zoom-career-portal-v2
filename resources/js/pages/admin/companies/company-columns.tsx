@@ -9,7 +9,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react";
 
 const goToShow = (id: number) => {
-    router.get(route('admin.companies.show', id));
+    router.get(`/admin/companies/${id}`);
 }
 
 export const columns: ColumnDef<Company>[] = [

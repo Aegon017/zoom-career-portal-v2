@@ -32,7 +32,7 @@ const SkillsModal: React.FC<SkillsModalProps> = ({ isActive, handleClose, defaul
     }, [selectedSkills, setValue]);
 
     const onSubmit: SubmitHandler<SkillsFormInputs> = (data) => {
-        router.post(route("jobseeker.profile.skills.store"), { ...data });
+        router.post("/jobseeker/profile/skills", { ...data });
         handleClose();
     };
 

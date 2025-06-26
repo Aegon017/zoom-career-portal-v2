@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { JobTitle, TalentProfile, type BreadcrumbItem } from '@/types';
+import { TalentProfile, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,7 +13,7 @@ const CreateOrEditTalentProfile = ({ talent_profile, operation, operationLabel }
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Talent Profiles',
-            href: route('admin.talent-profiles.index'),
+            href: "/admin/talent-profiles",
         },
         {
             title: operation,
@@ -42,15 +42,15 @@ const CreateOrEditTalentProfile = ({ talent_profile, operation, operationLabel }
         };
 
         const routes = {
-            Create: () => router.post(route('admin.talent-profiles.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.talent-profiles.update', talent_profile.id), data, { onError: handleErrors }),
+            Create: () => router.post("/admin/talent-profiles", data, { onError: handleErrors }),
+            Edit: () => router.put(`/admin/talent-profiles/${talent_profile.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.talent-profiles.destroy', id));
+        router.delete(`/admin/talent-profiles/${id}`);
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -94,7 +94,7 @@ const CreateOrEditTalentProfile = ({ talent_profile, operation, operationLabel }
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.talent-profiles.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get("/admin/talent-profiles")}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

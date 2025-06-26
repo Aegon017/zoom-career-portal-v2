@@ -7,7 +7,7 @@ import { columns } from './job-type-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Job types',
-        href: route('admin.job-types.index'),
+        href: "/admin/job-types",
     },
 ];
 
@@ -20,7 +20,7 @@ export default function IndustriesListing({ jobTypes }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Job types" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={jobTypes} listingName="job type" createUrl={route('admin.job-types.create')} />
+                <DataTable columns={columns} data={jobTypes} listingName="job type" createUrl="/admin/job-types/create" />
             </div>
         </AppLayout>
     );

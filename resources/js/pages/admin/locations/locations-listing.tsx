@@ -7,7 +7,7 @@ import { columns } from './location-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Locations',
-        href: route('admin.locations.index'),
+        href: "/admin/locations",
     },
 ];
 
@@ -20,7 +20,7 @@ export default function IndustriesListing({ locations }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Locations" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={locations} listingName="location" createUrl={route('admin.locations.create')} />
+                <DataTable columns={columns} data={locations} listingName="location" createUrl="/admin/locations/create" />
             </div>
         </AppLayout>
     );

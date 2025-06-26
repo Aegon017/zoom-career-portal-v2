@@ -71,7 +71,7 @@ const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
 
     const onSubmit = useCallback(
         (data: FormValues) => {
-            router.post(route('employer.on-boarding.company.create-or-join.handle'), data, {
+            router.post("/employer/on-boarding/company/create-or-join", data, {
                 onError: (errors) => {
                     if (errors && typeof errors === 'object') {
                         Object.entries(errors).forEach(([field, message]) => {

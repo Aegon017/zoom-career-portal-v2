@@ -7,7 +7,7 @@ import { columns } from './talent-profile-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Talent Profiles',
-        href: route('admin.talent-profiles.index'),
+        href: "/admin/talent-profiles",
     },
 ];
 
@@ -16,7 +16,7 @@ export default function TalentProfilesListing({ talent_profiles }: { talent_prof
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Talent profiles" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={talent_profiles} listingName="talent profile" createUrl={route('admin.talent-profiles.create')} />
+                <DataTable columns={columns} data={talent_profiles} listingName="talent profile" createUrl="/admin/talent-profiles/create" />
             </div>
         </AppLayout>
     );

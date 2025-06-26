@@ -7,7 +7,7 @@ import { columns } from './company-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Companies',
-        href: route('admin.companies.index'),
+        href: "/admin/companies",
     },
 ];
 
@@ -20,7 +20,7 @@ export default function CompaniesListing({ companies }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Companies" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={companies} listingName="company" hasCreate={false} createUrl={route('admin.companies.create')} />
+                <DataTable columns={columns} data={companies} listingName="company" hasCreate={false} createUrl="/admin/companies/create" />
             </div>
         </AppLayout>
     );

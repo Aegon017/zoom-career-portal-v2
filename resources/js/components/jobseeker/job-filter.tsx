@@ -1,4 +1,4 @@
-import { useForm, router } from '@inertiajs/react'
+import { router, useForm } from '@inertiajs/react'
 import { useEffect, useRef, useState } from 'react'
 
 // Debounce hook
@@ -31,7 +31,7 @@ const JobFilters = ({ filters }: { filters: any }) => {
     const debouncedJobTitle = useDebounce(data.job_title, 500)
 
     useEffect(() => {
-        router.get(route('jobseeker.jobs.index'), {
+        router.get("/jobseeker/jobs", {
             ...data,
             company: debouncedCompany,
             job_title: debouncedJobTitle,
@@ -42,7 +42,7 @@ const JobFilters = ({ filters }: { filters: any }) => {
     }, [debouncedCompany, debouncedJobTitle])
 
     useEffect(() => {
-        router.get(route('jobseeker.jobs.index'), data, {
+        router.get("/jobseeker/jobs", data, {
             preserveState: true,
             replace: true,
         })

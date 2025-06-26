@@ -15,7 +15,7 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
 
     const handleLoadMore = () => {
         const newCount = count + 10;
-        router.get(route('jobseeker.jobs.saved.index'), { count: newCount }, {
+        router.get("/jobseeker/jobs/your/saved", { count: newCount }, {
             preserveState: true,
             preserveScroll: true,
         });

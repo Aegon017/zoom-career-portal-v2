@@ -7,11 +7,11 @@ import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns";
 
 const handleEdit = (id: number) => {
-    router.get(route("employer.jobs.edit", id));
+    router.get(`/employer/jobs/${id}/edit`);
 };
 
 const handleDelete = (id: number) => {
-    router.delete(route("employer.jobs.destroy", id), { preserveScroll: true });
+    router.delete(`/employer/jobs/${id}`, { preserveScroll: true });
 };
 
 export const columns: ColumnDef<Opening>[] = [

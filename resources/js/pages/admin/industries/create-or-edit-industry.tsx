@@ -19,7 +19,7 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Industries',
-            href: route('admin.industries.index'),
+            href: "/admin/industries",
         },
         {
             title: operation,
@@ -48,15 +48,15 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
         };
 
         const routes = {
-            Create: () => router.post(route('admin.industries.store'), data, { onError: handleErrors }),
-            Edit: () => router.put(route('admin.industries.update', industry.id), data, { onError: handleErrors }),
+            Create: () => router.post("/admin/industries", data, { onError: handleErrors }),
+            Edit: () => router.put(`/admin/industries/${industry.id}`, data, { onError: handleErrors }),
         };
 
         routes[operation as keyof typeof routes]?.();
     };
 
     const handleDelete = (id: number) => {
-        router.delete(route('admin.industries.destroy', id));
+        router.delete(`/admin/industries/${id}`);
     }
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
@@ -100,7 +100,7 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get(route('admin.industries.index'))}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get("/admin/industries")}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

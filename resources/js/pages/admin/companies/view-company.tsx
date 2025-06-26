@@ -64,7 +64,7 @@ const ViewCompany = ({ company }: Props) => {
     const verificationStatus = watch('verification_status');
 
     const onSubmit = (data: FormData) => {
-        router.patch(route("admin.companies.update", company.id), {
+        router.patch(`/admin/companies/${company.id}`, {
             verification_status: data.verification_status,
         });
     }
