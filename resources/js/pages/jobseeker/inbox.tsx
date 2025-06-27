@@ -37,7 +37,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
         setIsSending( true );
 
         router.post(
-            `/jobseeker/inbox/send-message`,
+            `/inbox/send-message`,
             {
                 chat_id: activeChatId,
                 message,
@@ -54,7 +54,6 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
             }
         );
     };
-
 
     return (
         <JobseekerLayout>
@@ -97,11 +96,15 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                                         <h3>{ otherUser.name }</h3>
                                                         <div className="date">
                                                             { chat.messages.length > 0
-                                                                ? format( new Date( chat.messages[ chat.messages.length - 1 ].created_at ), "MMM dd" )
+                                                                ? format(
+                                                                    new Date(
+                                                                        chat.messages[ chat.messages.length - 1 ].created_at
+                                                                    ),
+                                                                    "MMM dd"
+                                                                )
                                                                 : "" }
                                                         </div>
                                                     </div>
-                                                    {/* <h5 className="user-designation-company">{ otherUser.name }</h5> */ }
                                                     <p>{ getLastMessage( chat ) }</p>
                                                 </div>
                                             </div>
@@ -110,7 +113,8 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                 } ) }
                             </ul>
                         </aside>
-                        <div className="zc-chat-content">
+
+                        <div className={ `zc-chat-content ${ activeChatId ? "show" : "" }` }>
                             { activeChat ? (
                                 <>
                                     <div className="zc-chat-common-header">
@@ -123,7 +127,10 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                                 if ( !otherUser ) return null;
                                                 return (
                                                     <div className="user-img">
-                                                        <img src={ otherUser.profile_image } alt={ `${ otherUser.name }'s avatar` } />
+                                                        <img
+                                                            src={ otherUser.profile_image }
+                                                            alt={ `${ otherUser.name }'s avatar` }
+                                                        />
                                                     </div>
                                                 );
                                             } )() }
@@ -153,36 +160,56 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="zc-messanger">
                                         { activeChat.messages.length === 0 ? (
-                                            <p className="text-muted p-4">No messages yet. Start the conversation!</p>
+                                            <p className="text-muted p-4">
+                                                No messages yet. Start the conversation!
+                                            </p>
                                         ) : (
                                             activeChat.messages.map( ( msg ) => {
                                                 const isCurrentUser = msg.user_id === currentUserId;
                                                 return (
                                                     <div
                                                         key={ msg.id }
-                                                        className={ `chat-message ${ isCurrentUser ? "sent" : "received" }` }
+                                                        className={ `chat-message ${ isCurrentUser ? "me" : "other" }` }
                                                     >
-                                                        <div className="d-flex align-items-center gap-2 text-secondary text-sm">
-                                                            <div className="message-bubble">{ msg.message }</div>
-                                                            <small className="message-time">
-                                                                { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                            </small>
+                                                        <div className="d-flex align-items-end gap-2 text-secondary text-sm">
+                                                            { isCurrentUser ? (
+                                                                <>
+                                                                    <small className="text-secondary">
+                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                    </small>
+                                                                    <div className="message-bubble">{ msg.message }</div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <div className="message-bubble">{ msg.message }</div>
+                                                                    <small className="text-secondary">
+                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                    </small>
+                                                                </>
+                                                            ) }
                                                         </div>
                                                     </div>
                                                 );
                                             } )
                                         ) }
                                     </div>
-                                    <div className="zc-message-box">
+
+                                    <div className="zc-message-box d-flex align-items-center">
                                         <div
                                             ref={ messageInputRef }
                                             contentEditable={ true }
                                             className="message-type-box"
                                             data-placeholder="Type a message..."
                                         ></div>
-                                        <button className="btn-send-msg" aria-label="Send message" onClick={ handleSendMessage } disabled={ isSending }>
+                                        <button
+                                            className="btn-send-msg"
+                                            aria-label="Send message"
+                                            onClick={ handleSendMessage }
+                                            disabled={ isSending }
+                                        >
                                             <SendIcon />
                                         </button>
                                     </div>
@@ -192,7 +219,8 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                     <MailIcon />
                                     <h2 className="mt-4">Message anyone</h2>
                                     <p className="text-muted">
-                                        Connect with professionals and recruiters to grow your career through meaningful conversations.
+                                        Connect with professionals and recruiters to grow your career through meaningful
+                                        conversations.
                                     </p>
                                 </div>
                             ) }

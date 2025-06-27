@@ -86,9 +86,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 Route::get('/verification-pending', [EmployerOnBoardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
         });
-        Route::prefix('inbox')->name('inbox.')->group(function (): void {
-            Route::get('/', [InboxController::class, 'index'])->name('index');
-        });
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
@@ -131,8 +128,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/employers', [EmployerController::class, 'index'])->name('employers.index');
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
-        Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
-        Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
     });
 
     // admin routes
@@ -157,6 +152,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
+
+    Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
+    Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
 });
 
 Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());

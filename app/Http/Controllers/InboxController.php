@@ -22,8 +22,17 @@ class InboxController extends Controller
             ->whereHas('participants', fn($q) => $q->where('user_id', $userId))
             ->get();
 
-        return Inertia::render('jobseeker/inbox', [
-            'chats' => $chats
+        if (Auth::user()->hasRole('jobseeker')) {
+            $view = 'jobseeker/inbox';
+        } elseif (Auth::user()->hasRole('employer')) {
+            $view = 'employer/inbox';
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
+        return Inertia::render($view, [
+            'chats' => $chats,
+            'currentUserId' => Auth::id()
         ]);
     }
 

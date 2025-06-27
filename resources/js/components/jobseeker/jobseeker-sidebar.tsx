@@ -32,8 +32,8 @@ export function AppSidebar( { sidebarToggle }: { sidebarToggle: ReturnType<typeo
             key: 'inbox',
             icon: <i className="fa-solid fa-envelope-open-text mr-2"></i>,
             label: 'Inbox',
-            href: '/jobseeker/inbox',
-            isActive: window.location.pathname === '/jobseeker/inbox',
+            href: '/inbox',
+            isActive: window.location.pathname === '/inbox',
         },
         features.people_feature
             ? {

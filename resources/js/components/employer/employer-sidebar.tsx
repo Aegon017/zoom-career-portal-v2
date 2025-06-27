@@ -19,7 +19,7 @@ export function AppSidebar() {
         },
         {
             title: 'Inbox',
-            href: '/employer/inbox',
+            href: '/inbox',
             icon: MailOpen,
         },
         ...(
@@ -61,11 +61,11 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} groupName="Employer Panel" />
+                <NavMain items={ mainNavItems } groupName="Employer Panel" />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <NavFooter items={ footerNavItems } className="mt-auto" />
                 <Separator />
                 <NavUser />
             </SidebarFooter>
