@@ -37,7 +37,7 @@ export interface SharedData {
         people_feature: boolean;
     }
     sidebarOpen: boolean;
-    [key: string]: unknown;
+    [ key: string ]: unknown;
 }
 
 export interface User {
@@ -60,7 +60,7 @@ export interface User {
     skills?: Skill[];
     created_at: string;
     updated_at: string;
-    [key: string]: unknown;
+    [ key: string ]: unknown;
 }
 
 export interface Company {
@@ -83,7 +83,7 @@ export interface Company {
     openings: Opening[];
     users: User[];
     followers: number;
-    [key: string]: unknown;
+    [ key: string ]: unknown;
 }
 
 interface AppNotificationData {
@@ -180,17 +180,32 @@ interface TalentProfile {
     name: string;
 }
 
-interface Message {
-    id: string
-    name: string
-    title: string
-    company: string
-    preview: string
-    date: string
-    avatar?: string
-    initials?: string
-    isUnread?: boolean
+export interface Message {
+    id: number;
+    chat_id: number;
+    user_id: number;
+    message: string;
+    sent_at: Date;
+    created_at: string;
+    sender: User;
 }
+
+export interface ChatUser {
+    id: number;
+    chat_id: number;
+    user_id: number;
+    last_read_at: string | null;
+    user: User;
+}
+
+export interface Chat {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    participants: ChatUser[];
+    messages: Message[];
+}
+
 
 export interface WorkExperience {
     id: number;

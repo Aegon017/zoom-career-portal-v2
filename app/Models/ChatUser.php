@@ -6,30 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Message extends Model
+class ChatUser extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'chat_id',
-        'user_id',
-        'message',
-        'status',
-        'sent_at',
-    ];
+    protected $fillable = ['chat_id', 'user_id', 'last_read_at'];
 
     protected $casts = [
-        'sent_at' => 'datetime',
+        'last_read_at' => 'datetime',
     ];
 
-
-    public function chat()
+    public function chat(): BelongsTo
     {
         return $this->belongsTo(Chat::class);
     }
 
-    public function sender()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

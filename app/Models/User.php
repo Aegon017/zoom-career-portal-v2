@@ -156,4 +156,14 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     {
         return $this->belongsToMany(Skill::class, 'skill_users')->withTimestamps();
     }
+
+    public function chatUsers()
+    {
+        return $this->hasMany(ChatUser::class);
+    }
+
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_users')->withTimestamps();
+    }
 }

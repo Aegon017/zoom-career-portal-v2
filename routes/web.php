@@ -24,6 +24,7 @@ use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\InboxController as ControllersInboxController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
 use App\Http\Controllers\Jobseeker\EmployerController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
@@ -129,6 +131,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/employers', [EmployerController::class, 'index'])->name('employers.index');
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
+        Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
+        Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
     });
 
     // admin routes

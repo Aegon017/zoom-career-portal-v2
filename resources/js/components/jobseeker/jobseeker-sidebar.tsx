@@ -7,6 +7,7 @@ import JobsIcon from '@/icons/jobs-icon';
 import PeopleIcon from '@/icons/people-icon';
 import EmployerIcon from '@/icons/employer-icon';
 import { SharedData } from '@/types';
+import BackIcon from '@/icons/back-icon';
 
 type SidebarItem = {
     key: string;
@@ -17,7 +18,7 @@ type SidebarItem = {
     isActive?: boolean;
 };
 
-export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
+export function AppSidebar( { sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> } ) {
     const { features } = usePage<SharedData>().props;
     const sidebarItems: SidebarItem[] = [
         {
@@ -26,6 +27,13 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
             label: 'Explore',
             href: '/jobseeker/explore',
             isActive: window.location.pathname === '/jobseeker/explore',
+        },
+        {
+            key: 'inbox',
+            icon: <i className="fa-solid fa-envelope-open-text mr-2"></i>,
+            label: 'Inbox',
+            href: '/jobseeker/inbox',
+            isActive: window.location.pathname === '/jobseeker/inbox',
         },
         features.people_feature
             ? {
@@ -54,53 +62,53 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
             href: '/jobseeker/employers',
             isActive: window.location.pathname === '/jobseeker/employers',
         },
-    ].filter(Boolean) as SidebarItem[];
-    const [activeItem, setActiveItem] = useState<string | null>(null);
+    ].filter( Boolean ) as SidebarItem[];
+    const [ activeItem, setActiveItem ] = useState<string | null>( null );
 
-    const handleDropdownToggle = (itemKey: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleDropdownToggle = ( itemKey: string ) => ( e: React.MouseEvent<HTMLAnchorElement> ) => {
         e.preventDefault();
-        setActiveItem(prev => (prev === itemKey ? null : itemKey));
+        setActiveItem( prev => ( prev === itemKey ? null : itemKey ) );
     };
 
     return (
-        <nav id="zc-sidebar" className={`sidebar zc-sidebar ${sidebarToggle.collapsed ? 'collapsed' : ''}`} ref={sidebarToggle.sidebarRef}>
+        <nav id="zc-sidebar" className={ `sidebar zc-sidebar ${ sidebarToggle.collapsed ? 'collapsed' : '' }` } ref={ sidebarToggle.sidebarRef }>
             <div className="sidebar-content">
                 <div className="sidebar-brand">
                     <Link href="jobseeker/explore">
-                        <img src={logo} alt="Zoom Career" />
+                        <img src={ logo } alt="Zoom Career" />
                     </Link>
                 </div>
                 <ul className="sidebar-nav">
-                    {sidebarItems.map(item => (
+                    { sidebarItems.map( item => (
                         <li
-                            key={item.key}
-                            className={`sidebar-item${item.children ? ' has-children' : ''}${item.isActive || activeItem === item.key ? ' active' : ''}`}
+                            key={ item.key }
+                            className={ `sidebar-item${ item.children ? ' has-children' : '' }${ item.isActive || activeItem === item.key ? ' active' : '' }` }
                         >
-                            {item.children ? (
+                            { item.children ? (
                                 <>
-                                    <a onClick={handleDropdownToggle(item.key)} href="#">
-                                        {item.icon}
-                                        <span>{item.label}</span>
+                                    <a onClick={ handleDropdownToggle( item.key ) } href="#">
+                                        { item.icon }
+                                        <span>{ item.label }</span>
                                         <i className="fa-solid fa-angle-down dropdown-icon"></i>
                                     </a>
-                                    {activeItem === item.key && (
+                                    { activeItem === item.key && (
                                         <ul className="sub-menu">
-                                            {item.children.map(child => (
-                                                <li key={child.href}>
-                                                    <Link href={child.href}>{child.label}</Link>
+                                            { item.children.map( child => (
+                                                <li key={ child.href }>
+                                                    <Link href={ child.href }>{ child.label }</Link>
                                                 </li>
-                                            ))}
+                                            ) ) }
                                         </ul>
-                                    )}
+                                    ) }
                                 </>
                             ) : (
-                                <Link href={item.href!}>
-                                    {item.icon}
-                                    <span>{item.label}</span>
+                                <Link href={ item.href! }>
+                                    { item.icon }
+                                    <span>{ item.label }</span>
                                 </Link>
-                            )}
+                            ) }
                         </li>
-                    ))}
+                    ) ) }
                 </ul>
             </div>
         </nav>
