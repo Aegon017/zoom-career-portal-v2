@@ -18,7 +18,6 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
     const [ chatsState, setChats ] = useState<Chat[]>( chats );
     const activeChat = chatsState.find( ( chat ) => String( chat.id ) === activeChatId );
     const messagesEndRef = useRef<HTMLDivElement>( null );
-
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView( { behavior: "smooth" } );
     };
@@ -247,7 +246,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                     </div>
                                 </>
                             ) : (
-                                <div className="zc-chat-placeholder text-center p-5">
+                                <div className="m-auto text-center p-5">
                                     <MailIcon />
                                     <h2 className="mt-4">Message anyone</h2>
                                     <p className="text-muted">
