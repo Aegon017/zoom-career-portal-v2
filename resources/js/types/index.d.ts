@@ -85,6 +85,26 @@ export interface Company {
     [ key: string ]: unknown;
 }
 
+export interface CompanyUser {
+    id: number;
+    user_id: number;
+    company_id: number;
+    verified_at: string | null;
+    verification_status: string;
+    role: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface Profile {
+    id: number;
+    user_id: number;
+    user: User;
+    job_title: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Address {
     id: number;
     country: string;

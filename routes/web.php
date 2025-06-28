@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobFunctionController;
 use App\Http\Controllers\Admin\JobTypeController;
@@ -137,8 +138,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/users', UserController::class);
         Route::resource('/employee', AdminEmployeeController::class);
         Route::resource('/companies', CompanyController::class);
-        Route::get('/employer/verify', [AdminEmployerVerifyController::class, 'verify'])->name('employer.verify');
-        Route::post('/employer/verify', [AdminEmployerVerifyController::class, 'store'])->name('employer.verify.store');
+        Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
+        Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
 
