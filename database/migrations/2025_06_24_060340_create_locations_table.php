@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('country');
             $table->string('state')->nullable();
             $table->string('city');
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

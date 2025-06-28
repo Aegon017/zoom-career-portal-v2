@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -31,13 +32,9 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'email_verified_at',
-        'phone',
-        'headline',
-        'pronouns',
-        'location',
-        'banner',
     ];
 
     /**
@@ -55,12 +52,57 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    protected $appends = ['profile_image'];
+    protected $appends = [
+        'avatar_url',
+        'banner_url',
+        'resume_urls',
+    ];
 
-    public function getProfileImageAttribute(): string
+    public function registerMediaCollections(): void
     {
-        return $this->getFirstMediaUrl('profile_images');
+        $this->addMediaCollection('avatars')->singleFile();
+        $this->addMediaCollection('banners')->singleFile();
+        $this->addMediaCollection('resumes');
     }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('avatars');
+    }
+
+    public function getBannerUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('banners');
+    }
+
+    public function getResumeUrlsAttribute(): array
+    {
+        return $this->getMedia('resumes')->map->getUrl()->toArray();
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
+    public function companyUsers(): HasMany
+    {
+        return $this->hasMany(CompanyUser::class);
+    }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user');
+    }
+
+
+
+
 
     public function employerOnBording(): HasOne
     {
@@ -70,13 +112,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function employerProfile(): HasOne
     {
         return $this->hasOne(EmployerProfile::class);
-    }
-
-    public function companies()
-    {
-        return $this->belongsToMany(Company::class, 'company_user')
-            ->withPivot(['status', 'role', 'verified_at'])
-            ->withTimestamps();
     }
 
     public function jobSeekerProfile(): HasOne
@@ -92,12 +127,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function workExperiences()
     {
         return $this->hasMany(WorkExperience::class);
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('profile_images')->singleFile();
-        $this->addMediaCollection('resumes');
     }
 
     public function savedOpenings(): HasMany

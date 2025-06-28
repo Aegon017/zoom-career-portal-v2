@@ -146,7 +146,7 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                     >
                                         <Avatar className="h-12 w-12">
                                             <AvatarImage
-                                                src={ other.profile_image || "/placeholder.svg" }
+                                                src={ other.avatar_url || "/placeholder.svg" }
                                                 alt={ `${ other.name }'s avatar` }
                                             />
                                             <AvatarFallback>
@@ -192,7 +192,7 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                             <>
                                                 <Avatar className="h-10 w-10">
                                                     <AvatarImage
-                                                        src={ usr.profile_image || "/placeholder.svg" }
+                                                        src={ usr.avatar_url || "/placeholder.svg" }
                                                         alt={ `${ usr.name }'s avatar` }
                                                     />
                                                     <AvatarFallback>

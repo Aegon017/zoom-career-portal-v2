@@ -45,13 +45,9 @@ export interface User {
     name: string;
     email: string;
     phone?: string;
-    avatar?: string;
+    avatar_url?: string;
+    banner_url?: string,
     password?: string,
-    headline?: string,
-    pronouns?: string,
-    location?: string,
-    profile_image?: string,
-    banner?: string,
     followers: User[],
     followingUsers: User[],
     followingCompanies: Company[],
@@ -63,33 +59,43 @@ export interface User {
     [ key: string ]: unknown;
 }
 
+export interface JobTitle {
+    id: number;
+    name: string;
+}
+
 export interface Company {
     id: number;
-    company_name: string;
-    company_logo: string;
-    banner: string;
-    industry: string;
-    company_website: string;
-    company_description: string;
-    company_address: string;
-    public_phone: string;
-    public_email: string;
-    company_size: string;
-    company_type: string;
+    name: string;
+    logo_url: string;
+    banner_url: string;
+    industry_id: number | null;
+    website_url: string;
+    description: string;
+    size: string;
+    type: string;
+    verification_status: string;
+    users: User[];
+    industry: Industry;
+    address: Address;
+    openings: Opening[];
+    is_followed: boolean;
     created_at: string;
     updated_at: string;
-    verification_status: string;
-    is_followed: boolean;
-    openings: Opening[];
-    users: User[];
-    followers: number;
     [ key: string ]: unknown;
+}
+
+export interface Address {
+    id: number;
+    country: string;
+    state: string;
+    city: string;
 }
 
 interface AppNotificationData {
     message: string;
     employer_name: string;
-    company_name: string;
+    name: string;
     registered_at: string;
     url: string;
     type: 'new_employer' | string;
@@ -109,7 +115,7 @@ export interface Skill {
 
 export interface Opening {
     id: number;
-    company_id: number;
+    id: number;
     user_id: number;
     title: string;
     employment_type: string;
@@ -151,7 +157,7 @@ interface Application {
 interface Employer {
     id: number;
     user_id: number;
-    company_id: number;
+    id: number;
     profile_image: string;
     job_title: string;
     types_of_candidates: string[];
@@ -210,13 +216,13 @@ export interface Chat {
 export interface WorkExperience {
     id: number;
     user_id?: number;
-    company_id?: number;
-    company_name: string;
+    id?: number;
+    name: string;
     title: string;
     start_date: string;
     end_date: string;
     is_current?: boolean;
-    company_logo?: string;
+    logo?: string;
     created_at?: string;
     updated_at?: string;
     company: Company;
@@ -274,4 +280,9 @@ export interface Setting {
     id: number;
     name: string;
     status: boolean;
+}
+
+export interface Option {
+    value: string;
+    label: string;
 }

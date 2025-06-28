@@ -18,8 +18,7 @@ use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
-use App\Http\Controllers\Employer\EmployerOnBoardingController;
-use App\Http\Controllers\Employer\InboxController;
+use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
@@ -34,7 +33,6 @@ use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
@@ -74,16 +72,16 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function (): void {
             // profile and company setup
             Route::prefix('setup')->name('setup.')->group(function (): void {
-                Route::get('/profile', [EmployerOnBoardingController::class, 'setupProfile'])->name('profile');
-                Route::post('/profile', [EmployerOnBoardingController::class, 'storeProfile'])->name('profile.store');
-                Route::get('/company/new', [EmployerOnBoardingController::class, 'setupCompany'])->name('company');
-                Route::post('/company', [EmployerOnBoardingController::class, 'storeCompany'])->name('company.store');
-                Route::get('/company/verification-pending', [EmployerOnBoardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
+                Route::get('/profile', [OnboardingController::class, 'setupProfile'])->name('profile');
+                Route::post('/profile', [OnboardingController::class, 'storeProfile'])->name('profile.store');
+                Route::get('/company/new', [OnboardingController::class, 'setupCompany'])->name('company');
+                Route::post('/company', [OnboardingController::class, 'storeCompany'])->name('company.store');
+                Route::get('/company/verification-pending', [OnboardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
             });
             Route::prefix('company')->name('company.')->group(function (): void {
-                Route::get('/create-or-join', [EmployerOnBoardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
-                Route::post('/create-or-join', [EmployerOnBoardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
-                Route::get('/verification-pending', [EmployerOnBoardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
+                Route::get('/create-or-join', [OnboardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
+                Route::post('/create-or-join', [OnboardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
+                Route::get('/verification-pending', [OnboardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
         });
 

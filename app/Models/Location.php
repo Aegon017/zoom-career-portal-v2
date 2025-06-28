@@ -8,11 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final class Location extends Model
 {
-    protected $fillable = ['country', 'state', 'city', 'is_active'];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected $fillable = ['country', 'state', 'city'];
 
     public function careerInterestLocations()
     {

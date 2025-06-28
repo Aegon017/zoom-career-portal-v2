@@ -117,7 +117,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                         >
                                             <div className="chats-button" role="button">
                                                 <img
-                                                    src={ otherUser.profile_image }
+                                                    src={ otherUser.avatar_url }
                                                     className="user-img"
                                                     alt={ `${ otherUser.name }'s avatar` }
                                                 />
@@ -158,7 +158,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                                 return (
                                                     <div className="user-img">
                                                         <img
-                                                            src={ otherUser.profile_image }
+                                                            src={ otherUser.avatar_url }
                                                             alt={ `${ otherUser.name }'s avatar` }
                                                         />
                                                     </div>
