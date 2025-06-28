@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MessageStatusEnum;
+use App\Events\MessageSent;
 use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class InboxController extends Controller
         ]);
     }
 
-    public function sendMessage(Request $request, Chat $chat)
+    public function sendMessage(Request $request)
     {
         $request->validate([
             'chat_id' => 'required|exists:chats,id',
@@ -49,6 +50,13 @@ class InboxController extends Controller
             'message' => $request->message,
             'status' => MessageStatusEnum::SENT->value
         ]);
+
+        $receiverId = $message->chat->participants
+            ->where('user_id', '!=', Auth::id())
+            ->pluck('user_id')
+            ->first();
+
+        broadcast(new MessageSent($message, $receiverId))->toOthers();
 
         return back();
     }

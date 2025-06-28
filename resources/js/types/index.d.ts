@@ -187,7 +187,7 @@ export interface Message {
     message: string;
     sent_at: Date;
     created_at: string;
-    sender: User;
+    user: User;
 }
 
 export interface ChatUser {

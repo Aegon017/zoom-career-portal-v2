@@ -11,12 +11,12 @@ class Chat extends Model
 {
     use HasFactory;
 
-    public function participants()
+    public function participants(): HasMany
     {
         return $this->hasMany(ChatUser::class)->with('user');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }

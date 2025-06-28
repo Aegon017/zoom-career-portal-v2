@@ -2388,6 +2388,8 @@ ul.zc-certificate-list li {
     flex-direction: column;
     gap: 8px;
     padding: 10px;
+    height: calc(100vh - 180px);
+
 }
 
 /* Scrollbar styles for WebKit browsers */

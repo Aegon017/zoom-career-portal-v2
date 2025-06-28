@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BackIcon from "@/icons/back-icon";
 import JobseekerLayout from "@/layouts/jobseeker-layout";
 import { Head, router } from "@inertiajs/react";
-import MailIcon from "@/icons/mail-icon";
 import { Chat } from "@/types";
 import { format } from "date-fns";
 import SendIcon from "@/icons/send-icon";
+import { useEchoPublic } from "@laravel/echo-react";
+import MailIcon from "@/icons/mail-icon";
 
 interface Props {
     chats: Chat[];
@@ -14,8 +15,20 @@ interface Props {
 
 const Inbox = ( { chats, currentUserId }: Props ) => {
     const [ activeChatId, setActiveChatId ] = useState<string | null>( null );
-    const activeChat = chats.find( ( chat ) => String( chat.id ) === activeChatId );
+    const [ chatsState, setChats ] = useState<Chat[]>( chats );
+    const activeChat = chatsState.find( ( chat ) => String( chat.id ) === activeChatId );
+    const messagesEndRef = useRef<HTMLDivElement>( null );
 
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView( { behavior: "smooth" } );
+    };
+
+
+    useEffect( () => {
+        if ( activeChatId ) {
+            scrollToBottom();
+        }
+    }, [ activeChatId, chatsState ] );
     function getOtherParticipant( chat: Chat ) {
         return chat.participants.find( ( p ) => p.user.id !== currentUserId )?.user;
     }
@@ -55,6 +68,24 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
         );
     };
 
+    useEchoPublic(
+        "chats",
+        'MessageSent',
+        ( e: any ) => {
+            setChats( ( prevChats ) =>
+                prevChats.map( ( chat ) => {
+                    if ( chat.id === e.message.chat_id ) {
+                        return {
+                            ...chat,
+                            messages: [ ...chat.messages, e.message ],
+                        };
+                    }
+                    return chat;
+                } )
+            );
+        },
+    );
+
     return (
         <JobseekerLayout>
             <Head title="Inbox" />
@@ -76,7 +107,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                 </div>
                             </div>
                             <ul className="zc-chats-list">
-                                { chats.map( ( chat ) => {
+                                { chatsState.map( ( chat ) => {
                                     const otherUser = getOtherParticipant( chat );
                                     if ( !otherUser ) return null;
                                     return (
@@ -191,6 +222,7 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                                                 </>
                                                             ) }
                                                         </div>
+                                                        <div ref={ messagesEndRef } />
                                                     </div>
                                                 );
                                             } )
@@ -225,11 +257,14 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                 </div>
                             ) }
                         </div>
+
                     </div>
                 </div>
             </div>
         </JobseekerLayout>
     );
 };
+
+
 
 export default Inbox;
