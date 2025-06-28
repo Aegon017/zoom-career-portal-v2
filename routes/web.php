@@ -137,7 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/talent-profiles', TalentProfileController::class);
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
-        Route::resource('/employee', AdminEmployeeController::class);
+        Route::resource('/employees', AdminEmployeeController::class);
         Route::resource('/companies', CompanyController::class);
         Route::get('/employer/verify', [AdminEmployerVerifyController::class, 'verify'])->name('employer.verify');
         Route::post('/employer/verify', [AdminEmployerVerifyController::class, 'store'])->name('employer.verify.store');

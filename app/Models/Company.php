@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -66,11 +67,14 @@ final class Company extends Model implements HasMedia
         return $this->hasMany(Opening::class);
     }
 
-    public function users(): BelongsToMany
+    public function companyUsers(): HasMany
     {
-        return $this->belongsToMany(User::class, 'company_user')
-            ->withPivot(['status', 'role', 'verified_at'])
-            ->withTimestamps();
+        return $this->hasMany(CompanyUser::class);
+    }
+
+    public function users(): HasManyThrough
+    {
+        return $this->hasManyThrough(User::class, CompanyUser::class);
     }
 
     public function workExperiences(): HasMany

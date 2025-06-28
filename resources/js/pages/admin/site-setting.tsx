@@ -34,23 +34,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const SiteSetting = ({ settings }: Props) => {
-    const defaultValues = settings.reduce((acc, setting) => {
-        acc[setting.name] = setting.status;
+const SiteSetting = ( { settings }: Props ) => {
+
+    const defaultValues = settings.reduce( ( acc, setting ) => {
+        acc[ setting.name ] = setting.status;
         return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as Record<string, boolean> );
 
-    const form = useForm({
+    const form = useForm( {
         defaultValues,
-    });
+    } );
 
-    const onSubmit = (data: Record<string, boolean>) => {
-        console.log("Submitted data:", data);
-        router.post("/admin/site-settings", { settings: data });
+    const onSubmit = ( data: Record<string, boolean> ) => {
+        console.log( "Submitted data:", data );
+        router.post( "/admin/site-settings", { settings: data } );
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Site settings" />
             <div className="flex flex-col gap-4 p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -65,19 +66,19 @@ const SiteSetting = ({ settings }: Props) => {
                         </CardHeader>
 
                         <CardContent>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <Form { ...form }>
+                                <form onSubmit={ form.handleSubmit( onSubmit ) } className="space-y-6">
                                     <div className="grid gap-4">
-                                        {settings.map((setting) => (
+                                        { settings.map( ( setting ) => (
                                             <FormField
-                                                key={setting.id}
-                                                control={form.control}
-                                                name={setting.name}
-                                                render={({ field }) => (
+                                                key={ setting.id }
+                                                control={ form.control }
+                                                name={ setting.name }
+                                                render={ ( { field } ) => (
                                                     <FormItem className="flex items-center justify-between rounded-md border px-4 py-3 shadow-sm hover:bg-muted transition-colors">
                                                         <div className="space-y-1">
                                                             <FormLabel className="text-base font-medium capitalize">
-                                                                {setting.name.replace(/_/g, " ")}
+                                                                { setting.name.replace( /_/g, " " ) }
                                                             </FormLabel>
                                                             <FormDescription>
                                                                 Enable this feature for student usage.
@@ -86,15 +87,15 @@ const SiteSetting = ({ settings }: Props) => {
 
                                                         <FormControl>
                                                             <Checkbox
-                                                                checked={field.value}
-                                                                onCheckedChange={field.onChange}
+                                                                checked={ field.value }
+                                                                onCheckedChange={ field.onChange }
                                                                 className="ml-4"
                                                             />
                                                         </FormControl>
                                                     </FormItem>
-                                                )}
+                                                ) }
                                             />
-                                        ))}
+                                        ) ) }
                                     </div>
 
                                     <div className="pt-4">

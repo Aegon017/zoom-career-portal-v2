@@ -39,8 +39,8 @@ export function AppSidebar() {
             icon: Users2,
             items: [
                 {
-                    title: 'Employee',
-                    href: '/admin/employee',
+                    title: 'Employees',
+                    href: '/admin/employees',
                 }, {
                     title: 'Companies',
                     href: '/admin/companies',
@@ -104,12 +104,12 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} groupName="Admin Panel" />
+                <NavMain items={ mainNavItems } groupName="Admin Panel" />
             </SidebarContent>
 
             <SidebarFooter>
                 <Separator />
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <NavFooter items={ footerNavItems } className="mt-auto" />
                 <Separator />
                 <NavUser />
             </SidebarFooter>

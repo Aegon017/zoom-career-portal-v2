@@ -9,24 +9,21 @@ use Inertia\Inertia;
 
 final class AdminEmployeeController extends Controller
 {
-    public function index(): never
+    public function index()
     {
-        dd();
-    }
+        $employees = User::whereHas('companies')->get();
 
-    public function edit(string $id)
-    {
-        $user = User::find($id);
-
-        return Inertia::render('admin/employee/edit', [
-            'user' => $user,
+        return Inertia::render('admin/employee/employees-listing', [
+            'employees' => $employees
         ]);
     }
 
-    public function show(string $id)
+    public function show(int $id)
     {
-        User::find($id);
+        $user = User::find($id);
 
-        return Inertia::render('admin/employee/show');
+        return Inertia::render('admin/employee/view-employee', [
+            'user' => $user
+        ]);
     }
 }

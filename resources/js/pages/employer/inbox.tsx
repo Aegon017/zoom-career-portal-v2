@@ -250,7 +250,7 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                                                         "hh:mm a"
                                                                     ) }
                                                                 </span>
-                                                                <div className="px-4 py-2 bg-blue-500 text-white rounded-2xl">
+                                                                <div className="px-4 py-2 bg-blue-500 text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-2xl">
                                                                     <p className="text-sm whitespace-pre-wrap">
                                                                         { msg.message }
                                                                     </p>
@@ -258,7 +258,7 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <div className="px-4 py-2 bg-white text-gray-900 rounded-2xl">
+                                                                <div className="px-4 py-2 bg-white text-gray-900 rounded-tl-2xl rounded-br-2xl rounded-tr-2xl">
                                                                     <p className="text-sm whitespace-pre-wrap">
                                                                         { msg.message }
                                                                     </p>

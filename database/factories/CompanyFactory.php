@@ -22,7 +22,7 @@ final class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_name' => fake()->company(),
+            'company_name' => fake()->unique()->company(),
             'industry' => fake()->randomElement(['Technology', 'Healthcare', 'Finance', 'Education', 'Manufacturing']),
             'company_website' => fake()->url(),
             'company_description' => fake()->paragraph(3),

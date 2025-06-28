@@ -72,11 +72,14 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(EmployerProfile::class);
     }
 
-    public function companies()
+    public function companyUsers(): HasMany
     {
-        return $this->belongsToMany(Company::class, 'company_user')
-            ->withPivot(['status', 'role', 'verified_at'])
-            ->withTimestamps();
+        return $this->hasMany(CompanyUser::class);
+    }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_users');
     }
 
     public function jobSeekerProfile(): HasOne
@@ -86,7 +89,8 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function getRoleForCompany(Company $company): ?string
     {
-        return $this->companies()->where('company_id', $company->id)->first()?->pivot?->role;
+        $companyUser = $this->companyUsers()->where('company_id', $company->id)->first();
+        return $companyUser?->role;
     }
 
     public function workExperiences()
@@ -164,6 +168,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function chats()
     {
-        return $this->belongsToMany(Chat::class, 'chat_users')->withTimestamps();
+        return $this->belongsToMany(Chat::class, 'chat_users');
     }
 }

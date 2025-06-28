@@ -55,7 +55,7 @@ final class EmployerOnBoardingController extends Controller
             'profile_image' => 'nullable|string',
             'job_title_id' => 'required|exists:opening_titles,id',
             'types_of_candidates' => 'nullable|array',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:16',
         ]);
 
         $user->phone = $data['phone'];
@@ -66,7 +66,7 @@ final class EmployerOnBoardingController extends Controller
         $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$data['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
         }
@@ -157,7 +157,7 @@ final class EmployerOnBoardingController extends Controller
         $company = $this->createCompanyAction->handle($data, $verification_status);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $company->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $company->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logos');
         }
