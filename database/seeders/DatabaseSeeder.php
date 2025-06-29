@@ -23,7 +23,7 @@ final class DatabaseSeeder extends Seeder
     {
         // User::factory(1000)->create();
         // Skill::factory(100)->create();
-        Company::factory(5)->create();
+        Company::factory(30)->create();
         // Opening::factory(10)->create();
         // Chat::factory(10)->create()->each(function ($chat) {
         //     $participants = User::inRandomOrder()->take(2)->get();

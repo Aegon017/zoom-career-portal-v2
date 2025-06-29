@@ -2,83 +2,83 @@ import { router, useForm } from '@inertiajs/react'
 import { useEffect, useRef, useState } from 'react'
 
 // Debounce hook
-function useDebounce<T>(value: T, delay: number): T {
-    const [debouncedValue, setDebouncedValue] = useState(value)
+function useDebounce<T>( value: T, delay: number ): T {
+    const [ debouncedValue, setDebouncedValue ] = useState( value )
 
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedValue(value), delay)
-        return () => clearTimeout(handler)
-    }, [value, delay])
+    useEffect( () => {
+        const handler = setTimeout( () => setDebouncedValue( value ), delay )
+        return () => clearTimeout( handler )
+    }, [ value, delay ] )
 
     return debouncedValue
 }
 
-const JobFilters = ({ filters }: { filters: any }) => {
-    const [isIndustryDropdownOpen, setIsIndustryDropdownOpen] = useState(false)
-    const [isEmploymentDropdownOpen, setIsEmploymentDropdownOpen] = useState(false)
+const JobFilters = ( { filters }: { filters: any } ) => {
+    const [ isIndustryDropdownOpen, setIsIndustryDropdownOpen ] = useState( false )
+    const [ isEmploymentDropdownOpen, setIsEmploymentDropdownOpen ] = useState( false )
 
-    const industryRef = useRef<HTMLDivElement>(null)
-    const employmentRef = useRef<HTMLDivElement>(null)
+    const industryRef = useRef<HTMLDivElement>( null )
+    const employmentRef = useRef<HTMLDivElement>( null )
 
-    const { data, setData } = useForm({
+    const { data, setData } = useForm( {
         company: filters?.company || '',
         job_title: filters?.job_title || '',
         employment_types: filters?.employment_types || [],
         industries: filters?.industries || [],
-    })
+    } )
 
-    const debouncedCompany = useDebounce(data.company, 500)
-    const debouncedJobTitle = useDebounce(data.job_title, 500)
+    const debouncedCompany = useDebounce( data.company, 500 )
+    const debouncedJobTitle = useDebounce( data.job_title, 500 )
 
-    useEffect(() => {
-        router.get("/jobseeker/jobs", {
+    useEffect( () => {
+        router.get( "/jobseeker/jobs", {
             ...data,
             company: debouncedCompany,
             job_title: debouncedJobTitle,
         }, {
             preserveState: true,
             replace: true,
-        })
-    }, [debouncedCompany, debouncedJobTitle])
+        } )
+    }, [ debouncedCompany, debouncedJobTitle ] )
 
-    useEffect(() => {
-        router.get("/jobseeker/jobs", data, {
+    useEffect( () => {
+        router.get( "/jobseeker/jobs", data, {
             preserveState: true,
             replace: true,
-        })
-    }, [data.employment_types, data.industries])
+        } )
+    }, [ data.employment_types, data.industries ] )
 
-    const toggleFilter = (field: 'employment_types' | 'industries', value: string) => {
-        const current = data[field]
-        const updated = current.includes(value)
-            ? current.filter((v: string) => v !== value)
-            : [...current, value]
+    const toggleFilter = ( field: 'employment_types' | 'industries', value: string ) => {
+        const current = data[ field ]
+        const updated = current.includes( value )
+            ? current.filter( ( v: string ) => v !== value )
+            : [ ...current, value ]
 
-        setData(field, updated)
+        setData( field, updated )
     }
 
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = ( e: MouseEvent ) => {
         if (
             employmentRef.current &&
-            !employmentRef.current.contains(e.target as Node)
+            !employmentRef.current.contains( e.target as Node )
         ) {
-            setIsEmploymentDropdownOpen(false)
+            setIsEmploymentDropdownOpen( false )
         }
 
         if (
             industryRef.current &&
-            !industryRef.current.contains(e.target as Node)
+            !industryRef.current.contains( e.target as Node )
         ) {
-            setIsIndustryDropdownOpen(false)
+            setIsIndustryDropdownOpen( false )
         }
     }
 
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside)
+    useEffect( () => {
+        document.addEventListener( 'mousedown', handleClickOutside )
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside)
+            document.removeEventListener( 'mousedown', handleClickOutside )
         }
-    }, [])
+    }, [] )
 
     return (
         <div className="zc-jobs-filter-wrapper zc-card">
@@ -91,7 +91,7 @@ const JobFilters = ({ filters }: { filters: any }) => {
                 </div>
             </div>
             <div className="zc-job-filter-widget d-block position-relative w-100">
-                {/* Company */}
+                {/* Company */ }
                 <div className="zc-field-wrap mb-2">
                     <label htmlFor="search_by_company">Company</label>
                     <input
@@ -99,12 +99,12 @@ const JobFilters = ({ filters }: { filters: any }) => {
                         name="search_by_company"
                         id="search_by_company"
                         className="form-control"
-                        value={data.company}
-                        onChange={(e) => setData('company', e.target.value)}
+                        value={ data.company }
+                        onChange={ ( e ) => setData( 'company', e.target.value ) }
                     />
                 </div>
 
-                {/* Job Title */}
+                {/* Job Title */ }
                 <div className="zc-field-wrap mb-2">
                     <label htmlFor="search_by_jobtitle">Job Title</label>
                     <input
@@ -112,58 +112,58 @@ const JobFilters = ({ filters }: { filters: any }) => {
                         name="search_by_jobtitle"
                         id="search_by_jobtitle"
                         className="form-control"
-                        value={data.job_title}
-                        onChange={(e) => setData('job_title', e.target.value)}
+                        value={ data.job_title }
+                        onChange={ ( e ) => setData( 'job_title', e.target.value ) }
                     />
                 </div>
 
-                {/* Employment Type Dropdown */}
-                <div ref={employmentRef} className="zc-field-wrap zc-dropdown-field mb-2 position-relative">
+                {/* Employment Type Dropdown */ }
+                <div ref={ employmentRef } className="zc-field-wrap zc-dropdown-field mb-2 position-relative">
                     <label htmlFor="search_by_emptype">Employment Type</label>
                     <input
                         type="text"
                         id="search_by_emptype"
                         className="dropdown-toggle"
                         readOnly
-                        onClick={() => {
-                            setIsEmploymentDropdownOpen((prev) => !prev)
-                            setIsIndustryDropdownOpen(false)
-                        }}
+                        onClick={ () => {
+                            setIsEmploymentDropdownOpen( ( prev ) => !prev )
+                            setIsIndustryDropdownOpen( false )
+                        } }
                     />
                     <div
                         className="zc-dropdown"
-                        style={{ display: isEmploymentDropdownOpen ? 'block' : 'none' }}
+                        style={ { display: isEmploymentDropdownOpen ? 'block' : 'none' } }
                     >
                         <div className="dropdown-options">
-                            {["Full Time", "Part Time", "Freelance", "Government"].map((type) => (
-                                <label className="option" key={type}>
+                            { [ "Full Time", "Part Time", "Freelance", "Government" ].map( ( type ) => (
+                                <label className="option" key={ type }>
                                     <input
                                         type="checkbox"
-                                        checked={data.employment_types.includes(type)}
-                                        onChange={() => toggleFilter('employment_types', type)}
-                                    /> {type}
+                                        checked={ data.employment_types.includes( type ) }
+                                        onChange={ () => toggleFilter( 'employment_types', type ) }
+                                    /> { type }
                                 </label>
-                            ))}
+                            ) ) }
                         </div>
                     </div>
                 </div>
 
-                {/* Industry Dropdown */}
-                <div ref={industryRef} className="zc-field-wrap zc-dropdown-field mb-2 position-relative">
+                {/* Industry Dropdown */ }
+                <div ref={ industryRef } className="zc-field-wrap zc-dropdown-field mb-2 position-relative">
                     <label htmlFor="search_by_industry">Industry</label>
                     <input
                         type="text"
                         id="search_by_industry"
                         className="dropdown-toggle"
                         readOnly
-                        onClick={() => {
-                            setIsIndustryDropdownOpen((prev) => !prev)
-                            setIsEmploymentDropdownOpen(false)
-                        }}
+                        onClick={ () => {
+                            setIsIndustryDropdownOpen( ( prev ) => !prev )
+                            setIsEmploymentDropdownOpen( false )
+                        } }
                     />
                     <div
                         className="zc-dropdown"
-                        style={{ display: isIndustryDropdownOpen ? 'block' : 'none' }}
+                        style={ { display: isIndustryDropdownOpen ? 'block' : 'none' } }
                     >
                         <input
                             type="text"
@@ -171,15 +171,15 @@ const JobFilters = ({ filters }: { filters: any }) => {
                             placeholder="Search"
                         />
                         <div className="dropdown-options">
-                            {["IT", "Marketing", "Real Estate", "Government", "Freelance"].map((industry) => (
-                                <label className="option" key={industry}>
+                            { [ "IT", "Marketing", "Real Estate", "Government", "Freelance" ].map( ( industry ) => (
+                                <label className="option" key={ industry }>
                                     <input
                                         type="checkbox"
-                                        checked={data.industries.includes(industry)}
-                                        onChange={() => toggleFilter('industries', industry)}
-                                    /> {industry}
+                                        checked={ data.industries.includes( industry ) }
+                                        onChange={ () => toggleFilter( 'industries', industry ) }
+                                    /> { industry }
                                 </label>
-                            ))}
+                            ) ) }
                         </div>
                     </div>
                 </div>

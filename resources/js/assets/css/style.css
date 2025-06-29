@@ -2212,7 +2212,8 @@ ul.zc-certificate-list li {
     margin-bottom: 10px;
 }
 
-.zc-employer-profile-view-header .col-right .top .right .btn-group a {
+.zc-employer-profile-view-header .col-right .top .right .btn-group a,
+.btn-follow {
     color: var(--zc-secondary-color);
     text-decoration: none;
     border: 1px solid var(--zc-secondary-color);
@@ -2223,9 +2224,12 @@ ul.zc-certificate-list li {
     font-size: 15px;
     font-weight: 600;
     padding: 5px 10px;
+    position: relative;
+    z-index: 2;
 }
 
-.zc-employer-profile-view-header .col-right .top .right .btn-group a:hover {
+.zc-employer-profile-view-header .col-right .top .right .btn-group a:hover,
+.btn-follow:hover {
     background-color: var(--zc-secondary-color);
     color: #ffffff;
 }

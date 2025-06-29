@@ -15,25 +15,25 @@ type JobDetailsProps = {
     }
 }
 
-const JobDetails = ({ jobs, filters }: JobDetailsProps) => {
-    const { data, setData } = useForm({
+const JobDetails = ( { jobs, filters }: JobDetailsProps ) => {
+    const { data, setData } = useForm( {
         company: filters?.company || '',
         job_title: filters?.job_title || '',
         employment_types: filters?.employment_types || [],
         industries: filters?.industries || [],
-    })
+    } )
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            router.get('/jobseeker/jobs', data, { preserveState: true, replace: true })
-        }, 300)
-        return () => clearTimeout(timeout)
-    }, [data])
+    useEffect( () => {
+        const timeout = setTimeout( () => {
+            router.get( '/jobseeker/jobs', data, { preserveState: true, replace: true } )
+        }, 300 )
+        return () => clearTimeout( timeout )
+    }, [ data ] )
 
-    const toggleArray = (key: 'employment_types' | 'industries', value: string) => {
-        setData(key, data[key].includes(value)
-            ? data[key].filter((v: string) => v !== value)
-            : [...data[key], value])
+    const toggleArray = ( key: 'employment_types' | 'industries', value: string ) => {
+        setData( key, data[ key ].includes( value )
+            ? data[ key ].filter( ( v: string ) => v !== value )
+            : [ ...data[ key ], value ] )
     }
 
     return (
@@ -46,15 +46,15 @@ const JobDetails = ({ jobs, filters }: JobDetailsProps) => {
                 <div className="zc-container">
                     <div className="row">
                         <div className="col-lg-4">
-                            <JobFilters filters={filters} />
+                            <JobFilters filters={ filters } />
                         </div>
                         <div className="col-lg-8">
                             <div className="zc-card">
-                                {jobs.map(job => (
-                                    <div key={job.id} className="mb-3">
-                                        <OpeningItem opening={job} />
+                                { jobs.map( job => (
+                                    <div key={ job.id } className="mb-3">
+                                        <OpeningItem opening={ job } />
                                     </div>
-                                ))}
+                                ) ) }
                             </div>
                         </div>
                     </div>

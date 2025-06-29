@@ -26,6 +26,8 @@ final class CompanyFactory extends Factory
             'industry_id' => null,
             'website_url' => fake()->url(),
             'description' => fake()->paragraph(3),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->unique()->phoneNumber(),
             'size' => fake()->randomElement(CompanySizeEnum::values()),
             'type' => fake()->randomElement(CompanyTypeEnum::values()),
             'verification_status' => fake()->randomElement(VerificationStatusEnum::values()),

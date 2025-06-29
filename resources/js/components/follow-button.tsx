@@ -5,19 +5,21 @@ interface FollowButtonProps {
     followableId: number;
     followableType: "user" | "company";
     isFollowing: boolean;
+    className?: string;
 }
 
-export default function FollowButton({
+export default function FollowButton( {
     followableId,
     followableType,
     isFollowing: initiallyFollowing,
-}: FollowButtonProps) {
-    const [isFollowing, setIsFollowing] = useState(initiallyFollowing);
-    const [loading, setLoading] = useState(false);
+    className = "",
+}: FollowButtonProps ) {
+    const [ isFollowing, setIsFollowing ] = useState( initiallyFollowing );
+    const [ loading, setLoading ] = useState( false );
 
     const handleFollowToggle = () => {
-        if (loading) return;
-        setLoading(true);
+        if ( loading ) return;
+        setLoading( true );
 
         router.post(
             "/follow/toggle",
@@ -27,19 +29,20 @@ export default function FollowButton({
             },
             {
                 preserveScroll: true,
-                onSuccess: () => setIsFollowing((prev) => !prev),
-                onFinish: () => setLoading(false),
+                onSuccess: () => setIsFollowing( ( prev ) => !prev ),
+                onFinish: () => setLoading( false ),
             }
         );
     };
 
     return (
         <button
-            onClick={handleFollowToggle}
-            disabled={loading}
-            className={`btn-follow`}
+            type="button"
+            onClick={ handleFollowToggle }
+            disabled={ loading }
+            className={ `btn-follow ${ className }` }
         >
-            <i className="fa-solid fa-user-plus"></i>{loading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
+            <i className="fa-solid fa-user-plus"></i>{ loading ? "Processing..." : isFollowing ? "Unfollow" : "Follow" }
         </button>
     );
 }
