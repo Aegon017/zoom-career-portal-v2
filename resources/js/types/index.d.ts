@@ -154,6 +154,7 @@ export interface Opening {
     country: string | null;
     published_at: string;
     expires_at: Date;
+    apply_link?: string;
     status: string;
     verification_status: string;
     created_at: string;

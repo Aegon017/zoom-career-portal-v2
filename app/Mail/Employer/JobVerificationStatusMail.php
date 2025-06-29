@@ -19,7 +19,8 @@ final class JobVerificationStatusMail extends Mailable
      */
     public function __construct(
         public string $job_title,
-        public string $status
+        public string $status,
+        public string $reason
     ) {
         //
     }

@@ -25,10 +25,11 @@ final class JobVerifyController extends Controller
 
     public function store(Opening $opening, Request $request)
     {
-        if ($request->has('status')) {
-            $opening->verification_status = $request->status;
+        if ($request->has('verification_status')) {
+            $opening->verification_status = $request->verification_status;
             $opening->save();
-            Mail::to($opening->user)->send(new JobVerificationStatusMail($opening->title, $opening->verification_status));
+            $reason = $request->rejection_reason;
+            Mail::to($opening->user)->send(new JobVerificationStatusMail($opening->title, $opening->verification_status, $reason));
         }
 
         return back()->with('success', 'Job status updated successfully');

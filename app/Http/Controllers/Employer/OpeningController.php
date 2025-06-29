@@ -88,7 +88,7 @@ final class OpeningController extends Controller
 
         $this->sendNotification($job->user, $job);
 
-        return to_route('employer.jobs.edit', $job->id)->with('success', 'Job record created successfully');
+        return to_route('employer.jobs.index')->with('success', 'Job record created successfully');
     }
 
     /**
@@ -144,7 +144,7 @@ final class OpeningController extends Controller
 
         $this->sendNotification($job->user, $job);
 
-        return back()->with('success', 'Job record updated successfully');
+        return to_route('employer.jobs.index')->with('success', 'Job record updated successfully');
     }
 
     /**

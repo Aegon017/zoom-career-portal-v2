@@ -51,11 +51,7 @@ final class SkillController extends Controller
 
         $operation = OperationsEnum::Edit;
 
-        return to_route('admin.skills.edit', [
-            'skill' => SkillResource::make($skill),
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label(),
-        ])->with('success', 'Skill record created successfully.');
+        return to_route('admin.skills.index')->with('success', 'Skill record created successfully.');
     }
 
     /**
@@ -89,7 +85,7 @@ final class SkillController extends Controller
 
         $skill->update($data);
 
-        return back()->with('success', 'Skill record updated successfully');
+        return to_route('admin.skills.index')->with('success', 'Skill record updated successfully');
     }
 
     /**

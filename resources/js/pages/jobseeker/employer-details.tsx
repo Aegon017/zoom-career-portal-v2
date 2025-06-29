@@ -27,7 +27,7 @@ const EmployerDetails = ( { company }: Props ) => {
                                     <img src={ company.logo_url } className="mw-100" />
                                 </div>
                             </div>
-                            <div className="col-right">
+                            <div className="col-right w-100">
                                 <div className="top">
                                     <div className="left">
                                         <h3 className="employer-name">{ company.name }</h3>

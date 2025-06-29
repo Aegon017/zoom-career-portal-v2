@@ -23,7 +23,8 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
      */
     public function __construct(
         public User $user,
-        public Company $company
+        public Company $company,
+        public ?string $reason
     ) {}
 
     /**

@@ -40,10 +40,17 @@ interface Props {
 
 export default function Show( { user, profile, company, company_user }: Props ) {
 
-    const form = useForm( {
+    type FormValues = {
+        status: string
+        verification_status: string
+        rejection_reason?: string
+    }
+
+    const form = useForm<FormValues>( {
         defaultValues: {
             status: company_user.verification_status ?? "",
-            verification_status: company.verification_status ?? ""
+            verification_status: company.verification_status ?? "",
+            rejection_reason: ""
         }
     } );
 
@@ -52,7 +59,8 @@ export default function Show( { user, profile, company, company_user }: Props ) 
         router.post( "/admin/employer/verify", data );
     }
 
-    const { handleSubmit, control, setError } = form;
+    const { handleSubmit, control, setError, watch } = form;
+    const status = watch( "status" );
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Employer Verify" />
@@ -160,6 +168,26 @@ export default function Show( { user, profile, company, company_user }: Props ) 
                                                     </FormItem>
                                                 ) }
                                             />
+                                            { status === "rejected" && (
+                                                <FormField
+                                                    control={ control }
+                                                    name="rejection_reason"
+                                                    rules={ { required: "Rejection reason is required when rejecting a job" } }
+                                                    render={ ( { field } ) => (
+                                                        <FormItem className="px-4 pb-4">
+                                                            <FormLabel>Rejection Reason</FormLabel>
+                                                            <FormControl>
+                                                                <textarea
+                                                                    className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                                    placeholder="Enter the reason for rejection..."
+                                                                    { ...field }
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    ) }
+                                                />
+                                            ) }
                                         </Card>
                                     </div>
 

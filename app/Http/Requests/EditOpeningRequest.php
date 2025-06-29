@@ -43,6 +43,7 @@ final class EditOpeningRequest extends FormRequest
             'country' => 'sometimes|nullable|string|max:100',
             'published_at' => 'sometimes|date',
             'expires_at' => 'sometimes|required|date|after:published_at',
+            'apply_link' => 'nullable|string|max:255',
             'status' => ['sometimes', 'required', Rule::enum(JobStatusEnum::class)],
             'verification_status' => ['sometimes', Rule::enum(VerificationStatusEnum::class)],
             'skills' => 'sometimes|required|array',

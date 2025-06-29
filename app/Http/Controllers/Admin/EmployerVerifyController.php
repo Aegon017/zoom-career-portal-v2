@@ -48,8 +48,10 @@ class EmployerVerifyController extends Controller
         $companyUser->verification_status = $data['status'];
         if ($companyUser->verification_status === VerificationStatusEnum::Verified->value) {
             $companyUser->verified_at = now();
-            Mail::to($user)->send(new VerificationUpdateMail($user, $company));
         }
+        $reason = $request->rejection_reason;
+
+        Mail::to($user)->send(new VerificationUpdateMail($user, $company, $reason));
 
         $companyUser->save();
 

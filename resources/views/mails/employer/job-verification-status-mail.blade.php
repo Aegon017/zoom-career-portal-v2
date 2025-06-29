@@ -87,11 +87,20 @@ declare(strict_types=1);
             <p>Hello,</p>
 
             <p>Your job posting titled <strong>{{ $job_title }}</strong> has been <strong
-                    style="color: {{ $status === 'approved' ? '#2e7d32' : '#d32f2f' }};">{{ ucfirst($status) }}</strong>
+                    style="color: {{ $status === 'verified' ? '#2e7d32' : '#d32f2f' }};">{{ ucfirst($status) }}</strong>
                 by the admin.</p>
 
-            @if ($status === 'approved')
+            @if ($status === 'verified')
                 <p>The job is now visible to candidates on Zoomingcareer.</p>
+            @elseif ($status === 'rejected')
+                <p>Unfortunately, your job posting did not meet our verification criteria and has been rejected.</p>
+                @if (!empty($reason))
+                    <p style="color: #b71c1c; font-weight: 500;">
+                        <strong>Reason for Rejection:</strong> {{ $reason }}
+                    </p>
+                @endif
+                <p>If you have questions or wish to update your posting, please contact our support team or edit your
+                    job listing.</p>
             @else
                 <p>Please review and update your job posting if needed.</p>
             @endif
@@ -106,4 +115,3 @@ declare(strict_types=1);
 </body>
 
 </html>
-<?php 
