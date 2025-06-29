@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('industry_id')->nullable()->constrained()->nullOnDelete();
             $table->string('website_url');
             $table->text('description');
+            $table->string('email')->unique();
+            $table->string('phone')->unique();
             $table->string('size');
             $table->string('type');
             $table->string('verification_status');

@@ -161,7 +161,7 @@ final class OpeningController extends Controller
     {
         $admins = User::role('super_admin')->get();
 
-        $company_name = $opening->company->company_name;
+        $company_name = $opening->company->name;
         $posted_by = $user->name;
         $job_title = $opening->title;
         $review_link = route('admin.job.verify', [

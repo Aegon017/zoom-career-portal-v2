@@ -6,7 +6,7 @@ interface Props {
     companies: Company[]
 }
 
-const Employers = ({ companies }: Props) => {
+const Employers = ( { companies }: Props ) => {
     return (
         <JobseekerLayout>
             <Head title="Explore" />
@@ -128,17 +128,17 @@ const Employers = ({ companies }: Props) => {
                             <div className="col-lg-8 col-md-8 col-sm-12">
                                 <div className="zc-employer-list d-block w-100 position-relative">
                                     {
-                                        companies.map((company, index) => (
-                                            <div key={index} className="zc-employer-list-item d-block w-100 position-relative">
-                                                <Link href={`/jobseeker/employers/${company.id}`} className="details-link"></Link>
+                                        companies.map( ( company, index ) => (
+                                            <div key={ index } className="zc-employer-list-item d-block w-100 position-relative">
+                                                <Link href={ `/jobseeker/employers/${ company.id }` } className="details-link"></Link>
                                                 <div className="top-sec">
                                                     <div className="left-block">
                                                         <div className="employer-logo">
-                                                            <img src={company.company_logo} alt="" className="mw-100" />
+                                                            <img src={ company.logo_url } alt="" className="mw-100" />
                                                         </div>
                                                         <div className="employer-details">
-                                                            <h3 className="employer-name">{company.company_name}</h3>
-                                                            <p className="employer-industry">{company.industry}</p>
+                                                            <h3 className="employer-name">{ company.name }</h3>
+                                                            <p className="employer-industry">{ company.industry.name }</p>
                                                         </div>
                                                     </div>
                                                     <div className="right-block">
@@ -152,22 +152,22 @@ const Employers = ({ companies }: Props) => {
                                                     <ul className="zc-icon-list">
                                                         <li>
                                                             <i className="fa-solid fa-location-dot"></i>
-                                                            <span>{company.company_address}</span>
+                                                            <span>{ company.address.location.city }, { company.address.location.state }, { company.address.location.country }</span>
                                                         </li>
                                                         <li>
                                                             <i className="fa-solid fa-user-tie"></i>
                                                             <span>
-                                                                {company.company_size}
+                                                                { company.size }
                                                             </span>
                                                         </li>
                                                         <li>
                                                             <i className="fa-solid fa-building"></i>
-                                                            <span>{company.company_type}</span>
+                                                            <span>{ company.type }</span>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
-                                        ))
+                                        ) )
                                     }
                                     <div className="load-more-wrapper text-center d-block position-relative">
                                         <p id="jobsLeftText">10 More</p>

@@ -45,8 +45,8 @@ final class VerificationUpdateMail extends Mailable implements ShouldQueue
             view: 'mails.employer.verification-update-mail',
             with: [
                 'employer_name' => $this->user->name,
-                'status' => $this->user->companies->first()?->pivot->status,
-                'status_text' => ucfirst((string) $this->user->companies->first()?->pivot->status),
+                'status' => $this->company->companyUsers()->where('user_id', $this->user->id)->first()->verification_status,
+                'status_text' => ucfirst((string) $this->company->companyUsers()->where('user_id', $this->user->id)->first()->verification_status),
                 'company_name' => $this->company->company_name,
                 'updated_at' => now()->format('F j, Y'),
             ]

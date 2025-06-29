@@ -257,12 +257,26 @@ export default function Show( { user, profile, company, company_user }: Props ) 
                                                                 </div>
                                                             </div>
                                                         ) }
+                                                        <div className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-muted/30">
+                                                            <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                                                            <div>
+                                                                <p className="text-xs text-muted-foreground font-medium">Email</p>
+                                                                <p className="text-sm text-foreground leading-relaxed">{ company.email }</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-muted/30">
+                                                            <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                                                            <div>
+                                                                <p className="text-xs text-muted-foreground font-medium">Phone</p>
+                                                                <p className="text-sm text-foreground leading-relaxed">{ company.phone }</p>
+                                                            </div>
+                                                        </div>
                                                         { company.address && (
                                                             <div className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-muted/30">
                                                                 <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                                                                 <div>
                                                                     <p className="text-xs text-muted-foreground font-medium">Address</p>
-                                                                    <p className="text-sm text-foreground leading-relaxed">{ company.address.city }, { company.address.state }, { company.address.country }</p>
+                                                                    <p className="text-sm text-foreground leading-relaxed">{ company.address.location.city }, { company.address.location.state }, { company.address.location.country }</p>
                                                                 </div>
                                                             </div>
                                                         ) }

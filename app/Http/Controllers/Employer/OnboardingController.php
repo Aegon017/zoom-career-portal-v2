@@ -102,7 +102,7 @@ class OnboardingController extends Controller
 
         $company = Company::find($data['company']);
 
-        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
+        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'verification_status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_JOIN_VERIFICATION->value,
@@ -146,6 +146,8 @@ class OnboardingController extends Controller
             'industry_id' => 'required|integer|exists:industries,id',
             'website_url' => 'required|url|max:255',
             'description' => 'required|string|max:1000',
+            'email' => 'required|email|unique:companies,email|max:255',
+            'phone' => 'required|string|unique:companies,phone|max:16',
             'location_id' => 'required|integer|exists:locations,id',
             'size' => 'required|string|max:50',
             'type' => 'required|string|max:50',
@@ -156,6 +158,8 @@ class OnboardingController extends Controller
             'industry_id' => $data['industry_id'],
             'website_url' => $data['website_url'],
             'description' => $data['description'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
             'size' => $data['size'],
             'type' => $data['type'],
             'verification_status' => VerificationStatusEnum::Pending->value

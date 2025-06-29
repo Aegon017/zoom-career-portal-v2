@@ -53,6 +53,7 @@ export interface User {
     followingCompanies: Company[],
     email_verified_at: string | null;
     work_experiences: WorkExperience[];
+    address: Address;
     skills?: Skill[];
     created_at: string;
     updated_at: string;
@@ -72,6 +73,8 @@ export interface Company {
     industry_id: number | null;
     website_url: string;
     description: string;
+    email: string;
+    phone: string;
     size: string;
     type: string;
     verification_status: string;
@@ -107,9 +110,10 @@ export interface Profile {
 
 export interface Address {
     id: number;
-    country: string;
-    state: string;
-    city: string;
+    user_id: number;
+    location_id: number;
+    user: User;
+    location: Location;
 }
 
 interface AppNotificationData {

@@ -1,10 +1,12 @@
 import { AppHeader } from "@/components/employer/employer-header";
 import FileUpload from "@/components/file-upload";
+import { PhoneInput } from "@/components/phone-input";
 import { SelectPopoverField } from "@/components/select-popover-field";
 import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -35,6 +37,8 @@ interface FormValues {
     location_id: string;
     size: string;
     type: string;
+    phone: string;
+    email: string;
 }
 
 const CompanySetup = ( { name, industries, locations, sizes, types }: Props ) => {
@@ -139,6 +143,42 @@ const CompanySetup = ( { name, industries, locations, sizes, types }: Props ) =>
                                     control={ control }
                                     label="Address"
                                     placeholder="Select Address"
+                                />
+                                <FormField
+                                    control={ control }
+                                    name="email"
+                                    render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Company email</FormLabel>
+                                            <FormControl>
+                                                <Input type="email" { ...field } />
+                                            </FormControl>
+                                            <FormDescription>
+                                                This email is <strong>mandatory</strong> for company verification.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) }
+                                />
+                                <FormField
+                                    control={ control }
+                                    name="phone"
+                                    render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Company phone</FormLabel>
+                                            <FormControl>
+                                                <PhoneInput
+                                                    type="tel"
+                                                    placeholder="Enter your company phone number"
+                                                    { ...field }
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                This phone number is <strong>mandatory</strong> for company verification.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) }
                                 />
                                 <FormField
                                     control={ control }

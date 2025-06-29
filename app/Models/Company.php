@@ -27,6 +27,8 @@ final class Company extends Model implements HasMedia
         'industry_id',
         'website_url',
         'description',
+        'email',
+        'phone',
         'size',
         'type',
         'verification_status',

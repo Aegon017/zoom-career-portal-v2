@@ -25,7 +25,7 @@ final class EmployerManageProfileController extends Controller
                 ->get()
         );
 
-        $companies = Company::query()->orderBy('company_name')->get();
+        $companies = Company::query()->orderBy('name')->get();
 
         return Inertia::render('employer/manage-profile/index', [
             'work_experiences' => $work_experiences,
@@ -48,7 +48,7 @@ final class EmployerManageProfileController extends Controller
         $user->update($validated);
 
         if (! empty($validated['profile_image']) && Storage::disk('public')->exists($validated['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$validated['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $validated['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
         }
@@ -65,7 +65,7 @@ final class EmployerManageProfileController extends Controller
         $work_experience = $user->workExperiences()->create($data);
 
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $work_experience->addMedia(storage_path('app/public/'.$data['company_logo']))
+            $work_experience->addMedia(storage_path('app/public/' . $data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logos');
         }
