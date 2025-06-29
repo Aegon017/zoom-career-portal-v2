@@ -2,27 +2,35 @@ import AppliedJobItem from "@/components/jobseeker/applied-opening-item"
 import AppLayout from "@/layouts/jobseeker-layout"
 import { Opening } from "@/types"
 import { Head, router } from "@inertiajs/react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 
 interface Props {
-    jobs: Opening[];
+    initialJobs: any;
     count: number;
 }
 
-const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => {
-    const [jobs, setJobs] = useState(initialJobs);
-    const [count, setCount] = useState(initialCount);
-    const [isDateAccordionOpen, setIsDateAccordionOpen] = useState(false);
-    const [isStatusAccordionOpen, setIsStatusAccordionOpen] = useState(false);
-    const [isTypeAccordionOpen, setIsTypeAccordionOpen] = useState(false);
+const SavedJobsListing = ( { initialJobs: initialJobs, count: initialCount }: Props ) => {
+    const [ jobs, setJobs ] = useState( initialJobs );
+    const [ isDateAccordionOpen, setIsDateAccordionOpen ] = useState( true );
+    const [ isStatusAccordionOpen, setIsStatusAccordionOpen ] = useState( true );
+    const [ nextPageUrl, setNextPageUrl ] = useState( initialJobs.next_page_url );
+    const [ loading, setLoading ] = useState( false );
 
-    const handleLoadMore = () => {
-        const newCount = count + 10;
-        router.get("/jobseeker/jobs/your/applied", { count: newCount }, {
-            preserveState: true,
+    const loadMore = useCallback( () => {
+        if ( !nextPageUrl || loading ) return;
+        setLoading( true );
+        router.get( nextPageUrl, {}, {
             preserveScroll: true,
-        });
-    };
+            preserveState: true,
+            only: [ 'companies' ],
+            onSuccess: ( page ) => {
+                const companies = page.props.companies as { data: any[]; next_page_url: string | null };
+                setJobs( ( prev: any[] ) => [ ...prev, ...jobs.data ] );
+                setNextPageUrl( companies.next_page_url );
+                setLoading( false );
+            },
+        } );
+    }, [ nextPageUrl, loading ] );
     return (
         <AppLayout>
             <Head title="Jobs Applied" />
@@ -45,41 +53,23 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
                                 <div className="filter-content">
                                     <div className="zc-filter-accordion">
                                         <div className="zc-accordion-item">
-                                            <div className={`zc-accordion-header ${isTypeAccordionOpen ? 'active' : ''}`} onClick={() => setIsTypeAccordionOpen(!isTypeAccordionOpen)}>
-                                                <h3>Application Type</h3>
-                                                <i className="fa-solid fa-angle-down"></i>
-                                            </div>
-                                            <div className="zc-accordion-content" style={{ display: isTypeAccordionOpen ? 'block' : 'none' }}>
-                                                <div className="jappli-type-filter">
-                                                    <div className="zc-field check-box-field">
-                                                        <input type="checkbox" name="jbappli-type-1" id="jbappli-type-1" />
-                                                        <label htmlFor="jbappli-type-1">Job Applications</label>
-                                                    </div>
-                                                    <div className="zc-field check-box-field">
-                                                        <input type="checkbox" name="jbappli-type-2" id="jbappli-type-2" />
-                                                        <label htmlFor="jbappli-type-2">Applications to interview</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="zc-accordion-item">
-                                            <div className={`zc-accordion-header ${isStatusAccordionOpen ? 'active' : ''}`} onClick={() => setIsStatusAccordionOpen(!isStatusAccordionOpen)}>
+                                            <div className={ `zc-accordion-header ${ isStatusAccordionOpen ? 'active' : '' }` } onClick={ () => setIsStatusAccordionOpen( !isStatusAccordionOpen ) }>
                                                 <h3>Status</h3>
                                                 <i className="fa-solid fa-angle-down"></i>
                                             </div>
-                                            <div className="zc-accordion-content" style={{ display: isStatusAccordionOpen ? 'block' : 'none' }}>
+                                            <div className="zc-accordion-content" style={ { display: isStatusAccordionOpen ? 'block' : 'none' } }>
                                                 <div className="jappli-status-filter">
                                                     <div className="zc-field check-box-field">
                                                         <input
                                                             type="checkbox"
                                                             name="jbappli-status-1"
                                                             id="jbappli-status-1"
-                                                            onChange={(e) => {
+                                                            onChange={ ( e ) => {
                                                                 const filtered = e.target.checked
-                                                                    ? initialJobs.filter(job => job.application_status === 'pending')
+                                                                    ? initialJobs.filter( ( job: Opening ) => job.application_status === 'pending' )
                                                                     : initialJobs;
-                                                                setJobs(filtered);
-                                                            }}
+                                                                setJobs( filtered );
+                                                            } }
                                                         />
                                                         <label htmlFor="jbappli-status-1">Pending</label>
                                                     </div>
@@ -88,45 +78,25 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
                                                             type="checkbox"
                                                             name="jbappli-status-2"
                                                             id="jbappli-status-2"
-                                                            onChange={(e) => {
+                                                            onChange={ ( e ) => {
                                                                 const filtered = e.target.checked
-                                                                    ? initialJobs.filter(job => job.application_status === 'reviewed')
+                                                                    ? initialJobs.filter( ( job: Opening ) => job.application_status === 'shortlisted' )
                                                                     : initialJobs;
-                                                                setJobs(filtered);
-                                                            }}
+                                                                setJobs( filtered );
+                                                            } }
                                                         />
-                                                        <label htmlFor="jbappli-status-2">Reviewed</label>
+                                                        <label htmlFor="jbappli-status-2">Shortlisted</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="zc-accordion-item">
-                                            <div className={`zc-accordion-header ${isDateAccordionOpen ? 'active' : ''}`} onClick={() => setIsDateAccordionOpen(!isDateAccordionOpen)}>
+                                            <div className={ `zc-accordion-header ${ isDateAccordionOpen ? 'active' : '' }` } onClick={ () => setIsDateAccordionOpen( !isDateAccordionOpen ) }>
                                                 <h3>Applied Date</h3>
                                                 <i className="fa-solid fa-angle-down"></i>
                                             </div>
-                                            <div className="zc-accordion-content" style={{ display: isDateAccordionOpen ? 'block' : 'none' }}>
+                                            <div className="zc-accordion-content" style={ { display: isDateAccordionOpen ? 'block' : 'none' } }>
                                                 <div className="jappli-status-filter">
-                                                    <div className="zc-field">
-                                                        <label>Before</label>
-                                                        <div className="field-with-icon border">
-                                                            <input
-                                                                type="date"
-                                                                name="jappli-bdate"
-                                                                id="jappli-bdate"
-                                                                className="zc-date-field"
-                                                                placeholder="dd/mm/yyyy"
-                                                                onChange={(e) => {
-                                                                    const beforeDate = new Date(e.target.value);
-                                                                    const filtered = initialJobs.filter(job => {
-                                                                        const appliedDate = new Date(job.application_created_at);
-                                                                        return appliedDate <= beforeDate;
-                                                                    });
-                                                                    setJobs(filtered);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </div>
                                                     <div className="zc-field">
                                                         <label>After</label>
                                                         <div className="field-with-icon border">
@@ -136,14 +106,34 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
                                                                 id="jappli-adate"
                                                                 className="zc-date-field"
                                                                 placeholder="dd/mm/yyyy"
-                                                                onChange={(e) => {
-                                                                    const afterDate = new Date(e.target.value);
-                                                                    const filtered = initialJobs.filter(job => {
-                                                                        const appliedDate = new Date(job.application_created_at);
+                                                                onChange={ ( e ) => {
+                                                                    const afterDate = new Date( e.target.value );
+                                                                    const filtered = initialJobs.filter( ( job: Opening ) => {
+                                                                        const appliedDate = new Date( job.application_created_at );
                                                                         return appliedDate >= afterDate;
-                                                                    });
-                                                                    setJobs(filtered);
-                                                                }}
+                                                                    } );
+                                                                    setJobs( filtered );
+                                                                } }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="zc-field">
+                                                        <label>Before</label>
+                                                        <div className="field-with-icon border">
+                                                            <input
+                                                                type="date"
+                                                                name="jappli-bdate"
+                                                                id="jappli-bdate"
+                                                                className="zc-date-field"
+                                                                placeholder="dd/mm/yyyy"
+                                                                onChange={ ( e ) => {
+                                                                    const beforeDate = new Date( e.target.value );
+                                                                    const filtered = initialJobs.filter( ( job: Opening ) => {
+                                                                        const appliedDate = new Date( job.application_created_at );
+                                                                        return appliedDate <= beforeDate;
+                                                                    } );
+                                                                    setJobs( filtered );
+                                                                } }
                                                             />
                                                         </div>
                                                     </div>
@@ -163,31 +153,34 @@ const SavedJobsListing = ({ jobs: initialJobs, count: initialCount }: Props) => 
                                         name="job_search_key"
                                         id="job_search_key"
                                         placeholder="Search Jobs"
-                                        onChange={(e) => {
+                                        onChange={ ( e ) => {
                                             const searchTerm = e.target.value.toLowerCase();
-                                            const filteredJobs = initialJobs.filter(job =>
-                                                job.title.toLowerCase().includes(searchTerm)
+                                            const filteredJobs = initialJobs.filter( ( job: Opening ) =>
+                                                job.title.toLowerCase().includes( searchTerm )
                                             );
-                                            setJobs(filteredJobs);
-                                        }}
+                                            setJobs( filteredJobs );
+                                        } }
                                     />
                                 </div>
                                 <div className="jobs-found">
-                                    <p>Found {jobs.length} job</p>
+                                    <p>Found { jobs.length } job</p>
                                 </div>
                             </div>
                             <div className="zc-applied-job-wrapper">
                                 <div className="zc-applied-jobs-grid mb-3">
                                     {
-                                        jobs.map((job: Opening) => (
-                                            <AppliedJobItem key={job.id} opening={job} />
-                                        ))
+                                        jobs.map( ( job: Opening ) => (
+                                            <AppliedJobItem key={ job.id } opening={ job } />
+                                        ) )
                                     }
                                 </div>
-                                <div className="load-more-wrapper text-center d-block position-relative">
-                                    <p id="jobsLeftText">10 More Jobs</p>
-                                    <button id="loadMoreBtn" onClick={handleLoadMore}>Load More</button>
-                                </div>
+                                { nextPageUrl && (
+                                    <div className="load-more-wrapper text-center">
+                                        <button onClick={ loadMore } disabled={ loading }>
+                                            { loading ? 'Loading...' : 'Load More' }
+                                        </button>
+                                    </div>
+                                ) }
                             </div>
                         </div>
                     </div>

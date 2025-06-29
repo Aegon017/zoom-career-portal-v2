@@ -77,7 +77,7 @@ const EmployerDetails = ( { company }: Props ) => {
 
                                 </div>
                                 <div className="btn-block d-flex justify-content-center mt-2">
-                                    <a href="#">View All</a>
+                                    <a href={ `/jobseeker/jobs?company=${ company.name }` }>View All</a>
                                 </div>
                             </div>
                         </div>
