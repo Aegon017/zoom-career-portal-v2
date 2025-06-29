@@ -37,10 +37,10 @@ interface SelectPopoverFieldProps {
     placeholder?: string;
     rules?: Record<string, any>;
     disabled?: boolean;
-    onChange?: (value: string) => void;
+    onChange?: ( value: string ) => void;
 }
 
-export const SelectPopoverField = ({
+export const SelectPopoverField = ( {
     control,
     name,
     label,
@@ -49,51 +49,51 @@ export const SelectPopoverField = ({
     rules,
     disabled = false,
     onChange
-}: SelectPopoverFieldProps) => {
-    const [open, setOpen] = useState(false);
+}: SelectPopoverFieldProps ) => {
+    const [ open, setOpen ] = useState( false );
 
     return (
         <FormField
-            rules={rules}
-            control={control}
-            name={name}
-            render={({ field }) => (
+            rules={ rules }
+            control={ control }
+            name={ name }
+            render={ ( { field } ) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
-                    <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild disabled={disabled}>
+                    <FormLabel>{ label }</FormLabel>
+                    <Popover open={ open } onOpenChange={ setOpen }>
+                        <PopoverTrigger asChild disabled={ disabled }>
                             <FormControl>
                                 <Button
                                     variant="outline"
                                     role="combobox"
-                                    className={cn("justify-between", !field.value && "text-muted-foreground")}
+                                    className={ cn( "justify-between", !field.value && "text-muted-foreground" ) }
                                 >
-                                    {field.value
-                                        ? options.find((opt) => opt.value === field.value)?.label
-                                        : placeholder}
+                                    { field.value
+                                        ? options.find( ( opt ) => opt.value === field.value )?.label
+                                        : placeholder }
                                     <ChevronsUpDown className="opacity-50" />
                                 </Button>
                             </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="p-0">
                             <Command>
-                                <CommandInput placeholder={`Search ${label.toLowerCase()}...`} className="h-9" />
+                                <CommandInput placeholder={ `Search ${ label.toLowerCase() }...` } className="h-9" />
                                 <CommandList>
-                                    <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>
+                                    <CommandEmpty>No { label.toLowerCase() } found.</CommandEmpty>
                                     <CommandGroup>
-                                        {options.map((option) => (
+                                        { options.map( ( option ) => (
                                             <CommandItem
-                                                key={option.value}
-                                                value={option.label}
-                                                onSelect={() => {
-                                                    field.onChange(option.value);
-                                                    setOpen(false);
-                                                }}
+                                                key={ option.value }
+                                                value={ option.label }
+                                                onSelect={ () => {
+                                                    field.onChange( option.value );
+                                                    setOpen( false );
+                                                } }
                                             >
-                                                {option.label}
-                                                <Check className={cn("ml-auto", option.value === field.value ? "opacity-100" : "opacity-0")} />
+                                                { option.label }
+                                                <Check className={ cn( "ml-auto", option.value === field.value ? "opacity-100" : "opacity-0" ) } />
                                             </CommandItem>
-                                        ))}
+                                        ) ) }
                                     </CommandGroup>
                                 </CommandList>
                             </Command>
@@ -101,7 +101,7 @@ export const SelectPopoverField = ({
                     </Popover>
                     <FormMessage />
                 </FormItem>
-            )}
+            ) }
         />
     );
 };

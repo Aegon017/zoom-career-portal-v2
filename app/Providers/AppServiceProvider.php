@@ -7,6 +7,7 @@ namespace App\Providers;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -24,6 +25,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Vite::useAggressivePrefetching();
         JsonResource::withoutWrapping();
         $this->redirectAuthenticatedUser();
     }

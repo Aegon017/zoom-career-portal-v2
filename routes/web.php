@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\ApplicationsController;
+use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\JobseekerController;
@@ -85,6 +86,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 Route::get('/verification-pending', [OnboardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
         });
+
+        Route::get('/company', [EmployerCompanyController::class, 'index'])->name('company.index');
+        Route::get('/company/edit', [EmployerCompanyController::class, 'edit'])->name('company.edit');
+        Route::put('/company/{company}', [EmployerCompanyController::class, 'update'])->name('company.update');
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');

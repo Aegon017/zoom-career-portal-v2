@@ -7,6 +7,7 @@ use App\Enums\CompanyTypeEnum;
 use App\Enums\EmployerOnBoardingEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Company\StoreCompanyRequest;
 use App\Mail\Admin\EmployerRegisteredMail as AdminEmployerRegisteredMail;
 use App\Mail\EmployerRegisteredMail;
 use App\Models\Company;
@@ -138,20 +139,9 @@ class OnboardingController extends Controller
         ]);
     }
 
-    public function storeCompany(Request $request): RedirectResponse
+    public function storeCompany(StoreCompanyRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'logo_url' => 'nullable|string',
-            'industry_id' => 'required|integer|exists:industries,id',
-            'website_url' => 'required|url|max:255',
-            'description' => 'required|string|max:1000',
-            'email' => 'required|email|unique:companies,email|max:255',
-            'phone' => 'required|string|unique:companies,phone|max:16',
-            'location_id' => 'required|integer|exists:locations,id',
-            'size' => 'required|string|max:50',
-            'type' => 'required|string|max:50',
-        ]);
+        $data = $request->validated();
 
         $company = Company::create([
             'name' => $data['name'],
@@ -175,6 +165,12 @@ class OnboardingController extends Controller
             $company->addMedia(storage_path('app/public/' . $data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
+        }
+
+        if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
+            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+                ->preservingOriginal()
+                ->toMediaCollection('banners');
         }
 
         $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'verification_status' => VerificationStatusEnum::Pending->value]);
