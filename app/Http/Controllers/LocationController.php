@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 final class LocationController extends Controller
 {
@@ -16,8 +15,6 @@ final class LocationController extends Controller
             ->distinct()
             ->orderBy('country')
             ->pluck('country');
-
-        Log::info($countries);
 
         return response()->json([
             'success' => true,

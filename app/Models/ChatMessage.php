@@ -6,12 +6,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-final class Profile extends Model
+final class ChatMessage extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'job_title',
-    ];
+    protected $fillable = ['chat_id', 'user_id', 'message'];
+
+    public function chat()
+    {
+        return $this->belongsTo(Chat::class);
+    }
 
     public function user()
     {

@@ -173,7 +173,7 @@ interface Application {
     user_id: number;
     status: string;
     cover_letter: string;
-    resume: string;
+    resume_url: string;
     user: User;
     created_at: string;
     updated_at: string;
@@ -221,7 +221,7 @@ export interface Message {
     user: User;
 }
 
-export interface ChatUser {
+export interface ChatParticipant {
     id: number;
     chat_id: number;
     user_id: number;
@@ -233,7 +233,7 @@ export interface Chat {
     id: number;
     created_at: string;
     updated_at: string;
-    participants: ChatUser[];
+    participants: ChatParticipant[];
     messages: Message[];
 }
 

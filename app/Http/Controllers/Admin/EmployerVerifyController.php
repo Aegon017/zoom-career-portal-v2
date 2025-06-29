@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\VerificationStatusEnum;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class EmployerVerifyController extends Controller
+final class EmployerVerifyController extends Controller
 {
     public function verify(Request $request): Response
     {
@@ -26,7 +28,7 @@ class EmployerVerifyController extends Controller
             'user' => $user,
             'profile' => $profile,
             'company' => $company,
-            'company_user' => $companyUser
+            'company_user' => $companyUser,
         ]);
     }
 
@@ -49,6 +51,7 @@ class EmployerVerifyController extends Controller
         if ($companyUser->verification_status === VerificationStatusEnum::Verified->value) {
             $companyUser->verified_at = now();
         }
+
         $reason = $request->rejection_reason;
 
         Mail::to($user)->send(new VerificationUpdateMail($user, $company, $reason));

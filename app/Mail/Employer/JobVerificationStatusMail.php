@@ -14,16 +14,15 @@ final class JobVerificationStatusMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
+
     /**
      * Create a new message instance.
      */
     public function __construct(
         public string $job_title,
         public string $status,
-        public string $reason
-    ) {
-        //
-    }
+        public ?string $reason
+    ) {}
 
     /**
      * Get the message envelope.

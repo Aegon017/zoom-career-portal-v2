@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import BackIcon from "@/icons/back-icon";
 import JobseekerLayout from "@/layouts/jobseeker-layout";
 import { Head, router } from "@inertiajs/react";
-import { Chat } from "@/types";
+import { Chat, User } from "@/types";
 import { format } from "date-fns";
 import SendIcon from "@/icons/send-icon";
 import { useEchoPublic } from "@laravel/echo-react";
@@ -11,79 +11,114 @@ import MailIcon from "@/icons/mail-icon";
 interface Props {
     chats: Chat[];
     currentUserId: number;
+    activeChat?: Chat;
+    targetUser?: User;
 }
 
-const Inbox = ( { chats, currentUserId }: Props ) => {
-    const [ activeChatId, setActiveChatId ] = useState<string | null>( null );
+const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: Props ) => {
+    const [ activeChat, setActiveChat ] = useState<Chat | null>( initialChat || null );
+    const [ message, setMessage ] = useState( "" );
+    const [ isSending, setIsSending ] = useState( false );
     const [ chatsState, setChats ] = useState<Chat[]>( chats );
-    const activeChat = chatsState.find( ( chat ) => String( chat.id ) === activeChatId );
+
+    const messageInputRef = useRef<HTMLDivElement>( null );
     const messagesEndRef = useRef<HTMLDivElement>( null );
+
+
+
+    useEffect( () => {
+        if ( !activeChat && targetUser ) {
+            messageInputRef.current?.focus();
+        }
+    }, [ activeChat, targetUser ] );
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView( { behavior: "smooth" } );
     };
 
-
-    useEffect( () => {
-        if ( activeChatId ) {
-            scrollToBottom();
-        }
-    }, [ activeChatId, chatsState ] );
-    function getOtherParticipant( chat: Chat ) {
-        return chat.participants.find( ( p ) => p.user.id !== currentUserId )?.user;
-    }
-
-    function getLastMessage( chat: Chat ) {
-        if ( !chat.messages.length ) return "No messages yet";
-        return chat.messages[ chat.messages.length - 1 ].message;
-    }
-
-    const messageInputRef = useRef<HTMLDivElement>( null );
-    const [ isSending, setIsSending ] = useState( false );
+    const getOtherParticipant = ( chat: Chat ) =>
+        chat.participants.find( ( p ) => p.user.id !== currentUserId )?.user;
 
     const handleSendMessage = () => {
-        if ( !activeChatId || !messageInputRef.current ) return;
-
-        const message = messageInputRef.current.innerText.trim();
-        if ( !message ) return;
+        if ( !message.trim() ) return;
 
         setIsSending( true );
 
         router.post(
-            `/inbox/send-message`,
+            "/inbox/send-message",
             {
-                chat_id: activeChatId,
+                chat_id: activeChat?.id,
+                user_id: targetUser?.id,
                 message,
             },
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    messageInputRef.current!.innerText = "";
+                    setMessage( "" );
+                    if ( messageInputRef.current ) messageInputRef.current.innerText = "";
                     setIsSending( false );
                 },
-                onError: () => {
-                    setIsSending( false );
-                },
+                onError: () => setIsSending( false ),
             }
         );
     };
 
-    useEchoPublic(
-        "chats",
-        'MessageSent',
-        ( e: any ) => {
-            setChats( ( prevChats ) =>
-                prevChats.map( ( chat ) => {
-                    if ( chat.id === e.message.chat_id ) {
-                        return {
-                            ...chat,
-                            messages: [ ...chat.messages, e.message ],
-                        };
-                    }
-                    return chat;
-                } )
-            );
-        },
-    );
+    useEchoPublic( "chats", "MessageSent", ( e: any ) => {
+        setChats( ( prev ) => {
+            const idx = prev.findIndex( ( c ) => c.id === e.message.chat_id );
+            let updatedChats;
+
+            if ( idx === -1 ) {
+                const newChat = {
+                    id: e.message.chat_id,
+                    participants: [
+                        { user: { id: currentUserId } },
+                        { user: e.user },
+                    ],
+                    messages: [ e.message ],
+                    created_at: e.message.created_at || new Date().toISOString(),
+                    updated_at: e.message.created_at || new Date().toISOString(),
+                } as Chat;
+
+                updatedChats = [ ...prev, newChat ];
+
+                // Set as activeChat if we just sent a first message to this user
+                if ( !activeChat && targetUser && targetUser.id === e.user.id ) {
+                    setActiveChat( newChat );
+                }
+
+                return updatedChats;
+            }
+
+            updatedChats = [ ...prev ];
+            const chat = updatedChats[ idx ];
+            const newMessages = [ ...( chat.messages || [] ), e.message ];
+
+            updatedChats[ idx ] = {
+                ...chat,
+                messages: newMessages,
+            };
+
+            // Update activeChat if it's the current one
+            if ( activeChat && activeChat.id === e.message.chat_id ) {
+                setActiveChat( {
+                    ...activeChat,
+                    messages: [ ...( activeChat.messages || [] ), e.message ],
+                } );
+            }
+
+            return updatedChats;
+        } );
+    } );
+
+    useEffect( () => {
+        if ( activeChat?.messages?.length ) {
+            requestAnimationFrame( () => {
+                scrollToBottom();
+            } );
+        }
+    }, [ activeChat?.messages?.length ] );
+
 
     return (
         <JobseekerLayout>
@@ -97,45 +132,32 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                         <aside className="zc-chat-side">
                             <div className="zc-chat-side-header">
                                 <div className="chat-search-widget">
-                                    <input
-                                        type="search"
-                                        name="search-chat-list"
-                                        id="search-chat-list"
-                                        placeholder="Search or start new chat"
-                                    />
+                                    <input type="search" placeholder="Search or start new chat" />
                                 </div>
                             </div>
                             <ul className="zc-chats-list">
                                 { chatsState.map( ( chat ) => {
-                                    const otherUser = getOtherParticipant( chat );
-                                    if ( !otherUser ) return null;
+                                    const other = getOtherParticipant( chat );
+                                    if ( !other ) return null;
+                                    const last = chat.messages?.at( -1 )?.message || "No messages yet";
+                                    const dateStr = chat.messages?.length
+                                        ? format( new Date( chat.messages.at( -1 )!.created_at ), "MMM dd" )
+                                        : "";
+
                                     return (
                                         <li
                                             key={ chat.id }
-                                            className={ `chats-item ${ activeChatId === String( chat.id ) ? "active" : "" }` }
-                                            onClick={ () => setActiveChatId( String( chat.id ) ) }
+                                            className={ `chats-item ${ activeChat?.id === chat.id ? "active" : "" }` }
+                                            onClick={ () => router.get( `/inbox?chat=${ chat.id }`, {} ) }
                                         >
                                             <div className="chats-button" role="button">
-                                                <img
-                                                    src={ otherUser.avatar_url }
-                                                    className="user-img"
-                                                    alt={ `${ otherUser.name }'s avatar` }
-                                                />
+                                                <img src={ other.avatar_url } className="user-img" alt={ `${ other.name }'s avatar` } />
                                                 <div className="chats-item-info">
                                                     <div className="info-header">
-                                                        <h3>{ otherUser.name }</h3>
-                                                        <div className="date">
-                                                            { chat.messages.length > 0
-                                                                ? format(
-                                                                    new Date(
-                                                                        chat.messages[ chat.messages.length - 1 ].created_at
-                                                                    ),
-                                                                    "MMM dd"
-                                                                )
-                                                                : "" }
-                                                        </div>
+                                                        <h3>{ other.name }</h3>
+                                                        <div className="date">{ dateStr }</div>
                                                     </div>
-                                                    <p>{ getLastMessage( chat ) }</p>
+                                                    <p className="line-clamp-1">{ last }</p>
                                                 </div>
                                             </div>
                                         </li>
@@ -144,30 +166,23 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                             </ul>
                         </aside>
 
-                        <div className={ `zc-chat-content ${ activeChatId ? "show" : "" }` }>
+                        <div className={ `zc-chat-content ${ activeChat ? "show" : "" }` }>
                             { activeChat ? (
                                 <>
                                     <div className="zc-chat-common-header">
                                         <div className="left">
-                                            <div className="back-btn" onClick={ () => setActiveChatId( null ) }>
-                                                <BackIcon />
-                                            </div>
+                                            <div className="back-btn" onClick={ () => router.get( "/inbox" ) }> <BackIcon /> </div>
                                             { ( () => {
-                                                const otherUser = getOtherParticipant( activeChat );
-                                                if ( !otherUser ) return null;
+                                                const usr = getOtherParticipant( activeChat );
+                                                if ( !usr ) return null;
                                                 return (
                                                     <div className="user-img">
-                                                        <img
-                                                            src={ otherUser.avatar_url }
-                                                            alt={ `${ otherUser.name }'s avatar` }
-                                                        />
+                                                        <img src={ usr.avatar_url } alt={ `${ usr.name }'s avatar` } />
                                                     </div>
                                                 );
                                             } )() }
                                             <div className="user-info">
-                                                <h3 className="user-name">
-                                                    { getOtherParticipant( activeChat )?.name || "Unknown User" }
-                                                </h3>
+                                                <h3 className="user-name">{ getOtherParticipant( activeChat )?.name || "Unknown User" }</h3>
                                             </div>
                                         </div>
                                         <div className="right">
@@ -176,16 +191,8 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                                     <i className="fa-solid fa-ellipsis-vertical"></i>
                                                 </div>
                                                 <ul className="user-dropdown-menu">
-                                                    <li>
-                                                        <a href="#">
-                                                            <i className="fa-regular fa-user"></i>View Profile
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">
-                                                            <i className="fa-solid fa-triangle-exclamation"></i>Report
-                                                        </a>
-                                                    </li>
+                                                    <li><a href="#"><i className="fa-regular fa-user"></i>View Profile</a></li>
+                                                    <li><a href="#"><i className="fa-solid fa-triangle-exclamation"></i>Report</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -193,31 +200,22 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
 
                                     <div className="zc-messanger">
                                         { activeChat.messages.length === 0 ? (
-                                            <p className="text-muted p-4">
-                                                No messages yet. Start the conversation!
-                                            </p>
+                                            <p className="text-muted p-4">No messages yet. Start the conversation!</p>
                                         ) : (
                                             activeChat.messages.map( ( msg ) => {
-                                                const isCurrentUser = msg.user_id === currentUserId;
+                                                const isMe = msg.user_id === currentUserId;
                                                 return (
-                                                    <div
-                                                        key={ msg.id }
-                                                        className={ `chat-message ${ isCurrentUser ? "me" : "other" }` }
-                                                    >
+                                                    <div key={ msg.id } className={ `chat-message ${ isMe ? "me" : "other" }` }>
                                                         <div className="d-flex align-items-end gap-2 text-secondary text-sm">
-                                                            { isCurrentUser ? (
+                                                            { isMe ? (
                                                                 <>
-                                                                    <small className="text-secondary">
-                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                                    </small>
+                                                                    <small className="text-secondary">{ format( new Date( msg.created_at ), "hh:mm a" ) }</small>
                                                                     <div className="message-bubble">{ msg.message }</div>
                                                                 </>
                                                             ) : (
                                                                 <>
                                                                     <div className="message-bubble">{ msg.message }</div>
-                                                                    <small className="text-secondary">
-                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                                    </small>
+                                                                    <small className="text-secondary">{ format( new Date( msg.created_at ), "hh:mm a" ) }</small>
                                                                 </>
                                                             ) }
                                                         </div>
@@ -231,10 +229,17 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                     <div className="zc-message-box d-flex align-items-center">
                                         <div
                                             ref={ messageInputRef }
-                                            contentEditable={ true }
+                                            contentEditable
                                             className="message-type-box"
                                             data-placeholder="Type a message..."
-                                        ></div>
+                                            onInput={ ( e ) => setMessage( ( e.target as HTMLElement ).innerText ) }
+                                            onKeyDown={ ( e ) => {
+                                                if ( e.key === "Enter" && !e.shiftKey ) {
+                                                    e.preventDefault();
+                                                    handleSendMessage();
+                                                }
+                                            } }
+                                        />
                                         <button
                                             className="btn-send-msg"
                                             aria-label="Send message"
@@ -250,20 +255,16 @@ const Inbox = ( { chats, currentUserId }: Props ) => {
                                     <MailIcon />
                                     <h2 className="mt-4">Message anyone</h2>
                                     <p className="text-muted">
-                                        Connect with professionals and recruiters to grow your career through meaningful
-                                        conversations.
+                                        Connect with professionals and recruiters to grow your career through meaningful conversations.
                                     </p>
                                 </div>
                             ) }
                         </div>
-
                     </div>
                 </div>
             </div>
         </JobseekerLayout>
     );
 };
-
-
 
 export default Inbox;

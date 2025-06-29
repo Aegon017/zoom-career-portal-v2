@@ -48,7 +48,7 @@ final class OpeningTitleController extends Controller
             'name' => 'required|string|max:255|unique:opening_titles,name',
         ]);
 
-        $opening_title = OpeningTitle::create($data);
+        OpeningTitle::create($data);
 
         return to_route('admin.job-titles.index')->with('success', 'Job title record created successfully');
     }
@@ -81,7 +81,7 @@ final class OpeningTitleController extends Controller
     public function update(Request $request, OpeningTitle $jobTitle)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:opening_titles,name,' . $jobTitle->id,
+            'name' => 'required|string|max:255|unique:opening_titles,name,'.$jobTitle->id,
         ]);
 
         $jobTitle->update($data);

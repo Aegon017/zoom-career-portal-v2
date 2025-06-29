@@ -16,12 +16,11 @@ use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
-use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
-use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\JobseekerController;
+use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\FollowController;
@@ -45,7 +44,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -87,15 +86,14 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             });
         });
 
-        Route::get('/company', [EmployerCompanyController::class, 'index'])->name('company.index');
-        Route::get('/company/edit', [EmployerCompanyController::class, 'edit'])->name('company.edit');
-        Route::put('/company/{company}', [EmployerCompanyController::class, 'update'])->name('company.update');
+        Route::get('/company', (new EmployerCompanyController())->index(...))->name('company.index');
+        Route::get('/company/edit', (new EmployerCompanyController())->edit(...))->name('company.edit');
+        Route::put('/company/{company}', (new EmployerCompanyController())->update(...))->name('company.update');
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
         Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
-        Route::get('/jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('jobs.applications');
 
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function (): void {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
@@ -157,11 +155,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
 
-    Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
-    Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
+    Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
+    Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

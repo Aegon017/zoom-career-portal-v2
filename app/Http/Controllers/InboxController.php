@@ -1,60 +1,106 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Enums\MessageStatusEnum;
 use App\Events\MessageSent;
 use App\Models\Chat;
-use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class InboxController extends Controller
+final class InboxController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $userId = Auth::id();
 
         $chats = Chat::with([
-            'participants',
-            'messages',
+            'participants.user',
+            'messages' => fn ($q) => $q->latest()->limit(1),
         ])
-            ->whereHas('participants', fn($q) => $q->where('user_id', $userId))
+            ->whereHas('participants', fn ($q) => $q->where('user_id', $userId))
             ->get();
 
-        if (Auth::user()->hasRole('jobseeker')) {
-            $view = 'jobseeker/inbox';
-        } elseif (Auth::user()->hasRole('employer')) {
-            $view = 'employer/inbox';
-        } else {
-            abort(403, 'Unauthorized');
+        $activeChat = null;
+        $targetUser = null;
+
+        if ($request->has('chat')) {
+            $activeChat = Chat::with(['participants.user', 'messages.user'])
+                ->where('id', $request->chat)
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $userId))
+                ->first();
+        } elseif ($request->has('user')) {
+            $targetUser = User::findOrFail($request->user);
+
+            $existingChat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', $userId))
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $targetUser->id))
+                ->first();
+
+            if ($existingChat) {
+                return redirect()->route('inbox.index', ['chat' => $existingChat->id]);
+            }
+
+            // Create new chat immediately
+            $chat = Chat::create();
+            $chat->participants()->createMany([
+                ['user_id' => $userId],
+                ['user_id' => $targetUser->id],
+            ]);
+
+            return redirect()->route('inbox.index', ['chat' => $chat->id]);
         }
+
+        $view = Auth::user()->hasRole('employer') ? 'employer/inbox' : 'jobseeker/inbox';
 
         return Inertia::render($view, [
             'chats' => $chats,
-            'currentUserId' => Auth::id()
+            'currentUserId' => $userId,
+            'activeChat' => $activeChat,
+            'targetUser' => $targetUser,
         ]);
     }
 
     public function sendMessage(Request $request)
     {
         $request->validate([
-            'chat_id' => 'required|exists:chats,id',
             'message' => 'required|string',
+            'chat_id' => 'nullable|exists:chats,id',
+            'user_id' => 'nullable|exists:users,id',
         ]);
 
-        $message = Message::create([
-            'chat_id' => $request->chat_id,
-            'user_id' => Auth::id(),
+        $userId = Auth::id();
+        $chat = null;
+
+        if ($request->chat_id) {
+            $chat = Chat::findOrFail($request->chat_id);
+        } elseif ($request->user_id) {
+            $existing = Chat::whereHas('participants', fn ($q) => $q->where('user_id', $userId))
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $request->user_id))
+                ->first();
+
+            if ($existing) {
+                $chat = $existing;
+            } else {
+                $chat = Chat::create();
+                $chat->participants()->createMany([
+                    ['user_id' => $userId],
+                    ['user_id' => $request->user_id],
+                ]);
+            }
+        }
+
+        $message = $chat->messages()->create([
+            'user_id' => $userId,
             'message' => $request->message,
-            'status' => MessageStatusEnum::SENT->value
         ]);
 
-        $receiverId = $message->chat->participants
-            ->where('user_id', '!=', Auth::id())
-            ->pluck('user_id')
-            ->first();
+        $receiverId = $chat->participants()
+            ->where('user_id', '!=', $userId)
+            ->first()
+            ?->user_id;
 
         broadcast(new MessageSent($message, $receiverId))->toOthers();
 

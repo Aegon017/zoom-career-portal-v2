@@ -21,7 +21,6 @@ final class ApplicationsController extends Controller
     public function index(Request $request)
     {
         $jobs = Opening::where('user_id', Auth::id())->get();
-
         $job = Opening::find($request?->job_id);
 
         $applications = $job?->applications()->with('user')->get();
@@ -31,7 +30,7 @@ final class ApplicationsController extends Controller
         return Inertia::render('employer/applications/index', [
             'jobs' => $jobs,
             'applications' => $applications,
-            'job' => $job,
+            'job_id' => $request->job_id,
             'statuses' => $statuses,
         ]);
     }
@@ -54,7 +53,7 @@ final class ApplicationsController extends Controller
 
         match ($application->status) {
             JobApplicationStatusEnum::Shortlisted->value => Mail::to($user)->send(new ShortlistedMail($user->name, $opening->title, $company->name)),
-            JobApplicationStatusEnum::Rejected->value => Mail::to($user)->send(new RejectedMail($user->name, $opening->title, $company->name)),
+            // JobApplicationStatusEnum::Rejected->value => Mail::to($user)->send(new RejectedMail($user->name, $opening->title, $company->name)),
             default => '',
         };
 

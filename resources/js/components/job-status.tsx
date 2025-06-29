@@ -12,69 +12,69 @@ interface JobStatusProps {
     application: Application
 }
 
-const JobStatus = ({ statuses, application }: JobStatusProps) => {
-    const onSubmit = (data: any) => {
-        router.post("/employer/applications", data, {
+const JobStatus = ( { statuses, application }: JobStatusProps ) => {
+    const onSubmit = ( data: any ) => {
+        router.post( "/employer/applications", data, {
             preserveScroll: true
-        });
+        } );
     };
 
-    const form = useForm({
+    const form = useForm( {
         defaultValues: {
             applicationId: application.id,
             status: application.status ?? ""
         }
-    });
+    } );
 
     const { control, watch, handleSubmit } = form;
 
-    const status = watch("status");
+    const status = watch( "status" );
 
-    const hasMounted = useRef(false);
+    const hasMounted = useRef( false );
 
-    useEffect(() => {
-        if (hasMounted.current) {
-            handleSubmit(onSubmit)();
+    useEffect( () => {
+        if ( hasMounted.current ) {
+            handleSubmit( onSubmit )();
         } else {
             hasMounted.current = true;
         }
-    }, [status]);
+    }, [ status ] );
 
     return (
-        <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <Form { ...form }>
+            <form onSubmit={ handleSubmit( onSubmit ) } className="w-full">
                 <FormField
-                    control={form.control}
+                    control={ form.control }
                     name="applicationId"
-                    render={({ field }) => (
+                    render={ ( { field } ) => (
                         <FormItem>
                             <FormControl>
-                                <Input type="hidden" {...field} />
+                                <Input type="hidden" { ...field } />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
-                    )}
+                    ) }
                 />
                 <FormField
-                    control={control}
+                    control={ control }
                     name="status"
-                    render={({ field }) => (
+                    render={ ( { field } ) => (
                         <FormItem>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={ field.onChange } defaultValue={ field.value }>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="status" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {statuses.map((status, index) => (
-                                        <SelectItem key={index} value={status.value}>{status.label}</SelectItem>
-                                    ))}
+                                    { statuses.map( ( status, index ) => (
+                                        <SelectItem key={ index } value={ status.value }>{ status.label }</SelectItem>
+                                    ) ) }
                                 </SelectContent>
                             </Select>
                             <FormMessage />
                         </FormItem>
-                    )}
+                    ) }
                 />
             </form>
         </Form>

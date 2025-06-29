@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Employer;
 
 use App\Enums\CompanySizeEnum;
@@ -14,7 +16,6 @@ use App\Models\Company;
 use App\Models\Industry;
 use App\Models\Location;
 use App\Models\OpeningTitle;
-use App\Models\Profile;
 use App\Models\User;
 use App\Notifications\EmployerVerifyNotification;
 use Illuminate\Http\RedirectResponse;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class OnboardingController extends Controller
+final class OnboardingController extends Controller
 {
     public function setupProfile(): Response
     {
@@ -53,11 +54,11 @@ class OnboardingController extends Controller
         $user->save();
 
         $user->profile()->create([
-            'job_title' => $data['job_title']
+            'job_title' => $data['job_title'],
         ]);
 
         if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
-            $user->addMedia(storage_path('app/public/' . $data['avatar']))
+            $user->addMedia(storage_path('app/public/'.$data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
         }
@@ -83,7 +84,7 @@ class OnboardingController extends Controller
     {
         $data = $request->validate([
             'company' => 'required',
-            'is_new' => 'required|boolean'
+            'is_new' => 'required|boolean',
         ]);
 
         $user = Auth::user();
@@ -117,18 +118,14 @@ class OnboardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $industries = Industry::get()->map(function ($industry) {
-            return [
-                'value' => $industry->id,
-                'label' => $industry->name,
-            ];
-        });
-        $locations = Location::get()->map(function ($location) {
-            return [
-                'value' => $location->id,
-                'label' => $location->full_name,
-            ];
-        });
+        $industries = Industry::get()->map(fn($industry): array => [
+            'value' => $industry->id,
+            'label' => $industry->name,
+        ]);
+        $locations = Location::get()->map(fn($location): array => [
+            'value' => $location->id,
+            'label' => $location->full_name,
+        ]);
 
         return Inertia::render('employer/on-boarding/company-setup', [
             'name' => $request->name,
@@ -152,23 +149,23 @@ class OnboardingController extends Controller
             'phone' => $data['phone'],
             'size' => $data['size'],
             'type' => $data['type'],
-            'verification_status' => VerificationStatusEnum::Pending->value
+            'verification_status' => VerificationStatusEnum::Pending->value,
         ]);
 
         $user = Auth::user();
 
         $company->address()->create([
-            'location_id' => $data['location_id']
+            'location_id' => $data['location_id'],
         ]);
 
         if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }

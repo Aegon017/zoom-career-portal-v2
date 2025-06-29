@@ -82,11 +82,6 @@ final class Company extends Model implements HasMedia
         return $this->belongsToMany(User::class, 'company_users', 'company_id', 'user_id');
     }
 
-
-
-
-
-
     public function openings(): HasMany
     {
         return $this->hasMany(Opening::class);

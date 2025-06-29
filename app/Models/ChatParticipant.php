@@ -6,12 +6,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-final class Profile extends Model
+final class ChatParticipant extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'job_title',
-    ];
+    protected $fillable = ['chat_id', 'user_id'];
 
     public function user()
     {

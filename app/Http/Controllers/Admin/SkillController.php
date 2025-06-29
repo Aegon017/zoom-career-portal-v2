@@ -47,9 +47,7 @@ final class SkillController extends Controller
     public function store(StoreSkillRequest $storeSkillRequest): RedirectResponse
     {
         $data = $storeSkillRequest->validated();
-        $skill = Skill::create($data);
-
-        $operation = OperationsEnum::Edit;
+        Skill::create($data);
 
         return to_route('admin.skills.index')->with('success', 'Skill record created successfully.');
     }

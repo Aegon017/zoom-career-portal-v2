@@ -14,27 +14,25 @@ final class EmployerController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
+        Auth::user();
 
         $query = Company::with('industry', 'address', 'address.location');
 
         if ($request->filled('keyword')) {
-            $query->where('name', 'like', '%' . $request->keyword . '%');
+            $query->where('name', 'like', '%'.$request->keyword.'%');
         }
 
         if ($request->filled('industries')) {
             $query->whereHas(
                 'industry',
-                fn($q) =>
-                $q->whereIn('name', (array) $request->industries)
+                fn ($q) => $q->whereIn('name', (array) $request->industries)
             );
         }
 
         if ($request->filled('locations')) {
             $query->whereHas(
                 'address.location',
-                fn($q) =>
-                $q->whereIn('city', (array) $request->locations)
+                fn ($q) => $q->whereIn('city', (array) $request->locations)
             );
         }
 
@@ -43,7 +41,7 @@ final class EmployerController extends Controller
         }
 
         if ($request->boolean('followed') && Auth::check()) {
-            $query->whereHas('followers', fn($q) => $q->where('users.id', Auth::id()));
+            $query->whereHas('followers', fn ($q) => $q->where('users.id', Auth::id()));
         }
 
         $companies = $query->paginate(10)->withQueryString();
@@ -53,6 +51,7 @@ final class EmployerController extends Controller
             'filters' => $request->only(['keyword', 'industries', 'locations', 'sizes', 'followed']),
         ]);
     }
+
     public function show(Company $company)
     {
         $company = $company->load('openings', 'users', 'openings.company', 'users.workExperiences', 'users.jobSeekerProfile', 'industry', 'address', 'address.location');

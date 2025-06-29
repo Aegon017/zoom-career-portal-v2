@@ -1,40 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
-use App\Models\Message;
+use App\Models\ChatMessage;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+final class MessageSent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+    public ChatMessage $message;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public Message $message, public int $receiverId) {}
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function __construct(ChatMessage $message, public int $receiverId)
     {
-        return [
-            new Channel("chats"),
-        ];
+        $this->message = $message->load('user');
     }
 
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->message
+            'message' => [
+                'id' => $this->message->id,
+                'chat_id' => $this->message->chat_id,
+                'user_id' => $this->message->user_id,
+                'message' => $this->message->message,
+                'created_at' => $this->message->created_at->toISOString(),
+                'user' => [
+                    'id' => $this->message->user->id,
+                    'name' => $this->message->user->name,
+                    'avatar_url' => $this->message->user->avatar_url,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new Channel('chats'),
         ];
     }
 }
