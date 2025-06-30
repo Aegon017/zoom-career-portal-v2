@@ -110,19 +110,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(EmployerProfile::class);
     }
 
-<<<<<<< HEAD
-    public function companyUsers(): HasMany
-    {
-        return $this->hasMany(CompanyUser::class);
-    }
-
-    public function companies(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class, 'company_users');
-    }
-
-=======
->>>>>>> v3
     public function jobSeekerProfile(): HasOne
     {
         return $this->hasOne(JobSeekerProfile::class);
@@ -203,10 +190,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function chats()
     {
-<<<<<<< HEAD
-        return $this->belongsToMany(Chat::class, 'chat_users');
-=======
         return $this->belongsToMany(Chat::class, 'chat_participants')->withTimestamps();
->>>>>>> v3
     }
 }
