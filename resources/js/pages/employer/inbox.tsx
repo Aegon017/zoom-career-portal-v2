@@ -238,52 +238,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                             </div>
 
                             <ScrollArea className="flex-1 overflow-y-auto bg-gray-100 p-4">
-<<<<<<< HEAD
-                                { activeChat.messages.length === 0 ? (
-                                    <div className="text-center text-gray-500 mt-8">
-                                        No messages yet
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4 pb-24">
-                                        { activeChat.messages.map( ( msg ) => {
-                                            const isMe = msg.user_id === currentUserId;
-                                            return (
-                                                <div
-                                                    key={ msg.id }
-                                                    className={ `flex ${ isMe ? "justify-end" : "justify-start"
-                                                        } mb-3` }
-                                                >
-                                                    <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
-                                                        { isMe ? (
-                                                            <>
-                                                                <span className="text-xs text-gray-500">
-                                                                    { format(
-                                                                        new Date( msg.created_at ),
-                                                                        "hh:mm a"
-                                                                    ) }
-                                                                </span>
-                                                                <div className="px-4 py-2 bg-blue-500 text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-2xl">
-                                                                    <p className="text-sm whitespace-pre-wrap">
-                                                                        { msg.message }
-                                                                    </p>
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <div className="px-4 py-2 bg-white text-gray-900 rounded-tl-2xl rounded-br-2xl rounded-tr-2xl">
-                                                                    <p className="text-sm whitespace-pre-wrap">
-                                                                        { msg.message }
-                                                                    </p>
-                                                                </div>
-                                                                <span className="text-xs text-gray-500">
-                                                                    { format(
-                                                                        new Date( msg.created_at ),
-                                                                        "hh:mm a"
-                                                                    ) }
-                                                                </span>
-                                                            </>
-                                                        ) }
-=======
                                 <div className="space-y-4 pb-24">
                                     { activeChat.messages?.map( msg => {
                                         const isMe = msg.user_id === currentUserId;
@@ -297,7 +251,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                     ) }
                                                     <div className={ `px-4 py-2 rounded-tr-2xl rounded-tl-2xl ${ isMe ? "bg-primary text-white rounded-bl-2xl" : "bg-white text-foreground rounded-br-2xl" }` }>
                                                         <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
->>>>>>> v3
                                                     </div>
                                                     { !isMe && (
                                                         <span className="text-xs text-gray-500">
