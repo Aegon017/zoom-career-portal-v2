@@ -5,6 +5,7 @@ import { CalendarDays, Eye } from "lucide-react"
 import { Button } from "./ui/button"
 import JobStatus from "./job-status"
 import { Link } from "@inertiajs/react"
+import MessageButton from "./message-button"
 
 interface Props {
     application: Application,
@@ -41,12 +42,11 @@ const JobApplicationCard = ( { application, statuses }: Props ) => {
                             </div>
                         </div>
                     </div>
-
-                    <Link href={ `/inbox?user=${ application.user.id }` } className="w-fit">
-                        <Button variant="outline" className="shadow-sm text-sm">
+                    <MessageButton userId={ application.user.id }>
+                        <Button variant="outline" size="sm">
                             Message
                         </Button>
-                    </Link>
+                    </MessageButton>
                 </div>
             </CardHeader>
             <CardFooter>

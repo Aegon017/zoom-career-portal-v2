@@ -24,8 +24,6 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
     const messageInputRef = useRef<HTMLDivElement>( null );
     const messagesEndRef = useRef<HTMLDivElement>( null );
 
-
-
     useEffect( () => {
         if ( !activeChat && targetUser ) {
             messageInputRef.current?.focus();
@@ -82,7 +80,6 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
 
                 updatedChats = [ ...prev, newChat ];
 
-                // Set as activeChat if we just sent a first message to this user
                 if ( !activeChat && targetUser && targetUser.id === e.user.id ) {
                     setActiveChat( newChat );
                 }
@@ -92,18 +89,25 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
 
             updatedChats = [ ...prev ];
             const chat = updatedChats[ idx ];
-            const newMessages = [ ...( chat.messages || [] ), e.message ];
+
+            const allMessages = [
+                ...( chat.messages || [] ),
+                ...( Array.isArray( e.messages ) ? e.messages : [ e.message ] ),
+            ];
+
+            const uniqueMessages = Array.from(
+                new Map( allMessages.map( ( msg ) => [ msg.id, msg ] ) ).values()
+            );
 
             updatedChats[ idx ] = {
                 ...chat,
-                messages: newMessages,
+                messages: uniqueMessages,
             };
 
-            // Update activeChat if it's the current one
             if ( activeChat && activeChat.id === e.message.chat_id ) {
                 setActiveChat( {
                     ...activeChat,
-                    messages: [ ...( activeChat.messages || [] ), e.message ],
+                    messages: uniqueMessages,
                 } );
             }
 
@@ -118,7 +122,6 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
             } );
         }
     }, [ activeChat?.messages?.length ] );
-
 
     return (
         <JobseekerLayout>

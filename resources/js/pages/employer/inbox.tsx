@@ -46,8 +46,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
     const messageInputRef = useRef<HTMLDivElement>( null );
     const messagesEndRef = useRef<HTMLDivElement>( null );
 
-
-
     useEffect( () => {
         if ( !activeChat && targetUser ) {
             messageInputRef.current?.focus();
@@ -104,8 +102,10 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
 
                 updatedChats = [ ...prev, newChat ];
 
-                // Set as activeChat if we just sent a first message to this user
-                if ( !activeChat && targetUser && targetUser.id === e.user.id ) {
+                if (
+                    ( !activeChat && targetUser && targetUser.id === e.user.id ) ||
+                    ( activeChat && activeChat.id === e.message.chat_id )
+                ) {
                     setActiveChat( newChat );
                 }
 
@@ -114,25 +114,32 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
 
             updatedChats = [ ...prev ];
             const chat = updatedChats[ idx ];
-            const newMessages = [ ...( chat.messages || [] ), e.message ];
 
-            updatedChats[ idx ] = {
-                ...chat,
-                messages: newMessages,
-            };
+            const existingMsg = ( chat.messages || [] ).find( ( m ) => m.id === e.message.id );
+            if ( !existingMsg ) {
+                updatedChats[ idx ] = {
+                    ...chat,
+                    messages: [ ...( chat.messages || [] ), e.message ],
+                };
+            }
 
-            // Update activeChat if it's the current one
             if ( activeChat && activeChat.id === e.message.chat_id ) {
-                setActiveChat( {
-                    ...activeChat,
-                    messages: [ ...( activeChat.messages || [] ), e.message ],
-                } );
+                setActiveChat( ( prevActive ) =>
+                    prevActive
+                        ? {
+                            ...prevActive,
+                            messages: [
+                                ...( prevActive.messages || [] ),
+                                ...( existingMsg ? [] : [ e.message ] ),
+                            ],
+                        }
+                        : prevActive
+                );
             }
 
             return updatedChats;
         } );
     } );
-
 
     const openChat = ( chatId: number ) => {
         router.get( `/inbox?chat=${ chatId }`, {} );
@@ -145,7 +152,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
             } );
         }
     }, [ activeChat?.messages?.length ] );
-
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
@@ -197,7 +203,9 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                         <>
                             <div className="flex items-center justify-between p-4 border-b bg-white">
                                 <div className="flex items-center gap-3">
-                                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={ () => router.get( "/inbox" ) }> <ArrowLeft /> </Button>
+                                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={ () => router.get( "/inbox" ) }>
+                                        <ArrowLeft />
+                                    </Button>
                                     { ( () => {
                                         const usr = getOtherParticipant( activeChat );
                                         if ( !usr ) return null;
@@ -214,11 +222,17 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                 </div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon"><EllipsisVertical /></Button>
+                                        <Button variant="ghost" size="icon">
+                                            <EllipsisVertical />
+                                        </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem><UserIcon className="mr-2 w-4 h-4" /> View Profile</DropdownMenuItem>
-                                        <DropdownMenuItem className="text-destructive focus:text-destructive"><TriangleAlert className="mr-2 w-4 h-4 text-red-500" /> Report</DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <UserIcon className="mr-2 w-4 h-4" /> View Profile
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="text-destructive focus:text-destructive">
+                                            <TriangleAlert className="mr-2 w-4 h-4 text-red-500" /> Report
+                                        </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -230,11 +244,19 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                         return (
                                             <div key={ msg.id } className={ `flex ${ isMe ? "justify-end" : "justify-start" }` }>
                                                 <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
-                                                    { isMe && <span className="text-xs text-gray-500">{ format( new Date( msg.created_at ), "hh:mm a" ) }</span> }
-                                                    <div className={ `px-4 py-2 rounded-2xl ${ isMe ? "bg-primary text-white" : "bg-white text-foreground" }` }>
+                                                    { isMe && (
+                                                        <span className="text-xs text-gray-500">
+                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                        </span>
+                                                    ) }
+                                                    <div className={ `px-4 py-2 rounded-tr-2xl rounded-tl-2xl ${ isMe ? "bg-primary text-white rounded-bl-2xl" : "bg-white text-foreground rounded-br-2xl" }` }>
                                                         <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
                                                     </div>
-                                                    { !isMe && <span className="text-xs text-gray-500">{ format( new Date( msg.created_at ), "hh:mm a" ) }</span> }
+                                                    { !isMe && (
+                                                        <span className="text-xs text-gray-500">
+                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                        </span>
+                                                    ) }
                                                 </div>
                                             </div>
                                         );

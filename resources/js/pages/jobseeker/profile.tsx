@@ -75,7 +75,7 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                                 </div>
                                 <div className="other-details">
                                     <ul>
-                                        <li><i className="fa-solid fa-location-dot"></i>{ user.address.location.city }, { user.address.location.state }, { user.address.location.country }</li>
+                                        <li><i className="fa-solid fa-location-dot"></i>{ user.address?.location.city }, { user.address?.location.state }, { user.address?.location.country }</li>
                                         <li><i className="fa-solid fa-briefcase"></i>{ jobseeker_profile?.experience }</li>
                                         <li><i className="fa-solid fa-calendar-days"></i>{ jobseeker_profile?.notice_period }</li>
                                     </ul>
@@ -144,7 +144,7 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                                             ) }
                                         </div>
                                         <h4 className="company-name-location">
-                                            { workExperience.name ?? workExperience.company?.name }, { workExperience.company?.address.location.city ?? "" }, { workExperience.company?.address.location.state ?? "" }, { workExperience.company?.address.location.country ?? "" }
+                                            { workExperience.name ?? workExperience.company?.name }, { workExperience.company?.address?.location.city ?? "" }, { workExperience.company?.address?.location.state ?? "" }, { workExperience.company?.address?.location.country ?? "" }
                                         </h4>
                                         <div className="duration">
                                             { format( new Date( workExperience.start_date ), "dd MMM yyyy" ) } -{ " " }

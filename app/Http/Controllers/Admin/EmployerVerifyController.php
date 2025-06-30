@@ -22,7 +22,7 @@ final class EmployerVerifyController extends Controller
         $user = User::find($request->employer);
         $company = Company::find($request->company);
         $profile = $user->profile;
-        $companyUser = $company->companyUsers()->where('user_id', $user->id)->first();
+        $companyUser = $company?->companyUsers()->where('user_id', $user->id)->first();
 
         return Inertia::render('admin/employers/verify', [
             'user' => $user,

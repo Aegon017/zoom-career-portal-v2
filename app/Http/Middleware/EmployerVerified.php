@@ -21,7 +21,7 @@ final class EmployerVerified
     {
         $user = Auth::user();
 
-        $isVerified = $user?->companyUsers()->latest()?->first()->verification_status === VerificationStatusEnum::Verified->value;
+        $isVerified = $user?->companyUsers()->latest()?->first()?->verification_status === VerificationStatusEnum::Verified->value;
 
         if (! $isVerified) {
             return redirect()->route('account.verification.notice');
