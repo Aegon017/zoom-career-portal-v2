@@ -14,7 +14,7 @@ final class AdminEmployeeController extends Controller
         $employees = User::whereHas('companies')->get();
 
         return Inertia::render('admin/employee/employees-listing', [
-            'employees' => $employees
+            'employees' => $employees,
         ]);
     }
 
@@ -23,7 +23,7 @@ final class AdminEmployeeController extends Controller
         $user = User::find($id);
 
         return Inertia::render('admin/employee/view-employee', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 }

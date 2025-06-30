@@ -16,6 +16,7 @@ final class MessageSent implements ShouldBroadcast
     use Dispatchable;
     use InteractsWithSockets;
     use SerializesModels;
+
     public ChatMessage $message;
 
     public function __construct(ChatMessage $message, public int $receiverId)

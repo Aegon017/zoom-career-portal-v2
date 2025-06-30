@@ -31,11 +31,11 @@ final class CompanyController extends Controller
     public function edit(): Response
     {
         $company = CompanyUser::where('user_id', Auth::id())->latest()->first()->company;
-        $industries = Industry::get()->map(fn($industry): array => [
+        $industries = Industry::get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
-        $locations = Location::get()->map(fn($location): array => [
+        $locations = Location::get()->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);

@@ -45,16 +45,9 @@ final class OnboardingController extends Controller
         $user = Auth::user();
 
         $data = $request->validate([
-<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
-            'profile_image' => 'nullable|string',
-            'job_title_id' => 'required|exists:opening_titles,id',
-            'types_of_candidates' => 'nullable|array',
-            'phone' => 'required|string|max:16',
-=======
             'avatar' => 'nullable|string',
             'job_title' => 'required|string|max:255',
             'phone' => 'required|string|unique:users,phone|max:16',
->>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
         ]);
 
         $user->phone = $data['phone'];
@@ -64,15 +57,8 @@ final class OnboardingController extends Controller
             'job_title' => $data['job_title'],
         ]);
 
-<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
-        $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));
-
-        if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
-=======
         if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
             $user->addMedia(storage_path('app/public/'.$data['avatar']))
->>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
         }
@@ -132,11 +118,11 @@ final class OnboardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $industries = Industry::get()->map(fn($industry): array => [
+        $industries = Industry::get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
-        $locations = Location::get()->map(fn($location): array => [
+        $locations = Location::get()->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
@@ -172,13 +158,8 @@ final class OnboardingController extends Controller
             'location_id' => $data['location_id'],
         ]);
 
-<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
-        if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
-            $company->addMedia(storage_path('app/public/' . $data['company_logo']))
-=======
         if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
             $company->addMedia(storage_path('app/public/'.$data['logo_url']))
->>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }

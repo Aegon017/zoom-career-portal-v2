@@ -58,11 +58,6 @@ export function AppSidebar() {
             icon: ChartBar,
         },
         {
-            title: 'Talent Profiles',
-            href: '/admin/talent-profiles',
-            icon: ClipboardList,
-        },
-        {
             title: 'Industries',
             href: '/admin/industries',
             icon: Factory,

@@ -105,19 +105,10 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(EmployerOnBoarding::class);
     }
 
-    public function employerProfile(): HasOne
-    {
-        return $this->hasOne(EmployerProfile::class);
-    }
-
-    public function jobSeekerProfile(): HasOne
-    {
-        return $this->hasOne(JobSeekerProfile::class);
-    }
-
     public function getRoleForCompany(Company $company): ?string
     {
         $companyUser = $this->companyUsers()->where('company_id', $company->id)->first();
+
         return $companyUser?->role;
     }
 

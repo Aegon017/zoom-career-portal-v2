@@ -134,7 +134,7 @@ final class OpeningController extends Controller
 
         $job->update([
             ...$data,
-            'verification_status' => VerificationStatusEnum::Pending->value
+            'verification_status' => VerificationStatusEnum::Pending->value,
         ]);
 
         if ($job->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {

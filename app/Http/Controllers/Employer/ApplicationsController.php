@@ -31,7 +31,7 @@ final class ApplicationsController extends Controller
             $applicationsQuery = $job->applications()->with(['user.skills']);
 
             if ($request->filled('skill') && $request->skill !== 'all') {
-                $applicationsQuery->whereHas('user.skills', function ($q) use ($request) {
+                $applicationsQuery->whereHas('user.skills', function ($q) use ($request): void {
                     $q->where('name', $request->skill);
                 });
             }

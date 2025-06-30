@@ -12,11 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-<<<<<<< HEAD
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-=======
 use Illuminate\Database\Eloquent\Relations\MorphOne;
->>>>>>> v3
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -91,19 +87,6 @@ final class Company extends Model implements HasMedia
         return $this->hasMany(Opening::class);
     }
 
-<<<<<<< HEAD
-    public function companyUsers(): HasMany
-    {
-        return $this->hasMany(CompanyUser::class);
-    }
-
-    public function users(): HasManyThrough
-    {
-        return $this->hasManyThrough(User::class, CompanyUser::class);
-    }
-
-=======
->>>>>>> v3
     public function workExperiences(): HasMany
     {
         return $this->hasMany(WorkExperience::class);
