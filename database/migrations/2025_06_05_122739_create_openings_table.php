@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
             $table->string('apply_link')->nullable();
             $table->string('status');
             $table->string('verification_status');
