@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AppLayout from "@/layouts/employer-layout";
 import MailIcon from "@/icons/mail-icon";
-import { BreadcrumbItem, Chat } from "@/types";
+import { BreadcrumbItem, Chat, User } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { useEchoPublic } from "@laravel/echo-react";
 import { format } from "date-fns";
@@ -24,7 +24,7 @@ import {
     EllipsisVertical,
     Send,
     TriangleAlert,
-    User,
+    User as UserIcon,
     SearchIcon,
 } from "lucide-react";
 
@@ -33,50 +33,49 @@ const breadcrumbs: BreadcrumbItem[] = [ { title: "Inbox", href: "/inbox" } ];
 interface Props {
     chats: Chat[];
     currentUserId: number;
+    activeChat?: Chat;
+    targetUser?: User;
 }
 
-export default function Inbox( { chats, currentUserId }: Props ) {
-    const [ activeChatId, setActiveChatId ] = useState<string | null>( null );
+export default function Inbox( { chats, currentUserId, activeChat: initialChat, targetUser }: Props ) {
+    const [ activeChat, setActiveChat ] = useState<Chat | null>( initialChat || null );
+    const [ message, setMessage ] = useState( "" );
     const [ isSending, setIsSending ] = useState( false );
     const [ chatsState, setChats ] = useState<Chat[]>( chats );
-    const [ message, setMessage ] = useState( "" );
 
     const messageInputRef = useRef<HTMLDivElement>( null );
     const messagesEndRef = useRef<HTMLDivElement>( null );
 
-    const activeChat = chatsState.find( ( c ) => String( c.id ) === activeChatId );
-
-    const scrollToBottom = () =>
-        messagesEndRef.current?.scrollIntoView( { behavior: "smooth" } );
-
     useEffect( () => {
-        if ( activeChatId ) {
-            scrollToBottom();
+        if ( !activeChat && targetUser ) {
+            messageInputRef.current?.focus();
         }
-    }, [ activeChatId, chatsState ] );
+    }, [ activeChat, targetUser ] );
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView( { behavior: "smooth" } );
+    };
 
     const getOtherParticipant = ( chat: Chat ) =>
         chat.participants.find( ( p ) => p.user.id !== currentUserId )?.user;
 
-    const getLastMessage = ( chat: Chat ) =>
-        chat.messages.length
-            ? chat.messages[ chat.messages.length - 1 ]!.message
-            : "No messages yet";
-
     const handleSendMessage = () => {
-        if ( !activeChatId || !message.trim() ) return;
+        if ( !message.trim() ) return;
 
         setIsSending( true );
+
         router.post(
             "/inbox/send-message",
-            { chat_id: activeChatId, message: message.trim() },
+            {
+                chat_id: activeChat?.id,
+                user_id: targetUser?.id,
+                message,
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    if ( messageInputRef.current ) {
-                        messageInputRef.current.innerText = "";
-                    }
                     setMessage( "" );
+                    if ( messageInputRef.current ) messageInputRef.current.innerText = "";
                     setIsSending( false );
                 },
                 onError: () => setIsSending( false ),
@@ -84,86 +83,113 @@ export default function Inbox( { chats, currentUserId }: Props ) {
         );
     };
 
-    const handleKeyPress = ( e: React.KeyboardEvent ) => {
-        if ( e.key === "Enter" && !e.shiftKey ) {
-            e.preventDefault();
-            handleSendMessage();
-        }
+    useEchoPublic( "chats", "MessageSent", ( e: any ) => {
+        setChats( ( prev ) => {
+            const idx = prev.findIndex( ( c ) => c.id === e.message.chat_id );
+            let updatedChats;
+
+            if ( idx === -1 ) {
+                const newChat = {
+                    id: e.message.chat_id,
+                    participants: [
+                        { user: { id: currentUserId } },
+                        { user: e.user },
+                    ],
+                    messages: [ e.message ],
+                    created_at: e.message.created_at || new Date().toISOString(),
+                    updated_at: e.message.created_at || new Date().toISOString(),
+                } as Chat;
+
+                updatedChats = [ ...prev, newChat ];
+
+                if (
+                    ( !activeChat && targetUser && targetUser.id === e.user.id ) ||
+                    ( activeChat && activeChat.id === e.message.chat_id )
+                ) {
+                    setActiveChat( newChat );
+                }
+
+                return updatedChats;
+            }
+
+            updatedChats = [ ...prev ];
+            const chat = updatedChats[ idx ];
+
+            const existingMsg = ( chat.messages || [] ).find( ( m ) => m.id === e.message.id );
+            if ( !existingMsg ) {
+                updatedChats[ idx ] = {
+                    ...chat,
+                    messages: [ ...( chat.messages || [] ), e.message ],
+                };
+            }
+
+            if ( activeChat && activeChat.id === e.message.chat_id ) {
+                setActiveChat( ( prevActive ) =>
+                    prevActive
+                        ? {
+                            ...prevActive,
+                            messages: [
+                                ...( prevActive.messages || [] ),
+                                ...( existingMsg ? [] : [ e.message ] ),
+                            ],
+                        }
+                        : prevActive
+                );
+            }
+
+            return updatedChats;
+        } );
+    } );
+
+    const openChat = ( chatId: number ) => {
+        router.get( `/inbox?chat=${ chatId }`, {} );
     };
 
-    useEchoPublic( "chats", "MessageSent", ( e: any ) => {
-        setChats( ( prev ) =>
-            prev.map( ( c ) =>
-                c.id === e.message.chat_id
-                    ? { ...c, messages: [ ...c.messages, e.message ] }
-                    : c
-            )
-        );
-    } );
+    useEffect( () => {
+        if ( activeChat?.messages?.length ) {
+            requestAnimationFrame( () => {
+                scrollToBottom();
+            } );
+        }
+    }, [ activeChat?.messages?.length ] );
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Inbox" />
-            <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-gray-50">
-                <div
-                    className={ `flex flex-col border-r w-full bg-white ${ activeChatId ? "hidden" : "flex"
-                        } lg:flex lg:w-1/3` }
-                >
+            <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-background">
+                <div className={ `flex flex-col border-r bg-white ${ activeChat ? "hidden" : "flex" } w-full lg:flex lg:w-1/3` }>
                     <div className="p-4 border-b">
                         <div className="relative">
                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                            <Input
-                                className="pl-10"
-                                type="search"
-                                placeholder="Search or start new chat"
-                            />
+                            <Input className="pl-10" type="search" placeholder="Search or start new chat" />
                         </div>
                     </div>
-                    <ScrollArea className="flex-1">
+                    <ScrollArea>
                         <div className="p-2 space-y-1">
-                            { chatsState.map( ( chat ) => {
+                            { chatsState.map( chat => {
                                 const other = getOtherParticipant( chat );
                                 if ( !other ) return null;
-                                const active = String( chat.id ) === activeChatId;
-                                const last = getLastMessage( chat );
-                                const dateStr = chat.messages.length
-                                    ? format(
-                                        new Date(
-                                            chat.messages[ chat.messages.length - 1 ]!.created_at
-                                        ),
-                                        "MMM dd"
-                                    )
+                                const last = chat.messages?.at( -1 )?.message || "No messages yet";
+                                const dateStr = chat.messages?.length
+                                    ? format( new Date( chat.messages.at( -1 )!.created_at ), "MMM dd" )
                                     : "";
 
                                 return (
                                     <div
                                         key={ chat.id }
-                                        className={ `flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${ active
-                                            ? "bg-blue-50 border-l-4 border-blue-500"
-                                            : "hover:bg-gray-50"
-                                            }` }
-                                        onClick={ () => setActiveChatId( String( chat.id ) ) }
+                                        onClick={ () => openChat( chat.id ) }
+                                        className="flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-muted"
                                     >
                                         <Avatar className="h-12 w-12">
-                                            <AvatarImage
-                                                src={ other.profile_image || "/placeholder.svg" }
-                                                alt={ `${ other.name }'s avatar` }
-                                            />
-                                            <AvatarFallback>
-                                                { other.name
-                                                    .split( " " )
-                                                    .map( ( n ) => n[ 0 ] )
-                                                    .join( "" ) }
-                                            </AvatarFallback>
+                                            <AvatarImage src={ other.avatar_url || "/placeholder.svg" } />
+                                            <AvatarFallback>{ other.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between mb-1">
-                                                <h3 className="font-semibold text-sm truncate text-gray-900">
-                                                    { other.name }
-                                                </h3>
-                                                <span className="text-xs text-gray-500">{ dateStr }</span>
+                                                <h3 className="font-semibold text-sm truncate text-foreground">{ other.name }</h3>
+                                                <span className="text-xs text-muted-foreground">{ dateStr }</span>
                                             </div>
-                                            <p className="text-sm text-gray-600 truncate">{ last }</p>
+                                            <p className="text-sm text-muted-foreground truncate line-clamp-1">{ last }</p>
                                         </div>
                                     </div>
                                 );
@@ -177,12 +203,7 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                         <>
                             <div className="flex items-center justify-between p-4 border-b bg-white">
                                 <div className="flex items-center gap-3">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="lg:hidden"
-                                        onClick={ () => setActiveChatId( null ) }
-                                    >
+                                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={ () => router.get( "/inbox" ) }>
                                         <ArrowLeft />
                                     </Button>
                                     { ( () => {
@@ -191,18 +212,10 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                         return (
                                             <>
                                                 <Avatar className="h-10 w-10">
-                                                    <AvatarImage
-                                                        src={ usr.profile_image || "/placeholder.svg" }
-                                                        alt={ `${ usr.name }'s avatar` }
-                                                    />
-                                                    <AvatarFallback>
-                                                        { usr.name
-                                                            .split( " " )
-                                                            .map( ( n ) => n[ 0 ] )
-                                                            .join( "" ) }
-                                                    </AvatarFallback>
+                                                    <AvatarImage src={ usr.avatar_url || "/placeholder.svg" } />
+                                                    <AvatarFallback>{ usr.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
                                                 </Avatar>
-                                                <h3 className="font-semibold text-gray-900">{ usr.name }</h3>
+                                                <h3 className="font-semibold text-foreground">{ usr.name }</h3>
                                             </>
                                         );
                                     } )() }
@@ -215,18 +228,17 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem>
-                                            <User className="mr-2 w-4 h-4" />
-                                            View Profile
+                                            <UserIcon className="mr-2 w-4 h-4" /> View Profile
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="text-destructive focus:text-destructive">
-                                            <TriangleAlert className="mr-2 w-4 h-4 text-red-500" />
-                                            Report
+                                            <TriangleAlert className="mr-2 w-4 h-4 text-red-500" /> Report
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
 
                             <ScrollArea className="flex-1 overflow-y-auto bg-gray-100 p-4">
+<<<<<<< HEAD
                                 { activeChat.messages.length === 0 ? (
                                     <div className="text-center text-gray-500 mt-8">
                                         No messages yet
@@ -271,13 +283,33 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                                                 </span>
                                                             </>
                                                         ) }
+=======
+                                <div className="space-y-4 pb-24">
+                                    { activeChat.messages?.map( msg => {
+                                        const isMe = msg.user_id === currentUserId;
+                                        return (
+                                            <div key={ msg.id } className={ `flex ${ isMe ? "justify-end" : "justify-start" }` }>
+                                                <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
+                                                    { isMe && (
+                                                        <span className="text-xs text-gray-500">
+                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                        </span>
+                                                    ) }
+                                                    <div className={ `px-4 py-2 rounded-tr-2xl rounded-tl-2xl ${ isMe ? "bg-primary text-white rounded-bl-2xl" : "bg-white text-foreground rounded-br-2xl" }` }>
+                                                        <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
+>>>>>>> v3
                                                     </div>
+                                                    { !isMe && (
+                                                        <span className="text-xs text-gray-500">
+                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                        </span>
+                                                    ) }
                                                 </div>
-                                            );
-                                        } ) }
-                                        <div ref={ messagesEndRef } />
-                                    </div>
-                                ) }
+                                            </div>
+                                        );
+                                    } ) }
+                                    <div ref={ messagesEndRef } />
+                                </div>
                             </ScrollArea>
 
                             <div className="p-4 border-t bg-white">
@@ -288,12 +320,14 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                                                 ref={ messageInputRef }
                                                 contentEditable
                                                 suppressContentEditableWarning
-                                                onInput={ ( e ) =>
-                                                    setMessage( ( e.target as HTMLElement ).innerText )
-                                                }
-                                                onKeyDown={ handleKeyPress }
-                                                className="w-full p-3 bg-white rounded-full outline-none resize-none overflow-y-auto"
-                                                style={ { minHeight: "50px" } }
+                                                onInput={ ( e ) => setMessage( ( e.target as HTMLElement ).innerText ) }
+                                                onKeyDown={ ( e ) => {
+                                                    if ( e.key === "Enter" && !e.shiftKey ) {
+                                                        e.preventDefault();
+                                                        handleSendMessage();
+                                                    }
+                                                } }
+                                                className="w-full p-3 bg-white rounded-full outline-none resize-none overflow-y-auto min-h-[50px]"
                                             />
                                             { message.trim() === "" && (
                                                 <div className="absolute inset-0 p-3 text-gray-500 pointer-events-none">
@@ -318,12 +352,9 @@ export default function Inbox( { chats, currentUserId }: Props ) {
                         <div className="flex-1 items-center justify-center hidden lg:flex">
                             <div className="text-center">
                                 <MailIcon />
-                                <h2 className="mt-4 text-xl font-semibold text-gray-900">
-                                    Message anyone
-                                </h2>
-                                <p className="mt-2 max-w-lg text-gray-600">
-                                    Connect with professionals and recruiters through meaningful
-                                    conversations.
+                                <h2 className="mt-4 text-xl font-semibold text-foreground">Message anyone</h2>
+                                <p className="mt-2 max-w-lg text-muted-foreground">
+                                    Connect with professionals and recruiters through meaningful conversations.
                                 </p>
                             </div>
                         </div>

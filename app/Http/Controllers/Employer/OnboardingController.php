@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Employer;
 
-use App\Actions\CreateCompanyAction;
-use App\Actions\CreateEmployerProfileAction;
 use App\Enums\CompanySizeEnum;
 use App\Enums\CompanyTypeEnum;
 use App\Enums\EmployerOnBoardingEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Company\StoreCompanyRequest;
 use App\Mail\Admin\EmployerRegisteredMail as AdminEmployerRegisteredMail;
 use App\Mail\EmployerRegisteredMail;
 use App\Models\Company;
+use App\Models\Industry;
+use App\Models\Location;
 use App\Models\OpeningTitle;
-use App\Models\TalentProfile;
 use App\Models\User;
 use App\Notifications\EmployerVerifyNotification;
 use Illuminate\Http\RedirectResponse;
@@ -27,22 +27,15 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class EmployerOnBoardingController extends Controller
+final class OnboardingController extends Controller
 {
-    public function __construct(
-        private readonly CreateEmployerProfileAction $createEmployerProfileAction,
-        private readonly CreateCompanyAction $createCompanyAction
-    ) {}
-
     public function setupProfile(): Response
     {
         $user = Auth::user();
-        $talent_profiles = TalentProfile::query()->get();
-        $job_titles = OpeningTitle::query()->get();
+        $job_titles = OpeningTitle::orderBy('name')->get();
 
         return Inertia::render('employer/on-boarding/profile-setup', [
             'user' => $user,
-            'talent_profiles' => $talent_profiles,
             'job_titles' => $job_titles,
         ]);
     }
@@ -52,23 +45,36 @@ final class EmployerOnBoardingController extends Controller
         $user = Auth::user();
 
         $data = $request->validate([
+<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
             'profile_image' => 'nullable|string',
             'job_title_id' => 'required|exists:opening_titles,id',
             'types_of_candidates' => 'nullable|array',
             'phone' => 'required|string|max:16',
+=======
+            'avatar' => 'nullable|string',
+            'job_title' => 'required|string|max:255',
+            'phone' => 'required|string|unique:users,phone|max:16',
+>>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
         ]);
 
         $user->phone = $data['phone'];
         $user->save();
 
-        $employerProfile = $this->createEmployerProfileAction->handle($data, $user);
+        $user->profile()->create([
+            'job_title' => $data['job_title'],
+        ]);
 
+<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
         $employerProfile->talentProfiles()->attach(array_values($data['types_of_candidates']));
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
             $user->addMedia(storage_path('app/public/' . $data['profile_image']))
+=======
+        if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
+            $user->addMedia(storage_path('app/public/'.$data['avatar']))
+>>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
                 ->preservingOriginal()
-                ->toMediaCollection('profile_images');
+                ->toMediaCollection('avatars');
         }
 
         $user->employerOnBording()->update([
@@ -81,9 +87,7 @@ final class EmployerOnBoardingController extends Controller
 
     public function companyCreateOrJoin(): Response
     {
-        $companies = Company::query()->orderBy('company_name')->get();
-
-        Auth::user();
+        $companies = Company::orderBy('name')->get();
 
         return Inertia::render('employer/on-boarding/company-create-or-join', [
             'companies' => $companies,
@@ -100,7 +104,7 @@ final class EmployerOnBoardingController extends Controller
         $user = Auth::user();
 
         if ($data['is_new']) {
-            $company_name = $data['company'];
+            $name = $data['company'];
 
             $user->employerOnBording()->update([
                 'step' => EmployerOnBoardingEnum::COMPANY_SETUP->value,
@@ -108,13 +112,13 @@ final class EmployerOnBoardingController extends Controller
             ]);
 
             return to_route('employer.on-boarding.setup.company', [
-                'company_name' => $company_name,
+                'name' => $name,
             ]);
         }
 
         $company = Company::find($data['company']);
 
-        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
+        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'verification_status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_JOIN_VERIFICATION->value,
@@ -128,41 +132,64 @@ final class EmployerOnBoardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
+        $industries = Industry::get()->map(fn($industry): array => [
+            'value' => $industry->id,
+            'label' => $industry->name,
+        ]);
+        $locations = Location::get()->map(fn($location): array => [
+            'value' => $location->id,
+            'label' => $location->full_name,
+        ]);
+
         return Inertia::render('employer/on-boarding/company-setup', [
-            'company_name' => $request->company_name,
-            'company_sizes' => CompanySizeEnum::options(),
-            'company_types' => CompanyTypeEnum::options(),
+            'name' => $request->name,
+            'industries' => $industries,
+            'locations' => $locations,
+            'sizes' => CompanySizeEnum::options(),
+            'types' => CompanyTypeEnum::options(),
         ]);
     }
 
-    public function storeCompany(Request $request): RedirectResponse
+    public function storeCompany(StoreCompanyRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'company_name' => 'required|string|max:255',
-            'company_logo' => 'nullable|string',
-            'industry' => 'required|string|max:100',
-            'company_website' => 'required|url|max:255',
-            'company_description' => 'required|string|max:1000',
-            'company_address' => 'required|string|max:255',
-            'public_phone' => 'nullable|string|max:20',
-            'public_email' => 'nullable|email|max:255',
-            'company_size' => 'required|string|max:50',
-            'company_type' => 'required|string|max:50',
-        ]);
+        $data = $request->validated();
 
-        $verification_status = VerificationStatusEnum::Pending->value;
+        $company = Company::create([
+            'name' => $data['name'],
+            'industry_id' => $data['industry_id'],
+            'website_url' => $data['website_url'],
+            'description' => $data['description'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'size' => $data['size'],
+            'type' => $data['type'],
+            'verification_status' => VerificationStatusEnum::Pending->value,
+        ]);
 
         $user = Auth::user();
 
-        $company = $this->createCompanyAction->handle($data, $verification_status);
+        $company->address()->create([
+            'location_id' => $data['location_id'],
+        ]);
 
+<<<<<<< HEAD:app/Http/Controllers/Employer/EmployerOnBoardingController.php
         if (! empty($data['company_logo']) && Storage::disk('public')->exists($data['company_logo'])) {
             $company->addMedia(storage_path('app/public/' . $data['company_logo']))
+=======
+        if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
+>>>>>>> v3:app/Http/Controllers/Employer/OnboardingController.php
                 ->preservingOriginal()
-                ->toMediaCollection('company_logos');
+                ->toMediaCollection('logos');
         }
 
-        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'status' => VerificationStatusEnum::Pending->value]);
+        if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
+                ->preservingOriginal()
+                ->toMediaCollection('banners');
+        }
+
+        $company->users()->attach($user->id, ['role' => 'recruiter', 'verified_at' => null, 'verification_status' => VerificationStatusEnum::Pending->value]);
 
         $user->employerOnBording()->update([
             'step' => EmployerOnBoardingEnum::COMPANY_SETUP_VERIFICATION->value,
@@ -190,12 +217,10 @@ final class EmployerOnBoardingController extends Controller
 
     public function sendNotification(User $user, Company $company): void
     {
-        $user->employerProfile()->create();
-
         $admins = User::role('super_admin')->get();
 
         $name = $user->name;
-        $company_name = $company->company_name;
+        $company_name = $company->name;
         $review_link = route('admin.employer.verify', [
             'employer' => $user->id,
             'company' => $company->id,

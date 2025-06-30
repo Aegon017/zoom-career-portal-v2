@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('job_titles', function (Blueprint $table): void {
+        Schema::create('chat_participants', function (Blueprint $table): void {
             $table->id();
-            $table->string('name');
+            $table->foreignId('chat_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('job_titles');
+        Schema::dropIfExists('chat_participants');
     }
 };

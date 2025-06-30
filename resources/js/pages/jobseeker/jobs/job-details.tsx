@@ -4,10 +4,13 @@ import BookmarkButton from "@/components/jobseeker/bookmark-button"
 import OpeningItem from "@/components/jobseeker/opening-item"
 import AppLayout from "@/layouts/jobseeker-layout"
 import { Opening } from "@/types"
-import { Head } from "@inertiajs/react"
+import { Head, Link } from "@inertiajs/react"
 import { format, formatDistanceToNow } from "date-fns"
+import { useState } from "react"
 
-const JobDetails = ({ job, similar_jobs }: { job: Opening, similar_jobs: Opening[] }) => {
+const JobDetails = ( { job, similar_jobs }: { job: Opening, similar_jobs: Opening[] } ) => {
+
+    const [ redirecting, setRedirecting ] = useState( false );
     return (
         <AppLayout>
             <Head title="Job details" />
@@ -18,27 +21,65 @@ const JobDetails = ({ job, similar_jobs }: { job: Opening, similar_jobs: Opening
                             <div className="company-info">
                                 <a href="#">
                                     <div className="logo mb-2">
-                                        <img src={job.company.company_logo} />
+                                        <img src={ job.company.logo_url } />
                                     </div>
                                     <div className="details mb-2">
-                                        <h3>{job.company.company_name}</h3>
-                                        <h4>{job.company.industry}</h4>
+                                        <h3>{ job.company.name }</h3>
+                                        <h4>{ job.company.industry.name }</h4>
                                     </div>
                                 </a>
                             </div>
                             <div className="job-info mb-3">
-                                <h2 className="job-title">{job.title}</h2>
+                                <h2 className="job-title">{ job.title }</h2>
                                 <p className="pdate-adate-info">
-                                    {formatDistanceToNow(new Date(job.published_at), { addSuffix: true })} <span className="divider">-</span> Apply By  {format(new Date(job.expires_at), 'd MMMM, yyyy')}
+                                    { formatDistanceToNow( new Date( job.published_at ), { addSuffix: true } ) } <span className="divider">-</span> Apply By  { format( new Date( job.expires_at ), 'd MMMM, yyyy' ) }
                                 </p>
                             </div>
                             <div className="job-action">
-                                <BookmarkButton jobId={job.id} isSaved={job.is_saved} hasText={true} />
-                                <ApplyButton jobId={job.id} hasApplied={job.has_applied} status={job.application_status} />
+                                <BookmarkButton jobId={ job.id } isSaved={ job.is_saved } hasText={ true } />
+                                { job.apply_link ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={ () => {
+                                                setRedirecting( true );
+                                                setTimeout( () => {
+                                                    window.open( job.apply_link, '_blank', 'noopener,noreferrer' );
+                                                    setRedirecting( false );
+                                                }, 1500 );
+                                            } }
+                                            className="zc-btn zc-btn-primary"
+                                        >
+                                            Apply Now
+                                        </button>
+
+                                        { redirecting && (
+                                            <>
+                                                <div className="modal show fade d-block" role="dialog">
+                                                    <div className="modal-dialog modal-dialog-centered" role="document">
+                                                        <div className="modal-content shadow-lg rounded-3 border-0">
+                                                            <div className="modal-body text-center p-5 bg-light">
+                                                                <div className="spinner-border text-primary mb-4" role="status">
+                                                                    <span className="visually-hidden">Loading...</span>
+                                                                </div>
+                                                                <h5 className="modal-title mb-2 fw-semibold text-dark">Redirecting...</h5>
+                                                                <p className="text-secondary mb-0">
+                                                                    You’re being redirected to the employer's website.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) }
+                                    </>
+                                ) : (
+                                    <ApplyButton jobId={ job.id } hasApplied={ job.has_applied } status={ job.application_status } />
+                                ) }
                                 <FollowButton
-                                    followableId={job.company.id}
+                                    followableId={ job.company.id }
                                     followableType="company"
-                                    isFollowing={job.company.is_followed}
+                                    isFollowing={ job.company.is_followed }
                                 />
                             </div>
                         </div>
@@ -48,44 +89,44 @@ const JobDetails = ({ job, similar_jobs }: { job: Opening, similar_jobs: Opening
                                 <ul className="info">
                                     <li>
                                         <i className="fa-solid fa-briefcase"></i>
-                                        {job.employment_type}
+                                        { job.employment_type }
                                     </li>
                                     <li>
                                         <i className="fa-solid fa-location-dot"></i>
-                                        {job.city}, {job.country}
+                                        { job.city }, { job.country }
                                     </li>
                                     <li>
                                         <i className="fa-solid fa-clock"></i>
-                                        {formatDistanceToNow(new Date(job.published_at), { addSuffix: true })}
+                                        { formatDistanceToNow( new Date( job.published_at ), { addSuffix: true } ) }
                                     </li>
                                     <li>
                                         <i className="fa-solid fa-money-bill"></i>
-                                        {job.salary_min} - {job.salary_max} {job.currency}
+                                        { job.salary_min } - { job.salary_max } { job.currency }
                                     </li>
                                 </ul>
                             </div>
                             <div className="job-skills d-block w-100 position-relative py-4">
                                 <h3 className="block-title mb-4">Skills Required</h3>
                                 <ul className="skills-list">{
-                                    job.skills.map((skill, index) => (
-                                        <li key={index}>{skill.name}</li>
-                                    ))}
+                                    job.skills.map( ( skill, index ) => (
+                                        <li key={ index }>{ skill.name }</li>
+                                    ) ) }
                                 </ul>
                             </div>
                             <div className="job-description d-block w-100 position-relative py-4">
                                 <h3 className="block-title mb-4">Job Description</h3>
-                                <div dangerouslySetInnerHTML={{ __html: job.description }} />
+                                <div dangerouslySetInnerHTML={ { __html: job.description } } />
                             </div>
                         </div>
                     </div>
-                    {similar_jobs.length > 0 && (
+                    { similar_jobs.length > 0 && (
                         <div className="zc-similar-jobs d-block w-100 position-relative py-4">
                             <h3 className="block-title mb-4">Similar Jobs</h3>
-                            {similar_jobs.map((job, index) => (
-                                <OpeningItem key={index} opening={job} />
-                            ))}
+                            { similar_jobs.map( ( job, index ) => (
+                                <OpeningItem key={ index } opening={ job } />
+                            ) ) }
                         </div>
-                    )}
+                    ) }
                 </div>
             </div>
         </AppLayout>

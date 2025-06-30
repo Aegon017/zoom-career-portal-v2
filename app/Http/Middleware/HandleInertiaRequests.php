@@ -49,18 +49,18 @@ final class HandleInertiaRequests extends Middleware
             'quote' => ['message' => mb_trim($message), 'author' => mb_trim($author)],
             'auth' => [
                 'user' => Auth::user(),
-                'isEmployerVerified' => Auth::user()?->companies->first()?->pivot->status === VerificationStatusEnum::Verified->value,
-                'roles' => Auth::check() ? Auth::user()->getRoleNames() : [],
+                'isEmployerVerified' => Auth::user()?->companyUsers()->latest()?->first()?->verification_status === VerificationStatusEnum::Verified->value,
+                'roles' => Auth::user()?->getRoleNames() ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
             'features' => [
                 'people_feature' => (bool) SiteSetting::where('name', 'People feature in student dashboard')->value('status'),
             ],
-            'url' => fn() => request()->getRequestUri(),
+            'url' => fn () => request()->getRequestUri(),
         ];
     }
 }

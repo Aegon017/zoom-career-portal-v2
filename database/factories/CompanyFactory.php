@@ -22,6 +22,7 @@ final class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
+<<<<<<< HEAD
             'company_name' => fake()->unique()->company(),
             'industry' => fake()->randomElement(['Technology', 'Healthcare', 'Finance', 'Education', 'Manufacturing']),
             'company_website' => fake()->url(),
@@ -31,6 +32,16 @@ final class CompanyFactory extends Factory
             'public_email' => fake()->companyEmail(),
             'company_size' => fake()->randomElement(CompanySizeEnum::values()),
             'company_type' => fake()->randomElement(CompanyTypeEnum::values()),
+=======
+            'name' => fake()->unique()->company(),
+            'industry_id' => null,
+            'website_url' => fake()->url(),
+            'description' => fake()->paragraph(3),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->unique()->phoneNumber(),
+            'size' => fake()->randomElement(CompanySizeEnum::values()),
+            'type' => fake()->randomElement(CompanyTypeEnum::values()),
+>>>>>>> v3
             'verification_status' => fake()->randomElement(VerificationStatusEnum::values()),
         ];
     }

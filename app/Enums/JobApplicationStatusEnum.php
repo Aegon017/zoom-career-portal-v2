@@ -15,7 +15,7 @@ enum JobApplicationStatusEnum: string
     // case UnderReview = 'under_review';
     // case InterviewScheduled = 'interview_scheduled';
     // case Offered = 'offered';
-    case Rejected = 'rejected';
+    // case Rejected = 'rejected';
 
     public function label(): string
     {
@@ -25,7 +25,7 @@ enum JobApplicationStatusEnum: string
             // self::UnderReview => 'Under Review',
             // self::InterviewScheduled => 'Interview Scheduled',
             // self::Offered => 'Offered',
-            self::Rejected => 'Rejected',
+            // self::Rejected => 'Rejected',
         };
     }
 }

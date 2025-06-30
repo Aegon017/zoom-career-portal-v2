@@ -25,7 +25,7 @@ final class EmployerManageProfileController extends Controller
                 ->get()
         );
 
-        $companies = Company::query()->orderBy('company_name')->get();
+        $companies = Company::query()->orderBy('name')->get();
 
         return Inertia::render('employer/manage-profile/index', [
             'work_experiences' => $work_experiences,

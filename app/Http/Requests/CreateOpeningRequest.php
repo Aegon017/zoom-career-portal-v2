@@ -43,6 +43,7 @@ final class CreateOpeningRequest extends FormRequest
             'country' => 'nullable|string|max:100',
             'published_at' => 'date',
             'expires_at' => 'required|date|after:published_at',
+            'apply_link' => 'nullable|string|max:255',
             'status' => ['required', Rule::enum(JobStatusEnum::class)],
             'verification_status' => [Rule::enum(VerificationStatusEnum::class)],
             'skills' => 'required|array',

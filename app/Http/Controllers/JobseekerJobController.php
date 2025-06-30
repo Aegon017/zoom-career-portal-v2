@@ -23,12 +23,12 @@ final class JobseekerJobController extends Controller
         if ($request->filled('company')) {
             $query->whereHas(
                 'company',
-                fn ($q) => $q->where('company_name', 'like', '%'.$request->company.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->company . '%')
             );
         }
 
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%'.$request->job_title.'%');
+            $query->where('title', 'like', '%' . $request->job_title . '%');
         }
 
         if ($request->filled('employment_types')) {
@@ -39,21 +39,21 @@ final class JobseekerJobController extends Controller
             $query->whereIn('industry', $request->industries);
         }
 
-        $jobs = $query->latest()->get();
+        $initialJobs = $query->latest()->paginate(10);
 
         return inertia('jobseeker/jobs/all-jobs', [
-            'jobs' => $jobs,
+            'initialJobs' => $initialJobs,
             'filters' => $request->only('company', 'job_title', 'employment_types', 'industries'),
         ]);
     }
 
     public function show(string $jobId): Response
     {
-        $job = Opening::with(['company', 'skills'])->find($jobId);
+        $job = Opening::with(['company', 'skills', 'company.industry'])->find($jobId);
 
         Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
@@ -67,34 +67,25 @@ final class JobseekerJobController extends Controller
         ]);
     }
 
-    public function savedJobs(Request $request)
+    public function savedJobs()
     {
-        $count = (int) $request->input('count', 10);
         $user = Auth::user();
-        $jobs = $user->savedOpenings()->with('opening.company')->get();
-        $jobs = $jobs->pluck('opening')->filter()->values();
-
-        $jobs = $jobs->take($count);
+        $jobs = $user->savedOpenings()->with('opening.company')->paginate(10);
+        $initialJobs = $jobs->pluck('opening')->filter()->values();
 
         return Inertia::render('jobseeker/jobs/saved-jobs', [
-            'jobs' => $jobs,
-            'count' => $count,
+            'initialJobs' => $initialJobs,
         ]);
     }
 
-    public function appliedJobs(Request $request)
+    public function appliedJobs()
     {
-        $count = (int) $request->input('count', 10);
-
         $user = Auth::user();
-        $jobs = $user->openingApplications()->with('opening.company')->get();
-        $jobs = $jobs->pluck('opening')->filter()->values();
-
-        $jobs = $jobs->take($count);
+        $jobs = $user->openingApplications()->with('opening.company')->paginate(10);
+        $initialJobs = $jobs->pluck('opening')->filter()->values();
 
         return Inertia::render('jobseeker/jobs/applied-jobs', [
-            'jobs' => $jobs,
-            'count' => $count,
+            'initialJobs' => $initialJobs,
         ]);
     }
 }

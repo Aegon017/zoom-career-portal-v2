@@ -9,9 +9,14 @@ use App\Enums\CompanyTypeEnum;
 use App\Enums\VerificationStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+=======
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+>>>>>>> v3
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -22,15 +27,14 @@ final class Company extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $fillable = [
-        'company_name',
-        'industry',
-        'company_website',
-        'company_description',
-        'company_address',
-        'public_phone',
-        'public_email',
-        'company_size',
-        'company_type',
+        'name',
+        'industry_id',
+        'website_url',
+        'description',
+        'email',
+        'phone',
+        'size',
+        'type',
         'verification_status',
     ];
 
@@ -41,25 +45,45 @@ final class Company extends Model implements HasMedia
     ];
 
     protected $appends = [
-        'company_logo',
-        'banner',
+        'logo_url',
+        'banner_url',
         'is_followed',
     ];
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('company_logos')->singleFile();
-        $this->addMediaCollection('banner')->singleFile();
+        $this->addMediaCollection('logos')->singleFile();
+        $this->addMediaCollection('banners')->singleFile();
     }
 
-    public function getCompanyLogoAttribute(): string
+    public function getLogoUrlAttribute(): string
     {
-        return $this->getFirstMediaUrl('company_logos');
+        return $this->getFirstMediaUrl('logos');
     }
 
-    public function getBannerAttribute(): string
+    public function getBannerUrlAttribute(): string
     {
         return $this->getFirstMediaUrl('banners');
+    }
+
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class);
+    }
+
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
+    public function companyUsers(): HasMany
+    {
+        return $this->hasMany(CompanyUser::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'company_users', 'company_id', 'user_id');
     }
 
     public function openings(): HasMany
@@ -67,6 +91,7 @@ final class Company extends Model implements HasMedia
         return $this->hasMany(Opening::class);
     }
 
+<<<<<<< HEAD
     public function companyUsers(): HasMany
     {
         return $this->hasMany(CompanyUser::class);
@@ -77,6 +102,8 @@ final class Company extends Model implements HasMedia
         return $this->hasManyThrough(User::class, CompanyUser::class);
     }
 
+=======
+>>>>>>> v3
     public function workExperiences(): HasMany
     {
         return $this->hasMany(WorkExperience::class);

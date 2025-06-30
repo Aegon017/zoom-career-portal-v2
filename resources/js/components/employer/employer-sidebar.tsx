@@ -17,14 +17,14 @@ export function AppSidebar() {
             href: '/employer/dashboard',
             icon: LayoutGrid,
         },
-        {
-            title: 'Inbox',
-            href: '/inbox',
-            icon: MailOpen,
-        },
         ...(
             isVerified
                 ? [
+                    {
+                        title: 'Inbox',
+                        href: '/inbox',
+                        icon: MailOpen,
+                    },
                     {
                         title: 'Jobs',
                         href: '/employer/jobs',

@@ -67,7 +67,7 @@ final class RedirectIfEmployerOnboardingIncomplete
 
         if (
             $expectedRoute === 'employer.on-boarding.setup.company' &&
-            ! $request->filled('company_name')
+            ! $request->filled('name')
         ) {
             $user->employerOnBording()->update([
                 'step' => EmployerOnBoardingEnum::COMPANY_CREATE_OR_JOIN->value,

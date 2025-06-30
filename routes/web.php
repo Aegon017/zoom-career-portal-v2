@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobFunctionController;
 use App\Http\Controllers\Admin\JobTypeController;
@@ -15,12 +16,11 @@ use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
-use App\Http\Controllers\AdminEmployerVerifyController;
 use App\Http\Controllers\Employer\ApplicationsController;
+use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
-use App\Http\Controllers\Employer\EmployerOnBoardingController;
-use App\Http\Controllers\Employer\InboxController;
 use App\Http\Controllers\Employer\JobseekerController;
+use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\OpeningController;
 use App\Http\Controllers\EmployerManageProfileController;
 use App\Http\Controllers\FollowController;
@@ -34,7 +34,6 @@ use App\Http\Controllers\Jobseeker\ProfileController;
 use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
@@ -45,7 +44,7 @@ use Inertia\Inertia;
 Route::redirect('/', '/login');
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -74,24 +73,27 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function (): void {
             // profile and company setup
             Route::prefix('setup')->name('setup.')->group(function (): void {
-                Route::get('/profile', [EmployerOnBoardingController::class, 'setupProfile'])->name('profile');
-                Route::post('/profile', [EmployerOnBoardingController::class, 'storeProfile'])->name('profile.store');
-                Route::get('/company/new', [EmployerOnBoardingController::class, 'setupCompany'])->name('company');
-                Route::post('/company', [EmployerOnBoardingController::class, 'storeCompany'])->name('company.store');
-                Route::get('/company/verification-pending', [EmployerOnBoardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
+                Route::get('/profile', [OnboardingController::class, 'setupProfile'])->name('profile');
+                Route::post('/profile', [OnboardingController::class, 'storeProfile'])->name('profile.store');
+                Route::get('/company/new', [OnboardingController::class, 'setupCompany'])->name('company');
+                Route::post('/company', [OnboardingController::class, 'storeCompany'])->name('company.store');
+                Route::get('/company/verification-pending', [OnboardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
             });
             Route::prefix('company')->name('company.')->group(function (): void {
-                Route::get('/create-or-join', [EmployerOnBoardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
-                Route::post('/create-or-join', [EmployerOnBoardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
-                Route::get('/verification-pending', [EmployerOnBoardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
+                Route::get('/create-or-join', [OnboardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
+                Route::post('/create-or-join', [OnboardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
+                Route::get('/verification-pending', [OnboardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
         });
+
+        Route::get('/company', (new EmployerCompanyController())->index(...))->name('company.index');
+        Route::get('/company/edit', (new EmployerCompanyController())->edit(...))->name('company.edit');
+        Route::put('/company/{company}', (new EmployerCompanyController())->update(...))->name('company.update');
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
         Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
-        Route::get('/jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('jobs.applications');
 
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function (): void {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
@@ -139,8 +141,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/users', UserController::class);
         Route::resource('/employees', AdminEmployeeController::class);
         Route::resource('/companies', CompanyController::class);
-        Route::get('/employer/verify', [AdminEmployerVerifyController::class, 'verify'])->name('employer.verify');
-        Route::post('/employer/verify', [AdminEmployerVerifyController::class, 'store'])->name('employer.verify.store');
+        Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
+        Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
 
@@ -153,11 +155,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
 
-    Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
-    Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
+    Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
+    Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

@@ -118,7 +118,11 @@ declare(strict_types=1);
             <span class="status-badge status-{{ $status }}">{{ $status_text }}</span>
 
             <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
-
+            @if ($status === 'rejected' && !empty($reason))
+                <p style="color: #b71c1c; font-weight: 500;">
+                    <strong>Reason for Rejection:</strong> {{ $reason }}
+                </p>
+            @endif
             <p><strong>Company:</strong> {{ $company_name }}</p>
             <p><strong>Updated On:</strong> {{ $updated_at }}</p>
 

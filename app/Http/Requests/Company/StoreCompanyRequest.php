@@ -24,16 +24,17 @@ final class StoreCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_name' => 'required|string|max:255',
-            'company_logo' => 'nullable|string',
-            'industry' => 'required|string|max:100',
-            'company_website' => 'required|url|max:255',
-            'company_description' => 'required|string|max:1000',
-            'company_address' => 'required|string|max:255',
-            'public_phone' => 'nullable|string|max:20',
-            'public_email' => 'nullable|email|max:255',
-            'company_size' => 'required|string|max:50',
-            'company_type' => 'required|string|max:50',
+            'name' => 'required|string|max:255',
+            'logo_url' => 'nullable|string',
+            'banner_url' => 'nullable|string',
+            'industry_id' => 'required|integer|exists:industries,id',
+            'website_url' => 'required|url|max:255',
+            'description' => 'required|string|max:1000',
+            'email' => 'required|email|unique:companies,email,' . $this->company?->id,
+            'phone' => 'required|string|unique:companies,phone,' . $this->company?->id,
+            'location_id' => 'required|integer|exists:locations,id',
+            'size' => 'required|string|max:50',
+            'type' => 'required|string|max:50',
         ];
     }
 }

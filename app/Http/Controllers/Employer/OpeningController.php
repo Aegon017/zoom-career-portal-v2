@@ -88,7 +88,7 @@ final class OpeningController extends Controller
 
         $this->sendNotification($job->user, $job);
 
-        return to_route('employer.jobs.edit', $job->id)->with('success', 'Job record created successfully');
+        return to_route('employer.jobs.index')->with('success', 'Job record created successfully');
     }
 
     /**
@@ -132,7 +132,10 @@ final class OpeningController extends Controller
     {
         $data = $editOpeningRequest->validated();
 
-        $job->update($data);
+        $job->update([
+            ...$data,
+            'verification_status' => VerificationStatusEnum::Pending->value
+        ]);
 
         if ($job->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
             $job->published_at = now();
@@ -144,7 +147,7 @@ final class OpeningController extends Controller
 
         $this->sendNotification($job->user, $job);
 
-        return back()->with('success', 'Job record updated successfully');
+        return to_route('employer.jobs.index')->with('success', 'Job record updated successfully');
     }
 
     /**
@@ -161,7 +164,7 @@ final class OpeningController extends Controller
     {
         $admins = User::role('super_admin')->get();
 
-        $company_name = $opening->company->company_name;
+        $company_name = $opening->company->name;
         $posted_by = $user->name;
         $job_title = $opening->title;
         $review_link = route('admin.job.verify', [

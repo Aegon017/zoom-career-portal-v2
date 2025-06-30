@@ -16,76 +16,75 @@ import { useForm } from 'react-hook-form'
 import { useState, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 
-interface CompanyCreateOrJoinProps {
+interface Props {
     companies: Company[]
-    is_new?: boolean
 }
 
 type FormValues = {
-    company: string
+    company: string,
     is_new: boolean
 }
 
-const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
+const CompanyCreateOrJoin = ( { companies }: Props ) => {
     const initialOptions = useMemo<Option[]>(
         () =>
-            companies.map((company) => ({
-                label: company.company_name,
+            companies.map( ( company ) => ( {
+                label: company.name,
                 value: company.id.toString(),
-            })),
-        [companies]
+            } ) ),
+        [ companies ]
     )
 
-    const [companyOptions, setCompanyOptions] = useState<Option[]>(initialOptions)
+    const [ companyOptions, setCompanyOptions ] = useState<Option[]>( initialOptions )
 
-    const form = useForm<FormValues>({
+    const form = useForm<FormValues>( {
         defaultValues: {
             company: '',
             is_new: false,
         },
-    })
+    } )
 
     const { control, setError, handleSubmit, setValue, watch } = form
 
-    const selectedCompanyId = watch('company')
+    const selectedCompanyId = watch( 'company' )
 
     const selectedCompany = useMemo(
-        () => companyOptions.find((opt) => opt.value === selectedCompanyId),
-        [companyOptions, selectedCompanyId]
+        () => companyOptions.find( ( opt ) => opt.value === selectedCompanyId ),
+        [ companyOptions, selectedCompanyId ]
     )
 
     const handleCompanyChange = useCallback(
-        (newValue: string, isNew?: boolean) => {
-            if (isNew) {
+        ( newValue: string, isNew?: boolean ) => {
+            if ( isNew ) {
                 const newOption = { label: newValue, value: newValue }
-                setCompanyOptions((prev) => [...prev, newOption])
-                setValue('company', newOption.value)
-                setValue('is_new', true)
+                setCompanyOptions( ( prev ) => [ ...prev, newOption ] )
+                setValue( 'company', newOption.value )
+                setValue( 'is_new', true )
             } else {
-                setValue('company', newValue)
-                setValue('is_new', false)
+                setValue( 'company', newValue )
+                setValue( 'is_new', false )
             }
         },
-        [setValue]
+        [ setValue ]
     )
 
     const onSubmit = useCallback(
-        (data: FormValues) => {
-            router.post("/employer/on-boarding/company/create-or-join", data, {
-                onError: (errors) => {
-                    if (errors && typeof errors === 'object') {
-                        Object.entries(errors).forEach(([field, message]) => {
-                            setError(field as keyof FormValues, {
+        ( data: FormValues ) => {
+            router.post( "/employer/on-boarding/company/create-or-join", data, {
+                onError: ( errors ) => {
+                    if ( errors && typeof errors === 'object' ) {
+                        Object.entries( errors ).forEach( ( [ field, message ] ) => {
+                            setError( field as keyof FormValues, {
                                 type: 'server',
                                 message: message as string,
-                            })
-                        })
+                            } )
+                        } )
                     }
                 },
                 preserveScroll: true,
-            })
+            } )
         },
-        [setError]
+        [ setError ]
     )
 
     return (
@@ -99,33 +98,32 @@ const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
                         Join or create a company to get started.
                     </p>
                     <div className="py-8">
-                        <Form {...form}>
-                            <form onSubmit={handleSubmit(onSubmit)}>
+                        <Form { ...form }>
+                            <form onSubmit={ handleSubmit( onSubmit ) }>
                                 <div className="space-y-6">
                                     <div className="grid md:grid-cols-1 gap-6">
                                         <FormField
-                                            control={control}
+                                            control={ control }
                                             name="company"
-                                            render={() => (
+                                            render={ () => (
                                                 <FormItem>
-                                                    <FormLabel>Company name</FormLabel>
+                                                    <FormLabel htmlFor="company">Company name</FormLabel>
                                                     <FormControl>
                                                         <CreatableCombobox
-                                                            value={selectedCompanyId}
-                                                            options={companyOptions}
-                                                            onChange={handleCompanyChange}
+                                                            value={ selectedCompanyId }
+                                                            options={ companyOptions }
+                                                            onChange={ handleCompanyChange }
                                                             placeholder="Search company..."
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
-                                            )}
+                                            ) }
                                         />
-                                        {/* Hidden field for is_new to submit form data */}
-                                        <input type="hidden" {...form.register('is_new')} />
+                                        <input type="hidden" { ...form.register( 'is_new' ) } />
                                     </div>
 
-                                    {selectedCompany && (
+                                    { selectedCompany && (
                                         <Card className="w-full overflow-hidden dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-none shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
                                             <CardHeader className="h-12 bg-gradient-to-r from-orange-100 to-orange-200 p-0" />
 
@@ -136,12 +134,12 @@ const CompanyCreateOrJoin = ({ companies }: CompanyCreateOrJoinProps) => {
 
                                                 <div className="min-w-0 flex-1">
                                                     <h1 className="truncate text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                                                        {selectedCompany.label}
+                                                        { selectedCompany.label }
                                                     </h1>
                                                 </div>
                                             </CardContent>
                                         </Card>
-                                    )}
+                                    ) }
                                 </div>
                                 <div className="flex justify-end mt-8">
                                     <Button type="submit" variant="default">

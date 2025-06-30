@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Jobseeker;
 
-use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use App\Models\User;
@@ -17,7 +16,7 @@ final class PeopleController extends Controller
     {
         $feature = SiteSetting::where('name', 'People feature in student dashboard')->first();
 
-        if (!$feature || !$feature->status) {
+        if (! $feature || ! $feature->status) {
             abort(403, 'Feature is disabled.');
         }
 

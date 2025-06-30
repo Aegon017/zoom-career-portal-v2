@@ -2,34 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\VerificationStatusEnum;
+use App\Http\Controllers\Controller;
 use App\Mail\Employer\VerificationUpdateMail;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use Inertia\Response;
 
-final class AdminEmployerVerifyController extends Controller
+final class EmployerVerifyController extends Controller
 {
-    public function verify(Request $request)
+    public function verify(Request $request): Response
     {
         $user = User::find($request->employer);
         $company = Company::find($request->company);
-        $employer_profile = $user->employerProfile->load(['openingTitle', 'talentProfiles']);
-        $pivotData = $user->companies->first()?->pivot;
+        $profile = $user->profile;
+        $companyUser = $company?->companyUsers()->where('user_id', $user->id)->first();
 
         return Inertia::render('admin/employers/verify', [
             'user' => $user,
-            'employer_profile' => $employer_profile,
+            'profile' => $profile,
             'company' => $company,
-            'pivot' => $pivotData,
+            'company_user' => $companyUser,
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'user_id' => 'required|int',
@@ -43,14 +46,17 @@ final class AdminEmployerVerifyController extends Controller
         $company->verification_status = $data['verification_status'];
         $company->save();
 
-        $pivotData = $user->companies->first()?->pivot;
-        $pivotData->status = $data['status'];
-        if ($pivotData->status === VerificationStatusEnum::Verified->value) {
-            $pivotData->verified_at = now();
-            Mail::to($user)->send(new VerificationUpdateMail($user, $company));
+        $companyUser = $company->companyUsers()->where('user_id', $user->id)->first();
+        $companyUser->verification_status = $data['status'];
+        if ($companyUser->verification_status === VerificationStatusEnum::Verified->value) {
+            $companyUser->verified_at = now();
         }
 
-        $pivotData->save();
+        $reason = $request->rejection_reason;
+
+        Mail::to($user)->send(new VerificationUpdateMail($user, $company, $reason));
+
+        $companyUser->save();
 
         return back()->with('success', 'Verification status updated successfully');
     }

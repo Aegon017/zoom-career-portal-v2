@@ -5,7 +5,7 @@ import type { Company } from "@/types"
 import { Head } from "@inertiajs/react"
 import { Building2, Clock, CheckCircle, Mail, Sparkles } from "lucide-react"
 
-const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
+const JoinCompanyVerificationPending = ( { company }: { company: Company } ) => {
     return (
         <>
             <Head title="Join Company Verification Pending" />
@@ -13,53 +13,53 @@ const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
             <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-muted/40">
                 <div className="flex flex-col items-center justify-center min-h-screen px-6 py-16">
                     <div className="w-full max-w-4xl space-y-12 text-center">
-                        {/* Animated Loader Section */}
+                        {/* Animated Loader Section */ }
                         <div className="relative mx-auto w-32 h-32">
-                            {/* Outer rotating rings */}
+                            {/* Outer rotating rings */ }
                             <div
                                 className="absolute inset-0 rounded-full border-4 border-muted animate-spin"
-                                style={{ animationDuration: "3s" }}
+                                style={ { animationDuration: "3s" } }
                             />
                             <div
                                 className="absolute inset-2 rounded-full border-2 border-dashed border-muted-foreground/30 animate-spin"
-                                style={{ animationDuration: "2s", animationDirection: "reverse" }}
+                                style={ { animationDuration: "2s", animationDirection: "reverse" } }
                             />
 
-                            {/* Center icon */}
+                            {/* Center icon */ }
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg">
                                     <CheckCircle className="w-8 h-8 text-primary-foreground animate-pulse" />
                                 </div>
                             </div>
 
-                            {/* Floating icons */}
+                            {/* Floating icons */ }
                             <div
                                 className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 shadow-lg animate-bounce"
-                                style={{ animationDelay: "0.2s" }}
+                                style={ { animationDelay: "0.2s" } }
                             >
                                 <Building2 className="w-4 h-4 text-white" />
                             </div>
                             <div
                                 className="absolute -bottom-3 -left-3 flex h-8 w-8 items-center justify-center rounded-full bg-violet-500 shadow-lg animate-bounce"
-                                style={{ animationDelay: "0.6s" }}
+                                style={ { animationDelay: "0.6s" } }
                             >
                                 <Mail className="w-4 h-4 text-white" />
                             </div>
                             <div
                                 className="absolute top-1/2 -left-6 flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 shadow-lg animate-bounce"
-                                style={{ animationDelay: "0.4s" }}
+                                style={ { animationDelay: "0.4s" } }
                             >
                                 <Clock className="w-4 h-4 text-white" />
                             </div>
                             <div
                                 className="absolute top-1/2 -right-6 flex h-8 w-8 items-center justify-center rounded-full bg-pink-500 shadow-lg animate-bounce"
-                                style={{ animationDelay: "0.8s" }}
+                                style={ { animationDelay: "0.8s" } }
                             >
                                 <Sparkles className="w-4 h-4 text-white" />
                             </div>
                         </div>
 
-                        {/* Header Section */}
+                        {/* Header Section */ }
                         <div className="space-y-6">
                             <div className="space-y-4">
                                 <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">Request Under Review</h1>
@@ -70,7 +70,7 @@ const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
                             </p>
                         </div>
 
-                        {/* Company Card */}
+                        {/* Company Card */ }
                         <div className="max-w-2xl mx-auto">
                             <Card className="border-border/60 bg-card/80 backdrop-blur-sm shadow-xl">
                                 <CardContent className="p-8 md:p-10">
@@ -79,7 +79,7 @@ const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
                                             <Building2 className="w-8 h-8 text-primary-foreground" />
                                         </div>
                                         <div className="text-left">
-                                            <h2 className="text-2xl font-bold text-card-foreground mb-1">{company.company_name}</h2>
+                                            <h2 className="text-2xl font-bold text-card-foreground mb-1">{ company.name }</h2>
                                             <Badge variant="secondary" className="text-xs font-medium uppercase tracking-wider">
                                                 Company
                                             </Badge>
@@ -95,7 +95,7 @@ const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
                             </Card>
                         </div>
 
-                        {/* Information Cards */}
+                        {/* Information Cards */ }
                         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                             <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 shadow-lg">
                                 <CardContent className="p-6">
@@ -132,12 +132,12 @@ const JoinCompanyVerificationPending = ({ company }: { company: Company }) => {
                             </Card>
                         </div>
 
-                        {/* Status Indicator */}
+                        {/* Status Indicator */ }
                         <div className="flex items-center justify-center space-x-4 pt-8">
                             <div className="flex space-x-3">
                                 <div className="h-3 w-3 animate-pulse rounded-full bg-primary" />
-                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/70" style={{ animationDelay: "0.2s" }} />
-                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/40" style={{ animationDelay: "0.4s" }} />
+                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/70" style={ { animationDelay: "0.2s" } } />
+                                <div className="h-3 w-3 animate-pulse rounded-full bg-primary/40" style={ { animationDelay: "0.4s" } } />
                             </div>
                             <span className="text-base font-medium text-muted-foreground">Processing your request</span>
                         </div>

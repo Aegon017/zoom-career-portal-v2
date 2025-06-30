@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('job_functions', function (Blueprint $table): void {
             $table->id();
             $table->string('name')->unique();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\MessageStatusEnum;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Message>
  */
-class MessageFactory extends Factory
+final class MessageFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -26,7 +28,7 @@ class MessageFactory extends Factory
             'status' => $this->faker->randomElement(MessageStatusEnum::values()),
             'sent_at' => now(),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

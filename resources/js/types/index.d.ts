@@ -45,51 +45,81 @@ export interface User {
     name: string;
     email: string;
     phone?: string;
-    avatar?: string;
+    avatar_url?: string;
+    banner_url?: string,
     password?: string,
-    headline?: string,
-    pronouns?: string,
-    location?: string,
-    profile_image?: string,
-    banner?: string,
     followers: User[],
     followingUsers: User[],
     followingCompanies: Company[],
     email_verified_at: string | null;
     work_experiences: WorkExperience[];
+    address: Address;
     skills?: Skill[];
     created_at: string;
     updated_at: string;
     [ key: string ]: unknown;
 }
 
+export interface JobTitle {
+    id: number;
+    name: string;
+}
+
 export interface Company {
     id: number;
-    company_name: string;
-    company_logo: string;
-    banner: string;
-    industry: string;
-    company_website: string;
-    company_description: string;
-    company_address: string;
-    public_phone: string;
-    public_email: string;
-    company_size: string;
-    company_type: string;
+    name: string;
+    logo_url: string;
+    banner_url: string;
+    industry_id: number | null;
+    website_url: string;
+    description: string;
+    email: string;
+    phone: string;
+    size: string;
+    type: string;
+    verification_status: string;
+    users: User[];
+    industry: Industry;
+    address: Address;
+    openings: Opening[];
+    is_followed: boolean;
     created_at: string;
     updated_at: string;
-    verification_status: string;
-    is_followed: boolean;
-    openings: Opening[];
-    users: User[];
-    followers: number;
     [ key: string ]: unknown;
+}
+
+export interface CompanyUser {
+    id: number;
+    user_id: number;
+    company_id: number;
+    verified_at: string | null;
+    verification_status: string;
+    role: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface Profile {
+    id: number;
+    user_id: number;
+    user: User;
+    job_title: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Address {
+    id: number;
+    user_id: number;
+    location_id: number;
+    user: User;
+    location: Location;
 }
 
 interface AppNotificationData {
     message: string;
     employer_name: string;
-    company_name: string;
+    name: string;
     registered_at: string;
     url: string;
     type: 'new_employer' | string;
@@ -109,7 +139,7 @@ export interface Skill {
 
 export interface Opening {
     id: number;
-    company_id: number;
+    id: number;
     user_id: number;
     title: string;
     employment_type: string;
@@ -124,6 +154,7 @@ export interface Opening {
     country: string | null;
     published_at: string;
     expires_at: Date;
+    apply_link?: string;
     status: string;
     verification_status: string;
     created_at: string;
@@ -142,7 +173,7 @@ interface Application {
     user_id: number;
     status: string;
     cover_letter: string;
-    resume: string;
+    resume_url: string;
     user: User;
     created_at: string;
     updated_at: string;
@@ -151,7 +182,7 @@ interface Application {
 interface Employer {
     id: number;
     user_id: number;
-    company_id: number;
+    id: number;
     profile_image: string;
     job_title: string;
     types_of_candidates: string[];
@@ -190,7 +221,7 @@ export interface Message {
     user: User;
 }
 
-export interface ChatUser {
+export interface ChatParticipant {
     id: number;
     chat_id: number;
     user_id: number;
@@ -202,7 +233,7 @@ export interface Chat {
     id: number;
     created_at: string;
     updated_at: string;
-    participants: ChatUser[];
+    participants: ChatParticipant[];
     messages: Message[];
 }
 
@@ -210,13 +241,13 @@ export interface Chat {
 export interface WorkExperience {
     id: number;
     user_id?: number;
-    company_id?: number;
-    company_name: string;
+    id?: number;
+    name: string;
     title: string;
     start_date: string;
     end_date: string;
     is_current?: boolean;
-    company_logo?: string;
+    logo?: string;
     created_at?: string;
     updated_at?: string;
     company: Company;
@@ -274,4 +305,9 @@ export interface Setting {
     id: number;
     name: string;
     status: boolean;
+}
+
+export interface Option {
+    value: string;
+    label: string;
 }

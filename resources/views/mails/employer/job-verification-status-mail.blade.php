@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,7 +76,7 @@ declare(strict_types=1);
     <div class="email-wrapper">
         <!-- Header -->
         <div class="email-header">
-            <img src="{{ asset('logo.png') }}" alt="Zoom Careers Logo" />
+            <img src="{{ asset('logo.png') }}" alt="Zoomingcareer Logo" />
             <h3>Job Verification Status</h3>
         </div>
 
@@ -86,24 +84,48 @@ declare(strict_types=1);
         <div class="email-body">
             <p>Hello,</p>
 
-            <p>Your job posting titled <strong>{{ $job_title }}</strong> has been <strong
-                    style="color: {{ $status === 'approved' ? '#2e7d32' : '#d32f2f' }};">{{ ucfirst($status) }}</strong>
-                by the admin.</p>
+            <p>
+                Your job posting titled
+                <strong>{{ $job_title ?? 'Untitled Job' }}</strong>
+                has been
+                <strong
+                    style="color:
+                    {{ $status === 'verified' ? '#2e7d32' : ($status === 'rejected' ? '#d32f2f' : '#f9a825') }};
+                ">
+                    {{ ucfirst($status ?? 'pending') }}
+                </strong>
+                by our team.
+            </p>
 
-            @if ($status === 'approved')
-                <p>The job is now visible to candidates on Zoomingcareer.</p>
+            @if ($status === 'verified')
+                <p>The job is now visible to candidates on Zoomingcareer. Please review the posting and make any
+                    necessary updates.</p>
+            @elseif ($status === 'rejected')
+                <p>Unfortunately, your job posting did not meet our verification criteria and has been rejected.</p>
+                @if (!empty($reason))
+                    <p style="color: #b71c1c; font-weight: 500;">
+                        <strong>Reason for Rejection:</strong> {{ $reason }}
+                    </p>
+                @endif
+                <p>You may update the posting and resubmit, or contact our support team for assistance.</p>
             @else
-                <p>Please review and update your job posting if needed.</p>
+                <p>Your job posting is currently pending review. You will receive a notification once it has been
+                    verified.</p>
             @endif
+
+            <p>If you need any assistance, feel free to contact us at
+                <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a>.
+            </p>
+            <p>Thank you,<br />
+                <strong>Zooming Career Team</strong>
+            </p>
         </div>
 
         <!-- Footer -->
         <div class="email-footer">
-            &copy; 2025 Zoomingcareer. |
-            <a href="mailto:support@zoomingcareer.com">Support</a>
+            &copy; 2025 Zoomingcareer.
         </div>
     </div>
 </body>
 
 </html>
-<?php 

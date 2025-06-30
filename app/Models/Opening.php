@@ -31,6 +31,7 @@ final class Opening extends Model
         'country',
         'published_at',
         'expires_at',
+        'apply_link',
         'status',
         'verification_status',
     ];
