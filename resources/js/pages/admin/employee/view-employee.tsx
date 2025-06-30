@@ -68,7 +68,7 @@ const ViewEmployee = ( { user }: Props ) => {
                         <CardContent className="space-y-6">
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <Avatar className="h-24 w-24 ring-4 ring-primary/10 shadow-lg">
-                                    <AvatarImage src={ user.profile_image || undefined } />
+                                    <AvatarImage src={ user.avatar_url || undefined } />
                                     <AvatarFallback className="text-xl font-semibold bg-primary/10 text-primary">
                                         { user.name?.[ 0 ] }
                                     </AvatarFallback>

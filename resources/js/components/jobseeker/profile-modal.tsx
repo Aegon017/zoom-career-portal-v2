@@ -26,44 +26,44 @@ interface ProfileFormInputs {
     notice_period: string;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defaultValues }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, defaultValues } ) => {
     const {
         register,
         handleSubmit,
         setValue,
         formState: { errors }
-    } = useForm<ProfileFormInputs>({
+    } = useForm<ProfileFormInputs>( {
         defaultValues: {
             name: defaultValues.user.name ?? "",
             email: defaultValues.user.email ?? "",
             phone: defaultValues.user.phone ?? "",
-            profile_image: defaultValues.user.profile_image ?? "",
-            location: defaultValues.user.location ?? "",
+            profile_image: defaultValues.user.avatar_url ?? "",
+            location: defaultValues.user.address.location.city ?? "",
             experience: defaultValues.jobseeker_profile?.experience ?? "",
             notice_period: defaultValues.jobseeker_profile?.notice_period ?? "",
         }
-    });
+    } );
 
-    const onSubmit: SubmitHandler<ProfileFormInputs> = (data: any) => {
-        router.post("/jobseeker/profile/basic-details", data);
+    const onSubmit: SubmitHandler<ProfileFormInputs> = ( data: any ) => {
+        router.post( "/jobseeker/profile/basic-details", data );
         handleClose();
     };
 
     return (
         <PopupModal
-            isActive={isActive}
+            isActive={ isActive }
             title="Profile Summary"
-            onClose={handleClose}
-            onSave={handleSubmit(onSubmit)}
+            onClose={ handleClose }
+            onSave={ handleSubmit( onSubmit ) }
         >
-            <div className="modal-body overflow-auto" style={{ maxHeight: '400px' }}>
+            <div className="modal-body overflow-auto" style={ { maxHeight: '400px' } }>
                 <div className="mb-3">
                     <label htmlFor="file" className="form-label">Profile image:</label>
                     <FileUpload
-                        acceptedFileTypes={['image/*']}
+                        acceptedFileTypes={ [ 'image/*' ] }
                         placeholder="Upload profile image"
                         name="file"
-                        onUploaded={(url) => setValue("profile_image", url)}
+                        onUploaded={ ( url ) => setValue( "profile_image", url ) }
                     />
                 </div>
                 <div className="mb-3">
@@ -71,9 +71,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
                     <input
                         type="text"
                         className="form-control"
-                        {...register('name', { required: true })}
+                        { ...register( 'name', { required: true } ) }
                     />
-                    {errors.name && <p className="text-danger">Name is required</p>}
+                    { errors.name && <p className="text-danger">Name is required</p> }
                 </div>
 
                 <div className="mb-3">
@@ -81,19 +81,19 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
                     <input
                         type="email"
                         className="form-control"
-                        {...register('email', { required: true })}
+                        { ...register( 'email', { required: true } ) }
                     />
-                    {errors.email && <p className="text-danger">Email is required</p>}
+                    { errors.email && <p className="text-danger">Email is required</p> }
                 </div>
 
                 <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone:</label>
                     <IntlTelInput
-                        initialValue={defaultValues.user.phone}
-                        onChangeNumber={(value: string) => setValue('phone', value)}
-                        inputProps={{ className: "form-control block w-full" }}
+                        initialValue={ defaultValues.user.phone }
+                        onChangeNumber={ ( value: string ) => setValue( 'phone', value ) }
+                        inputProps={ { className: "form-control block w-full" } }
                     />
-                    {errors.phone && <p className="text-danger">Phone is required</p>}
+                    { errors.phone && <p className="text-danger">Phone is required</p> }
                 </div>
 
                 <div className="mb-3">
@@ -101,7 +101,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
                     <input
                         type="text"
                         className="form-control"
-                        {...register('location', { required: true })}
+                        { ...register( 'location', { required: true } ) }
                     />
                 </div>
 
@@ -110,7 +110,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
                     <input
                         type="text"
                         className="form-control"
-                        {...register('experience', { required: true })}
+                        { ...register( 'experience', { required: true } ) }
                     />
                 </div>
 
@@ -119,7 +119,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isActive, handleClose, defa
                     <input
                         type="text"
                         className="form-control"
-                        {...register('notice_period', { required: true })}
+                        { ...register( 'notice_period', { required: true } ) }
                     />
                 </div>
             </div>
