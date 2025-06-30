@@ -132,7 +132,10 @@ final class OpeningController extends Controller
     {
         $data = $editOpeningRequest->validated();
 
-        $job->update($data);
+        $job->update([
+            ...$data,
+            'verification_status' => VerificationStatusEnum::Pending->value
+        ]);
 
         if ($job->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
             $job->published_at = now();
