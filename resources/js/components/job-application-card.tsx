@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { CalendarDays, Eye } from "lucide-react"
 import { Button } from "./ui/button"
 import JobStatus from "./job-status"
-import { Link } from "@inertiajs/react"
 import MessageButton from "./message-button"
 
 interface Props {
@@ -12,8 +11,6 @@ interface Props {
     statuses: ApplicationStatus[]
 }
 const JobApplicationCard = ( { application, statuses }: Props ) => {
-    console.log( application );
-
     return (
         <Card key={ application.id } className="hover:shadow-md transition-shadow duration-200">
             <CardHeader>

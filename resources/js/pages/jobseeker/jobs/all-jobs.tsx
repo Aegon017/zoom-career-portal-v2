@@ -53,15 +53,6 @@ const AllJobs = ( { initialJobs, filters }: Props ) => {
         return () => clearTimeout( timeout )
     }, [ data ] )
 
-    const toggleArray = ( key: 'employment_types' | 'industries', value: string ) => {
-        setData(
-            key,
-            data[ key ].includes( value )
-                ? data[ key ].filter( ( v: string ) => v !== value )
-                : [ ...data[ key ], value ]
-        )
-    }
-
     return (
         <AppLayout>
             <Head title="Job details" />
@@ -71,18 +62,26 @@ const AllJobs = ( { initialJobs, filters }: Props ) => {
             <div className="zc-main-jobs-wrapper">
                 <div className="zc-container">
                     <div className="row">
-                        <div className="col-lg-4">
-                            <JobFilters filters={ filters } />
-                        </div>
-                        <div className="col-lg-8">
-                            <div className="zc-card">
-                                { jobs.map( ( job: Opening ) => (
-                                    <div key={ job.id } className="mb-3">
-                                        <OpeningItem opening={ job } />
-                                    </div>
-                                ) ) }
+                        { jobs.length > 0 && (
+                            <div className="col-lg-4">
+                                <JobFilters filters={ filters } />
                             </div>
-                            { nextPageUrl && (
+                        ) }
+                        <div className={ jobs.length > 0 ? "col-lg-8" : "col-lg-12" }>
+                            <div className="zc-card">
+                                { jobs.length === 0 ? (
+                                    <div className="text-center py-5">
+                                        <p>No jobs found.</p>
+                                    </div>
+                                ) : (
+                                    jobs.map( ( job: Opening ) => (
+                                        <div key={ job.id } className="mb-3">
+                                            <OpeningItem opening={ job } />
+                                        </div>
+                                    ) )
+                                ) }
+                            </div>
+                            { nextPageUrl && jobs.length > 0 && (
                                 <div className="load-more-wrapper text-center">
                                     <button onClick={ loadMore } disabled={ loading }>
                                         { loading ? 'Loading...' : 'Load More' }

@@ -6,10 +6,9 @@ import { useCallback, useState } from "react"
 
 interface Props {
     initialJobs: any;
-    count: number;
 }
 
-const SavedJobsListing = ( { initialJobs: initialJobs, count: initialCount }: Props ) => {
+const SavedJobsListing = ( { initialJobs: initialJobs }: Props ) => {
     const [ jobs, setJobs ] = useState( initialJobs );
     const [ isDateAccordionOpen, setIsDateAccordionOpen ] = useState( true );
     const [ isStatusAccordionOpen, setIsStatusAccordionOpen ] = useState( true );

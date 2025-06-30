@@ -1,6 +1,5 @@
-import { Card } from "@/components/ui/card";
 import AppLayout from "@/layouts/employer-layout";
-import { Application, ApplicationStatus, BreadcrumbItem, Opening } from "@/types";
+import { Application, ApplicationStatus, BreadcrumbItem, Opening, Skill } from "@/types";
 import { Head } from "@inertiajs/react";
 import { User } from "lucide-react";
 import JobApplicationCard from "@/components/job-application-card";
@@ -18,14 +17,15 @@ interface Props {
     job_id?: number,
     applications: Application[],
     statuses: ApplicationStatus[],
+    skills: any
 }
 
-const Index = ( { jobs, job_id, applications, statuses }: Props ) => {
+const Index = ( { jobs, job_id, applications, statuses, skills }: Props ) => {
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <JobApplicationsFilter defaultValue={ job_id } jobOptions={
+                <JobApplicationsFilter skills={ skills } defaultValue={ job_id } jobOptions={
                     jobs.map( ( job ) => ( {
                         value: String( job.id ),
                         label: job.title,
@@ -43,8 +43,18 @@ const Index = ( { jobs, job_id, applications, statuses }: Props ) => {
                     : (
                         <div className="text-center m-auto">
                             <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                            <h3 className="text-lg font-semibold mb-2">No applications found</h3>
-                            <p className="text-muted-foreground">Applications will appear here once candidates start applying.</p>
+                            { !job_id ? (
+                                <>
+                                    <h3 className="text-lg font-semibold mb-2">Please select a job</h3>
+                                    <p className="text-muted-foreground">Select a job to view its applications.</p>
+                                </>
+                            ) : (
+                                <>
+                                    <h3 className="text-lg font-semibold mb-2">No applications found</h3>
+                                    <p className="text-muted-foreground">Applications will appear here once candidates start applying.</p>
+                                </>
+                            ) }
+
                         </div>
                     ) }
             </div>

@@ -21,9 +21,25 @@ final class ApplicationsController extends Controller
     public function index(Request $request)
     {
         $jobs = Opening::where('user_id', Auth::id())->get();
-        $job = Opening::find($request?->job_id);
+        $job = Opening::find($request->job_id);
 
-        $applications = $job?->applications()->with('user')->get();
+        $applications = collect();
+        $skills = collect();
+
+        if ($job) {
+            // Load applications with user and skills
+            $applicationsQuery = $job->applications()->with(['user.skills']);
+
+            if ($request->filled('skill') && $request->skill !== 'all') {
+                $applicationsQuery->whereHas('user.skills', function ($q) use ($request) {
+                    $q->where('name', $request->skill);
+                });
+            }
+
+            $applications = $applicationsQuery->get();
+
+            $skills = $job->skills()->pluck('name')->unique()->values();
+        }
 
         $statuses = JobApplicationStatusEnum::options();
 
@@ -32,6 +48,8 @@ final class ApplicationsController extends Controller
             'applications' => $applications,
             'job_id' => $request->job_id,
             'statuses' => $statuses,
+            'skills' => $skills,
+            'selectedSkill' => $request->skill ?? 'all',
         ]);
     }
 

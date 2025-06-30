@@ -67,32 +67,25 @@ final class JobseekerJobController extends Controller
         ]);
     }
 
-    public function savedJobs(Request $request)
+    public function savedJobs()
     {
-        $count = (int) $request->input('count', 10);
         $user = Auth::user();
-        $jobs = $user->savedOpenings()->with('opening.company')->get();
-        $jobs = $jobs->pluck('opening')->filter()->values();
-
-        $jobs = $jobs->take($count);
+        $jobs = $user->savedOpenings()->with('opening.company')->paginate(10);
+        $initialJobs = $jobs->pluck('opening')->filter()->values();
 
         return Inertia::render('jobseeker/jobs/saved-jobs', [
-            'jobs' => $jobs,
-            'count' => $count,
+            'initialJobs' => $initialJobs,
         ]);
     }
 
-    public function appliedJobs(Request $request)
+    public function appliedJobs()
     {
-        $count = (int) $request->input('count', 10);
-
         $user = Auth::user();
         $jobs = $user->openingApplications()->with('opening.company')->paginate(10);
         $initialJobs = $jobs->pluck('opening')->filter()->values();
 
         return Inertia::render('jobseeker/jobs/applied-jobs', [
             'initialJobs' => $initialJobs,
-            'count' => $count,
         ]);
     }
 }
