@@ -19,7 +19,7 @@ final class ProfileController extends Controller
     public function show(User $user)
     {
         $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
-        $jobseeker_profile = $user->jobseekerProfile;
+        $jobseeker_profile = $user->profile;
         $skills = Skill::get();
         $companies = Company::where('verification_status', VerificationStatusEnum::Verified->value)->orderBy('name')->get();
 
@@ -37,8 +37,8 @@ final class ProfileController extends Controller
 
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,'.$user->id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,' . $user->id],
             'location' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
             'notice_period' => 'nullable|string|max:255',
@@ -53,12 +53,12 @@ final class ProfileController extends Controller
         ]);
 
         if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/'.$data['profile_image']))
+            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
         }
 
-        $user->jobseekerProfile()->update([
+        $user->profile()->update([
             'experience' => $data['experience'],
             'notice_period' => $data['notice_period'],
         ]);
@@ -75,7 +75,7 @@ final class ProfileController extends Controller
 
         $user = Auth::user();
 
-        $user->jobseekerProfile()->update([
+        $user->profile()->update([
             'summary' => $data['summary'],
         ]);
 

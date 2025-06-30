@@ -91,7 +91,7 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <Link href="/dashboard">
+                        <Link href="/admin/dashboard">
                             <AppLogo />
                         </Link>
                     </SidebarMenuItem>
