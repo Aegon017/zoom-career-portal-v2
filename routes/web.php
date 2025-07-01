@@ -40,8 +40,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Home route
-Route::redirect('/', '/login');
+Route::get('/', function () {
+    return Inertia::render('home');
+});
+
 Route::redirect('/admin', '/admin/dashboard');
 
 Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
