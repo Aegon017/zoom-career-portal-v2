@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function (): void {
     Route::prefix('employer')->name('employer.')->group(function (): void {
         Route::get('register', [RegisteredEmployerController::class, 'create'])->name('register');
-        Route::post('register', [RegisteredEmployerController::class, 'store'])->name('register');
+        Route::post('register', [RegisteredEmployerController::class, 'store'])->name('register.store');
     });
 
     Route::get('register', [RegisteredUserController::class, 'create'])
