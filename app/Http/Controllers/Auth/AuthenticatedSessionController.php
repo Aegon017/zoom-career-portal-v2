@@ -41,12 +41,16 @@ final class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if ($request->header('X-Inertia')) {
+            return response('', 409)->header('X-Inertia-Location', url('/'));
+        }
 
         return redirect('/');
     }
