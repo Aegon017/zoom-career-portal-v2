@@ -1,18 +1,7 @@
 import AppLayout from "@/layouts/jobseeker-layout";
+import { CareerInterest } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import React, { useState } from "react";
-
-interface CareerInterest {
-    preferred_positions?: string[];
-    post_graduation_plans?: string[];
-    zoom_support_preferences?: string[];
-    desired_jobs?: string[];
-    preferred_locations?: string[];
-    target_industries?: string[];
-    job_function_interests?: string[];
-    graduation_month?: string;
-    graduation_year?: string;
-}
 
 interface Props {
     careerInterest: CareerInterest;
