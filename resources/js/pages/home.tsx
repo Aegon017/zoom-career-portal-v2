@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { Link } from "@inertiajs/react"
+import { Head, Link } from "@inertiajs/react"
 
 export default function HomePage() {
     const [ scrollY, setScrollY ] = useState( 0 )
@@ -16,8 +16,8 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen hero-gradient-bg text-foreground overflow-hidden relative">
+            <Head title="Home" />
             <div className="fixed inset-0 bg-pattern-dots opacity-40 pointer-events-none" />
-
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-animated-primary rounded-full blur-3xl animate-pulse" />
                 <div className="absolute top-1/2 -left-40 w-80 h-80 bg-animated-secondary rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
@@ -26,7 +26,7 @@ export default function HomePage() {
 
             <nav className="fixed top-0 w-full z-50 glass-effect">
                 <div className="container-padding flex justify-between items-center py-4">
-                    <Link href="#" className="flex items-center gap-2 focus-ring rounded-lg">
+                    <Link href="/" className="flex items-center gap-2 focus-ring rounded-lg">
                         <img src="/logo.png" alt="Zooming Career Logo" className="h-12 w-auto" />
                     </Link>
                 </div>
