@@ -183,4 +183,9 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     {
         return $this->belongsToMany(Chat::class, 'chat_participants')->withTimestamps();
     }
+
+    public function careerInterest(): HasOne
+    {
+        return $this->hasOne(CareerInterest::class);
+    }
 }

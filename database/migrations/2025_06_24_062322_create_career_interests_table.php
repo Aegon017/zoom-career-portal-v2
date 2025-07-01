@@ -16,9 +16,13 @@ return new class extends Migration
         Schema::create('career_interests', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('position_type')->nullable();
-            $table->string('post_grad_options')->nullable();
-            $table->text('how_can_we_help')->nullable();
+            $table->json('preferred_positions')->nullable();
+            $table->json('post_graduation_plans')->nullable();
+            $table->json('zoom_support_preferences')->nullable();
+            $table->json('desired_jobs')->nullable();
+            $table->json('preferred_locations')->nullable();
+            $table->json('target_industries')->nullable();
+            $table->json('job_function_interests')->nullable();
             $table->string('graduation_month')->nullable();
             $table->string('graduation_year')->nullable();
             $table->timestamps();

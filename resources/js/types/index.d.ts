@@ -1,313 +1,400 @@
-import { LucideIcon } from 'lucide-react';
-import type { Config } from 'ziggy-js';
+import AppLayout from "@/layouts/jobseeker-layout";
+import { Head, router } from "@inertiajs/react";
+import React, { useState } from "react";
 
-export interface Auth {
-    user: User;
-    isEmployerVerified: boolean;
-    roles: string[];
+interface CareerInterest {
+    preferred_positions?: string[];
+    post_graduation_plans?: string[];
+    zoom_support_preferences?: string[];
+    desired_jobs?: string[];
+    preferred_locations?: string[];
+    target_industries?: string[];
+    job_function_interests?: string[];
+    graduation_month?: string;
+    graduation_year?: string;
 }
 
-export interface BreadcrumbItem {
-    title: string;
-    href: string;
+interface Props {
+    careerInterest: CareerInterest;
 }
 
-export interface NavGroup {
-    title: string;
-    items: NavItem[];
-}
+const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 
-export interface NavItem {
-    title: string;
-    href: string;
-    icon?: LucideIcon | null;
-    isActive?: boolean;
-    items?: {
-        title: string;
-        href: string;
-    }[];
-}
+const years = [
+    "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017"
+];
 
-export interface SharedData {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    ziggy: Config & { location: string };
-    features: {
-        people_feature: boolean;
-    }
-    sidebarOpen: boolean;
-    [ key: string ]: unknown;
-}
+const preferredPositions = [
+    "Full Time Job", "Part Time Job", "Internship", "On Campus Job"
+];
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    avatar_url?: string;
-    banner_url?: string,
-    password?: string,
-    followers: User[],
-    followingUsers: User[],
-    followingCompanies: Company[],
-    email_verified_at: string | null;
-    work_experiences: WorkExperience[];
-    address: Address;
-    skills?: Skill[];
-    created_at: string;
-    updated_at: string;
-    [ key: string ]: unknown;
-}
+const postGraduationPlans = [
+    "Working", "Graduate School", "Gap Year", "Military Service"
+];
 
-export interface JobTitle {
-    id: number;
-    name: string;
-}
+const zoomSupportPreferences = [
+    "I want a job",
+    "I want an internship",
+    "I'm interested in grad school",
+    "I want to find out about career center events"
+];
 
-export interface Company {
-    id: number;
-    name: string;
-    logo_url: string;
-    banner_url: string;
-    industry_id: number | null;
-    website_url: string;
-    description: string;
-    email: string;
-    phone: string;
-    size: string;
-    type: string;
-    verification_status: string;
-    users: User[];
-    industry: Industry;
-    address: Address;
-    openings: Opening[];
-    is_followed: boolean;
-    created_at: string;
-    updated_at: string;
-    [ key: string ]: unknown;
-}
+const desiredJobs = [ "corporate", "freelance", "remote", "part-time", "full-time" ];
 
-export interface CompanyUser {
-    id: number;
-    user_id: number;
-    company_id: number;
-    verified_at: string | null;
-    verification_status: string;
-    role: string;
-    created_at: string | null;
-    updated_at: string | null;
-}
+const preferredLocations = [ "Hyderabad", "Delhi", "Bangalore" ];
 
-export interface Profile {
-    id: number;
-    user_id: number;
-    user: User;
-    job_title: string;
-    created_at: string;
-    updated_at: string;
-}
+const industries = [
+    "Agriculture", "Animal & Wildlife", "Environmental Services", "Farming, Ranching and Fishing", "Forestry",
+    "Energy", "Oil & Gas", "Utilities and Renewable Energy",
+    "HealthCare", "Social Assistance", "Veterinary",
+    "Biotech & Life Sciences", "Medical Devices", "Pharmaceuticals",
+    "Architecture and Planning", "Civil Engineering", "Construction",
+    "Accounting", "Commercial Banking & Credit", "Financial Services",
+    "Hotels & Accommodation", "Restaurants & Food Service", "Tourism",
+    "Human Resources", "Management Consulting", "Scientific and Technical Consulting",
+    "CPG - Consumer Packaged Goods", "Food & Beverage",
+    "Aerospace", "Automotive", "Manufacturing",
+    "Retail Stores", "Wholesale Trade",
+    "Fashion", "Movies, TV, Music, Gaming",
+    "Defense", "Government - Consulting",
+    "Advertising, PR & Marketing", "Design",
+    "Computer Networking", "Electronic & Computer Hardware",
+    "Higher Education", "K-12 Education", "Library Services", "Other Education",
+    "NGO", "Non-Profit - Other", "Religious Work",
+    "Transportation & Logistics", "Other Industries", "Research"
+];
 
-export interface Address {
-    id: number;
-    user_id: number;
-    location_id: number;
-    user: User;
-    location: Location;
-}
+const jobFunctions = [
+    "Accounting", "Data & Analytics", "Hotel / Restaurant / Hospitality",
+    "Political Organizing / Lobbying", "Actuary", "Design / Art",
+    "Human Resources", "Product / Project Management", "Administration"
+];
 
-interface AppNotificationData {
-    message: string;
-    employer_name: string;
-    name: string;
-    registered_at: string;
-    url: string;
-    type: 'new_employer' | string;
-}
+const CareerInterests: React.FC<Props> = ( { careerInterest } ) => {
+    const [ form, setForm ] = useState<CareerInterest>( {
+        preferred_positions: careerInterest.preferred_positions || [],
+        post_graduation_plans: careerInterest.post_graduation_plans || [],
+        zoom_support_preferences: careerInterest.zoom_support_preferences || [],
+        desired_jobs: careerInterest.desired_jobs || [],
+        preferred_locations: careerInterest.preferred_locations || [],
+        target_industries: careerInterest.target_industries || [],
+        job_function_interests: careerInterest.job_function_interests || [],
+        graduation_month: careerInterest.graduation_month || "",
+        graduation_year: careerInterest.graduation_year || ""
+    } );
 
-export interface AppNotification {
-    id: string;
-    data: AppNotificationData;
-    read_at: string | null;
-    created_at: string;
-}
+    const [ isSubmitting, setIsSubmitting ] = useState( false );
 
-export interface Skill {
-    id: number,
-    name: string
-}
+    const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => {
+        const { name, value, type } = e.target;
 
-export interface Opening {
-    id: number;
-    id: number;
-    user_id: number;
-    title: string;
-    employment_type: string;
-    work_model: string;
-    description: string;
-    salary_min: number;
-    salary_max: number;
-    salary_unit: string;
-    currency: string;
-    city: string | null;
-    state: string | null;
-    country: string | null;
-    published_at: string;
-    expires_at: Date;
-    apply_link?: string;
-    status: string;
-    verification_status: string;
-    created_at: string;
-    updated_at: string;
-    skills: Skill[];
-    company: Company;
-    is_saved: boolean;
-    has_applied: boolean;
-    application_status: string;
-    application_created_at: string;
-}
+        if ( type === "checkbox" ) {
+            setForm( ( prev ) => {
+                const current = prev[ name as keyof CareerInterest ] as string[] || [];
+                return {
+                    ...prev,
+                    [ name ]: current.includes( value )
+                        ? current.filter( ( v ) => v !== value )
+                        : [ ...current, value ]
+                };
+            } );
+        } else if ( e.target instanceof HTMLSelectElement && e.target.multiple ) {
+            const selected = Array.from( e.target.selectedOptions ).map( ( option ) => option.value );
+            setForm( ( prev ) => ( {
+                ...prev,
+                [ name ]: selected
+            } ) );
+        } else {
+            setForm( ( prev ) => ( {
+                ...prev,
+                [ name ]: value
+            } ) );
+        }
+    };
 
-interface Application {
-    id: number;
-    opening_id: number;
-    user_id: number;
-    status: string;
-    cover_letter: string;
-    resume_url: string;
-    user: User;
-    created_at: string;
-    updated_at: string;
-}
+    const handleSubmit = async ( e: React.FormEvent ) => {
+        e.preventDefault();
+        setIsSubmitting( true );
+        try {
+            await router.post( "/jobseeker/career-interests/update", form );
+        } catch ( error ) {
+            console.error( "Submission failed:", error );
+        } finally {
+            setIsSubmitting( false );
+        }
+    };
 
-interface Employer {
-    id: number;
-    user_id: number;
-    id: number;
-    profile_image: string;
-    job_title: string;
-    types_of_candidates: string[];
-    phone: string;
-    verification_status: string;
-    talent_profiles: TalentProfile[];
-    opening_title: OpeningTItle;
-    educations: Education[];
+    return (
+        <AppLayout>
+        <Head title= "Career Interests" />
+        <div className="zc-main-wrapper py-4" >
+            <div className="zc-container bg-white px-4 py-4 rounded shadow-sm" >
+                <h3 className="mb-2" > Zoom Career wants to help you find the career and job that's right for you.</h3>
+                    < p className = "mb-4" >
+                        Tell us a little more about yourself and we'll recommend the events, articles, and jobs that match your interests.
+                            </>
+                            < hr />
+                            <form onSubmit={ handleSubmit }>
+                                {/* Preferred Positions */ }
+                                < div className = "mb-4" >
+                                    <h5>What type of position are you looking for? </h5>
+              {
+            preferredPositions.map( ( pos ) => (
+                <div className= "form-check" key = { pos } >
+                <input
+                    className="form-check-input"
+                    name = "preferred_positions"
+                    type = "checkbox"
+                    value = { pos }
+                    id = {`pos-${ pos.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+                    checked = { form.preferred_positions?.includes( pos ) || false }
+                    onChange = { handleChange }
+    aria - label={ `Select ${ pos }` }
+                  />
+        < label
+    className = "form-check-label"
+    htmlFor = {`pos-${ pos.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`
 }
+                  >
+    { pos }
+    </label>
+    </div>
+              ))}
+</>
 
-interface Education {
-    id: number;
-    employer_id: number;
-    jobseeker_id: number;
-    school_name: string;
-    graduation_year: number;
+{/* Post Graduation Plans */ }
+<div className="mb-4" >
+    <h5>What options are you considering after graduation ? </h5>
+              {
+    postGraduationPlans.map( ( plan ) => (
+        <div className= "form-check" key = { plan } >
+        <input
+                    className="form-check-input"
+                    name = "post_graduation_plans"
+                    type = "checkbox"
+                    value = { plan }
+                    id = {`plan-${ plan.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+checked = { form.post_graduation_plans?.includes( plan ) || false }
+onChange = { handleChange }
+aria - label={ `Select ${ plan }` }
+                  />
+    < label
+className = "form-check-label"
+htmlFor = {`plan-${ plan.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+                  >
+    { plan }
+    </label>
+    </div>
+              ))}
+</div>
+
+{/* Zoom Support Preferences */ }
+<div className="mb-4" >
+    <h5>How can Zoom Career help you ? </h5>
+              {
+    zoomSupportPreferences.map( ( pref ) => (
+        <div className= "form-check" key = { pref } >
+        <input
+                    className="form-check-input"
+                    name = "zoom_support_preferences"
+                    type = "checkbox"
+                    value = { pref }
+                    id = {`pref-${ pref.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+checked = { form.zoom_support_preferences?.includes( pref ) || false }
+onChange = { handleChange }
+aria - label={ `Select ${ pref }` }
+                  />
+    < label
+className = "form-check-label"
+htmlFor = {`pref-${ pref.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+                  >
+    { pref }
+    </label>
+    </div>
+              ))}
+</div>
+
+{/* Desired Jobs */ }
+<div className="mb-4" >
+    <h5>What types of jobs are you interested in? </h5>
+        < select
+                className = "form-select"
+name = "desired_jobs"
+multiple
+value = { form.desired_jobs || [] }
+onChange = { handleChange }
+aria - label="Select one or more job types"
+    >
+    <option value="" disabled >
+        Select one or more job types
+            </option>
+{
+    desiredJobs.map( ( job ) => (
+        <option key= { job } value = { job } >
+        { job.charAt( 0 ).toUpperCase() + job.slice( 1 ).replace( "-", " " ) }
+        </option>
+    ))
 }
+</select>
+    </div>
 
-interface OpeningTItle {
-    id: number,
-    name: string;
+{/* Preferred Locations */ }
+<div className="mb-4" >
+    <h5>Where are you interested in living ? </h5>
+        < select
+                className = "form-select"
+name = "preferred_locations"
+multiple
+value = { form.preferred_locations || [] }
+onChange = { handleChange }
+aria - label="Select one or more preferred locations"
+    >
+    <option value="" disabled >
+        Select one or more preferred locations
+            </option>
+{
+    preferredLocations.map( ( loc ) => (
+        <option key= { loc } value = { loc } >
+        { loc }
+        </option>
+    ))
 }
+</select>
+    </div>
 
-interface TalentProfile {
-    id: number;
-    name: string;
+{/* Target Industries */ }
+<div className="mb-4" >
+    <h5>Which industries are you interested in? </h5>
+        < div className = "row gy-2" >
+        {
+            industries.map( ( ind ) => (
+                <div className= "col-md-4" key = { ind } >
+                <div className="form-check" >
+            <input
+                        className="form-check-input"
+                        name = "target_industries"
+                        type = "checkbox"
+                        value = { ind }
+                        id = {`industry-${ ind.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+checked = { form.target_industries?.includes( ind ) || false }
+onChange = { handleChange }
+aria - label={ `Select ${ ind }` }
+                      />
+    < label
+className = "form-check-label"
+htmlFor = {`industry-${ ind.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+                      >
+    { ind }
+    </label>
+    </div>
+    </div>
+                ))}
+</div>
+    </div>
+
+{/* Job Function Interests */ }
+<div className="mb-4" >
+    <h5>Which kinds of job functions interest you ? </h5>
+        < div className = "row gy-2" >
+        {
+            jobFunctions.map( ( func ) => (
+                <div className= "col-md-4" key = { func } >
+                <div className="form-check" >
+            <input
+                        className="form-check-input"
+                        name = "job_function_interests"
+                        type = "checkbox"
+                        value = { func }
+                        id = {`job-${ func.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+checked = { form.job_function_interests?.includes( func ) || false }
+onChange = { handleChange }
+aria - label={ `Select ${ func }` }
+                      />
+    < label
+className = "form-check-label"
+htmlFor = {`job-${ func.replace( /[^a-z0-9]/gi, "-" ).toLowerCase() }`}
+                      >
+    { func }
+    </label>
+    </div>
+    </div>
+                ))}
+</div>
+    </div>
+
+{/* Graduation Month & Year */ }
+<div className="mb-4" >
+    <h5>When did you graduate ? </h5>
+        < div className = "row" >
+            <div className="col-md-6 mb-2" >
+                <label htmlFor="gradMonth" className = "form-label" >
+                    Graduation Month
+                        </label>
+                        < select
+className = "form-select"
+id = "gradMonth"
+name = "graduation_month"
+value = { form.graduation_month || "" }
+onChange = { handleChange }
+aria - label="Select graduation month"
+    >
+    <option value="" disabled >
+        Select Month
+            </option>
+{
+    months.map( ( month ) => (
+        <option key= { month } value = { month } >
+        { month }
+        </option>
+    ))
 }
-
-export interface Message {
-    id: number;
-    chat_id: number;
-    user_id: number;
-    message: string;
-    sent_at: Date;
-    created_at: string;
-    user: User;
+</select>
+    </div>
+    < div className = "col-md-6 mb-2" >
+        <label htmlFor="gradYear" className = "form-label" >
+            Graduation Year
+                </label>
+                < select
+className = "form-select"
+id = "gradYear"
+name = "graduation_year"
+value = { form.graduation_year || "" }
+onChange = { handleChange }
+aria - label="Select graduation year"
+    >
+    <option value="" disabled >
+        Select Year
+            </option>
+{
+    years.map( ( year ) => (
+        <option key= { year } value = { year } >
+        { year }
+        </option>
+    ))
 }
+</select>
+    </div>
+    </div>
+    </div>
 
-export interface ChatParticipant {
-    id: number;
-    chat_id: number;
-    user_id: number;
-    last_read_at: string | null;
-    user: User;
-}
+    < div className = "text-end mt-3" >
+        <button
+                type="submit"
+className = "btn btn-primary"
+disabled = { isSubmitting }
+aria - label="Submit career interests"
+    >
+    { isSubmitting? "Submitting...": "Submit" }
+    </button>
+    </div>
+    </form>
+    </div>
+    </div>
+    </AppLayout>
+  );
+};
 
-export interface Chat {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    participants: ChatParticipant[];
-    messages: Message[];
-}
-
-
-export interface WorkExperience {
-    id: number;
-    user_id?: number;
-    id?: number;
-    name: string;
-    title: string;
-    start_date: string;
-    end_date: string;
-    is_current?: boolean;
-    logo?: string;
-    created_at?: string;
-    updated_at?: string;
-    company: Company;
-}
-
-export interface Jobseeker {
-    id: string;
-    name: string;
-}
-
-export interface ApplicationStatus {
-    value: string;
-    label: string;
-}
-
-export interface JobSeekerProfile {
-    user_id: number;
-    location: string;
-    experience: string | null;
-    notice_period: string;
-    summary: string;
-    gender: 'male' | 'female' | 'other';
-    date_of_birth: string;
-    address: string;
-    marital_status: 'single' | 'married' | 'divorced' | 'widowed';
-    work_permit: string;
-    differently_abled: boolean;
-    created_at: string,
-    updated_at: string | null
-}
-
-export interface Industry {
-    id: number;
-    name: string;
-}
-
-export interface JobFunction {
-    id: number;
-    name: string;
-}
-
-export interface JobType {
-    id: number;
-    name: string;
-}
-
-export interface Location {
-    id: number;
-    country: string;
-    state: string;
-    city: string;
-}
-
-export interface Setting {
-    id: number;
-    name: string;
-    status: boolean;
-}
-
-export interface Option {
-    value: string;
-    label: string;
-}
+export default CareerInterests;

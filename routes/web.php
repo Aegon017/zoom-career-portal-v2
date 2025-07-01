@@ -27,6 +27,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\InboxController as ControllersInboxController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobSaveController;
+use App\Http\Controllers\Jobseeker\CareerInterestController;
 use App\Http\Controllers\Jobseeker\EmployerController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\Jobseeker\PeopleController;
@@ -132,6 +133,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/employers', [EmployerController::class, 'index'])->name('employers.index');
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
+        Route::get('/career-interests', [CareerInterestController::class, 'index'])->name('career-interests.index');
+        Route::post('/career-interests/update', [CareerInterestController::class, 'update'])->name('career-interests.update');
     });
 
     // admin routes
