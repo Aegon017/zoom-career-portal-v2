@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout"
-import type { Company, Employer, User, BreadcrumbItem, CompanyUser, Profile } from "@/types"
+import type { Company, User, BreadcrumbItem, CompanyUser, Profile } from "@/types"
 import { Head, router } from "@inertiajs/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"

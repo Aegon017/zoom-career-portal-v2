@@ -36,6 +36,7 @@ use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -140,6 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     // admin routes
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('/roles', RoleController::class);
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);

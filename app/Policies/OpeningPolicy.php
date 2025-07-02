@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Opening;
+use App\Models\User;
+
+class OpeningPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->can('view_any_opening');
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Opening $opening): bool
+    {
+        return $user->can('view_opening');
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return $user->can('create_opening');
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Opening $opening): bool
+    {
+        return $user->can('update_opening');
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Opening $opening): bool
+    {
+        return $user->can('delete_opening');
+    }
+}

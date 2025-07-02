@@ -29,7 +29,7 @@ export function AppSidebar() {
                     href: '/admin/users',
                 }, {
                     title: 'Roles',
-                    href: '',
+                    href: '/admin/roles',
                 },
             ]
         },
