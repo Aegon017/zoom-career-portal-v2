@@ -64,15 +64,15 @@ const jobFunctions = [
 
 const CareerInterests: React.FC<Props> = ( { careerInterest } ) => {
     const [ form, setForm ] = useState<CareerInterest>( {
-        preferred_positions: careerInterest.preferred_positions || [],
-        post_graduation_plans: careerInterest.post_graduation_plans || [],
-        zoom_support_preferences: careerInterest.zoom_support_preferences || [],
-        desired_jobs: careerInterest.desired_jobs || [],
-        preferred_locations: careerInterest.preferred_locations || [],
-        target_industries: careerInterest.target_industries || [],
-        job_function_interests: careerInterest.job_function_interests || [],
-        graduation_month: careerInterest.graduation_month || "",
-        graduation_year: careerInterest.graduation_year || ""
+        preferred_positions: careerInterest?.preferred_positions || [],
+        post_graduation_plans: careerInterest?.post_graduation_plans || [],
+        zoom_support_preferences: careerInterest?.zoom_support_preferences || [],
+        desired_jobs: careerInterest?.desired_jobs || [],
+        preferred_locations: careerInterest?.preferred_locations || [],
+        target_industries: careerInterest?.target_industries || [],
+        job_function_interests: careerInterest?.job_function_interests || [],
+        graduation_month: careerInterest?.graduation_month || "",
+        graduation_year: careerInterest?.graduation_year || ""
     } );
 
     const [ isSubmitting, setIsSubmitting ] = useState( false );
