@@ -119,8 +119,7 @@ declare(strict_types=1);
 
         <!-- Footer -->
         <div class="email-footer">
-            &copy; 2025 Zoomingcareer. |
-            <a href="mailto:support@zoomingcareer.com">Support</a>
+            &copy; 2025 Zoomingcareer.
         </div>
     </div>
 </body>

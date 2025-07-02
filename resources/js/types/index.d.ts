@@ -79,6 +79,15 @@ export interface JobTitle {
     name: string;
 }
 
+export interface SavedJob {
+    id: number;
+    opening_id: number;
+    user_id: number;
+    opening: Opening;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Company {
     id: number;
     name: string;

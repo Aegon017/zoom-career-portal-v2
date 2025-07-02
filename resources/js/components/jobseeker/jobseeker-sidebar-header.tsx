@@ -3,7 +3,11 @@ import logo from '../../assets/images/logo.png';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import useDropdown from '@/hooks/use-dropdown';
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
-import { SharedData } from '@/types';
+import { AppNotification, SharedData } from '@/types';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import NotificationItem from '../notification-item';
+import { formatDistanceToNow } from 'date-fns';
 
 export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> } ) {
     const cleanup = useMobileNavigation();
@@ -18,6 +22,20 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
     const notificationNav = useDropdown<HTMLLIElement>();
 
     const avatar = "https://www.w3schools.com/howto/img_avatar.png";
+
+    const [ notifications, setNotifications ] = useState<AppNotification[]>( [] );
+
+    useEffect( () => {
+        axios.get( '/notifications' )
+            .then( ( res ) => setNotifications( res.data.map( ( n: AppNotification ) => n ) ) )
+            .catch( ( err ) => console.error( 'Error fetching notifications', err ) );
+    }, [] );
+
+    const goToVerifcationPage = ( notificationId: string, url: string ) => {
+        router.get( `/notifications/${ notificationId }/markAsRead` );
+        router.get( url );
+    }
+
     return (
         <div className="zc-main-top-nav">
             <button className="zc-sidebar-toggle" id="zc-sidebar-toggle"
@@ -35,18 +53,35 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
                         notificationNav.toggle();
                         userNav.close();
                     } }>
-                        <div className="nicon-box">
-                            <i className="fa-regular fa-bell"></i>
-                            <span className="indicator">4</span>
-                        </div>
+                        {
+                            notifications && <div className="nicon-box">
+                                <i className="fa-regular fa-bell"></i>
+                                <span className="indicator">{ notifications.length }</span>
+                            </div>
+                        }
                     </button>
                     { notificationNav.isOpen && (
                         <div className="zc-dropdown-menu show">
-                            <div className="zc-dropdown-menu-header">4 New Notifications</div>
+                            {
+                                <div className="zc-dropdown-menu-header">
+                                    { notifications.length } New Notification{ notifications.length !== 1 ? 's' : '' }
+                                </div>
+                            }
                             <div className="list-group">
-                            </div>
-                            <div className="zc-dropdown-menu-footer">
-                                <a href="#" className="text-muted">Show all notifications</a>
+                                { notifications.map( ( notification ) => (
+                                    <a onClick={ () => goToVerifcationPage( notification.id, notification.data.url ) } className="list-group-item cursor-pointer">
+                                        <div className="row g-0 align-items-center">
+                                            <div className="text-muted small mt-1">{ formatDistanceToNow( new Date( notification.created_at ), { addSuffix: true } ) }</div>
+                                            <div className="text-dark">{ notification.data.message }</div>
+                                        </div>
+                                        { !notification.read_at && (
+                                            <div className="absolute top-3 right-3 flex items-center gap-1">
+                                                <span className="h-1 w-1 rounded-full bg-primary animate-ping" />
+                                                <span className="h-2 w-2 rounded-full bg-primary/80" />
+                                            </div>
+                                        ) }
+                                    </a>
+                                ) ) }
                             </div>
                         </div>
                     ) }

@@ -52,15 +52,8 @@ final class EmployerVerifyNotification extends Notification implements ShouldQue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New employer registered: '.$this->user->name,
-            'employer_name' => $this->user->name,
-            'company_name' => $this->company->name,
-            'registered_at' => $this->user->profile->created_at,
-            'url' => route('admin.employer.verify', [
-                'employer' => $this->user->id,
-                'company' => $this->company->id,
-            ]),
-            'type' => 'new_employer',
+            'message' => 'New employer registered: ' . $this->user->name . ' at ' . $this->company->name,
+            'url' => route('admin.employer.verify', ['employer' => $this->user->id, 'company' => $this->company->id,]),
         ];
     }
 }

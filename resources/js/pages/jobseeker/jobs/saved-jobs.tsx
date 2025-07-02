@@ -1,20 +1,19 @@
-import OpeningItem from "@/components/jobseeker/opening-item"
-import AppLayout from "@/layouts/jobseeker-layout"
-import { Opening } from "@/types"
+import OpeningItem from "@/components/jobseeker/opening-item";
+import AppLayout from "@/layouts/jobseeker-layout";
+import { Opening, SavedJob } from "@/types"
 import { Head, router } from "@inertiajs/react"
 import { useCallback, useState } from "react";
 
 interface Props {
-    initialJobs: {
-        data: Opening[];
+    initialSavedJobs: {
+        data: SavedJob[],
         next_page_url: string
     };
-    count: number;
 }
 
-const SavedJobsListing = ( { initialJobs }: Props ) => {
-    const [ jobs, setJobs ] = useState( initialJobs.data );
-    const [ nextPageUrl, setNextPageUrl ] = useState( initialJobs.next_page_url )
+const SavedJobsListing = ( { initialSavedJobs }: Props ) => {
+    const [ savedJobs, setSavedJobs ] = useState( initialSavedJobs.data );
+    const [ nextPageUrl, setNextPageUrl ] = useState<string | null>( initialSavedJobs.next_page_url )
     const [ loading, setLoading ] = useState( false )
     const loadMore = useCallback( () => {
         if ( !nextPageUrl || loading ) return
@@ -25,12 +24,23 @@ const SavedJobsListing = ( { initialJobs }: Props ) => {
             only: [ 'companies' ],
             onSuccess: ( page ) => {
                 const companies = page.props.companies as { data: Opening[]; next_page_url: string | null }
-                setJobs( ( prev: Opening[] ) => [ ...prev, ...companies.data ] )
-                setNextPageUrl( initialJobs.next_page_url )
+                setSavedJobs( ( prev: SavedJob[] ) => [
+                    ...prev,
+                    ...companies.data.map( opening => ( {
+                        id: opening.id,
+                        opening,
+                        opening_id: opening.id,
+                        user_id: opening.user_id ?? 0,
+                        created_at: opening.created_at ?? "",
+                        updated_at: opening.updated_at ?? "",
+                    } ) )
+                ] )
+                setNextPageUrl( companies.next_page_url )
                 setLoading( false )
             },
         } )
     }, [ nextPageUrl, loading ] )
+
     return (
         <AppLayout>
             <Head title="Explore" />
@@ -38,25 +48,18 @@ const SavedJobsListing = ( { initialJobs }: Props ) => {
                 <div className="page-title px-4">
                     <h2 className="mt-0">Saved Jobs</h2>
                 </div>
-                <div className="zc-saved-jobs-wrapper zc-card">
+                <div className="zc-saved-savedJobs-wrapper zc-card">
                     <div className="zc-job-list">
                         {
-                            !jobs ? (
+                            !savedJobs ? (
                                 <div className="text-center py-8 text-gray-500">
-                                    You have no saved jobs yet.
+                                    You have no saved savedJobs yet.
                                 </div>
                             ) : (
                                 <>
-                                    { jobs.map( ( job: Opening ) => (
-                                        <OpeningItem key={ job.id } opening={ job } />
+                                    { savedJobs.map( ( savedJob: SavedJob ) => (
+                                        <OpeningItem key={ savedJob.id } opening={ savedJob.opening } />
                                     ) ) }
-                                    { nextPageUrl && (
-                                        <div className="load-more-wrapper text-center">
-                                            <button onClick={ loadMore } disabled={ loading }>
-                                                { loading ? 'Loading...' : 'Load More' }
-                                            </button>
-                                        </div>
-                                    ) }
                                 </>
                             )
                         }

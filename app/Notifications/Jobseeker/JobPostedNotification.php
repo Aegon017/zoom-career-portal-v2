@@ -1,24 +1,26 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Notifications\Jobseeker;
 
-namespace App\Notifications;
-
+use App\Models\Opening;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
-final class JobCreatedNotification extends Notification
+class JobPostedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public User $user,
+        public Opening $job
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -27,7 +29,7 @@ final class JobCreatedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -49,7 +51,8 @@ final class JobCreatedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => "New Job Posted: {$this->job->title} at {$this->job->company->name}.",
+            'url' => route('jobseeker.jobs.show', $this->job->id),
         ];
     }
 }

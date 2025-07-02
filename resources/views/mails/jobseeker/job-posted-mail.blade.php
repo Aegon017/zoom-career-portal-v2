@@ -1,16 +1,10 @@
-<?php
-
-declare(strict_types=1);
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Job Verification Alert</title>
     <style>
+        /* Same CSS as before */
         body {
             background-color: #f5f5f5;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -55,6 +49,19 @@ declare(strict_types=1);
             line-height: 1.6;
         }
 
+        .status-badge {
+            display: inline-block;
+            font-size: 14px;
+            padding: 6px 14px;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .status-new {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
         .email-footer {
             background-color: #f0f0f0;
             text-align: center;
@@ -71,42 +78,32 @@ declare(strict_types=1);
         .email-footer a:hover {
             text-decoration: underline;
         }
-
-        .btn-review {
-            display: inline-block;
-            margin-top: 20px;
-            background-color: #1976d2;
-            color: #fff;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-
-        .btn-review:hover {
-            background-color: #125ea3;
-        }
     </style>
 </head>
 
 <body>
     <div class="email-wrapper">
-        <!-- Header -->
         <div class="email-header">
             <img src="{{ asset('logo.png') }}" alt="Zoom Careers Logo" />
-            <h3>New Job Posting Pending Approval</h3>
+            <h3>New Job Alert!</h3>
         </div>
 
         <div class="email-body">
-            <p>Hello Admin,</p>
+            <p>Hello <strong>{{ $user->name }}</strong>,</p>
 
-            <p>A new job has been posted on <strong>Zoomingcareer</strong> and requires your review and approval.</p>
+            <p>
+                A new job has just been posted by <strong>{{ $job->company->name }}</strong>:
+            </p>
 
-            <p><strong>Job Title:</strong> {{ $job_title }}</p>
-            <p><strong>Company:</strong> {{ $company_name }}</p>
-            <p><strong>Posted By:</strong> {{ $posted_by }}</p>
+            <p><strong>{{ $job->title }}</strong></p>
 
-            <a href="{{ $review_link }}" class="btn-review">Review Job Listing</a>
+            <span class="status-badge status-new">New Job</span>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
+
+            <p>
+                <a href="{{ route('jobseeker.jobs.show', $job->id) }}">Click here to view job details</a>
+            </p>
         </div>
 
         <div class="email-footer">

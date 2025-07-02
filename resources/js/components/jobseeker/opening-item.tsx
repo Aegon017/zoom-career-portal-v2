@@ -38,7 +38,7 @@ const OpeningItem = ( { opening }: { opening: Opening } ) => {
                     </li>
                     <li>
                         <i className="fa-solid fa-money-bill"></i>
-                        { opening.salary_min } - { opening.salary_max } { opening.currency }
+                        { opening.salary_min } - { opening.salary_max } { opening.currency } / { opening.salary_unit }
                     </li>
                 </ul>
             </div>
