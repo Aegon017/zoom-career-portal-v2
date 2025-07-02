@@ -108,10 +108,10 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
                                 <i className="fa-solid fa-file me-2"></i>
                                 My Documents
                             </Link>
-                            <a href="/jobseeker/career-interests" className="zc-dropdown-item">
+                            <Link href="/jobseeker/career-interests" className="zc-dropdown-item">
                                 <i className="fa-solid fa-spa me-2"></i>
                                 My Career Interests
-                            </a>
+                            </Link>
                             <Link
                                 className="zc-dropdown-item"
                                 method="post"
