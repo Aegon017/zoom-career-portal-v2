@@ -40,7 +40,7 @@ export default function Profile( { user, skills, companies }: Props ) {
                             <div className="candidate-image p-3">
                                 <img src={ user.avatar_url } alt="Profile" />
                             </div>
-                            <div className="candidate-info p-3">
+                            <div className="candidate-info p-3 flex-fill">
                                 <div className="zc-row d-block d-md-flex justify-content-between bb-style-2 pb-3">
                                     <div className="left-col mb-2 mb-md-0">
                                         <div className="name">

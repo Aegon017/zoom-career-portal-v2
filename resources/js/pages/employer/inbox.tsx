@@ -189,7 +189,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                 <h3 className="font-semibold text-sm truncate text-foreground">{ other.name }</h3>
                                                 <span className="text-xs text-muted-foreground">{ dateStr }</span>
                                             </div>
-                                            <p className="text-sm text-muted-foreground truncate line-clamp-1">{ last }</p>
+                                            <p className="text-sm text-muted-foreground truncate line-clamp-1 text-wrap">{ last }</p>
                                         </div>
                                     </div>
                                 );
@@ -245,7 +245,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                             <div key={ msg.id } className={ `flex ${ isMe ? "justify-end" : "justify-start" }` }>
                                                 <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
                                                     { isMe && (
-                                                        <span className="text-xs text-gray-500">
+                                                        <span className="text-xs text-gray-500 text-nowrap">
                                                             { format( new Date( msg.created_at ), "hh:mm a" ) }
                                                         </span>
                                                     ) }
@@ -253,7 +253,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                         <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
                                                     </div>
                                                     { !isMe && (
-                                                        <span className="text-xs text-gray-500">
+                                                        <span className="text-xs text-gray-500 text-nowrap">
                                                             { format( new Date( msg.created_at ), "hh:mm a" ) }
                                                         </span>
                                                     ) }

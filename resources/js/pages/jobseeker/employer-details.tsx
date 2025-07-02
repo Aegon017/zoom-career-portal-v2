@@ -18,8 +18,8 @@ const EmployerDetails = ( { company }: Props ) => {
                 </div>
                 <div className="zc-employer-profile-view-wrapper bg-white">
                     <div className="zc-employer-profile-view-top">
-                        <div className="zc-employer-profile-cover">
-                            <img src={ company.banner_url } className="w-100" style={ { height: '300px' } } />
+                        <div className="zc-employer-profile-cover bg-secondary w-100" style={ { height: '300px' } }>
+                            <img src={ company.banner_url } className='w-100' style={ { height: '300px' } } />
                         </div>
                         <div className="zc-employer-profile-view-header d-block d-md-flex gap-3">
                             <div className="col-left mb-2 mb-md-0">
