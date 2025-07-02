@@ -1,10 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/jobseeker-layout';
-import ProfileModal from '@/components/jobseeker/profile-modal';
-import { Company, JobSeekerProfile, Skill, User } from '@/types';
+import type { Company, Profile, Skill, User } from '@/types';
 import { format } from 'date-fns';
-import SummaryModal from '@/components/jobseeker/summary-modal';
 import SkillsModal from '@/components/jobseeker/skills-modal';
 import EmploymentModel from '@/components/jobseeker/employment-modal';
 
@@ -12,16 +10,15 @@ type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | 'employment' 
 
 interface Props {
     user: User,
-    jobseeker_profile: JobSeekerProfile,
     skills: Skill[],
     companies: Company[]
 }
 
-export default function Profile( { user, jobseeker_profile, skills, companies }: Props ) {
+export default function Profile( { user, skills, companies }: Props ) {
     const { auth } = usePage<{ auth: { user: User } }>().props;
     const { user: AuthUser } = auth;
 
-    const isUpdatable = user.id === AuthUser.id;
+    const isUpdatable = user.id == AuthUser.id;
 
     const [ activeModal, setActiveModal ] = useState<ModalName>( null );
     const [ employmentDefaultValues, setEmploymentDefaultValues ] = useState<any | undefined>( undefined );
@@ -60,7 +57,7 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                                                 <p className="company-name">at {/* Optional: company name */ }</p>
                                             </div>
                                             <div className="profile-updated-date">
-                                                Profile last updated - <span className="date">{ jobseeker_profile?.updated_at && format( new Date( jobseeker_profile?.updated_at ), "dd MMM yyyy" ) }</span>
+                                                Profile last updated - <span className="date">{ user.profile?.updated_at && format( new Date( user.profile?.updated_at ), "dd MMM yyyy" ) }</span>
                                             </div>
                                         </div>
                                     </div>
@@ -76,8 +73,8 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                                 <div className="other-details">
                                     <ul>
                                         <li><i className="fa-solid fa-location-dot"></i>{ user.address?.location.city }, { user.address?.location.state }, { user.address?.location.country }</li>
-                                        <li><i className="fa-solid fa-briefcase"></i>{ jobseeker_profile?.experience }</li>
-                                        <li><i className="fa-solid fa-calendar-days"></i>{ jobseeker_profile?.notice_period }</li>
+                                        {/* <li><i className="fa-solid fa-briefcase"></i>{ user.profile?.experience }</li>
+                                        <li><i className="fa-solid fa-calendar-days"></i>{ user.profile?.notice_period }</li> */}
                                     </ul>
                                 </div>
                             </div>
@@ -94,7 +91,7 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                             ) }
                         </div>
                         <div className="zc-card-content">
-                            { jobseeker_profile?.summary }
+                            {/* { user.profile?.summary } */ }
                         </div>
                     </div>
 
@@ -206,16 +203,16 @@ export default function Profile( { user, jobseeker_profile, skills, companies }:
                     </div>
 
 
-                    <ProfileModal
-                        defaultValues={ { user, jobseeker_profile } }
+                    {/* <ProfileModal
+                        // defaultValues={ { user, profile } }
                         isActive={ activeModal === 'profile' }
                         handleClose={ closeModal }
-                    />
-                    <SummaryModal
-                        defaultSummary={ jobseeker_profile?.summary }
+                    /> */}
+                    {/* <SummaryModal
+                        defaultSummary={ user.profile?.summary }
                         isActive={ activeModal === 'summary' }
                         handleClose={ closeModal }
-                    />
+                    /> */}
                     <SkillsModal
                         defaultValues={ { user, skills } }
                         isActive={ activeModal === 'skills' }

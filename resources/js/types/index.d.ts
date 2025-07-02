@@ -55,6 +55,7 @@ export interface User {
     work_experiences: WorkExperience[];
     careerInterest: CareerInterest;
     address: Address;
+    profile?: Profile;
     skills?: Skill[];
     created_at: string;
     updated_at: string;
@@ -192,24 +193,9 @@ interface Application {
     updated_at: string;
 }
 
-interface Employer {
-    id: number;
-    user_id: number;
-    id: number;
-    profile_image: string;
-    job_title: string;
-    types_of_candidates: string[];
-    phone: string;
-    verification_status: string;
-    talent_profiles: TalentProfile[];
-    opening_title: OpeningTItle;
-    educations: Education[];
-}
-
 interface Education {
     id: number;
-    employer_id: number;
-    jobseeker_id: number;
+    user_id: number;
     school_name: string;
     graduation_year: number;
 }
@@ -264,11 +250,6 @@ export interface WorkExperience {
     created_at?: string;
     updated_at?: string;
     company: Company;
-}
-
-export interface Jobseeker {
-    id: string;
-    name: string;
 }
 
 export interface ApplicationStatus {
