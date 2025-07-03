@@ -10,7 +10,7 @@ interface AuthLayoutProps {
     instruction?: string
 }
 
-export default function AuthSplitLayout({ children, title, description, instruction }: PropsWithChildren<AuthLayoutProps>) {
+export default function AuthSplitLayout( { children, title, description, instruction }: PropsWithChildren<AuthLayoutProps> ) {
     const { name, quote } = usePage<SharedData>().props;
 
     return (
@@ -19,17 +19,17 @@ export default function AuthSplitLayout({ children, title, description, instruct
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-950 to-orange-800 overflow-hidden">
                     <BackgroundWithParticles />
                 </div>
-                <Link href="/login" className="relative z-20 flex items-center text-lg font-medium">
+                <a href="/" className="relative z-20 flex items-center text-lg font-medium">
                     <AppLogoIcon className="max-w-32" />
-                </Link>
-                {quote && (
+                </a>
+                { quote && (
                     <div className="relative z-20 mt-auto">
                         <blockquote className="space-y-2">
-                            <p className="text-lg">&ldquo;{quote.message}&rdquo;</p>
-                            <footer className="text-sm text-neutral-300">{quote.author}</footer>
+                            <p className="text-lg">&ldquo;{ quote.message }&rdquo;</p>
+                            <footer className="text-sm text-neutral-300">{ quote.author }</footer>
                         </blockquote>
                     </div>
-                )}
+                ) }
             </div>
             <div className="w-full lg:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -37,12 +37,12 @@ export default function AuthSplitLayout({ children, title, description, instruct
                         <AppLogoIcon className="h-10 fill-current text-black sm:h-12" />
                     </Link>
                     <div className="flex flex-col items-start gap-2 text-left sm:items-center sm:text-center">
-                        <h1 className="text-xl font-medium">{title}</h1>
-                        <p className="text-muted-foreground text-sm text-balance">{description}</p>
-                        <p className="text-primary text-sm">{instruction}</p>
+                        <h1 className="text-xl font-medium">{ title }</h1>
+                        <p className="text-muted-foreground text-sm text-balance">{ description }</p>
+                        <p className="text-primary text-sm">{ instruction }</p>
 
                     </div>
-                    {children}
+                    { children }
                 </div>
             </div>
         </div>
