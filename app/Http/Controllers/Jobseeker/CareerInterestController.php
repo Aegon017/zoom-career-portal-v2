@@ -42,12 +42,12 @@ class CareerInterestController extends Controller
 
         return Inertia::render('jobseeker/career-interests', [
             'initialValues' => [
-                'graduation_month' => $careerInterest->graduation_month,
-                'graduation_year' => $careerInterest->graduation_year,
-                'employment_types' => $careerInterest->employmentTypes->pluck('employment_type'),
-                'desired_jobs' => $careerInterest->jobTitles->pluck('opening_title_id'),
-                'target_industries' => $careerInterest->industries->pluck('industry_id'),
-                'preferred_locations' => $careerInterest->locations->pluck('location_id'),
+                'graduation_month' => $careerInterest?->graduation_month,
+                'graduation_year' => $careerInterest?->graduation_year,
+                'employment_types' => $careerInterest?->employmentTypes->pluck('employment_type'),
+                'desired_jobs' => $careerInterest?->jobTitles->pluck('opening_title_id'),
+                'target_industries' => $careerInterest?->industries->pluck('industry_id'),
+                'preferred_locations' => $careerInterest?->locations->pluck('location_id'),
             ],
             'employmentTypes' => $employmentTypes,
             'years' => $years,

@@ -45,7 +45,9 @@ const EmployerDetails = ( { company }: Props ) => {
                                 </div>
                                 <div className="bottom">
                                     <ul>
-                                        <li><i className="fa-solid fa-location-dot"></i><span>{ company.address.location.city }, { company.address.location.state }, { company.address.location.country }</span></li>
+                                        { company.address && (
+                                            <li><i className="fa-solid fa-location-dot"></i><span>{ company.address?.location?.city }, { company.address?.location?.state }, { company.address?.location?.country }</span></li>
+                                        ) }
                                         <li><i className="fa-solid fa-user-tie"></i><span>{ company.size }</span></li>
                                         <li><i className="fa-solid fa-globe"></i><span><a href={ company.website_url } target="_blank">{ company.website_url }</a></span></li>
                                         <li><i className="fa-solid fa-building"></i><span>{ company.type }</span></li>
