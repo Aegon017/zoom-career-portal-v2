@@ -176,59 +176,70 @@ const Employers = () => {
                 </div>
                 <div className="zc-employer-list-wrapper">
                     <div className="row">
-                        <div className="col-lg-4 col-md-4 col-sm-12">
-                            <div className="zc-search-wrapper mb-3">
-                                <input
-                                    type="text"
-                                    className="w-100"
-                                    placeholder="Search by keyword"
-                                    value={ data.keyword }
-                                    onChange={ ( e ) => setData( 'keyword', e.target.value ) }
-                                />
-                            </div>
-                            <div className="zc-filter-wrapper">
-                                <div className="filter-header">
-                                    <FilterIcon />
-                                    <span className="text">Filters</span>
+                        { companies.length > 0 && (
+                            <div className="col-lg-4 col-md-4 col-sm-12">
+                                <div className="zc-search-wrapper mb-3">
+                                    <input
+                                        type="text"
+                                        className="w-100"
+                                        placeholder="Search by keyword"
+                                        value={ data.keyword }
+                                        onChange={ ( e ) => setData( 'keyword', e.target.value ) }
+                                    />
                                 </div>
-                                <div className="filter-content">
-                                    <div className="zc-filter-accordion">
-                                        <div className="zc-accordion-item">
-                                            <div className="zc-accordion-header active">
-                                                <h3>Activity</h3>
-                                                <i className="fa-solid fa-angle-down"></i>
-                                            </div>
-                                            <div className="zc-accordion-content">
-                                                <div className="zc-field check-box-field">
-                                                    <input
-                                                        type="checkbox"
-                                                        id="followed-employers"
-                                                        checked={ data.followed }
-                                                        onChange={ ( e ) => setData( 'followed', e.target.checked ) }
-                                                    />
-                                                    <label htmlFor="followed-employers">Employers You Follow</label>
+                                <div className="zc-filter-wrapper">
+                                    <div className="filter-header">
+                                        <FilterIcon />
+                                        <span className="text">Filters</span>
+                                    </div>
+                                    <div className="filter-content">
+                                        <div className="zc-filter-accordion">
+                                            <div className="zc-accordion-item">
+                                                <div className="zc-accordion-header active">
+                                                    <h3>Activity</h3>
+                                                    <i className="fa-solid fa-angle-down"></i>
+                                                </div>
+                                                <div className="zc-accordion-content">
+                                                    <div className="zc-field check-box-field">
+                                                        <input
+                                                            type="checkbox"
+                                                            id="followed-employers"
+                                                            checked={ data.followed }
+                                                            onChange={ ( e ) => setData( 'followed', e.target.checked ) }
+                                                        />
+                                                        <label htmlFor="followed-employers">Employers You Follow</label>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            { renderMultiSelect( 'Industry', 'industries', getUniqueValues( 'industry.name' ) ) }
+                                            { renderMultiSelect( 'Location', 'locations', getUniqueValues( 'address.location.city' ) ) }
+                                            { renderMultiSelect( 'Employer Size', 'sizes', getUniqueValues( 'size' ) ) }
                                         </div>
-                                        { renderMultiSelect( 'Industry', 'industries', getUniqueValues( 'industry.name' ) ) }
-                                        { renderMultiSelect( 'Location', 'locations', getUniqueValues( 'address.location.city' ) ) }
-                                        { renderMultiSelect( 'Employer Size', 'sizes', getUniqueValues( 'size' ) ) }
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        ) }
 
-                        <div className="col-lg-8 col-md-8 col-sm-12">
+                        <div className={ companies.length > 0 ? "col-lg-8 col-md-8 col-sm-12" : "col-lg-12" }>
                             <div className="zc-employer-list">
-                                { companies.map( ( company: any ) => (
-                                    <CompanyItem key={ company.id } company={ company } />
-                                ) ) }
-                                { nextPageUrl && (
-                                    <div className="load-more-wrapper text-center">
-                                        <button onClick={ loadMore } disabled={ loading }>
-                                            { loading ? 'Loading...' : 'Load More' }
-                                        </button>
+                                { companies.length === 0 ? (
+                                    <div className="text-center py-5">
+                                        <p>No employers found, Try again later.</p>
                                     </div>
+                                ) : (
+                                    <>
+                                        {
+                                            companies.map( ( company: any ) => (
+                                                <CompanyItem key={ company.id } company={ company } />
+                                            ) )
+                                        }
+                                        { nextPageUrl && (
+                                            <div className="load-more-wrapper text-center">
+                                                <button onClick={ loadMore } disabled={ loading }>
+                                                    { loading ? 'Loading...' : 'Load More' }
+                                                </button>
+                                            </div>
+                                        ) }</>
                                 ) }
                             </div>
                         </div>
