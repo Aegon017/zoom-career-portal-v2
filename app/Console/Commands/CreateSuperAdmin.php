@@ -39,7 +39,6 @@ class CreateSuperAdmin extends Command
         );
 
         $permissions = Permission::all();
-        $this->info($permissions);
         $role = Role::firstOrCreate(
             ['name' => 'super_admin'],
             ['guard_name' => 'web']
