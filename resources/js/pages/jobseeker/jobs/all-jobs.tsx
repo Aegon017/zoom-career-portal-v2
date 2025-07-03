@@ -56,11 +56,11 @@ const AllJobs = ( { initialJobs, filters }: Props ) => {
     return (
         <AppLayout>
             <Head title="Job details" />
-            <div className="page-title px-4">
-                <h2>Jobs</h2>
-            </div>
             <div className="zc-main-jobs-wrapper">
                 <div className="zc-container">
+                    <div className="page-title px-4">
+                        <h2>Jobs</h2>
+                    </div>
                     <div className="row">
                         { jobs.length > 0 && (
                             <div className="col-lg-4">

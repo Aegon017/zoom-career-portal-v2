@@ -72,6 +72,7 @@ export interface CareerInterest {
     job_function_interests?: string[];
     graduation_month?: string;
     graduation_year?: string;
+    employment_types?: string[];
 }
 
 export interface JobTitle {

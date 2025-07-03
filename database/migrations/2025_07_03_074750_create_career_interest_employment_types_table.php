@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('career_interest_job_functions', function (Blueprint $table): void {
+        Schema::create('career_interest_employment_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('career_interest_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('job_function_id')->constrained()->cascadeOnDelete();
+            $table->string('employment_type');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('career_interest_job_functions');
+        Schema::dropIfExists('career_interest_employment_types');
     }
 };

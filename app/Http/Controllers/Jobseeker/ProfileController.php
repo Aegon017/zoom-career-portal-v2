@@ -21,7 +21,7 @@ final class ProfileController extends Controller
         $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
         $jobseeker_profile = $user->profile;
         $skills = Skill::get();
-        $companies = Company::where('verification_status', VerificationStatusEnum::Verified->value)->orderBy('name')->get();
+        $companies = Company::where('status', VerificationStatusEnum::Verified->value)->orderBy('name')->get();
 
         return Inertia::render('jobseeker/profile', [
             'user' => $user,

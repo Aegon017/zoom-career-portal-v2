@@ -1,23 +1,21 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Models;
 
+use App\Enums\EmploymentTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-final class CareerInterestJobType extends Model
+class CareerInterestEmploymentType extends Model
 {
-    protected $fillable = ['career_interest_id', 'job_type_id'];
+    protected $fillable = ['career_interest_id', 'employment_type'];
+
+    protected $casts = [
+        'employment_type' => EmploymentTypeEnum::class,
+    ];
 
     public function careerInterest(): BelongsTo
     {
         return $this->belongsTo(CareerInterest::class);
-    }
-
-    public function jobType(): BelongsTo
-    {
-        return $this->belongsTo(JobType::class);
     }
 }

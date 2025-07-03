@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CareerInterestIndustry extends Model
+class CareerInterestJobTitle extends Model
 {
-    protected $fillable = ['career_interest_id', 'industry_id'];
+    protected $fillable = ['career_interest_id', 'opening_title_id'];
 
     public function careerInterest(): BelongsTo
     {
         return $this->belongsTo(CareerInterest::class);
     }
 
-    public function industry(): BelongsTo
+    public function openingTitle(): BelongsTo
     {
-        return $this->belongsTo(Industry::class);
+        return $this->belongsTo(OpeningTitle::class);
     }
 }
