@@ -120,7 +120,8 @@
 
                 <div
                     class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center animate-fade-in-up delay-500">
-                    <a href="{{ route('login') }}" class="btn btn-main btn-lg d-flex align-items-center gap-2 shadow">
+                    <a href="{{ route('employer.login') }}"
+                        class="btn btn-main btn-lg d-flex align-items-center gap-2 shadow">
                         Employer Portal
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +130,7 @@
                         </svg>
                     </a>
 
-                    <a href="{{ route('login') }}"
+                    <a href="{{ route('student.login') }}"
                         class="btn btn-outline-main btn-lg d-flex align-items-center gap-2 shadow">
                         Student Portal
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"

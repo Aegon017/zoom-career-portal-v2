@@ -30,14 +30,20 @@ class CreateSuperAdmin extends Command
      */
     public function handle()
     {
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@zoomgroup.com',
-            'password' => Hash::make('12345678'),
-        ]);
+        $user = User::firstOrCreate(
+            ['email' => 'admin@zoomgroup.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('12345678'),
+            ]
+        );
 
         $permissions = Permission::all();
-        $role = Role::create(['name' => 'Super Admin']);
+        $this->info($permissions);
+        $role = Role::firstOrCreate(
+            ['name' => 'super_admin'],
+            ['guard_name' => 'web']
+        );
         $role->syncPermissions($permissions);
         $user->assignRole($role);
     }

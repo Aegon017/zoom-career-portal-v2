@@ -27,6 +27,10 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
+    Route::get('/employer/login', [AuthenticatedSessionController::class, 'employerCreate'])
+        ->name('employer.login');
+    Route::get('/student/login', [AuthenticatedSessionController::class, 'studentCreate'])
+        ->name('student.login');
     Route::post('/remote/login', [RemoteLoginController::class, 'login'])->name('remote.login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);

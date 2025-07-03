@@ -26,6 +26,24 @@ final class AuthenticatedSessionController extends Controller
         ]);
     }
 
+    public function employerCreate(Request $request): Response
+    {
+        return Inertia::render('auth/employer-login', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => $request->session()->get('status'),
+        ]);
+    }
+
+    public function studentCreate(Request $request): Response
+    {
+        return Inertia::render('auth/student-login', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => $request->session()->get('status'),
+        ]);
+    }
+
+
+
     /**
      * Handle an incoming authentication request.
      */
