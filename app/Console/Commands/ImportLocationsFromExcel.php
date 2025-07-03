@@ -16,10 +16,10 @@ final class ImportLocationsFromExcel extends Command
 
     public function handle(): int
     {
-        $filePath = storage_path('app/locations/worldcities.xlsx');
+        $filePath = storage_path('locations/worldcities.xlsx');
 
         if (! file_exists($filePath)) {
-            $this->error('❌ File not found: '.$filePath);
+            $this->error('❌ File not found: ' . $filePath);
 
             return 1;
         }
