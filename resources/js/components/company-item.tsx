@@ -13,7 +13,9 @@ const CompanyItem = ( { company }: Props ) => {
             <div className="top-sec">
                 <div className="left-block">
                     <div className="employer-logo">
-                        <img src={ company.logo_url } alt="" className="mw-100" />
+                        { company.logo_url ? (
+                            <img src={ company.logo_url } alt={ company.name } className="mw-100" />
+                        ) : null }
                     </div>
                     <div className="employer-details">
                         <h3 className="employer-name">{ company.name }</h3>

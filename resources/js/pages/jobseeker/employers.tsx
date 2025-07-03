@@ -223,7 +223,7 @@ const Employers = () => {
                         <div className={ companies.length > 0 ? "col-lg-8 col-md-8 col-sm-12" : "col-lg-12" }>
                             <div className="zc-employer-list">
                                 { companies.length === 0 ? (
-                                    <div className="text-center py-5">
+                                    <div className="text-center py-5 bg-white rounded-md shadow-md">
                                         <p>No employers found, Try again later.</p>
                                     </div>
                                 ) : (
