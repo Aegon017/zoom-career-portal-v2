@@ -50,18 +50,17 @@ const SavedJobsListing = ( { initialSavedJobs }: Props ) => {
                 </div>
                 <div className="zc-saved-savedJobs-wrapper zc-card">
                     <div className="zc-job-list">
-                        {
-                            !savedJobs ? (
-                                <div className="text-center py-8 text-gray-500">
-                                    You have no saved savedJobs yet.
-                                </div>
-                            ) : (
-                                <>
-                                    { savedJobs.map( ( savedJob: SavedJob ) => (
-                                        <OpeningItem key={ savedJob.id } opening={ savedJob.opening } />
-                                    ) ) }
-                                </>
-                            )
+                        { savedJobs.length === 0 ? (
+                            <div className="text-center py-8 text-gray-500">
+                                You have no saved savedJobs yet.
+                            </div>
+                        ) : (
+                            <>
+                                { savedJobs.map( ( savedJob: SavedJob ) => (
+                                    <OpeningItem key={ savedJob.id } opening={ savedJob.opening } />
+                                ) ) }
+                            </>
+                        )
                         }
                     </div>
                 </div>
