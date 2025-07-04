@@ -61,15 +61,6 @@ export function AppSidebar() {
             title: 'Industries',
             href: '/admin/industries',
             icon: Factory,
-        }, {
-            title: 'Job functions',
-            href: '/admin/job-functions',
-            icon: ListTree,
-        },
-        {
-            title: 'Job types',
-            href: '/admin/job-types',
-            icon: TableProperties,
         },
         {
             title: 'Locations',
