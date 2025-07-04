@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import NotificationItem from '../notification-item';
 import { formatDistanceToNow } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useInitials } from '@/hooks/use-initials';
 
 export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> } ) {
     const cleanup = useMobileNavigation();
@@ -21,9 +23,8 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
     const userNav = useDropdown<HTMLLIElement>();
     const notificationNav = useDropdown<HTMLLIElement>();
 
-    const avatar = "https://www.w3schools.com/howto/img_avatar.png";
-
     const [ notifications, setNotifications ] = useState<AppNotification[]>( [] );
+    const getInitials = useInitials();
 
     useEffect( () => {
         axios.get( '/notifications' )
@@ -92,7 +93,16 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
                         userNav.toggle();
                         notificationNav.close();
                     } }>
-                        <img src={ avatar } />
+                        { user.avatar_url ? (
+                            <img src={ user.avatar_url } />
+                        ) : (
+                            <div
+                                className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle"
+                                style={ { width: '40px', height: '40px' } }
+                            >
+                                { getInitials( user.name ) }
+                            </div>
+                        ) }
                     </button>
                     { userNav.isOpen && (
                         <div className="zc-dropdown-menu show">

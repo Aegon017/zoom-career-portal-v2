@@ -123,6 +123,7 @@ p {
 /*** Button Style ***/
 a.zc-btn-edit i,
 a.zc-btn-add i {
+    cursor: pointer;
     color: #717b9e;
     transition: all 0.3s ease-in;
 }

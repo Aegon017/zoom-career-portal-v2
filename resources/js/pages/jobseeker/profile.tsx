@@ -5,6 +5,8 @@ import type { Company, Profile, Skill, User } from '@/types';
 import { format } from 'date-fns';
 import SkillsModal from '@/components/jobseeker/skills-modal';
 import EmploymentModel from '@/components/jobseeker/employment-modal';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/hooks/use-initials';
 
 type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | 'employment' | null;
 
@@ -29,6 +31,9 @@ export default function Profile( { user, skills, companies }: Props ) {
         setEmploymentDefaultValues( undefined );
     };
 
+    const getInitials = useInitials();
+
+
     return (
         <AppLayout>
             <Head title="Explore" />
@@ -37,9 +42,16 @@ export default function Profile( { user, skills, companies }: Props ) {
                     <div className="zc-candidate-profile-header mb-3">
                         <div className="top-cover"></div>
                         <div className="candidate-basic-details d-block d-sm-flex">
-                            <div className="candidate-image p-3">
-                                <img src={ user.avatar_url } alt="Profile" />
-                            </div>
+                            { user.avatar_url ? (
+                                <img src={ user.avatar_url } />
+                            ) : (
+                                <div
+                                    className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle m-3"
+                                    style={ { width: '160px', height: '160px' } }
+                                >
+                                    { getInitials( user.name ) }
+                                </div>
+                            ) }
                             <div className="candidate-info p-3 flex-fill">
                                 <div className="zc-row d-block d-md-flex justify-content-between bb-style-2 pb-3">
                                     <div className="left-col mb-2 mb-md-0">
