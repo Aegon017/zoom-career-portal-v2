@@ -78,6 +78,7 @@
             text-decoration: underline;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -89,12 +90,14 @@
 
         <div class="email-body">
             @yield('body')
-            <p>If you need any assistance, feel free to contact us at
-                <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a>.
-            </p>
-            <p>Thank you,<br />
-                <strong>Zooming Career Team</strong>
-            </p>
+            <div class="mt-3">
+                <p>If you need any assistance, feel free to contact us at
+                    <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a>.
+                </p>
+                <p>Thank you,<br />
+                    <strong>Zooming Career Team</strong>
+                </p>
+            </div>
         </div>
         <div class="email-footer">
             &copy; 2025 Zoomingcareer.

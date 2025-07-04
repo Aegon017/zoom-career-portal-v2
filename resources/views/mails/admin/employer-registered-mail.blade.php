@@ -1,6 +1,5 @@
-@section('title')
-    New Employer Registration
-@endsection
+@extends('mails.layout')
+@section('title', 'New Employer Registration')
 @section('body')
     <p>Hello Admin,</p>
 
@@ -9,5 +8,5 @@
     <p><strong>Employer Name:</strong> {{ $name }}</p>
     <p><strong>Company:</strong> {{ $company_name }}</p>
 
-    <a href="{{ $review_link }}" class="btn-review">Review Employer</a>
+    <a href="{{ $review_link }}" class="btn btn-primary">Review Employer</a>
 @endsection

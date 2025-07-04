@@ -40,6 +40,7 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -167,8 +168,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
 
-    Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
-    Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
+    Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
+    Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
+
+    Route::get('/test', function () {
+        $onboard = new OnboardingController;
+        $onboard->sendNotification(Auth::user(), Auth::user()->companies()->latest()->first());
+    });
 });
 
 Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
