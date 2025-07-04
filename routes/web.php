@@ -160,8 +160,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
 
         Route::resource('industries', IndustryController::class);
-        Route::resource('job-types', JobTypeController::class);
-        Route::resource('job-functions', JobFunctionController::class);
         Route::resource('locations', AdminLocationController::class);
 
         Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
@@ -173,6 +171,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('/test', function () {
         $onboard = new OnboardingController;
+
         $onboard->sendNotification(Auth::user(), Auth::user()->companies()->latest()->first());
     });
 });
