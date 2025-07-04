@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\EmploymentTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CareerInterestEmploymentType extends Model
+final class CareerInterestEmploymentType extends Model
 {
     protected $fillable = ['career_interest_id', 'employment_type'];
 

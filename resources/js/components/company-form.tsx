@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import FileUpload from './file-upload';
@@ -9,6 +9,7 @@ import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { PhoneInput } from './phone-input';
 import { Option } from '@/types';
+import axios from 'axios';
 
 interface FormValues {
     name: string;
@@ -31,12 +32,35 @@ interface Props {
     onSubmit: ( data: any ) => void,
     setValue: ( name: keyof FormValues, value: any ) => void
     industries: Option[],
-    locations: Option[],
     sizes: Option[],
     types: Option[]
 }
 
-const CompanyForm = ( { form, control, handleSubmit, onSubmit, setValue, industries, locations, sizes, types }: Props ) => {
+const CompanyForm = ( { form, control, handleSubmit, onSubmit, setValue, industries, sizes, types }: Props ) => {
+
+    const [ locationSearch, setLocationSearch ] = useState( '' );
+    const [ locationOptions, setLocationOptions ] = useState<Option[]>( [] );
+    const [ industrySearch, setIndustrySearch ] = useState( '' );
+    const [ industryOptions, setIndustryOptions ] = useState<Option[]>( [] );
+
+    useEffect( () => {
+        const timeout = setTimeout( () => {
+            axios.get( '/locations/search', { params: { search: locationSearch } } )
+                .then( res => setLocationOptions( res.data ) );
+        }, 300 );
+
+        return () => clearTimeout( timeout );
+    }, [ locationSearch ] );
+
+    useEffect( () => {
+        const timeout = setTimeout( () => {
+            axios.get( '/industries/search', { params: { search: industrySearch } } )
+                .then( res => setIndustryOptions( res.data ) );
+        }, 300 );
+
+        return () => clearTimeout( timeout );
+    }, [ industrySearch ] );
+
     return (
         <Form { ...form }>
             <form onSubmit={ handleSubmit( onSubmit ) } className="space-y-6">
@@ -88,11 +112,12 @@ const CompanyForm = ( { form, control, handleSubmit, onSubmit, setValue, industr
                     ) }
                 />
                 <SelectPopoverField
-                    options={ industries }
+                    options={ industryOptions }
                     name="industry_id"
                     control={ control }
                     label="Industry"
                     placeholder="Select industry"
+                    onValueChange={ setIndustrySearch }
                 />
                 <FormField
                     control={ control }
@@ -117,11 +142,12 @@ const CompanyForm = ( { form, control, handleSubmit, onSubmit, setValue, industr
                     ) }
                 />
                 <SelectPopoverField
-                    options={ locations }
+                    options={ locationOptions }
                     name="location_id"
                     control={ control }
                     label="Address"
                     placeholder="Select Address"
+                    onValueChange={ setLocationSearch }
                 />
                 <FormField
                     control={ control }

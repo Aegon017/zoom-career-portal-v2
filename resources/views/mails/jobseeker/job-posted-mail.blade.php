@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'New Job Alert!')
 @section('body')
@@ -15,3 +20,4 @@
         <a href="{{ route('jobseeker.jobs.show', $job->id) }}">Click here to view job details</a>
     </p>
 @endsection
+<?php 

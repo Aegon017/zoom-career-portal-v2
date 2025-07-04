@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'Application Update')
 @section('body')
@@ -18,3 +23,4 @@
     <p><strong>Company:</strong> {{ $company_name }}</p>
     <p><strong>Updated On:</strong> {{ $updated_at }}</p>
 @endsection
+<?php 

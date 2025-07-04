@@ -79,7 +79,7 @@ final class IndustryController extends Controller
     public function update(Request $request, Industry $industry)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,'.$industry->id,
+            'name' => 'required|string|unique:industries,name,' . $industry->id,
         ]);
 
         $industry->update($data);
@@ -95,5 +95,21 @@ final class IndustryController extends Controller
         $industry->delete();
 
         return to_route('admin.industries.index')->with('success', 'Industry record deleted successfully.');
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->query('search');
+
+        $industries = \App\Models\Industry::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%$search%");
+        })
+            ->limit(20)
+            ->get([
+                'id as value',
+                'name as label',
+            ]);
+
+        return response()->json($industries);
     }
 }

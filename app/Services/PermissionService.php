@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
-use App\Http\Resources\PermissionResource;
 use Spatie\Permission\Models\Permission;
 
-class PermissionService
+final class PermissionService
 {
     public function getGroupedPermissions()
     {
@@ -23,19 +24,15 @@ class PermissionService
 
                 foreach ($prefixes as $prefix) {
                     if (str_starts_with($name, $prefix)) {
-                        return str_replace('_', ' ', ucfirst(substr($name, strlen($prefix))));
+                        return str_replace('_', ' ', ucfirst(mb_substr($name, mb_strlen($prefix))));
                     }
                 }
 
                 return $name;
             })
-            ->map(function ($permissions) {
-                return $permissions->map(function ($permission) {
-                    return [
-                        'id' => $permission->id,
-                        'name' => $permission->name,
-                    ];
-                });
-            })->sortKeys();
+            ->map(fn($permissions) => $permissions->map(fn($permission): array => [
+                'id' => $permission->id,
+                'name' => $permission->name,
+            ]))->sortKeys();
     }
 }

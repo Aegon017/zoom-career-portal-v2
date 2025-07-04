@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Otp extends Model
+final class Otp extends Model
 {
     protected $fillable = [
         'user_id',
@@ -31,6 +33,6 @@ class Otp extends Model
 
     public function isVerified(): bool
     {
-        return !is_null($this->verified_at);
+        return ! is_null($this->verified_at);
     }
 }

@@ -95,7 +95,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function isPhoneVerified(): bool
     {
-        return !is_null($this->phone_verified_at);
+        return ! is_null($this->phone_verified_at);
     }
 
     public function profile(): HasOne

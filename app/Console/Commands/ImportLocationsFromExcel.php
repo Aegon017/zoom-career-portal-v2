@@ -19,7 +19,7 @@ final class ImportLocationsFromExcel extends Command
         $filePath = storage_path('locations/worldcities.xlsx');
 
         if (! file_exists($filePath)) {
-            $this->error('❌ File not found: ' . $filePath);
+            $this->error('❌ File not found: '.$filePath);
 
             return 1;
         }

@@ -38,6 +38,7 @@ interface SelectPopoverFieldProps {
     rules?: Record<string, any>;
     disabled?: boolean;
     onChange?: ( value: string ) => void;
+    onValueChange?: ( value: string ) => void;
 }
 
 export const SelectPopoverField = ( {
@@ -48,7 +49,8 @@ export const SelectPopoverField = ( {
     placeholder,
     rules,
     disabled = false,
-    onChange
+    onChange,
+    onValueChange
 }: SelectPopoverFieldProps ) => {
     const [ open, setOpen ] = useState( false );
 
@@ -77,7 +79,7 @@ export const SelectPopoverField = ( {
                         </PopoverTrigger>
                         <PopoverContent className="p-0">
                             <Command>
-                                <CommandInput placeholder={ `Search ${ label.toLowerCase() }...` } className="h-9" />
+                                <CommandInput onValueChange={ onValueChange } placeholder={ `Search ${ label.toLowerCase() }...` } className="h-9" />
                                 <CommandList>
                                     <CommandEmpty>No { label.toLowerCase() } found.</CommandEmpty>
                                     <CommandGroup>

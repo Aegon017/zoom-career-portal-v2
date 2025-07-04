@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRoleRequest extends FormRequest
+final class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

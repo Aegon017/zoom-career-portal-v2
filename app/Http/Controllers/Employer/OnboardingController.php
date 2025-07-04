@@ -58,7 +58,7 @@ final class OnboardingController extends Controller
         ]);
 
         if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
-            $user->addMedia(storage_path('app/public/'.$data['avatar']))
+            $user->addMedia(storage_path('app/public/' . $data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
         }
@@ -118,19 +118,14 @@ final class OnboardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $industries = Industry::get()->map(fn ($industry): array => [
+        $industries = Industry::get()->map(fn($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
-        ]);
-        $locations = Location::get()->map(fn ($location): array => [
-            'value' => $location->id,
-            'label' => $location->full_name,
         ]);
 
         return Inertia::render('employer/on-boarding/company-setup', [
             'name' => $request->name,
             'industries' => $industries,
-            'locations' => $locations,
             'sizes' => CompanySizeEnum::options(),
             'types' => CompanyTypeEnum::options(),
         ]);
@@ -159,13 +154,13 @@ final class OnboardingController extends Controller
         ]);
 
         if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
+            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
+            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }

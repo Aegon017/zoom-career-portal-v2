@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\JobType;
 use App\Models\User;
 
-class JobTypePolicy
+final class JobTypePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class JobTypePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, JobType $jobType): bool
+    public function view(User $user): bool
     {
         return $user->can('view_job_type');
     }
@@ -34,7 +36,7 @@ class JobTypePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, JobType $jobType): bool
+    public function update(User $user): bool
     {
         return $user->can('update_job_type');
     }
@@ -42,7 +44,7 @@ class JobTypePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, JobType $jobType): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_job_type');
     }

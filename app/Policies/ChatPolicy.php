@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Chat;
 use App\Models\User;
 
-class ChatPolicy
+final class ChatPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class ChatPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Chat $chat): bool
+    public function view(User $user): bool
     {
         return $user->can('view_chat');
     }
@@ -34,7 +36,7 @@ class ChatPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Chat $chat): bool
+    public function update(User $user): bool
     {
         return $user->can('update_chat');
     }
@@ -42,7 +44,7 @@ class ChatPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Chat $chat): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_chat');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail\Jobseeker;
 
 use App\Models\Opening;
@@ -11,10 +13,10 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class JobPostedMail extends Mailable implements ShouldQueue
+final class JobPostedMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
-
+    use Queueable;
+    use SerializesModels;
     /**
      * Create a new message instance.
      */
@@ -29,7 +31,7 @@ class JobPostedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "New Job Posted: {$this->job->title} at {$this->job->company->name}",
+            subject: sprintf('New Job Posted: %s at %s', $this->job->title, $this->job->company->name),
         );
     }
 

@@ -24,7 +24,7 @@ final class AdminEmployeeController extends Controller
 
         return Inertia::render('admin/employee/view-employee', [
             'user' => $user->load('profile'),
-            'company' => $user->companies()->latest()->first()
+            'company' => $user->companies()->latest()->first(),
         ]);
     }
 }

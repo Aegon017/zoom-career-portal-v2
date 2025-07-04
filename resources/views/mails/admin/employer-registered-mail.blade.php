@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'New Employer Registration')
 @section('body')
@@ -10,3 +15,4 @@
 
     <a href="{{ $review_link }}" class="btn btn-primary">Review Employer</a>
 @endsection
+<?php 

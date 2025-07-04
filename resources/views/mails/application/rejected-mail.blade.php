@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'Application Update')
 @section('body')
@@ -22,3 +27,4 @@
         We wish you the very best in your job search and future career endeavors.
     </p>
 @endsection
+<?php 

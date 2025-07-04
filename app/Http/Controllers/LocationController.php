@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 final class LocationController extends Controller
 {
@@ -60,5 +62,23 @@ final class LocationController extends Controller
             'success' => true,
             'data' => $cities,
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->query('search', '');
+
+        $locations = Location::when($search, function ($query, $search) {
+            $query->where('city', 'like', '%' . $search . '%')
+                ->orWhere('state', 'like', '%' . $search . '%')
+                ->orWhere('country', 'like', '%' . $search . '%');
+        })
+            ->limit(20)
+            ->get([
+                'id as value',
+                DB::raw("CONCAT(city, ', ', state, ', ', country) as label")
+            ]);
+
+        return response()->json($locations);
     }
 }

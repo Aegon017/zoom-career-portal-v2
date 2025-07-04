@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\CareerInterestJobFunction;
 use App\Models\User;
 
-class CareerInterestJobFunctionPolicy
+final class CareerInterestJobFunctionPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class CareerInterestJobFunctionPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, CareerInterestJobFunction $careerInterestJobFunction): bool
+    public function view(User $user): bool
     {
         return $user->can('view_career_interest_job_function');
     }
@@ -34,7 +36,7 @@ class CareerInterestJobFunctionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, CareerInterestJobFunction $careerInterestJobFunction): bool
+    public function update(User $user): bool
     {
         return $user->can('update_career_interest_job_function');
     }
@@ -42,7 +44,7 @@ class CareerInterestJobFunctionPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, CareerInterestJobFunction $careerInterestJobFunction): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_career_interest_job_function');
     }

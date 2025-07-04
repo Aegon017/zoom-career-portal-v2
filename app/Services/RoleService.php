@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Spatie\Permission\Models\Role;
 
-class RoleService
+final class RoleService
 {
     public function createRoleWithPermissions(array $data): Role
     {
@@ -12,7 +14,7 @@ class RoleService
             'name' => $data['name'],
         ]);
 
-        if (!empty($data['permissions'])) {
+        if (! empty($data['permissions'])) {
             $role->syncPermissions($data['permissions']);
         }
 

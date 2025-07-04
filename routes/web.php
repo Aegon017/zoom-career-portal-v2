@@ -6,14 +6,11 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
-use App\Http\Controllers\Admin\JobFunctionController;
-use App\Http\Controllers\Admin\JobTypeController;
 use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
-use App\Http\Controllers\Admin\TalentProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
@@ -44,9 +41,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/dashboard');
 
@@ -60,6 +55,8 @@ Route::post('/temp-upload/remove', [TempUploadController::class, 'destroy']);
 Route::get('/location/countries', [LocationController::class, 'getCountries'])->name('getCountries');
 Route::post('/location/states', [LocationController::class, 'getStates'])->name('getStates');
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
+Route::get('/locations/search', [LocationController::class, 'search']);
+Route::get('/industries/search',  [IndustryController::class, 'search']);
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     // otp routes
@@ -166,10 +163,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
     });
 
-    Route::get('/inbox', [ControllersInboxController::class, 'index'])->name('inbox.index');
-    Route::post('/inbox/send-message', [ControllersInboxController::class, 'sendMessage'])->name('inbox.send-message');
+    Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
+    Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 
-    Route::get('/test', function () {
+    Route::get('/test', function (): void {
         $onboard = new OnboardingController;
 
         $onboard->sendNotification(Auth::user(), Auth::user()->companies()->latest()->first());

@@ -56,7 +56,7 @@ final class RemoteLoginController extends Controller
 
     private function saveUser($user)
     {
-        $user = User::updateOrCreate(
+        return User::updateOrCreate(
             ['email' => $user->email],
             [
                 'name' => $user->name,
@@ -64,8 +64,6 @@ final class RemoteLoginController extends Controller
                 'email_verified_at' => $user->email_verified_at,
             ]
         );
-
-        return $user;
     }
 
     private function redirectToDashboard(User $user)

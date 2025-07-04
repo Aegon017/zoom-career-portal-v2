@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Otp;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class OtpService
+final class OtpService
 {
     public function generateCode(): string
     {
-        return str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        return mb_str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
-    public function sendOtp($user, $phone): Otp
+    public function sendOtp($user, string $phone): Otp
     {
         $existingOtp = Otp::where('user_id', $user->id)
             ->where('expires_at', '>', now())
@@ -28,17 +31,17 @@ class OtpService
 
         $success = $this->sendSms(
             $phone,
-            "Hello {$user->name}, Thank you for registering with zoomgroup.com. Your one-time password is {$code}. - Zoom Technologies."
+            sprintf('Hello %s, Thank you for registering with zoomgroup.com. Your one-time password is %s. - Zoom Technologies.', $user->name, $code)
         );
 
         if (! $success) {
-            throw new \Exception("SMS sending failed. OTP not created.");
+            throw new Exception('SMS sending failed. OTP not created.');
         }
 
         return Otp::create([
-            'user_id'    => $user->id,
-            'phone'      => $phone,
-            'code'       => $code,
+            'user_id' => $user->id,
+            'phone' => $phone,
+            'code' => $code,
             'expires_at' => now()->addMinutes(1),
         ]);
     }
@@ -47,25 +50,25 @@ class OtpService
     {
         $response = Http::get(config('services.sms.url'), [
             'authorization' => config('services.sms.api_key'),
-            'sender_id'     => config('services.sms.sender_id'),
-            'message'       => $message,
-            'template_id'   => config('services.sms.template_id'),
-            'entity_id'     => config('services.sms.entity_id'),
-            'route'         => 'dlt_manual',
-            'numbers'       => $phone,
+            'sender_id' => config('services.sms.sender_id'),
+            'message' => $message,
+            'template_id' => config('services.sms.template_id'),
+            'entity_id' => config('services.sms.entity_id'),
+            'route' => 'dlt_manual',
+            'numbers' => $phone,
         ]);
 
         if (! $response->successful()) {
             Log::warning('Failed to send SMS OTP', [
                 'response' => $response->body(),
-                'phone'    => $phone,
+                'phone' => $phone,
             ]);
         }
 
         return $response->successful();
     }
 
-    public function verifyOtp($user, string $code): bool
+    public function verifyOtp($user): bool
     {
         $otp = Otp::where('user_id', $user->id)
             ->where('expires_at', '>', now())
@@ -74,7 +77,7 @@ class OtpService
 
         $user->update([
             'phone_verified_at' => now(),
-            'phone'             => $otp->phone,
+            'phone' => $otp->phone,
         ]);
 
         $otp->delete();

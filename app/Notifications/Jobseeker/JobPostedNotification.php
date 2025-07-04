@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Jobseeker;
 
 use App\Models\Opening;
@@ -8,9 +10,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
-class JobPostedNotification extends Notification implements ShouldQueue
+final class JobPostedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -51,7 +52,7 @@ class JobPostedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "New Job Posted: {$this->job->title} at {$this->job->company->name}.",
+            'message' => sprintf('New Job Posted: %s at %s.', $this->job->title, $this->job->company->name),
             'url' => route('jobseeker.jobs.show', $this->job->id),
         ];
     }

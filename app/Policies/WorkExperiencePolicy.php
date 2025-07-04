@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\User;
 use App\Models\WorkExperience;
 
-class WorkExperiencePolicy
+final class WorkExperiencePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class WorkExperiencePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, WorkExperience $workExperience): bool
+    public function view(User $user): bool
     {
         return $user->can('view_work_experience');
     }
@@ -34,7 +36,7 @@ class WorkExperiencePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, WorkExperience $workExperience): bool
+    public function update(User $user): bool
     {
         return $user->can('update_work_experience');
     }
@@ -42,7 +44,7 @@ class WorkExperiencePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, WorkExperience $workExperience): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_work_experience');
     }

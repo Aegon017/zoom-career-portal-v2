@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\EmployerOnBoarding;
 use App\Models\User;
 
-class EmployerOnBoardingPolicy
+final class EmployerOnBoardingPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class EmployerOnBoardingPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, EmployerOnBoarding $employerOnBoarding): bool
+    public function view(User $user): bool
     {
         return $user->can('view_employer_on_boarding');
     }
@@ -34,7 +36,7 @@ class EmployerOnBoardingPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, EmployerOnBoarding $employerOnBoarding): bool
+    public function update(User $user): bool
     {
         return $user->can('update_employer_on_boarding');
     }
@@ -42,7 +44,7 @@ class EmployerOnBoardingPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, EmployerOnBoarding $employerOnBoarding): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_employer_on_boarding');
     }

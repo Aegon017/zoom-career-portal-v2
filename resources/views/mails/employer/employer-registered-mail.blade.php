@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'New Employer Registration')
 @section('body')
@@ -20,3 +25,4 @@
         in the meantime, feel free to reach out.
     </p>
 @endsection
+<?php 

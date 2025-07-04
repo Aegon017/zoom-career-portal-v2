@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\OperationsEnum;
@@ -16,7 +18,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+final class RoleController extends Controller
 {
     public function __construct(public RoleService $roleService, public PermissionService $permissionService, public User $user) {}
 
@@ -30,7 +32,7 @@ class RoleController extends Controller
         $roles = RoleResource::collection(Role::latest()->get());
 
         return Inertia::render('admin/roles/roles-listing', [
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 
@@ -61,8 +63,9 @@ class RoleController extends Controller
 
         try {
             $this->roleService->createRoleWithPermissions($request->validated());
+
             return to_route('admin.roles.index')->with('success', 'Role created successsfully!');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return to_route('admin.roles.index')->with('error', 'Failed to create role.');
         }
     }
@@ -70,7 +73,7 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -89,7 +92,7 @@ class RoleController extends Controller
             'role' => $role,
             'permissions' => $permissions,
             'operation' => OperationsEnum::Edit->value,
-            'operationLabel' => OperationsEnum::Edit->label()
+            'operationLabel' => OperationsEnum::Edit->label(),
         ]);
     }
 
@@ -101,8 +104,9 @@ class RoleController extends Controller
         Gate::authorize('update', $this->user);
         try {
             $this->roleService->updateRoleWithPermissions($id, $request->validated());
+
             return back()->with('success', 'Role updated successsfully!');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return back()->with('error', 'Failed to update role.');
         }
     }
@@ -116,8 +120,9 @@ class RoleController extends Controller
 
         try {
             $this->roleService->deleteRole($id);
+
             return back()->with('success', 'Role deleted successsfully!');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return back()->with('error', 'Failed to delete role.');
         }
     }

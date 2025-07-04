@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\User;
-use Database\Factories\UserFactory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class CreateSuperAdmin extends Command
+final class CreateSuperAdmin extends Command
 {
     /**
      * The name and signature of the console command.
@@ -28,7 +29,7 @@ class CreateSuperAdmin extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $user = User::firstOrCreate(
             ['email' => 'admin@zoomgroup.com'],
@@ -44,6 +45,7 @@ class CreateSuperAdmin extends Command
             ['guard_name' => 'web']
         );
         $role->syncPermissions($permissions);
+
         $user->assignRole($role);
     }
 }

@@ -42,8 +42,6 @@ final class AuthenticatedSessionController extends Controller
         ]);
     }
 
-
-
     /**
      * Handle an incoming authentication request.
      */

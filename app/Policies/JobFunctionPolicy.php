@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\JobFunction;
 use App\Models\User;
 
-class JobFunctionPolicy
+final class JobFunctionPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class JobFunctionPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, JobFunction $jobFunction): bool
+    public function view(User $user): bool
     {
         return $user->can('view_job_function');
     }
@@ -34,7 +36,7 @@ class JobFunctionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, JobFunction $jobFunction): bool
+    public function update(User $user): bool
     {
         return $user->can('update_job_function');
     }
@@ -42,7 +44,7 @@ class JobFunctionPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, JobFunction $jobFunction): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_job_function');
     }

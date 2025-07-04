@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @extends('mails.layout')
 @section('title', 'Application Update')
 @section('body')
@@ -23,3 +28,4 @@
         Wishing you the very best as you move forward in the selection process.
     </p>
 @endsection
+<?php 

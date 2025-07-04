@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CareerInterestIndustry extends Model
+final class CareerInterestIndustry extends Model
 {
     protected $fillable = ['career_interest_id', 'industry_id'];
 

@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Services\OtpService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class OtpController extends Controller
+final class OtpController extends Controller
 {
     public function index(): Response
     {
@@ -28,17 +31,17 @@ class OtpController extends Controller
     public function send(Request $request, OtpService $otpService)
     {
         $request->validate([
-            'phone' => 'required|numeric'
+            'phone' => 'required|numeric',
         ]);
 
         $user = Auth::user();
 
         try {
             $otp = $otpService->sendOtp($user, $request->phone);
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             return back()
                 ->withInput()
-                ->withErrors(['phone' => $e->getMessage()])
+                ->withErrors(['phone' => $exception->getMessage()])
                 ->with([
                     'step' => 'request',
                     'expires_at' => null,
@@ -54,12 +57,12 @@ class OtpController extends Controller
     public function verify(Request $request, OtpService $otpService)
     {
         $request->validate([
-            'code' => 'required|string|size:6'
+            'code' => 'required|string|size:6',
         ]);
 
         $user = Auth::user();
 
-        if (! $otpService->verifyOtp($user, $request->code)) {
+        if (! $otpService->verifyOtp($user)) {
             return back()
                 ->withInput()
                 ->withErrors(['code' => 'Invalid or expired OTP.'])

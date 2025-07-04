@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\SavedOpening;
 use App\Models\User;
 
-class SavedOpeningPolicy
+final class SavedOpeningPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +20,7 @@ class SavedOpeningPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, SavedOpening $savedOpening): bool
+    public function view(User $user): bool
     {
         return $user->can('view_saved_opening');
     }
@@ -34,7 +36,7 @@ class SavedOpeningPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, SavedOpening $savedOpening): bool
+    public function update(User $user): bool
     {
         return $user->can('update_saved_opening');
     }
@@ -42,7 +44,7 @@ class SavedOpeningPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, SavedOpening $savedOpening): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_saved_opening');
     }
