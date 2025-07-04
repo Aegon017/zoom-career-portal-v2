@@ -84,7 +84,7 @@ const CareerInterests: React.FC<Props> = ( {
                                                     className="form-check-input"
                                                     type="checkbox"
                                                     id={ `employment_${ option.value }` }
-                                                    checked={ field.value.includes( option.value.toString() ) }
+                                                    checked={ field.value?.includes( option.value.toString() ) }
                                                     onChange={ () =>
                                                         field.onChange(
                                                             toggleCheckboxValue(
@@ -113,7 +113,7 @@ const CareerInterests: React.FC<Props> = ( {
                                     <MultiSelect
                                         defaultValue={ Array.isArray( field.value ) ? field.value.map( String ) : [] }
                                         options={ jobTitles.map( opt => ( { ...opt, value: String( opt.value ) } ) ) }
-                                        value={ field.value.map( String ) }
+                                        value={ field.value?.map( String ) }
                                         onValueChange={ ( val ) => field.onChange( val.map( Number ) ) }
                                     />
                                 ) }
@@ -129,7 +129,7 @@ const CareerInterests: React.FC<Props> = ( {
                                     <MultiSelect
                                         defaultValue={ Array.isArray( field.value ) ? field.value.map( String ) : [] }
                                         options={ industries.map( opt => ( { ...opt, value: String( opt.value ) } ) ) }
-                                        value={ field.value.map( String ) }
+                                        value={ field.value?.map( String ) }
                                         onValueChange={ ( val ) => field.onChange( val.map( Number ) ) }
                                     />
                                 ) }
@@ -145,7 +145,7 @@ const CareerInterests: React.FC<Props> = ( {
                                     <MultiSelect
                                         defaultValue={ Array.isArray( field.value ) ? field.value.map( String ) : [] }
                                         options={ locations.map( opt => ( { ...opt, value: String( opt.value ) } ) ) }
-                                        value={ field.value.map( String ) }
+                                        value={ field.value?.map( String ) }
                                         onValueChange={ ( val ) => field.onChange( val.map( Number ) ) }
                                     />
                                 ) }
