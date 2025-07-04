@@ -79,7 +79,7 @@ final class IndustryController extends Controller
     public function update(Request $request, Industry $industry)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,' . $industry->id,
+            'name' => 'required|string|unique:industries,name,'.$industry->id,
         ]);
 
         $industry->update($data);
@@ -101,8 +101,8 @@ final class IndustryController extends Controller
     {
         $search = $request->query('search');
 
-        $industries = \App\Models\Industry::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%$search%");
+        $industries = Industry::when($search, function ($query, $search): void {
+            $query->where('name', 'like', sprintf('%%%s%%', $search));
         })
             ->limit(20)
             ->get([

@@ -41,11 +41,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', fn () => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -56,7 +56,7 @@ Route::get('/location/countries', [LocationController::class, 'getCountries'])->
 Route::post('/location/states', [LocationController::class, 'getStates'])->name('getStates');
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
 Route::get('/locations/search', [LocationController::class, 'search']);
-Route::get('/industries/search',  [IndustryController::class, 'search']);
+Route::get('/industries/search', [IndustryController::class, 'search']);
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     // otp routes
@@ -173,7 +173,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

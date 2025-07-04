@@ -30,7 +30,7 @@ final class PermissionService
 
                 return $name;
             })
-            ->map(fn($permissions) => $permissions->map(fn($permission): array => [
+            ->map(fn ($permissions) => $permissions->map(fn ($permission): array => [
                 'id' => $permission->id,
                 'name' => $permission->name,
             ]))->sortKeys();

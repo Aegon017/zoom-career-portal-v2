@@ -49,7 +49,7 @@ final class GeneratePermissions extends Command
                     $methodName = $method->getName();
                     $permissionName = Str::snake($methodName).'_'.$modelNameSnake;
                     Permission::firstOrCreate(['name' => $permissionName]);
-                    $this->line('✔ Created/exists: ' . $permissionName);
+                    $this->line('✔ Created/exists: '.$permissionName);
                 }
             }
         }

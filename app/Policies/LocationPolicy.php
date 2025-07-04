@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Models\Location;
 use App\Models\User;
 
 final class LocationPolicy

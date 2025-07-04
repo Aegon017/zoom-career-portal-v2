@@ -17,6 +17,7 @@ final class JobPostedMail extends Mailable implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;
+
     /**
      * Create a new message instance.
      */

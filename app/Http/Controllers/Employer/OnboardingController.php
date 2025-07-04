@@ -14,7 +14,6 @@ use App\Mail\Admin\EmployerRegisteredMail as AdminEmployerRegisteredMail;
 use App\Mail\EmployerRegisteredMail;
 use App\Models\Company;
 use App\Models\Industry;
-use App\Models\Location;
 use App\Models\OpeningTitle;
 use App\Models\User;
 use App\Notifications\EmployerVerifyNotification;
@@ -58,7 +57,7 @@ final class OnboardingController extends Controller
         ]);
 
         if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
-            $user->addMedia(storage_path('app/public/' . $data['avatar']))
+            $user->addMedia(storage_path('app/public/'.$data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
         }
@@ -118,7 +117,7 @@ final class OnboardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $industries = Industry::get()->map(fn($industry): array => [
+        $industries = Industry::get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
@@ -154,13 +153,13 @@ final class OnboardingController extends Controller
         ]);
 
         if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }
