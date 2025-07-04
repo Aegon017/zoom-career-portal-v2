@@ -84,11 +84,11 @@ const CareerInterests: React.FC<Props> = ( {
                                                     className="form-check-input"
                                                     type="checkbox"
                                                     id={ `employment_${ option.value }` }
-                                                    checked={ field.value?.includes( option.value.toString() ) }
+                                                    checked={ ( field.value || [] ).includes( option.value.toString() ) }
                                                     onChange={ () =>
                                                         field.onChange(
                                                             toggleCheckboxValue(
-                                                                field.value,
+                                                                field.value || [],
                                                                 option.value.toString()
                                                             )
                                                         )

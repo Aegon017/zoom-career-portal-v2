@@ -27,17 +27,17 @@ final class CareerInterestController extends Controller
             $months[] = date('F', mktime(0, 0, 0, $i, 1));
         }
 
-        $industries = Industry::get()->map(fn ($industry): array => [
+        $industries = Industry::get()->map(fn($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
 
-        $locations = Location::get()->take(100)->map(fn ($location): array => [
+        $locations = Location::get()->take(100)->map(fn($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
 
-        $jobTitles = OpeningTitle::get()->map(fn ($jobTitle): array => [
+        $jobTitles = OpeningTitle::get()->map(fn($jobTitle): array => [
             'value' => $jobTitle->id,
             'label' => $jobTitle->name,
         ]);
@@ -82,15 +82,10 @@ final class CareerInterestController extends Controller
             'graduation_year' => $validated['graduation_year'] ?? null,
         ]);
 
-        $careerInterest->update([
-            'graduation_month' => $validated['graduation_month'] ?? null,
-            'graduation_year' => $validated['graduation_year'] ?? null,
-        ]);
-
         $careerInterest->employmentTypes()?->delete();
         if (! empty($validated['employment_types'])) {
             $careerInterest->employmentTypes()->createMany(
-                collect($validated['employment_types'])->map(fn ($type): array => [
+                collect($validated['employment_types'])->map(fn($type): array => [
                     'employment_type' => $type,
                 ])->toArray()
             );
@@ -99,7 +94,7 @@ final class CareerInterestController extends Controller
         $careerInterest->jobTitles()?->delete();
         if (! empty($validated['desired_jobs'])) {
             $careerInterest->jobTitles()->createMany(
-                collect($validated['desired_jobs'])->map(fn ($id): array => [
+                collect($validated['desired_jobs'])->map(fn($id): array => [
                     'opening_title_id' => $id,
                 ])->toArray()
             );
@@ -108,7 +103,7 @@ final class CareerInterestController extends Controller
         $careerInterest->industries()?->delete();
         if (! empty($validated['target_industries'])) {
             $careerInterest->industries()->createMany(
-                collect($validated['target_industries'])->map(fn ($id): array => [
+                collect($validated['target_industries'])->map(fn($id): array => [
                     'industry_id' => $id,
                 ])->toArray()
             );
@@ -117,7 +112,7 @@ final class CareerInterestController extends Controller
         $careerInterest->locations()?->delete();
         if (! empty($validated['preferred_locations'])) {
             $careerInterest->locations()->createMany(
-                collect($validated['preferred_locations'])->map(fn ($id): array => [
+                collect($validated['preferred_locations'])->map(fn($id): array => [
                     'location_id' => $id,
                 ])->toArray()
             );
