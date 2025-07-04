@@ -11,12 +11,20 @@ use Inertia\Inertia;
 
 final class CompanyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $companies = Company::latest()->get();
+        $companies = Company::query()
+            ->when(
+                $request->search,
+                fn($q) =>
+                $q->where('name', 'like', '%' . $request->search . '%')
+            )
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
 
         return Inertia::render('admin/companies/companies-listing', [
             'companies' => $companies,
+            'filters' => $request->only('search', 'perPage')
         ]);
     }
 

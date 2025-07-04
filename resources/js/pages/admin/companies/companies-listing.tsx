@@ -12,15 +12,39 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    companies: Company[]
+    companies: {
+        data: Company[],
+        current_page: number,
+        last_page: number,
+        per_page: number,
+        total: number,
+    },
+    filters: {
+        search?: string,
+        perPage?: number,
+    }
 }
 
-export default function CompaniesListing({ companies }: Props) {
+export default function CompaniesListing( { companies, filters }: Props ) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Companies" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={companies} listingName="company" hasCreate={false} createUrl="/admin/companies/create" />
+                <DataTable
+                    hasCreate={ false }
+                    columns={ columns }
+                    data={ companies.data }
+                    pagination={ {
+                        current_page: companies.current_page,
+                        last_page: companies.last_page,
+                        per_page: companies.per_page,
+                        total: companies.total,
+                    } }
+                    filters={ filters }
+                    routeName="/admin/companies"
+                    listingName="company"
+                    createUrl="/admin/companies/create"
+                />
             </div>
         </AppLayout>
     );

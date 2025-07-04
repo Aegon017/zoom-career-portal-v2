@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>( {
     routeName: string
 } ) {
     const [ globalFilter, setGlobalFilter ] = useState( filters.search ?? "" );
-    const debouncedSearch = useDebounce( globalFilter, 1000 );
+    const debouncedSearch = useDebounce( globalFilter, 250 );
     const requestId = useRef( 0 );
 
     useEffect( () => {
