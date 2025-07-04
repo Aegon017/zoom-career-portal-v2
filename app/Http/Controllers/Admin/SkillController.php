@@ -11,6 +11,7 @@ use App\Http\Requests\Skill\UpdateSkillRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,12 +20,20 @@ final class SkillController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $skills = SkillResource::collection(Skill::query()->latest()->get());
+        $skills = Skill::query()
+            ->when(
+                $request->search,
+                fn($q) =>
+                $q->where('name', 'like', '%' . $request->search . '%')
+            )
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
 
         return Inertia::render('admin/skills/skills-listing', [
             'skills' => $skills,
+            'filters' => $request->only('search', 'perPage')
         ]);
     }
 

@@ -1,6 +1,6 @@
 import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
-import { JobTitle, OpeningTItle, type BreadcrumbItem } from '@/types';
+import { JobTitle, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { columns } from './job-title-colums';
 

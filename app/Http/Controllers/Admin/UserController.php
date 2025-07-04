@@ -11,6 +11,7 @@ use App\Http\Requests\EditUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,12 +20,21 @@ final class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $users = UserResource::collection(User::latest()->get());
+        $users = User::query()
+            ->when(
+                $request->search,
+                fn($q) =>
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%')
+            )
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
 
         return Inertia::render('admin/users/users-listing', [
             'users' => $users,
+            'filters' => $request->only('search', 'perPage')
         ]);
     }
 

@@ -12,15 +12,40 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const listingName = "user";
-const createUrl = "/admin/users/create";
+interface Props {
+    users: {
+        data: User[],
+        current_page: number,
+        last_page: number,
+        per_page: number,
+        total: number,
+    },
+    filters: {
+        search?: string,
+        perPage?: number,
+    }
+}
 
-export default function UsersListing({ users }: { users: User[] }) {
+
+export default function UsersListing( { users, filters }: Props ) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Users" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={users} listingName={listingName} createUrl={createUrl} />
+                <DataTable
+                    columns={ columns }
+                    data={ users.data }
+                    pagination={ {
+                        current_page: users.current_page,
+                        last_page: users.last_page,
+                        per_page: users.per_page,
+                        total: users.total,
+                    } }
+                    filters={ filters }
+                    routeName="/admin/users"
+                    listingName="user"
+                    createUrl="/admin/users/create"
+                />
             </div>
         </AppLayout>
     );
