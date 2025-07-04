@@ -41,7 +41,7 @@ export default function SkillsListing( { jobTitles, filters }: Props ) {
                     } }
                     filters={ filters }
                     routeName="/admin/job-titles"
-                    listingName="location"
+                    listingName="job title"
                     createUrl="/admin/job-titles/create"
                 />
             </div>
