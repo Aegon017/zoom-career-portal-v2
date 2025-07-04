@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -35,6 +36,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'phone',
         'password',
         'email_verified_at',
+        'phone_verified_at',
     ];
 
     /**
@@ -49,6 +51,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -78,6 +81,21 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function getResumeUrlsAttribute(): array
     {
         return $this->getMedia('resumes')->map->getUrl()->toArray();
+    }
+
+    public function otps(): HasMany
+    {
+        return $this->hasMany(Otp::class);
+    }
+
+    public function latestOtp(): HasOne
+    {
+        return $this->hasOne(Otp::class)->latestOfMany();
+    }
+
+    public function isPhoneVerified(): bool
+    {
+        return !is_null($this->phone_verified_at);
     }
 
     public function profile(): HasOne
@@ -112,7 +130,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $companyUser?->role;
     }
 
-    public function workExperiences()
+    public function workExperiences(): HasMany
     {
         return $this->hasMany(WorkExperience::class);
     }
@@ -139,7 +157,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         );
     }
 
-    public function follows()
+    public function follows(): HasMany
     {
         return $this->hasMany(Follow::class, 'follower_id');
     }
@@ -154,7 +172,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->morphedByMany(Company::class, 'followable', 'follows', 'follower_id');
     }
 
-    public function followers()
+    public function followers(): MorphToMany
     {
         return $this->morphToMany(self::class, 'followable', 'follows', 'followable_id', 'follower_id');
     }
@@ -174,12 +192,12 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->belongsToMany(Skill::class, 'skill_users')->withTimestamps();
     }
 
-    public function chatParticipants()
+    public function chatParticipants(): HasMany
     {
         return $this->hasMany(ChatParticipant::class);
     }
 
-    public function chats()
+    public function chats(): BelongsToMany
     {
         return $this->belongsToMany(Chat::class, 'chat_participants')->withTimestamps();
     }

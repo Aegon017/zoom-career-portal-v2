@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <style>
         body {
             background-color: #f5f5f5;
@@ -83,28 +83,19 @@
 <body>
     <div class="email-wrapper">
         <div class="email-header">
-            <img src="{{ asset('logo.png') }}" alt="Zoom Careers Logo" />
-            <h3>New Job Alert!</h3>
+            <img src="{{ asset('logo.png') }}" alt="Zoomingcareer Logo" />
+            <h3>@yield('title')</h3>
         </div>
 
         <div class="email-body">
-            <p>Hello <strong>{{ $user->name }}</strong>,</p>
-
-            <p>
-                A new job has just been posted by <strong>{{ $job->company->name }}</strong>:
+            @yield('body')
+            <p>If you need any assistance, feel free to contact us at
+                <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a>.
             </p>
-
-            <p><strong>{{ $job->title }}</strong></p>
-
-            <span class="status-badge status-new">New Job</span>
-
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
-
-            <p>
-                <a href="{{ route('jobseeker.jobs.show', $job->id) }}">Click here to view job details</a>
+            <p>Thank you,<br />
+                <strong>Zooming Career Team</strong>
             </p>
         </div>
-
         <div class="email-footer">
             &copy; 2025 Zoomingcareer.
         </div>

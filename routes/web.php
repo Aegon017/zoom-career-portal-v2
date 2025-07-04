@@ -36,6 +36,7 @@ use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
@@ -60,6 +61,11 @@ Route::post('/location/states', [LocationController::class, 'getStates'])->name(
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    // otp routes
+    Route::get('/otp', [OtpController::class, 'index'])->name('otp.index');
+    Route::post('/otp/send', [OtpController::class, 'send'])->name('otp.send');
+    Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
+
     // follow routes
     Route::post('/follow', [FollowController::class, 'follow'])->name('follow');
     Route::post('/unfollow', [FollowController::class, 'unfollow'])->name('unfollow');
@@ -84,7 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 Route::get('/company/verification-pending', [OnboardingController::class, 'setupVerificationPending'])->name('company.verification.pending');
             });
             Route::prefix('company')->name('company.')->group(function (): void {
-                Route::get('/create-or-join', [OnboardingController::class, 'companyCreateOrJoin'])->name('create-or-join');
+                Route::get('/create-or-join', [OnboardingController::class, 'companyCreateOrJoin'])->middleware('verified.phone')->name('create-or-join');
                 Route::post('/create-or-join', [OnboardingController::class, 'handleCompanyCreateOrJoin'])->name('create-or-join.handle');
                 Route::get('/verification-pending', [OnboardingController::class, 'joinVerificationPending'])->name('join.verification.pending');
             });
