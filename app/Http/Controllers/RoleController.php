@@ -13,6 +13,7 @@ use App\Services\PermissionService;
 use App\Services\RoleService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -25,14 +26,21 @@ final class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         Gate::authorize('viewAny', $this->user);
 
-        $roles = RoleResource::collection(Role::latest()->get());
+        $roles = Role::query()
+            ->when(
+                $request->search,
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+            )
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
 
         return Inertia::render('admin/roles/roles-listing', [
             'roles' => $roles,
+            'filters' => $request->only('search', 'perPage')
         ]);
     }
 

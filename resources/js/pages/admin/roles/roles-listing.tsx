@@ -12,15 +12,38 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    roles: Role[]
+    roles: {
+        data: Role[],
+        current_page: number,
+        last_page: number,
+        per_page: number,
+        total: number,
+    },
+    filters: {
+        search?: string,
+        perPage?: number,
+    }
 }
 
-export default function RolesListing( { roles }: Props ) {
+export default function RolesListing( { roles, filters }: Props ) {
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Roles" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={ columns } data={ roles } listingName="role" createUrl="/admin/roles/create" />
+                <DataTable
+                    columns={ columns }
+                    data={ roles.data }
+                    pagination={ {
+                        current_page: roles.current_page,
+                        last_page: roles.last_page,
+                        per_page: roles.per_page,
+                        total: roles.total,
+                    } }
+                    filters={ filters }
+                    routeName="/admin/roles"
+                    listingName="role"
+                    createUrl="/admin/roles/create"
+                />
             </div>
         </AppLayout>
     );
