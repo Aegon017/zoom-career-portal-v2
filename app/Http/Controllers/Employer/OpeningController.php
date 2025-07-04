@@ -22,6 +22,7 @@ use App\Models\Skill;
 use App\Models\User;
 use App\Notifications\JobPostedNotification;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -33,12 +34,20 @@ final class OpeningController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $jobs = Opening::where('user_id', Auth::id())->latest()->get();
+        $jobs = Opening::query()
+            ->when(
+                $request->search,
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+            )
+            ->where('user_id', Auth::id())
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
 
         return Inertia::render('employer/jobs/jobs-listing', [
             'jobs' => $jobs,
+            'filters' => $request->only('search', 'perPage')
         ]);
     }
 
