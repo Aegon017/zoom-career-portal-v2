@@ -12,15 +12,38 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    locations: Location[]
+    locations: {
+        data: Location[],
+        current_page: number,
+        last_page: number,
+        per_page: number,
+        total: number,
+    },
+    filters: {
+        search?: string,
+        perPage?: number,
+    }
 }
 
-export default function IndustriesListing({ locations }: Props) {
+export default function LocationsListing( { locations, filters }: Props ) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Locations" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <DataTable columns={columns} data={locations} listingName="location" createUrl="/admin/locations/create" />
+                <DataTable
+                    columns={ columns }
+                    data={ locations.data }
+                    pagination={ {
+                        current_page: locations.current_page,
+                        last_page: locations.last_page,
+                        per_page: locations.per_page,
+                        total: locations.total,
+                    } }
+                    filters={ filters }
+                    routeName="/admin/locations"
+                    listingName="location"
+                    createUrl="/admin/locations/create"
+                />
             </div>
         </AppLayout>
     );
