@@ -20,6 +20,7 @@ interface Props {
     expires_at?: string;
     step?: Step;
     errors?: Record<string, string>;
+    [ key: string ]: unknown;
 }
 
 export default function VerifyPhone( { user }: Props ) {
@@ -59,7 +60,6 @@ export default function VerifyPhone( { user }: Props ) {
 
     const sendOtp = () => {
         post( "/otp/send", {
-            data: { phone: data.phone },
             preserveScroll: true,
             onSuccess: () => {
                 toast.success( "OTP sent successfully." );
@@ -71,7 +71,6 @@ export default function VerifyPhone( { user }: Props ) {
 
     const verifyOtp = () => {
         post( "/otp/verify", {
-            data: { code: data.code },
             preserveScroll: true,
             onSuccess: () => {
                 toast.success( "Phone verified successfully." );
