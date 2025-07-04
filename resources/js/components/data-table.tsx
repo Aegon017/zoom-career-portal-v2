@@ -90,7 +90,6 @@ export function DataTable<TData, TValue>( {
             globalFilter,
         },
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         manualPagination: true,
         pageCount: pagination.last_page,
     } );
