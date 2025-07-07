@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobVerifyController;
+use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SiteSettingController;
@@ -41,11 +42,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -56,6 +57,8 @@ Route::get('/location/countries', [LocationController::class, 'getCountries'])->
 Route::post('/location/states', [LocationController::class, 'getStates'])->name('getStates');
 Route::post('/location/cities', [LocationController::class, 'getCities'])->name('getCities');
 Route::get('/locations/search', [LocationController::class, 'search']);
+Route::get('/skills/search', [SkillController::class, 'search']);
+Route::get('/companies', [CompanyController::class, 'search']);
 Route::get('/industries/search', [IndustryController::class, 'search']);
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
@@ -120,7 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
-        Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
+        Route::post('/profile/experience', [ProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::prefix('/jobs')->name('jobs.')->group(function (): void {
             Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
             Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');
@@ -156,8 +159,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
 
-        Route::resource('industries', IndustryController::class);
-        Route::resource('locations', AdminLocationController::class);
+        Route::resource('/industries', IndustryController::class);
+        Route::resource('/locations', AdminLocationController::class);
+        Route::resource('/languages', LanguageController::class);
 
         Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
@@ -173,7 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

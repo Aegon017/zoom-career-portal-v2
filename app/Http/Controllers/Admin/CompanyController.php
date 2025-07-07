@@ -42,4 +42,20 @@ final class CompanyController extends Controller
 
         return back()->with('success', 'Verification status updated successfully');
     }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search', '');
+
+        if (empty($searchTerm)) {
+            return response()->json([]);
+        }
+
+        $companies = Company::query()
+            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->limit(10)
+            ->get(['id', 'name']);
+
+        return response()->json($companies);
+    }
 }

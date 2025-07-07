@@ -104,4 +104,20 @@ final class SkillController extends Controller
 
         return to_route('admin.skills.index')->with('success', 'Skill record delted successfully');
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('search', '');
+
+        $skills = Skill::where('name', 'like', '%' . $query . '%')
+            ->orderBy('name')
+            ->limit(20)
+            ->get()
+            ->map(fn($skill) => [
+                'label' => $skill->name,
+                'value' => $skill->name,
+            ]);
+
+        return response()->json($skills);
+    }
 }

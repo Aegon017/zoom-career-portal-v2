@@ -1,121 +1,86 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Skill, User } from "@/types";
 import PopupModal from "../popup-modal";
 import { router } from "@inertiajs/react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import Select from "react-select";
+import axios from "axios";
 
 interface SkillsModalProps {
     isActive: boolean;
     handleClose: () => void;
-    defaultValues: {
-        user: User;
-        skills: Skill[];
-    };
+    user: User;
 }
 
 interface SkillsFormInputs {
     skills: string[];
 }
 
-const SkillsModal: React.FC<SkillsModalProps> = ({ isActive, handleClose, defaultValues }) => {
-    const initialSkills = defaultValues.user.skills?.map(skill => skill.name) || [];
+const SkillsModal: React.FC<SkillsModalProps> = ( { isActive, handleClose, user } ) => {
+    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<SkillsFormInputs>( {
+        defaultValues: {
+            skills: user.skills?.map( skill => skill.name ) || [],
+        }
+    } );
 
-    const [inputValue, setInputValue] = useState("");
-    const [selectedSkills, setSelectedSkills] = useState<string[]>(initialSkills);
+    const [ skillSearch, setSkillSearch ] = useState( "" );
+    const [ skillOptions, setSkillOptions ] = useState<{ label: string; value: string }[]>( [] );
 
-    const { handleSubmit, setValue } = useForm<SkillsFormInputs>({
-        defaultValues: { skills: initialSkills }
-    });
+    const selectedSkills = watch( "skills" );
 
-    useEffect(() => {
-        setValue("skills", selectedSkills);
-    }, [selectedSkills, setValue]);
+    useEffect( () => {
+        const timeout = setTimeout( () => {
+            axios.get( "/skills/search", { params: { search: skillSearch } } )
+                .then( res => {
+                    const formatted = res.data.map( ( s: any ) => ( {
+                        label: s.label,
+                        value: s.value
+                    } ) );
+                    setSkillOptions( formatted );
+                } );
+        }, 300 );
 
-    const onSubmit: SubmitHandler<SkillsFormInputs> = (data) => {
-        router.post("/jobseeker/profile/skills", { ...data });
+        return () => clearTimeout( timeout );
+    }, [ skillSearch ] );
+
+    const onSubmit: SubmitHandler<SkillsFormInputs> = ( data ) => {
+        router.post( "/jobseeker/profile/skills", { ...data } );
         handleClose();
     };
 
-    const handleAddSkill = (skill: string) => {
-        const trimmedSkill = skill.trim();
-        if (trimmedSkill && !selectedSkills.includes(trimmedSkill)) {
-            setSelectedSkills(prev => [...prev, trimmedSkill]);
-            setInputValue("");
-        }
-    };
-
-    const handleRemoveSkill = (skill: string) => {
-        setSelectedSkills(prev => prev.filter(s => s !== skill));
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleAddSkill(inputValue);
-        }
-    };
-
-    const filteredSuggestions = defaultValues.skills
-        .map(s => s.name)
-        .filter(name =>
-            name.toLowerCase().includes(inputValue.toLowerCase()) &&
-            !selectedSkills.includes(name)
-        );
+    const defaultValues = user.skills?.map( skill => ( {
+        label: skill.name,
+        value: skill.name
+    } ) ) || [];
 
     return (
         <PopupModal
-            title=""
-            isActive={isActive}
-            onClose={handleClose}
-            onSave={handleSubmit(onSubmit)}
+            title="Key Skills"
+            isActive={ isActive }
+            onClose={ handleClose }
+            onSave={ handleSubmit( onSubmit ) }
         >
             <div className="lightbox-header">
-                <div className="title-and-btn">
-                    <h4>Key Skills</h4>
-                </div>
+                <h4>Key Skills</h4>
                 <p className="mb-0">Add skills that best define your expertise.</p>
             </div>
 
             <div className="lightbox-content py-3">
-                <div className="added-skills-wrapper">
-                    <h4>Skills</h4>
-                    <ul className="added-skills mb-4">
-                        {selectedSkills.map((skill, index) => (
-                            <li key={index} className="skill-item">
-                                <span className="txt">{skill}</span>
-                                <a href="#" onClick={(e) => { e.preventDefault(); handleRemoveSkill(skill); }}>x</a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="zc-search-dropdown-wrapper">
-                    <input
-                        type="text"
-                        id="key-skill-search"
-                        className="search-field"
-                        placeholder="Add Skills"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                <div className="mb-3">
+                    <label htmlFor="skills" className="form-label">Skills:</label>
+                    <Select
+                        isMulti
+                        options={ skillOptions }
+                        defaultValue={ defaultValues }
+                        onChange={ ( selected ) => {
+                            setValue( "skills", selected.map( ( s ) => s.value ) );
+                        } }
+                        onInputChange={ setSkillSearch }
+                        placeholder="Type to search and add skills"
+                        isClearable={ false }
+                        classNamePrefix="react-select"
                     />
-
-                    {inputValue && filteredSuggestions.length > 0 && (
-                        <div id="skills-suggestions-dropdown" className="suggestions-list-wrapper">
-                            {filteredSuggestions.map((skill, idx) => (
-                                <div
-                                    key={idx}
-                                    className="suggestions-list-item"
-                                    onClick={() => handleAddSkill(skill)}
-                                    style={{ cursor: "pointer", padding: "8px 12px", background: "#fff" }}
-                                    onMouseEnter={e => e.currentTarget.style.background = "#f5f7fa"}
-                                    onMouseLeave={e => e.currentTarget.style.background = "#fff"}
-                                >
-                                    {skill}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    { errors.skills && <p className="text-danger">Skills are required</p> }
                 </div>
             </div>
         </PopupModal>

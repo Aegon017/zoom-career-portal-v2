@@ -1,22 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-final class Profile extends Model
+class Certificate extends Model
 {
     protected $fillable = [
         'user_id',
-        'job_title',
-        'experience',
-        'notice_period',
-        'summary'
+        'name'
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

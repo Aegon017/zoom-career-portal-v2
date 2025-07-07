@@ -1,32 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import PopupModal from '../popup-modal';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import FileUpload from '../file-upload';
-import { JobSeekerProfile, User } from '@/types';
+import { User } from '@/types';
 import IntlTelInput from "intl-tel-input/reactWithUtils";
 import "intl-tel-input/styles";
+import Select from 'react-select';
+import axios from 'axios';
 
 interface ProfileModalProps {
     isActive: boolean;
     handleClose: () => void;
-    defaultValues: {
-        user: User,
-        jobseeker_profile: JobSeekerProfile
-    }
+    user: User
 }
 
 interface ProfileFormInputs {
     name: string;
     email: string;
     phone: string;
-    profile_image: string;
-    location: string;
+    avatar: string;
+    location_id: string;
     experience: string;
     notice_period: string;
+    job_title: string;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, defaultValues } ) => {
+const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, user } ) => {
+    const { errors: serverErrors } = usePage().props;
     const {
         register,
         handleSubmit,
@@ -34,20 +35,39 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
         formState: { errors }
     } = useForm<ProfileFormInputs>( {
         defaultValues: {
-            name: defaultValues.user.name ?? "",
-            email: defaultValues.user.email ?? "",
-            phone: defaultValues.user.phone ?? "",
-            profile_image: defaultValues.user.avatar_url ?? "",
-            location: defaultValues.user.address.location.city ?? "",
-            experience: defaultValues.jobseeker_profile?.experience ?? "",
-            notice_period: defaultValues.jobseeker_profile?.notice_period ?? "",
+            name: user.name ?? "",
+            email: user.email ?? "",
+            phone: user.phone ?? "",
+            avatar: user.avatar_url ?? "",
+            location_id: user.address?.location?.id?.toString() ?? "",
+            experience: user.profile?.experience ?? "",
+            notice_period: user.profile?.notice_period ?? "",
+            job_title: user.profile?.job_title ?? ""
         }
     } );
+    const [ locationSearch, setLocationSearch ] = useState( '' );
+    const [ locationOptions, setLocationOptions ] = useState<{ label: string; value: string }[]>( [] );
+
+    const defaultLocation = user.address?.location
+        ? {
+            label: `${ user.address.location.city }, ${ user.address.location.state }, ${ user.address.location.country }`,
+            value: user.address.location.id.toString(),
+        }
+        : null;
 
     const onSubmit: SubmitHandler<ProfileFormInputs> = ( data: any ) => {
         router.post( "/jobseeker/profile/basic-details", data );
         handleClose();
     };
+
+    useEffect( () => {
+        const timeout = setTimeout( () => {
+            axios.get( '/locations/search', { params: { search: locationSearch } } )
+                .then( res => setLocationOptions( res.data ) );
+        }, 300 );
+
+        return () => clearTimeout( timeout );
+    }, [ locationSearch ] );
 
     return (
         <PopupModal
@@ -63,7 +83,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
                         acceptedFileTypes={ [ 'image/*' ] }
                         placeholder="Upload profile image"
                         name="file"
-                        onUploaded={ ( url ) => setValue( "profile_image", url ) }
+                        onUploaded={ ( url ) => setValue( "avatar", url ) }
                     />
                 </div>
                 <div className="mb-3">
@@ -71,9 +91,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
                     <input
                         type="text"
                         className="form-control"
-                        { ...register( 'name', { required: true } ) }
+                        { ...register( 'name' ) }
                     />
-                    { errors.name && <p className="text-danger">Name is required</p> }
+                    { serverErrors.name && <p className="text-danger">Name is required</p> }
                 </div>
 
                 <div className="mb-3">
@@ -81,28 +101,44 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
                     <input
                         type="email"
                         className="form-control"
-                        { ...register( 'email', { required: true } ) }
+                        { ...register( 'email' ) }
                     />
-                    { errors.email && <p className="text-danger">Email is required</p> }
+                    { serverErrors.email && <p className="text-danger">Email is required</p> }
                 </div>
 
                 <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone:</label>
                     <IntlTelInput
-                        initialValue={ defaultValues.user.phone }
+                        initialValue={ user.phone }
                         onChangeNumber={ ( value: string ) => setValue( 'phone', value ) }
                         inputProps={ { className: "form-control block w-full" } }
                     />
-                    { errors.phone && <p className="text-danger">Phone is required</p> }
+                    { serverErrors.phone && <p className="text-danger">Phone is required</p> }
+                </div>
+
+                <div className="mb-3">
+                    <label htmlFor="name" className="form-label">Job title:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        { ...register( 'job_title' ) }
+                    />
+                    { serverErrors.job_title && <p className="text-danger">Job <title></title> is required</p> }
                 </div>
 
                 <div className="mb-3">
                     <label htmlFor="location" className="form-label">Location:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        { ...register( 'location', { required: true } ) }
+                    <Select
+                        options={ locationOptions }
+                        defaultValue={ defaultLocation || ( user.address?.location?.city ? { label: user.address.location.city, value: user.address.location.city } : null ) }
+                        onChange={ ( selectedOption ) => {
+                            setValue( 'location_id', selectedOption?.value || "" );
+                        } }
+                        onInputChange={ ( inputValue ) => setLocationSearch( inputValue ) }
+                        isClearable
+                        placeholder="Select or search location"
                     />
+                    { serverErrors.location_id && <p className="text-danger">Location is required</p> }
                 </div>
 
                 <div className="mb-3">
@@ -110,7 +146,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
                     <input
                         type="text"
                         className="form-control"
-                        { ...register( 'experience', { required: true } ) }
+                        { ...register( 'experience' ) }
                     />
                 </div>
 
@@ -119,7 +155,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ( { isActive, handleClose, def
                     <input
                         type="text"
                         className="form-control"
-                        { ...register( 'notice_period', { required: true } ) }
+                        { ...register( 'notice_period' ) }
                     />
                 </div>
             </div>

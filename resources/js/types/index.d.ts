@@ -146,6 +146,7 @@ export interface Profile {
     job_title: string;
     experience: string;
     notice_period: string;
+    summary: string;
     created_at: string;
     updated_at: string;
 }
@@ -268,8 +269,8 @@ export interface Chat {
 export interface WorkExperience {
     id: number;
     user_id?: number;
-    id?: number;
-    name: string;
+    company_id?: number;
+    company_name: string;
     title: string;
     start_date: string;
     end_date: string;
@@ -321,6 +322,7 @@ export interface Location {
     country: string;
     state: string;
     city: string;
+    fullName: string;
 }
 
 export interface Setting {
@@ -343,4 +345,12 @@ export interface Role {
 export interface Permission {
     id: number,
     name: string
+}
+
+export interface Language {
+    id: number;
+    name: string;
+    code: string;
+    created_at: string;
+    updated_at: string;
 }

@@ -24,11 +24,11 @@ final class CreateWorkExperienceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['nullable', 'exists:companies,id'],
-            'name' => ['required_without:id', 'string', 'max:255'],
+            'company_id' => ['nullable', 'exists:companies,id'],
+            'company_name' => ['required_without:id', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date', 'required_unless:is_current,true'],
             'is_current' => ['boolean'],
             'logo' => ['nullable', 'string'],
         ];

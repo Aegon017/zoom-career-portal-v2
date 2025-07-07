@@ -7,16 +7,18 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Location;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Inertia\Response;
 
 final class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $locations = Location::query()
             ->when(
@@ -38,7 +40,7 @@ final class LocationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         $operation = OperationsEnum::Create;
 
@@ -51,7 +53,7 @@ final class LocationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'city' => ['required', 'string', 'max:255'],
@@ -82,7 +84,7 @@ final class LocationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Location $location)
+    public function edit(Location $location): Response
     {
         $operation = OperationsEnum::Edit;
 
@@ -96,7 +98,7 @@ final class LocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Location $location)
+    public function update(Request $request, Location $location): RedirectResponse
     {
         $data = $request->validate([
             'state' => ['nullable', 'string', 'max:255'],
@@ -121,7 +123,7 @@ final class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Location $location)
+    public function destroy(Location $location): RedirectResponse
     {
         $location->delete();
 

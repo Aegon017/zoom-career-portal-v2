@@ -1,5 +1,5 @@
 import { NavItem, SharedData } from "@/types";
-import { ChartBar, ClipboardList, CodeXml, Factory, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
+import { ChartBar, ClipboardList, CodeXml, Factory, Languages, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -66,6 +66,11 @@ export function AppSidebar() {
             title: 'Locations',
             href: '/admin/locations',
             icon: MapPin,
+        },
+        {
+            title: 'Languages',
+            href: '/admin/languages',
+            icon: Languages,
         },
     ];
 

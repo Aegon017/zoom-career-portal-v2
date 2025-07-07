@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Jobseeker;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateWorkExperienceRequest;
 use App\Models\Company;
 use App\Models\Skill;
 use App\Models\User;
@@ -18,16 +19,10 @@ final class ProfileController extends Controller
 {
     public function show(User $user)
     {
-        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company');
-        $jobseeker_profile = $user->profile;
-        $skills = Skill::get();
-        $companies = Company::where('status', VerificationStatusEnum::Verified->value)->orderBy('name')->get();
+        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company', 'profile', 'address', 'address.location');
 
         return Inertia::render('jobseeker/profile', [
             'user' => $user,
-            'skills' => $skills,
-            'jobseeker_profile' => $jobseeker_profile,
-            'companies' => $companies,
         ]);
     }
 
@@ -36,34 +31,39 @@ final class ProfileController extends Controller
         $user = Auth::user();
 
         $data = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,' . $user->id],
-            'location' => 'nullable|string|max:255',
-            'experience' => 'nullable|string|max:255',
-            'notice_period' => 'nullable|string|max:255',
-            'profile_image' => 'nullable|string|max:255',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'avatar' => ['nullable', 'url'],
+            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'experience' => ['nullable', 'string', 'max:255'],
+            'notice_period' => ['nullable', 'string', 'max:255'],
+            'job_title' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user->update([
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'],
-            'location' => $data['location'],
         ]);
 
-        if (! empty($data['profile_image']) && Storage::disk('public')->exists($data['profile_image'])) {
-            $user->addMedia(storage_path('app/public/' . $data['profile_image']))
+        if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
+            $user->addMedia(storage_path('app/public/' . $data['avatar']))
                 ->preservingOriginal()
-                ->toMediaCollection('profile_images');
+                ->toMediaCollection('avatars');
         }
 
-        $user->profile()->update([
+        $user->address()->updateOrCreate([], [
+            'location_id' => $data['location_id'],
+        ]);
+
+        $user->profile()->updateOrCreate([], [
+            'job_title' => $data['job_title'],
             'experience' => $data['experience'],
             'notice_period' => $data['notice_period'],
         ]);
 
-        return back()->with('success', 'succesfully updated basic details');
+        return back()->with('success', 'Profile updated successfully.');
     }
 
     public function storeSummary(Request $request)
@@ -100,5 +100,22 @@ final class ProfileController extends Controller
         $user->skills()->sync($skillIds);
 
         return back()->with('success', 'Successfully updated your skills');
+    }
+
+    public function storeExperience(CreateWorkExperienceRequest $request)
+    {
+        $data = $request->validated();
+
+        $user = Auth::user();
+
+        $work_experience = $user->workExperiences()->updateOrCreate($data);
+
+        if (! empty($data['logo']) && Storage::disk('public')->exists($data['logo'])) {
+            $work_experience->addMedia(storage_path('app/public/' . $data['logo']))
+                ->preservingOriginal()
+                ->toMediaCollection('logos');
+        }
+
+        return redirect()->back()->with('success', 'Work experience added successfully.');
     }
 }
