@@ -144,6 +144,8 @@ export interface Profile {
     user_id: number;
     user: User;
     job_title: string;
+    experience: string;
+    notice_period: string;
     created_at: string;
     updated_at: string;
 }

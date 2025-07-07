@@ -1648,8 +1648,7 @@ ul.zc-certificate-list li {
 
 .zc-lightbox .zc-lightbox-wrapper .zc-btn-pclose {
     position: relative;
-    top: -20px;
-    left: 100%;
+    left: 97%;
     width: fit-content;
     cursor: pointer;
 }

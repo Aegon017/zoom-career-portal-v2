@@ -98,7 +98,7 @@ export function AppSidebarHeader( { sidebarToggle }: { sidebarToggle: ReturnType
                         ) : (
                             <div
                                 className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle"
-                                style={ { width: '40px', height: '40px' } }
+                                style={ { width: '30px', height: '30px', fontSize: '13px' } }
                             >
                                 { getInitials( user.name ) }
                             </div>
