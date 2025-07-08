@@ -34,7 +34,7 @@ final class WorkExperience extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('logoss')->singleFile();
+        $this->addMediaCollection('logos')->singleFile();
     }
 
     public function getLogoUrlAttribute(): string

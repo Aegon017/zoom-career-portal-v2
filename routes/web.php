@@ -60,6 +60,7 @@ Route::get('/locations/search', [LocationController::class, 'search']);
 Route::get('/skills/search', [SkillController::class, 'search']);
 Route::get('/companies', [CompanyController::class, 'search']);
 Route::get('/industries/search', [IndustryController::class, 'search']);
+Route::get('/languages/search', [LanguageController::class, 'search']);
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     // otp routes
@@ -123,8 +124,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
-        Route::post('/profile/experience', [ProfileController::class, 'storeExperience'])->name('profile.experience.store');
+        Route::post('/profile/employments', [ProfileController::class, 'storeEmployments'])->name('profile.employments.store');
+        Route::post('/profile/educations', [ProfileController::class, 'storeEducations'])->name('profile.educations.store');
         Route::post('/profile/personal-details', [ProfileController::class, 'storePersonalDetails'])->name('profile.personal-details.store');
+        Route::post('/profile/languages', [ProfileController::class, 'storeLanguages'])->name('profile.languages.store');
+        Route::post('/profile/certificates', [ProfileController::class, 'storeCertificates'])->name('profile.certificates.store');
         Route::prefix('/jobs')->name('jobs.')->group(function (): void {
             Route::get('/', [JobseekerJobController::class, 'index'])->name('index');
             Route::get('/your/saved/', [JobseekerJobController::class, 'savedJobs'])->name('saved.index');

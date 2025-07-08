@@ -10,6 +10,10 @@ import SkillsModal from '@/components/jobseeker/skills-modal';
 import EmploymentModal from '@/components/jobseeker/employment-modal';
 import PopupModal from '@/components/popup-modal';
 import PersonalDetails from '@/components/jobseeker/profile/personal-details';
+import Languages from '@/components/jobseeker/profile/languages';
+import Certifications from '@/components/jobseeker/profile/certifications';
+import Educations from '@/components/jobseeker/profile/educations';
+import Employments from '@/components/jobseeker/profile/employments';
 
 type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | 'employment' | 'personalDetails' | null;
 
@@ -144,243 +148,15 @@ export default function Profile( { user }: Props ) {
                         </div>
                     </div>
 
-                    <div className="zc-profile-employment zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <h3 className="mb-0">Employment</h3>
-                            { isUpdatable && (
-                                <a onClick={ () => {
-                                    setEmploymentDefaultValues( undefined );
-                                    openModal( 'employment' );
-                                } } className="zc-btn-add">
-                                    <i className="fa-solid fa-plus"></i>
-                                </a>
-                            ) }
-                        </div>
-                        <div className="zc-card-content">
-                            <div className="employment-list">
-                                { user.work_experiences.map( ( workExperience, index ) => (
-                                    <div key={ index } className="employment-list-item">
-                                        <div className="icon-text">
-                                            <h3 className="job-title">{ workExperience.title }</h3>
-                                            { isUpdatable && (
-                                                <a
-                                                    onClick={ () => {
-                                                        setEmploymentDefaultValues( workExperience );
-                                                        openModal( 'employment' );
-                                                    } }
-                                                    className="zc-btn-edit"
-                                                >
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
-                                            ) }
-                                        </div>
-                                        <h4 className="company-name-location">
-                                            { workExperience.company_name ?? workExperience.company?.name }
-                                            { workExperience.company?.address && (
-                                                <>
-                                                    { ", " }
-                                                    { [
-                                                        workExperience.company.address.location.city,
-                                                        workExperience.company.address.location.state,
-                                                        workExperience.company.address.location.country
-                                                    ]
-                                                        .filter( Boolean )
-                                                        .join( ', ' ) }
-                                                </>
-                                            ) }
-                                        </h4>
-                                        <div className="duration">
-                                            { format( new Date( workExperience.start_date ), 'dd MMM yyyy' ) } -{ ' ' }
-                                            { workExperience.is_current || !workExperience.end_date
-                                                ? 'Present'
-                                                : format( new Date( workExperience.end_date ), 'dd MMM yyyy' ) }
-                                        </div>
-                                    </div>
-                                ) ) }
-                            </div>
-                        </div>
-                    </div>
+                    <Employments isUpdatable={ isUpdatable } user={ user } />
 
-                    <div className="zc-profile-education zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <h3 className="mb-0">Education</h3>
-                            { isUpdatable && (
-                                <a href="#" id="zc-add-candidate-education" className="zc-btn-add">
-                                    <i className="fa-solid fa-plus"></i>
-                                </a>
-                            ) }
-                        </div>
-                        <div className="zc-card-content">
-                            <div className="education-list">
-                                <div className="education-list-item">
-                                    <div className="icon-text">
-                                        <h3 className="education-course-title">Master of Business Administration (MBA)</h3>
-                                        { isUpdatable && (
-                                            <a href="#" id="zc-edit-candidate-education" className="zc-btn-edit">
-                                                <i className="fa-solid fa-pencil"></i>
-                                            </a>
-                                        ) }
-                                    </div>
-                                    <h4 className="education-university-college">Hyderabad University</h4>
-                                    <div className="course-type-year d-flex align-items-center gap-1 mb-2">
-                                        <span className="year">2025</span>
-                                        <span className="divider"></span>
-                                        <span className="course-type">Full Time</span>
-                                    </div>
-                                </div>
-                                <div className="education-list-item">
-                                    <div className="icon-text">
-                                        <h3 className="education-course-title">Bachelor of Computer Applications</h3>
-                                        { isUpdatable && (
-                                            <a href="#" id="zc-edit-candidate-education" className="zc-btn-edit">
-                                                <i className="fa-solid fa-pencil"></i>
-                                            </a>
-                                        ) }
-                                    </div>
-                                    <h4 className="education-university-college">Acme College of Information Technology - [ACIT], Hyderabad</h4>
-                                    <div className="course-type-year d-flex align-items-center gap-1 mb-2">
-                                        <span className="year">2023</span>
-                                        <span className="divider"></span>
-                                        <span className="course-type">Full Time</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Educations isUpdatable={ isUpdatable } user={ user } />
 
-                    <div className="zc-profile-certification zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <div className="text">
-                                <h3 className="mb-0">Certification</h3>
-                                <p className="mb-0">Add details of certifications you have completed</p>
-                            </div>
-                            <a href="#" id="zc-add-candidate-certificate" className="zc-btn-add">
-                                <i className="fa-solid fa-plus"></i>
-                            </a>
-                        </div>
-                        <div className="zc-card-content">
-                            <div className="certificate-list">
-                                <div className="certificate-list-item d-flex align-items-start gap-2">
-                                    <div className="icon">
-                                        <svg fill="#000000" width="40" height="40" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                                            <path d="M32,6H4A2,2,0,0,0,2,8V28a2,2,0,0,0,2,2H19l.57-.7.93-1.14L20.41,28H4V8H32l0,8.56a8.41,8.41,0,0,1,2,1.81V8A2,2,0,0,0,32,6Z" className="clr-i-outline clr-i-outline-path-1"></path>
-                                            <rect x="7" y="12" width="17" height="1.6" className="clr-i-outline clr-i-outline-path-2"></rect>
-                                            <rect x="7" y="16" width="11" height="1.6" className="clr-i-outline clr-i-outline-path-3"></rect>
-                                            <rect x="7" y="23" width="10" height="1.6" className="clr-i-outline clr-i-outline-path-4"></rect>
-                                            <path d="M27.46,17.23a6.36,6.36,0,0,0-4.4,11l-1.94,2.37.9,3.61,3.66-4.46a6.26,6.26,0,0,0,3.55,0l3.66,4.46.9-3.61-1.94-2.37a6.36,6.36,0,0,0-4.4-11Zm0,10.68a4.31,4.31,0,1,1,4.37-4.31A4.35,4.35,0,0,1,27.46,27.91Z" className="clr-i-outline clr-i-outline-path-5"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="info">
-                                        <div className="title d-flex gap-2 align-items-center">
-                                            <h3 className="certificate-name m-0">Cybersecurity Fundamentals</h3>
-                                            <a href="#" id="zc-edit-candidate-certificate" className="zc-btn-edit">
-                                                <i className="fa-solid fa-pencil"></i>
-                                            </a>
-                                        </div>
-                                        <div className="certificate-validity">
-                                            Validity: Lifetime
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="certificate-list-item d-flex align-items-start gap-2">
-                                    <div className="icon">
-                                        <svg fill="#000000" width="40" height="40" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                                            <path d="M32,6H4A2,2,0,0,0,2,8V28a2,2,0,0,0,2,2H19l.57-.7.93-1.14L20.41,28H4V8H32l0,8.56a8.41,8.41,0,0,1,2,1.81V8A2,2,0,0,0,32,6Z" className="clr-i-outline clr-i-outline-path-1"></path>
-                                            <rect x="7" y="12" width="17" height="1.6" className="clr-i-outline clr-i-outline-path-2"></rect>
-                                            <rect x="7" y="16" width="11" height="1.6" className="clr-i-outline clr-i-outline-path-3"></rect>
-                                            <rect x="7" y="23" width="10" height="1.6" className="clr-i-outline clr-i-outline-path-4"></rect>
-                                            <path d="M27.46,17.23a6.36,6.36,0,0,0-4.4,11l-1.94,2.37.9,3.61,3.66-4.46a6.26,6.26,0,0,0,3.55,0l3.66,4.46.9-3.61-1.94-2.37a6.36,6.36,0,0,0-4.4-11Zm0,10.68a4.31,4.31,0,1,1,4.37-4.31A4.35,4.35,0,0,1,27.46,27.91Z" className="clr-i-outline clr-i-outline-path-5"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="info">
-                                        <div className="title d-flex gap-2 align-items-center">
-                                            <h3 className="certificate-name m-0">Cybersecurity Associate - SOC Analyst</h3>
-                                            <a href="#" id="zc-edit-candidate-certificate" className="zc-btn-edit">
-                                                <i className="fa-solid fa-pencil"></i>
-                                            </a>
-                                        </div>
-                                        <div className="certificate-validity">
-                                            Validity: not mentioned
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Certifications isUpdatable={ isUpdatable } user={ user } />
 
                     {/* Personal Details */ }
                     <PersonalDetails isUpdatable={ isUpdatable } user={ user } />
-
-                    <div className="zc-profile-candidate-languages zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <div className="text">
-                                <h3 className="mb-0">Languages</h3>
-                            </div>
-                            <a href="#" id="zc-edit-candidate-languages" className="zc-btn-edit">
-                                <i className="fa-solid fa-pencil"></i>
-                            </a>
-                        </div>
-                        <div className="zc-card-content">
-                            <div className="language-list">
-                                <div className="language-list-item">
-                                    <div className="row top">
-                                        <div className="col-6 mb-2">
-                                            <div className="title">Language</div>
-                                            <div className="content">English</div>
-                                        </div>
-                                        <div className="col-6 mb-2">
-                                            <div className="title">Proficiency</div>
-                                            <div className="content">Proficient</div>
-                                        </div>
-                                    </div>
-                                    <div className="bottom">
-                                        <ul>
-                                            <li>
-                                                <i className="fa-solid fa-check"></i>
-                                                Read
-                                            </li>
-                                            <li>
-                                                <i className="fa-solid fa-check"></i>
-                                                Write
-                                            </li>
-                                            <li>
-                                                <i className="fa-solid fa-check"></i>
-                                                Speak
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className="language-list-item">
-                                    <div className="row top">
-                                        <div className="col-6 mb-2">
-                                            <div className="title">Language</div>
-                                            <div className="content">Telugu</div>
-                                        </div>
-                                        <div className="col-6 mb-2">
-                                            <div className="title">Proficiency</div>
-                                            <div className="content">Proficient</div>
-                                        </div>
-                                    </div>
-                                    <div className="bottom">
-                                        <ul>
-                                            <li>
-                                                <i className="fa-solid fa-xmark"></i>
-                                                Read
-                                            </li>
-                                            <li>
-                                                <i className="fa-solid fa-xmark"></i>
-                                                Write
-                                            </li>
-                                            <li>
-                                                <i className="fa-solid fa-check"></i>
-                                                Speak
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Languages isUpdatable={ isUpdatable } user={ user } />
 
                     <ProfileModal
                         user={ user }

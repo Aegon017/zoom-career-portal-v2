@@ -4,22 +4,29 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Jobseeker;
 
+use App\Enums\ProficiencyEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWorkExperienceRequest;
+use App\Models\Certificate;
 use App\Models\Company;
+use App\Models\Education;
+use App\Models\Language;
 use App\Models\Skill;
 use App\Models\User;
+use App\Models\UserLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 final class ProfileController extends Controller
 {
     public function show(User $user)
     {
-        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company', 'profile', 'address', 'address.location', 'workPermits', 'personalDetail');
+        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company', 'profile', 'address', 'address.location', 'workPermits', 'personalDetail', 'userLanguages', 'userLanguages.language', 'certificates', 'educations');
 
         return Inertia::render('jobseeker/profile', [
             'user' => $user,
@@ -102,21 +109,76 @@ final class ProfileController extends Controller
         return back()->with('success', 'Successfully updated your skills');
     }
 
-    public function storeExperience(CreateWorkExperienceRequest $request)
+    public function storeEmployments(Request $request)
     {
-        $data = $request->validated();
-
         $user = Auth::user();
 
-        $work_experience = $user->workExperiences()->updateOrCreate($data);
+        $validated = $request->validate([
+            'work_experiences' => 'required|array',
+            'work_experiences.*.company_id' => 'nullable|integer|exists:companies,id',
+            'work_experiences.*.company_name' => 'nullable|string|max:255',
+            'work_experiences.*.title' => 'required|string|max:255',
+            'work_experiences.*.start_date' => 'nullable|date',
+            'work_experiences.*.end_date' => 'nullable|date|after_or_equal:work_experiences.*.start_date',
+            'work_experiences.*.is_current' => 'required|boolean',
+        ]);
 
-        if (! empty($data['logo']) && Storage::disk('public')->exists($data['logo'])) {
-            $work_experience->addMedia(storage_path('app/public/' . $data['logo']))
-                ->preservingOriginal()
-                ->toMediaCollection('logos');
+        DB::transaction(function () use ($user, $validated) {
+            $user->workExperiences()->delete();
+
+            foreach ($validated['work_experiences'] as $we) {
+                $user->workExperiences()->create([
+                    'company_id' => $we['company_id'],
+                    'company_name' => $we['company_id'] === null ? $we['company_name'] : null,
+                    'title' => $we['title'],
+                    'start_date' => $we['start_date'],
+                    'end_date' => $we['is_current'] ? null : $we['end_date'],
+                    'is_current' => $we['is_current'],
+                ]);
+            }
+        });
+
+        return back()->with('success', 'Work experiences updated successfully.');
+    }
+
+    public function storeEducations(Request $request)
+    {
+        $validated = $request->validate([
+            'educations' => 'required|array',
+            'educations.*.course_title' => 'required|string|max:255',
+            'educations.*.institution' => 'required|string|max:255',
+            'educations.*.start_date' => 'required|date',
+            'educations.*.end_date' => 'nullable|date',
+            'educations.*.is_current' => 'required|boolean',
+            'educations.*.course_type' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $educationIds = [];
+
+        foreach ($validated['educations'] as $edu) {
+            $education = Education::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'course_title' => $edu['course_title'],
+                    'institution' => $edu['institution'],
+                ],
+                [
+                    'start_date' => $edu['start_date'],
+                    'end_date' => $edu['is_current'] ? null : $edu['end_date'],
+                    'is_current' => $edu['is_current'],
+                    'course_type' => $edu['course_type'],
+                ]
+            );
+
+            $educationIds[] = $education->id;
         }
 
-        return redirect()->back()->with('success', 'Work experience added successfully.');
+        Education::where('user_id', $user->id)
+            ->whereNotIn('id', $educationIds)
+            ->delete();
+
+        return back()->with('success', 'Education history updated successfully.');
     }
 
     public function storePersonalDetails(Request $request)
@@ -149,5 +211,71 @@ final class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'personal details updated successfully.');
+    }
+
+    public function storeLanguages(Request $request)
+    {
+        $data = $request->validate([
+            'languages' => 'required|array',
+            'languages.*.language_id' => 'required|integer|exists:languages,id',
+            'languages.*.proficiency' => ['required', new Enum(ProficiencyEnum::class)],
+            'languages.*.can_read' => 'nullable|boolean',
+            'languages.*.can_write' => 'nullable|boolean',
+            'languages.*.can_speak' => 'nullable|boolean',
+        ]);
+
+        $user = Auth::user();
+        $userLanguageIds = [];
+
+        foreach ($data['languages'] as $langData) {
+            $userLanguage = UserLanguage::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'language_id' => $langData['language_id'],
+                ],
+                [
+                    'proficiency' => $langData['proficiency'],
+                    'can_read' => $langData['can_read'] ?? false,
+                    'can_write' => $langData['can_write'] ?? false,
+                    'can_speak' => $langData['can_speak'] ?? false,
+                ]
+            );
+
+            $userLanguageIds[] = $userLanguage->id;
+        }
+
+        UserLanguage::where('user_id', $user->id)
+            ->whereNotIn('id', $userLanguageIds)
+            ->delete();
+
+        return back()->with('success', 'Languages updated successfully.');
+    }
+
+    public function storeCertificates(Request $request)
+    {
+        $data = $request->validate([
+            'certifications' => 'required|array',
+            'certifications.*.name' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $certificateIds = [];
+
+        foreach ($data['certifications'] as $cert) {
+            $certificate = Certificate::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'name' => $cert['name'],
+                ],
+                []
+            );
+            $certificateIds[] = $certificate->id;
+        }
+
+        Certificate::where('user_id', $user->id)
+            ->whereNotIn('id', $certificateIds)
+            ->delete();
+
+        return back()->with('success', 'Certificates updated successfully.');
     }
 }

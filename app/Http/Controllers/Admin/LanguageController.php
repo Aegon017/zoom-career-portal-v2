@@ -109,4 +109,25 @@ class LanguageController extends Controller
 
         return to_route('admin.languages.index')->with('success', 'Language record deleted successfully.');
     }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => 'nullable|string|max:100',
+        ]);
+
+        $query = $request->input('search');
+
+        $languages = Language::when($query, function ($q) use ($query) {
+            $q->where('name', 'like', '%' . $query . '%');
+        })
+            ->orderBy('name')
+            ->limit(20)
+            ->get(['id', 'name']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $languages,
+        ]);
+    }
 }

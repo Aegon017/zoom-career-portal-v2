@@ -207,7 +207,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(CareerInterest::class);
     }
 
-    public function certificate(): HasMany
+    public function certificates(): HasMany
     {
         return $this->hasMany(Certificate::class);
     }

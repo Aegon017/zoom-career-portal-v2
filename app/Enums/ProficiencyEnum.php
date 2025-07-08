@@ -8,11 +8,11 @@ enum ProficiencyEnum: string
 {
     use EnumHelpers;
 
-    case Beginner = 'Beginner';
-    case Intermediate = 'Intermediate';
-    case Proficient = 'Proficient';
-    case Fluent = 'Fluent';
-    case Native = 'Native';
+    case Beginner = 'beginner';
+    case Intermediate = 'intermediate';
+    case Proficient = 'proficient';
+    case Fluent = 'fluent';
+    case Native = 'native';
 
     public function label(): string
     {
@@ -21,7 +21,7 @@ enum ProficiencyEnum: string
             self::Intermediate => 'Intermediate',
             self::Proficient => 'Proficient',
             self::Fluent => 'Fluent',
-            self::Native => 'Native'
+            self::Native => 'Native',
         };
     }
 }

@@ -74,6 +74,9 @@ export interface User {
     work_permits: workPermit[];
     address: Address;
     profile?: Profile;
+    user_languages?: UserLanguage[];
+    certificates: Certificate[];
+    educations: Education[];
     skills?: Skill[];
     created_at: string;
     updated_at: string;
@@ -238,11 +241,16 @@ interface Application {
     updated_at: string;
 }
 
-interface Education {
-    id: number;
-    user_id: number;
-    school_name: string;
-    graduation_year: number;
+export interface Education {
+    id?: number;
+    course_title: string;
+    institution: string;
+    start_date: Date | null;
+    end_date?: Date | null;
+    is_current: boolean;
+    course_type: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 interface OpeningTItle {
@@ -283,17 +291,15 @@ export interface Chat {
 
 
 export interface WorkExperience {
-    id: number;
+    id?: number;
     user_id?: number;
-    company_id?: number;
+    company_id?: number | null;
     company_name: string;
     title: string;
-    start_date: string;
-    end_date: string;
-    is_current?: boolean;
-    logo?: string;
-    created_at?: string;
-    updated_at?: string;
+    start_date: Date | null;
+    end_date: Date | null;
+    is_current: boolean;
+    logo_url?: string | null;
     company: Company;
 }
 
@@ -370,3 +376,25 @@ export interface Language {
     created_at: string;
     updated_at: string;
 }
+
+export interface UserLanguage {
+    id?: number;
+    language: {
+        id?: number;
+        name: string;
+        code?: string;
+    };
+    proficiency: string;
+    can_read: boolean;
+    can_write: boolean;
+    can_speak: boolean;
+}
+
+export interface Certificate {
+    id?: number;
+    user_id?: number;
+    name: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
