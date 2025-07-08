@@ -34,7 +34,7 @@ final class ProfileController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'avatar' => ['nullable', 'url'],
+            'avatar' => ['nullable', 'string'],
             'location_id' => ['nullable', 'integer', 'exists:locations,id'],
             'experience' => ['nullable', 'string', 'max:255'],
             'notice_period' => ['nullable', 'string', 'max:255'],

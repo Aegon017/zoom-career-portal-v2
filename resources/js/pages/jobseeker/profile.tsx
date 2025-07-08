@@ -42,16 +42,18 @@ export default function Profile( { user }: Props ) {
                     <div className="zc-candidate-profile-header mb-3">
                         <div className="top-cover"></div>
                         <div className="candidate-basic-details d-block d-sm-flex">
-                            { user.avatar_url ? (
-                                <img src={ user.avatar_url } />
-                            ) : (
-                                <div
-                                    className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle m-3"
-                                    style={ { width: '160px', height: '160px' } }
-                                >
-                                    { getInitials( user.name ) }
-                                </div>
-                            ) }
+                            <div className="candidate-image p-3">
+                                { user.avatar_url ? (
+                                    <img src={ user.avatar_url } />
+                                ) : (
+                                    <div
+                                        className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle fs-1"
+                                        style={ { width: '160px', height: '160px' } }
+                                    >
+                                        { getInitials( user.name ) }
+                                    </div>
+                                ) }
+                            </div>
                             <div className="candidate-info p-3 flex-fill">
                                 <div className="zc-row d-block d-md-flex justify-content-between bb-style-2 pb-3">
                                     <div className="left-col mb-2 mb-md-0">
@@ -287,6 +289,7 @@ export default function Profile( { user }: Props ) {
                             </div>
                         </div>
                     </div>
+
                     <div className="zc-profile-personal-details zc-card-style-2 mb-3">
                         <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                             <div className="text">
@@ -325,6 +328,7 @@ export default function Profile( { user }: Props ) {
                             </div>
                         </div>
                     </div>
+
                     <div className="zc-profile-candidate-languages zc-card-style-2 mb-3">
                         <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                             <div className="text">
@@ -395,6 +399,7 @@ export default function Profile( { user }: Props ) {
                             </div>
                         </div>
                     </div>
+
                     <ProfileModal
                         user={ user }
                         isActive={ activeModal === 'profile' }
@@ -418,6 +423,7 @@ export default function Profile( { user }: Props ) {
                         isActive={ activeModal === 'employment' }
                         handleClose={ closeModal }
                     />
+
                 </div>
             </div>
         </AppLayout>
