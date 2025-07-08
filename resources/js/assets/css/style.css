@@ -2904,5 +2904,5 @@ ul.zc-certificate-list li {
 }
 
 .iti {
-    display: block;
+    display: block !important;
 }
