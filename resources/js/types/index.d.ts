@@ -70,6 +70,8 @@ export interface User {
     email_verified_at: string | null;
     work_experiences: WorkExperience[];
     careerInterest: CareerInterest;
+    personal_detail: PersonalDetail;
+    work_permits: workPermit[];
     address: Address;
     profile?: Profile;
     skills?: Skill[];
@@ -78,6 +80,20 @@ export interface User {
     [ key: string ]: unknown;
 }
 
+export interface PersonalDetails {
+    user_id: number;
+    gender: string;
+    date_of_birth: Date;
+    marital_status: string;
+    differently_abled: boolean;
+    user?: User;
+}
+
+export interface WorkPermit {
+    user_id: number;
+    country: string;
+    user?: User;
+}
 export interface CareerInterest {
     preferred_positions?: string[];
     post_graduation_plans?: string[];
@@ -322,7 +338,7 @@ export interface Location {
     country: string;
     state: string;
     city: string;
-    fullName: string;
+    full_name: string;
 }
 
 export interface Setting {

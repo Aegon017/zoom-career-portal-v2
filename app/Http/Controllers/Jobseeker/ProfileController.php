@@ -19,7 +19,7 @@ final class ProfileController extends Controller
 {
     public function show(User $user)
     {
-        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company', 'profile', 'address', 'address.location');
+        $user = $user->load('followers', 'followingUsers', 'followingCompanies', 'skills', 'workExperiences', 'workExperiences.company', 'profile', 'address', 'address.location', 'workPermits', 'personalDetail');
 
         return Inertia::render('jobseeker/profile', [
             'user' => $user,
@@ -117,5 +117,37 @@ final class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'Work experience added successfully.');
+    }
+
+    public function storePersonalDetails(Request $request)
+    {
+        $validated = $request->validate([
+            'gender' => 'required|string',
+            'date_of_birth' => 'required|date',
+            'location_id' => 'required|integer|exists:locations,id',
+            'marital_status' => 'required|string',
+            'work_permit' => 'required|array',
+            'work_permit.*' => 'string',
+            'differently_abled' => 'required|boolean',
+        ]);
+
+        $user = Auth::user();
+
+        $user->personalDetail()->updateOrCreate(
+            ['user_id' => $user->id],
+            collect($validated)->except('location_id')->toArray()
+        );
+
+        $user->address()->updateOrCreate(
+            [],
+            ['location_id' => $validated['location_id']]
+        );
+
+        $user->workPermits()->delete();
+        foreach ($validated['work_permit'] as $country) {
+            $user->workPermits()->create(['country' => $country]);
+        }
+
+        return redirect()->back()->with('success', 'personal details updated successfully.');
     }
 }

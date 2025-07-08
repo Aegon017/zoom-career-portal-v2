@@ -17,11 +17,19 @@ final class LocationController extends Controller
             ->orderBy('country')
             ->pluck('country');
 
+        $countryOptions = $countries->map(function ($country) {
+            return [
+                'label' => $country,
+                'value' => $country,
+            ];
+        });
+
         return response()->json([
             'success' => true,
-            'data' => $countries,
+            'data' => $countryOptions,
         ]);
     }
+
 
     public function getStates(Request $request)
     {
@@ -36,9 +44,16 @@ final class LocationController extends Controller
             ->orderBy('state')
             ->pluck('state');
 
+        $stateOptions = $states->map(function ($state) {
+            return [
+                'label' => $state,
+                'value' => $state,
+            ];
+        });
+
         return response()->json([
             'success' => true,
-            'data' => $states,
+            'data' => $stateOptions,
         ]);
     }
 
@@ -57,9 +72,16 @@ final class LocationController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
+        $cityOptions = $cities->map(function ($city) {
+            return [
+                'label' => $city,
+                'value' => $city,
+            ];
+        });
+
         return response()->json([
             'success' => true,
-            'data' => $cities,
+            'data' => $cityOptions,
         ]);
     }
 
@@ -68,9 +90,9 @@ final class LocationController extends Controller
         $search = $request->query('search', '');
 
         $locations = Location::when($search, function ($query, string $search): void {
-            $query->where('city', 'like', '%'.$search.'%')
-                ->orWhere('state', 'like', '%'.$search.'%')
-                ->orWhere('country', 'like', '%'.$search.'%');
+            $query->where('city', 'like', '%' . $search . '%')
+                ->orWhere('state', 'like', '%' . $search . '%')
+                ->orWhere('country', 'like', '%' . $search . '%');
         })
             ->limit(20)
             ->get([

@@ -8,8 +8,10 @@ import ProfileModal from '@/components/jobseeker/profile-modal';
 import SummaryModal from '@/components/jobseeker/summary-modal';
 import SkillsModal from '@/components/jobseeker/skills-modal';
 import EmploymentModal from '@/components/jobseeker/employment-modal';
+import PopupModal from '@/components/popup-modal';
+import PersonalDetails from '@/components/jobseeker/profile/personal-details';
 
-type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | 'employment' | null;
+type ModalName = 'profile' | 'summary' | 'experience' | 'skills' | 'employment' | 'personalDetails' | null;
 
 interface Props {
     user: User,
@@ -47,7 +49,7 @@ export default function Profile( { user }: Props ) {
                                     <img src={ user.avatar_url } />
                                 ) : (
                                     <div
-                                        className="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle fs-1"
+                                        className="bg-secondary m-auto text-white d-flex align-items-center justify-content-center rounded-circle fs-1"
                                         style={ { width: '160px', height: '160px' } }
                                     >
                                         { getInitials( user.name ) }
@@ -306,44 +308,8 @@ export default function Profile( { user }: Props ) {
                         </div>
                     </div>
 
-                    <div className="zc-profile-personal-details zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <div className="text">
-                                <h3 className="mb-0">Personal Details</h3>
-                            </div>
-                            <a href="#" id="zc-edit-candidate-pdetails" className="zc-btn-edit">
-                                <i className="fa-solid fa-pencil"></i>
-                            </a>
-                        </div>
-                        <div className="zc-card-content">
-                            <div className="row candidate-personal-details">
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Gender</div>
-                                    <div className="value">Female</div>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Date Of Birth</div>
-                                    <div className="value">16 Sep 2002</div>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Address</div>
-                                    <div className="value">Banjara Hills, Hyderabad - 500034, Telangana, India</div>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Marital Status</div>
-                                    <div className="value">Single/unmarried</div>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Work Permit</div>
-                                    <div className="value">India</div>
-                                </div>
-                                <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                                    <div className="title">Differently Abled</div>
-                                    <div className="value">No</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {/* Personal Details */ }
+                    <PersonalDetails isUpdatable={ isUpdatable } user={ user } />
 
                     <div className="zc-profile-candidate-languages zc-card-style-2 mb-3">
                         <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">

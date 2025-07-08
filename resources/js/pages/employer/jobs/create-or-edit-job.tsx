@@ -67,12 +67,7 @@ const CreateOrEditJob = ( {
             const res = await axios.get( "/location/countries" );
             const countries = res.data?.data || [];
 
-            const formatted = countries.map( ( c: string ) => ( {
-                value: c,
-                label: c,
-            } ) );
-
-            setCountries( formatted );
+            setCountries( countries );
         } catch ( error ) {
             console.error( 'Error fetching countries:', error );
         }
@@ -87,12 +82,7 @@ const CreateOrEditJob = ( {
 
             const states = res.data?.data || [];
 
-            const formatted = states.map( ( s: string ) => ( {
-                value: s,
-                label: s,
-            } ) );
-
-            setStates( ( prev ) => ( { ...prev, [ countryName ]: formatted } ) );
+            setStates( ( prev ) => ( { ...prev, [ countryName ]: states } ) );
         } catch ( error ) {
             console.error( 'Error fetching states:', error );
         }
@@ -108,12 +98,7 @@ const CreateOrEditJob = ( {
 
             const cities = res.data?.data || [];
 
-            const formatted = cities.map( ( city: string ) => ( {
-                value: city,
-                label: city,
-            } ) );
-
-            setCities( ( prev ) => ( { ...prev, [ stateName ]: formatted } ) );
+            setCities( ( prev ) => ( { ...prev, [ stateName ]: cities } ) );
         } catch ( error ) {
             console.error( 'Error fetching cities:', error );
         }

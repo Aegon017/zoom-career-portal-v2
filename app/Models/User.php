@@ -162,12 +162,12 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(Follow::class, 'follower_id');
     }
 
-    public function followingUsers()
+    public function followingUsers(): MorphToMany
     {
         return $this->morphedByMany(self::class, 'followable', 'follows', 'follower_id');
     }
 
-    public function followingCompanies()
+    public function followingCompanies(): MorphToMany
     {
         return $this->morphedByMany(Company::class, 'followable', 'follows', 'follower_id');
     }
@@ -220,5 +220,15 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function userLanguages(): HasMany
     {
         return $this->hasMany(UserLanguage::class);
+    }
+
+    public function personalDetail(): HasOne
+    {
+        return $this->hasOne(PersonalDetail::class);
+    }
+
+    public function workPermits(): HasMany
+    {
+        return $this->hasMany(WorkPermit::class);
     }
 }

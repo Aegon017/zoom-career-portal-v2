@@ -10,6 +10,8 @@ final class Location extends Model
 {
     protected $fillable = ['country', 'state', 'city'];
 
+    protected $appends = ['full_name'];
+
     public function careerInterestLocations()
     {
         return $this->hasMany(CareerInterestLocation::class);

@@ -1635,7 +1635,8 @@ ul.zc-certificate-list li {
     padding: 30px;
     display: block;
     height: fit-content;
-    margin-top: 50px;
+    margin: auto;
+    margin-inline: 1rem;
     transform: scale(0);
     opacity: 0;
     transition: all 3s ease;

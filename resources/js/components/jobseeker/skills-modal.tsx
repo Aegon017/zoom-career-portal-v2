@@ -60,11 +60,6 @@ const SkillsModal: React.FC<SkillsModalProps> = ( { isActive, handleClose, user 
             onClose={ handleClose }
             onSave={ handleSubmit( onSubmit ) }
         >
-            <div className="lightbox-header">
-                <h4>Key Skills</h4>
-                <p className="mb-0">Add skills that best define your expertise.</p>
-            </div>
-
             <div className="lightbox-content py-3">
                 <div className="mb-3">
                     <label htmlFor="skills" className="form-label">Skills:</label>
