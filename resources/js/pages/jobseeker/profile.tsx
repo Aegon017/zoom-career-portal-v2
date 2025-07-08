@@ -97,19 +97,20 @@ export default function Profile( { user }: Props ) {
                                 </div>
                                 <div className="other-details">
                                     <ul>
-                                        { user.address?.location && (
-                                            <li><i className="fa-solid fa-location-dot"></i>{ user.address?.location.city }, { user.address?.location.state }, { user.address?.location.country }</li>
-
-                                        )
-                                        }
-                                        { user.profile?.experience && (
-                                            <li><i className="fa-solid fa-briefcase"></i>{ user.profile?.experience }</li>
-                                        )
-                                        }
-                                        { user.profile?.notice_period && (
-                                            <li><i className="fa-solid fa-calendar-days"></i>{ user.profile?.notice_period }</li>
-                                        )
-                                        }
+                                        <li>
+                                            <i className="fa-solid fa-location-dot"></i>{ ' ' }
+                                            { user.address?.location
+                                                ? `${ user.address.location.city }, ${ user.address.location.state }, ${ user.address.location.country }`
+                                                : 'N/A' }
+                                        </li>
+                                        <li>
+                                            <i className="fa-solid fa-briefcase"></i>{ ' ' }
+                                            { user.profile?.experience ? user.profile.experience : 'N/A' }
+                                        </li>
+                                        <li>
+                                            <i className="fa-solid fa-calendar-days"></i>{ ' ' }
+                                            { user.profile?.notice_period ? user.profile.notice_period : 'N/A' }
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -126,7 +127,7 @@ export default function Profile( { user }: Props ) {
                             ) }
                         </div>
                         <div className="zc-card-content">
-                            { user.profile?.summary }
+                            { user.profile?.summary ?? "No summary added yet." }
                         </div>
                     </div>
 
@@ -141,9 +142,11 @@ export default function Profile( { user }: Props ) {
                         </div>
                         <div className="zc-card-content">
                             <ul className="zc-skills-list">
-                                { user.skills?.map( ( skill ) => (
-                                    <li key={ skill.id }>{ skill.name }</li>
-                                ) ) }
+                                { user.skills && user.skills.length > 0 ? (
+                                    user.skills.map( skill => <li key={ skill.id }>{ skill.name }</li> )
+                                ) : (
+                                    <p>No skills added yet.</p>
+                                ) }
                             </ul>
                         </div>
                     </div>
@@ -175,13 +178,6 @@ export default function Profile( { user }: Props ) {
                         isActive={ activeModal === 'skills' }
                         handleClose={ closeModal }
                     />
-
-                    <EmploymentModal
-                        defaultValues={ employmentDefaultValues }
-                        isActive={ activeModal === 'employment' }
-                        handleClose={ closeModal }
-                    />
-
                 </div>
             </div>
         </AppLayout>
