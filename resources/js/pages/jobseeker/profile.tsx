@@ -66,12 +66,18 @@ export default function Profile( { user }: Props ) {
                                             ) }
                                         </div>
                                         <div className="d-block">
-                                            <div className="current-emp-info">
-                                                <h4 className="designation">{ user.profile?.job_title }</h4>
-                                            </div>
-                                            <div className="profile-updated-date">
-                                                Profile last updated - <span className="date">{ user.profile?.updated_at && format( new Date( user.profile?.updated_at ), "dd MMM yyyy" ) }</span>
-                                            </div>
+                                            { user.profile?.job_title && (
+                                                <div className="current-emp-info">
+                                                    <h4 className="designation">{ user.profile?.job_title }</h4>
+                                                </div>
+                                            )
+                                            }
+                                            { user.profile?.updated_at && (
+                                                <div className="profile-updated-date">
+                                                    Profile last updated - <span className="date">{ user.profile?.updated_at && format( new Date( user.profile?.updated_at ), "dd MMM yyyy" ) }</span>
+                                                </div>
+                                            )
+                                            }
                                         </div>
                                     </div>
                                     <div className="right-col follower-block d-flex align-items-start gap-2">
@@ -85,9 +91,19 @@ export default function Profile( { user }: Props ) {
                                 </div>
                                 <div className="other-details">
                                     <ul>
-                                        <li><i className="fa-solid fa-location-dot"></i>{ user.address?.location.city }, { user.address?.location.state }, { user.address?.location.country }</li>
-                                        <li><i className="fa-solid fa-briefcase"></i>{ user.profile?.experience }</li>
-                                        <li><i className="fa-solid fa-calendar-days"></i>{ user.profile?.notice_period }</li>
+                                        { user.address?.location && (
+                                            <li><i className="fa-solid fa-location-dot"></i>{ user.address?.location.city }, { user.address?.location.state }, { user.address?.location.country }</li>
+
+                                        )
+                                        }
+                                        { user.profile?.experience && (
+                                            <li><i className="fa-solid fa-briefcase"></i>{ user.profile?.experience }</li>
+                                        )
+                                        }
+                                        { user.profile?.notice_period && (
+                                            <li><i className="fa-solid fa-calendar-days"></i>{ user.profile?.notice_period }</li>
+                                        )
+                                        }
                                     </ul>
                                 </div>
                             </div>
