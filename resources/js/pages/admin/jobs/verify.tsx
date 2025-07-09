@@ -40,7 +40,6 @@ const Verify = ( { job }: Props ) => {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="min-h-screen bg-background">
                     <div className="container mx-auto px-4 py-8 max-w-6xl">
-                        {/* Header Section */ }
                         <Form { ...form }>
                             <form onSubmit={ handleSubmit( onSubmit ) }>
                                 <div className="mb-8">
@@ -62,14 +61,7 @@ const Verify = ( { job }: Props ) => {
                                 </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    {/* Employer Profile Section (left column) */ }
-                                    {/* ...existing employer profile and verification form... */ }
-
                                     <div className="lg:col-span-3 space-y-6">
-                                        {/* Company Information Card */ }
-                                        {/* ...your existing company info card code... */ }
-
-                                        {/* Job Details Card */ }
                                         <Card className="shadow-lg backdrop-blur-sm">
                                             <CardHeader className="pb-4">
                                                 <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
+use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
@@ -159,6 +160,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/users', UserController::class);
         Route::resource('/employees', AdminEmployeeController::class);
         Route::resource('/companies', CompanyController::class);
+        Route::resource('/jobs', JobController::class);
+        Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications');
         Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
         Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');

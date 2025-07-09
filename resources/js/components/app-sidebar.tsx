@@ -1,5 +1,5 @@
 import { NavItem, SharedData } from "@/types";
-import { ChartBar, ClipboardList, CodeXml, Factory, Languages, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
+import { BriefcaseBusiness, ChartBar, ClipboardList, CodeXml, Factory, Languages, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import AppLogo from "./app-logo";
@@ -46,6 +46,11 @@ export function AppSidebar() {
                     href: '/admin/companies',
                 },
             ]
+        },
+        {
+            title: 'Job Management',
+            href: '/admin/jobs',
+            icon: BriefcaseBusiness,
         },
         {
             title: 'Skills',

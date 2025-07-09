@@ -72,20 +72,20 @@ const ViewEmployee = ( { user, company }: Props ) => {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="flex items-start gap-6 mb-4">
-                                            { company.logo_url && (
+                                            { company?.logo_url && (
                                                 <div className="flex-shrink-0">
                                                     <img
-                                                        src={ company.logo_url }
+                                                        src={ company?.logo_url }
                                                         alt="Company Logo"
                                                         className="h-20 w-20 object-contain border rounded-xl shadow-sm bg-white p-2"
                                                     />
                                                 </div>
                                             ) }
                                             <div className="flex-1">
-                                                <h2 className="text-xl font-bold text-foreground">{ company.name }</h2>
-                                                { company.description && (
+                                                <h2 className="text-xl font-bold text-foreground">{ company?.name }</h2>
+                                                { company?.description && (
                                                     <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
-                                                        { company.description }
+                                                        { company?.description }
                                                     </p>
                                                 ) }
                                             </div>
@@ -94,43 +94,43 @@ const ViewEmployee = ( { user, company }: Props ) => {
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {/* Left column */ }
                                             <div className="space-y-3">
-                                                { company.industry && (
-                                                    <InfoItem icon={ <Briefcase /> } label="Industry" value={ company.industry.name } />
+                                                { company?.industry && (
+                                                    <InfoItem icon={ <Briefcase /> } label="Industry" value={ company?.industry.name } />
                                                 ) }
-                                                { company.type && (
-                                                    <InfoItem icon={ <Landmark /> } label="Company Type" value={ company.type } />
+                                                { company?.type && (
+                                                    <InfoItem icon={ <Landmark /> } label="Company Type" value={ company?.type } />
                                                 ) }
-                                                { company.size && (
-                                                    <InfoItem icon={ <Users /> } label="Company Size" value={ company.size } />
+                                                { company?.size && (
+                                                    <InfoItem icon={ <Users /> } label="Company Size" value={ company?.size } />
                                                 ) }
                                             </div>
 
                                             {/* Right column */ }
                                             <div className="space-y-3">
-                                                { company.website_url && (
+                                                { company?.website_url && (
                                                     <InfoItem
                                                         icon={ <Globe /> }
                                                         label="Website"
                                                         value={
                                                             <a
-                                                                href={ company.website_url }
+                                                                href={ company?.website_url }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="text-sm text-primary hover:underline flex items-center gap-1 truncate"
                                                             >
-                                                                { company.website_url }
+                                                                { company?.website_url }
                                                                 <ExternalLink className="w-3 h-3" />
                                                             </a>
                                                         }
                                                     />
                                                 ) }
-                                                <InfoItem icon={ <Mail /> } label="Email" value={ company.email } />
-                                                <InfoItem icon={ <Phone /> } label="Phone" value={ company.phone } />
-                                                { company.address && (
+                                                <InfoItem icon={ <Mail /> } label="Email" value={ company?.email } />
+                                                <InfoItem icon={ <Phone /> } label="Phone" value={ company?.phone } />
+                                                { company?.address && (
                                                     <InfoItem
                                                         icon={ <MapPin /> }
                                                         label="Address"
-                                                        value={ `${ company.address.location.city }, ${ company.address.location.state }, ${ company.address.location.country }` }
+                                                        value={ `${ company?.address.location.city }, ${ company?.address.location.state }, ${ company?.address.location.country }` }
                                                     />
                                                 ) }
                                             </div>

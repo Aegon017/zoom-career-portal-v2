@@ -37,4 +37,3 @@ declare(strict_types=1);
             verified.</p>
     @endif
 @endsection
-<?php 

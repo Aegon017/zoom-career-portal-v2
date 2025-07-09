@@ -12,7 +12,7 @@ final class AdminEmployeeController extends Controller
 {
     public function index(Request $request)
     {
-        $employees = User::query()
+        $employees = User::query()->Role('employer')
             ->when(
                 $request->search,
                 fn($q) =>
@@ -20,7 +20,7 @@ final class AdminEmployeeController extends Controller
                     ->orWhere('email', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
-            ->withQueryString();;
+            ->withQueryString();
 
         return Inertia::render('admin/employee/employees-listing', [
             'employees' => $employees,
