@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -11,7 +13,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class LanguageController extends Controller
+final class LanguageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,9 +23,8 @@ class LanguageController extends Controller
         $languages = Language::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('code', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('code', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -43,7 +44,7 @@ class LanguageController extends Controller
 
         return Inertia::render('admin/languages/create-or-edit-language', [
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -54,7 +55,7 @@ class LanguageController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:languages,name'],
-            'code' => ['nullable', 'string', 'max:255']
+            'code' => ['nullable', 'string', 'max:255'],
         ]);
 
         Language::create($data);
@@ -65,7 +66,7 @@ class LanguageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Language $language)
+    public function show(Language $language): void
     {
         //
     }
@@ -80,7 +81,7 @@ class LanguageController extends Controller
         return Inertia::render('admin/languages/create-or-edit-language', [
             'language' => $language,
             'operation' => $operation->value,
-            'operationLabel' => $operation->label()
+            'operationLabel' => $operation->label(),
         ]);
     }
 
@@ -91,9 +92,8 @@ class LanguageController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('languages', 'name')->ignore($language->id)],
-            'code' => ['nullable', 'string', 'max:255']
+            'code' => ['nullable', 'string', 'max:255'],
         ]);
-
 
         $language->update($data);
 
@@ -118,8 +118,8 @@ class LanguageController extends Controller
 
         $query = $request->input('search');
 
-        $languages = Language::when($query, function ($q) use ($query) {
-            $q->where('name', 'like', '%' . $query . '%');
+        $languages = Language::when($query, function ($q) use ($query): void {
+            $q->where('name', 'like', '%'.$query.'%');
         })
             ->orderBy('name')
             ->limit(20)

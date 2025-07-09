@@ -25,15 +25,14 @@ final class SkillController extends Controller
         $skills = Skill::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/skills/skills-listing', [
             'skills' => $skills,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 
@@ -109,11 +108,11 @@ final class SkillController extends Controller
     {
         $query = $request->input('search', '');
 
-        $skills = Skill::where('name', 'like', '%' . $query . '%')
+        $skills = Skill::where('name', 'like', '%'.$query.'%')
             ->orderBy('name')
             ->limit(20)
             ->get()
-            ->map(fn($skill) => [
+            ->map(fn ($skill): array => [
                 'label' => $skill->name,
                 'value' => $skill->name,
             ]);

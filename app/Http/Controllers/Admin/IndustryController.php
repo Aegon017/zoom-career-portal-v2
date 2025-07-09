@@ -20,15 +20,14 @@ final class IndustryController extends Controller
         $industries = Industry::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/industries/industries-listing', [
             'industries' => $industries,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 
@@ -87,7 +86,7 @@ final class IndustryController extends Controller
     public function update(Request $request, Industry $industry)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,' . $industry->id,
+            'name' => 'required|string|unique:industries,name,'.$industry->id,
         ]);
 
         $industry->update($data);

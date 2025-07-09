@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Education extends Model
+final class Education extends Model
 {
-
     protected $fillable = [
         'user_id',
         'course_title',
@@ -34,6 +35,6 @@ class Education extends Model
         $start = optional($this->start_date)->format('Y');
         $end = $this->is_current ? 'Present' : optional($this->end_date)->format('Y');
 
-        return trim("{$start} - {$end}", ' -');
+        return mb_trim(sprintf('%s - %s', $start, $end), ' -');
     }
 }

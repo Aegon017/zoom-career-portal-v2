@@ -5,13 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Jobseeker;
 
 use App\Enums\ProficiencyEnum;
-use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateWorkExperienceRequest;
 use App\Models\Certificate;
-use App\Models\Company;
 use App\Models\Education;
-use App\Models\Language;
 use App\Models\Skill;
 use App\Models\User;
 use App\Models\UserLanguage;
@@ -55,7 +51,7 @@ final class ProfileController extends Controller
         ]);
 
         if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
-            $user->addMedia(storage_path('app/public/' . $data['avatar']))
+            $user->addMedia(storage_path('app/public/'.$data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
         }
@@ -123,7 +119,7 @@ final class ProfileController extends Controller
             'work_experiences.*.is_current' => 'required|boolean',
         ]);
 
-        DB::transaction(function () use ($user, $validated) {
+        DB::transaction(function () use ($user, $validated): void {
             $user->workExperiences()->delete();
 
             foreach ($validated['work_experiences'] as $we) {

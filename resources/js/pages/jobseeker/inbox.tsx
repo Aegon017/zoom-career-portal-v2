@@ -80,7 +80,10 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
 
                 updatedChats = [ ...prev, newChat ];
 
-                if ( !activeChat && targetUser && targetUser.id === e.user.id ) {
+                if (
+                    ( !activeChat && targetUser && targetUser.id === e.user.id ) ||
+                    ( activeChat && activeChat.id === e.message.chat_id )
+                ) {
                     setActiveChat( newChat );
                 }
 
@@ -90,25 +93,26 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
             updatedChats = [ ...prev ];
             const chat = updatedChats[ idx ];
 
-            const allMessages = [
-                ...( chat.messages || [] ),
-                ...( Array.isArray( e.messages ) ? e.messages : [ e.message ] ),
-            ];
-
-            const uniqueMessages = Array.from(
-                new Map( allMessages.map( ( msg ) => [ msg.id, msg ] ) ).values()
-            );
-
-            updatedChats[ idx ] = {
-                ...chat,
-                messages: uniqueMessages,
-            };
+            const existingMsg = ( chat.messages || [] ).find( ( m ) => m.id === e.message.id );
+            if ( !existingMsg ) {
+                updatedChats[ idx ] = {
+                    ...chat,
+                    messages: [ ...( chat.messages || [] ), e.message ],
+                };
+            }
 
             if ( activeChat && activeChat.id === e.message.chat_id ) {
-                setActiveChat( {
-                    ...activeChat,
-                    messages: uniqueMessages,
-                } );
+                setActiveChat( ( prevActive ) =>
+                    prevActive
+                        ? {
+                            ...prevActive,
+                            messages: [
+                                ...( prevActive.messages || [] ),
+                                ...( existingMsg ? [] : [ e.message ] ),
+                            ],
+                        }
+                        : prevActive
+                );
             }
 
             return updatedChats;
@@ -174,7 +178,9 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
                                 <>
                                     <div className="zc-chat-common-header">
                                         <div className="left">
-                                            <div className="back-btn" onClick={ () => router.get( "/inbox" ) }> <BackIcon /> </div>
+                                            <div className="back-btn" onClick={ () => router.get( "/inbox" ) }>
+                                                <BackIcon />
+                                            </div>
                                             { ( () => {
                                                 const usr = getOtherParticipant( activeChat );
                                                 if ( !usr ) return null;
@@ -194,8 +200,12 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
                                                     <i className="fa-solid fa-ellipsis-vertical"></i>
                                                 </div>
                                                 <ul className="user-dropdown-menu">
-                                                    <li><a href="#"><i className="fa-regular fa-user"></i>View Profile</a></li>
-                                                    <li><a href="#"><i className="fa-solid fa-triangle-exclamation"></i>Report</a></li>
+                                                    <li>
+                                                        <a href="#"><i className="fa-regular fa-user"></i>View Profile</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#"><i className="fa-solid fa-triangle-exclamation"></i>Report</a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -212,13 +222,17 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
                                                         <div className="d-flex align-items-end gap-2 text-secondary text-sm">
                                                             { isMe ? (
                                                                 <>
-                                                                    <small className="text-secondary">{ format( new Date( msg.created_at ), "hh:mm a" ) }</small>
+                                                                    <small className="text-secondary">
+                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                    </small>
                                                                     <div className="message-bubble">{ msg.message }</div>
                                                                 </>
                                                             ) : (
                                                                 <>
                                                                     <div className="message-bubble">{ msg.message }</div>
-                                                                    <small className="text-secondary">{ format( new Date( msg.created_at ), "hh:mm a" ) }</small>
+                                                                    <small className="text-secondary">
+                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                    </small>
                                                                 </>
                                                             ) }
                                                         </div>

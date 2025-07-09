@@ -78,7 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
     // employer routes
-    Route::middleware('role:employer')->prefix('employer')->name('employer.')->group(function (): void {
+    Route::middleware('role:employer|super_admin')->prefix('employer')->name('employer.')->group(function (): void {
         Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware(['employer_is_verified'])->name('dashboard');
         Route::middleware('employer_is_verified')->resource('/jobs', OpeningController::class);
 
@@ -161,7 +161,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/employees', AdminEmployeeController::class);
         Route::resource('/companies', CompanyController::class);
         Route::resource('/jobs', JobController::class);
-        Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications');
+        Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
+        Route::post('/jobs/{job}/applications', [JobController::class, 'storeApplications'])->name('jobs.applications.store');
         Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
         Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');

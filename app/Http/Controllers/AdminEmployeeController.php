@@ -15,16 +15,15 @@ final class AdminEmployeeController extends Controller
         $employees = User::query()->Role('employer')
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/employee/employees-listing', [
             'employees' => $employees,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 

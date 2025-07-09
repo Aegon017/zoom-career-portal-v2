@@ -8,9 +8,10 @@ import MessageButton from "./message-button"
 
 interface Props {
     application: Application,
-    statuses: ApplicationStatus[]
+    statuses: ApplicationStatus[],
+    message?: boolean
 }
-const JobApplicationCard = ( { application, statuses }: Props ) => {
+const JobApplicationCard = ( { application, statuses, message = true }: Props ) => {
     return (
         <Card key={ application.id } className="hover:shadow-md transition-shadow duration-200">
             <CardHeader>
@@ -39,11 +40,13 @@ const JobApplicationCard = ( { application, statuses }: Props ) => {
                             </div>
                         </div>
                     </div>
-                    <MessageButton userId={ application.user.id }>
-                        <Button variant="outline" size="sm">
-                            Message
-                        </Button>
-                    </MessageButton>
+                    { message && (
+                        <MessageButton userId={ application.user.id }>
+                            <Button variant="outline" size="sm">
+                                Message
+                            </Button>
+                        </MessageButton>
+                    ) }
                 </div>
             </CardHeader>
             <CardFooter>

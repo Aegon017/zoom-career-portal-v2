@@ -13,7 +13,7 @@ final class Profile extends Model
         'job_title',
         'experience',
         'notice_period',
-        'summary'
+        'summary',
     ];
 
     public function user()

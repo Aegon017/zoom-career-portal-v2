@@ -25,16 +25,15 @@ final class UserController extends Controller
         $users = User::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/users/users-listing', [
             'users' => $users,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 

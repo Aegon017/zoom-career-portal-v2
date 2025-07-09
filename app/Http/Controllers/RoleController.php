@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Enums\OperationsEnum;
 use App\Http\Requests\Role\CreateRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
-use App\Http\Resources\RoleResource;
 use App\Models\User;
 use App\Services\PermissionService;
 use App\Services\RoleService;
@@ -33,14 +32,14 @@ final class RoleController extends Controller
         $roles = Role::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/roles/roles-listing', [
             'roles' => $roles,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 

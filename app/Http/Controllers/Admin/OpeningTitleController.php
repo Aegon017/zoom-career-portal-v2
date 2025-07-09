@@ -22,15 +22,14 @@ final class OpeningTitleController extends Controller
         $job_titles = OpeningTitle::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/job-titles/job-titles-listing', [
             'jobTitles' => $job_titles,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 
@@ -89,7 +88,7 @@ final class OpeningTitleController extends Controller
     public function update(Request $request, OpeningTitle $jobTitle)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:opening_titles,name,' . $jobTitle->id,
+            'name' => 'required|string|max:255|unique:opening_titles,name,'.$jobTitle->id,
         ]);
 
         $jobTitle->update($data);

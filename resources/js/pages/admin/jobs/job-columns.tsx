@@ -59,7 +59,7 @@ export const columns: ColumnDef<Opening>[] = [
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                         >
-                            <Link href={ `/admin/jobs/${ job.id }` }>Show</Link>
+                            <Link href={ `/admin/jobs/${ job.id }` } className="flex-1">Show</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                         >

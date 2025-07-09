@@ -39,7 +39,7 @@ final class OpeningController extends Controller
         $jobs = Opening::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->where('user_id', Auth::id())
             ->paginate($request->perPage ?? 10)
@@ -47,7 +47,7 @@ final class OpeningController extends Controller
 
         return Inertia::render('employer/jobs/jobs-listing', [
             'jobs' => $jobs,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 

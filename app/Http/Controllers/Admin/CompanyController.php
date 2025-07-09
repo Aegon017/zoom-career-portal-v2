@@ -16,15 +16,14 @@ final class CompanyController extends Controller
         $companies = Company::query()
             ->when(
                 $request->search,
-                fn($q) =>
-                $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/companies/companies-listing', [
             'companies' => $companies,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 
@@ -52,7 +51,7 @@ final class CompanyController extends Controller
         }
 
         $companies = Company::query()
-            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->where('name', 'LIKE', '%'.$searchTerm.'%')
             ->limit(10)
             ->get(['id', 'name']);
 
