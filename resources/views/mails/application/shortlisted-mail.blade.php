@@ -28,4 +28,3 @@ declare(strict_types=1);
         Wishing you the very best as you move forward in the selection process.
     </p>
 @endsection
-<?php 

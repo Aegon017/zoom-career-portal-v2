@@ -15,4 +15,3 @@ declare(strict_types=1);
 
     <a href="{{ $review_link }}" class="btn btn-primary">Review Employer</a>
 @endsection
-<?php 

@@ -25,4 +25,3 @@ declare(strict_types=1);
         in the meantime, feel free to reach out.
     </p>
 @endsection
-<?php 

@@ -23,4 +23,3 @@ declare(strict_types=1);
     <p><strong>Company:</strong> {{ $company_name }}</p>
     <p><strong>Updated On:</strong> {{ $updated_at }}</p>
 @endsection
-<?php 

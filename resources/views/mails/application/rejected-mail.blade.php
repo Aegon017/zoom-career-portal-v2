@@ -27,4 +27,3 @@ declare(strict_types=1);
         We wish you the very best in your job search and future career endeavors.
     </p>
 @endsection
-<?php 
