@@ -13,7 +13,7 @@ final class OtpService
 {
     public function generateCode(): string
     {
-        return mb_str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
     public function sendOtp($user, string $phone): Otp
