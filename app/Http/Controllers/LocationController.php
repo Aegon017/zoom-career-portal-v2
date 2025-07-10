@@ -17,7 +17,7 @@ final class LocationController extends Controller
             ->orderBy('country')
             ->pluck('country');
 
-        $countryOptions = $countries->map(fn($country): array => [
+        $countryOptions = $countries->map(fn ($country): array => [
             'label' => $country,
             'value' => $country,
         ]);
@@ -41,7 +41,7 @@ final class LocationController extends Controller
             ->orderBy('state')
             ->pluck('state');
 
-        $stateOptions = $states->map(fn($state): array => [
+        $stateOptions = $states->map(fn ($state): array => [
             'label' => $state,
             'value' => $state,
         ]);
@@ -67,7 +67,7 @@ final class LocationController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
-        $cityOptions = $cities->map(fn($city): array => [
+        $cityOptions = $cities->map(fn ($city): array => [
             'label' => $city,
             'value' => $city,
         ]);

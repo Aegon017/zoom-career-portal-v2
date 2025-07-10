@@ -22,7 +22,7 @@ final class JobController extends Controller
         $jobs = Opening::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -68,18 +68,16 @@ final class JobController extends Controller
         $users = User::role('jobseeker')
             ->whereNotIn('id', $appliedUserIds)
             ->get()
-            ->map(function ($user) {
-                return [
-                    'value' => $user->id,
-                    'label' => $user->email,
-                ];
-            });
+            ->map(fn($user): array => [
+                'value' => $user->id,
+                'label' => $user->email,
+            ]);
 
         return Inertia::render('admin/jobs/job-applications', [
             'job' => $job,
             'applications' => $applications,
             'statuses' => $statuses,
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
