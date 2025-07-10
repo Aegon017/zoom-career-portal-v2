@@ -181,7 +181,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                         className="flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-muted"
                                     >
                                         <Avatar className="h-12 w-12">
-                                            <AvatarImage src={ other.avatar_url || "/placeholder.svg" } />
+                                            <AvatarImage src={ other.avatar_url } />
                                             <AvatarFallback>{ other.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
@@ -212,7 +212,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                         return (
                                             <>
                                                 <Avatar className="h-10 w-10">
-                                                    <AvatarImage src={ usr.avatar_url || "/placeholder.svg" } />
+                                                    <AvatarImage src={ usr.avatar_url } />
                                                     <AvatarFallback>{ usr.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
                                                 </Avatar>
                                                 <h3 className="font-semibold text-foreground">{ usr.name }</h3>

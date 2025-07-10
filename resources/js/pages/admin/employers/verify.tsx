@@ -207,7 +207,7 @@ export default function Show( { user, profile, company, company_user }: Props ) 
                                                     { company.logo_url && (
                                                         <div className="flex-shrink-0">
                                                             <img
-                                                                src={ company.logo_url || "/placeholder.svg" }
+                                                                src={ company.logo_url }
                                                                 alt="Company Logo"
                                                                 className="h-20 w-20 object-contain border rounded-xl shadow-sm bg-white p-2"
                                                             />
