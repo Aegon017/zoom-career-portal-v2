@@ -189,7 +189,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class, 'skill_users')->withTimestamps();
+        return $this->belongsToMany(Skill::class, 'skill_users');
     }
 
     public function chatParticipants(): HasMany
@@ -199,7 +199,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function chats(): BelongsToMany
     {
-        return $this->belongsToMany(Chat::class, 'chat_participants')->withTimestamps();
+        return $this->belongsToMany(Chat::class, 'chat_participants');
     }
 
     public function careerInterest(): HasOne

@@ -17,7 +17,7 @@ import AppLayout from "@/layouts/employer-layout";
 import MailIcon from "@/icons/mail-icon";
 import { BreadcrumbItem, Chat, User } from "@/types";
 import { Head, router } from "@inertiajs/react";
-import { useEchoPublic } from "@laravel/echo-react";
+import { useEcho } from "@laravel/echo-react";
 import { format } from "date-fns";
 import {
     ArrowLeft,
@@ -83,7 +83,8 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
         );
     };
 
-    useEchoPublic( "chats", "MessageSent", ( e: any ) => {
+    useEcho( `chat.${ activeChat?.id }`, "MessageSent", ( e: any ) => {
+        console.log( e );
         setChats( ( prev ) => {
             const idx = prev.findIndex( ( c ) => c.id === e.message.chat_id );
             let updatedChats;

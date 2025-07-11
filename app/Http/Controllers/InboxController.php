@@ -43,7 +43,6 @@ final class InboxController extends Controller
                 return redirect()->route('inbox.index', ['chat' => $existingChat->id]);
             }
 
-            // Create new chat immediately
             $chat = Chat::create();
             $chat->participants()->createMany([
                 ['user_id' => $userId],
@@ -97,12 +96,7 @@ final class InboxController extends Controller
             'message' => $request->message,
         ]);
 
-        $receiverId = $chat->participants()
-            ->where('user_id', '!=', $userId)
-            ->first()
-            ?->user_id;
-
-        broadcast(new MessageSent($message, $receiverId))->toOthers();
+        MessageSent::dispatch($message);
 
         return back();
     }
