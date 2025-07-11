@@ -84,7 +84,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
     };
 
     useEcho( `chat.${ activeChat?.id }`, "MessageSent", ( e: any ) => {
-        console.log( e );
         setChats( ( prev ) => {
             const idx = prev.findIndex( ( c ) => c.id === e.message.chat_id );
             let updatedChats;

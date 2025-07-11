@@ -62,7 +62,6 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
     };
 
     useEcho( `chat.${ activeChat?.id }`, "MessageSent", ( e: any ) => {
-        console.log( e );
         setChats( ( prev ) => {
             const idx = prev.findIndex( ( c ) => c.id === e.message.chat_id );
             let updatedChats;
