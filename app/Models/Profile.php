@@ -14,6 +14,14 @@ final class Profile extends Model
         'experience',
         'notice_period',
         'summary',
+        'course_completed',
+        'student_id',
+        'completed_month',
+        'do_not_remember',
+    ];
+
+    protected $casts = [
+        'do_not_remember' => 'boolean',
     ];
 
     public function user()

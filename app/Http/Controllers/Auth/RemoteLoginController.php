@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,14 +14,19 @@ use Spatie\Permission\Models\Role;
 
 final class RemoteLoginController extends Controller
 {
-    public function login(LoginRequest $loginRequest)
+    public function login(Request $request)
     {
-        $credentials = $loginRequest->safe()->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
             Session::regenerate();
 
-            return redirect($this->redirectToDashboard(Auth::user()));
+            if ($user->hasRole('jobseeker')) {
+                $this->registerJobseekerProfile($user, $request);
+            }
+
+            return redirect($this->redirectToDashboard($user));
         }
 
         $remote_user = DB::connection('remote_mysql')
@@ -46,12 +49,36 @@ final class RemoteLoginController extends Controller
             Auth::login($user);
             Session::regenerate();
 
+            if ($role_name === 'jobseeker') {
+                $this->registerJobseekerProfile($user, $request);
+            }
+
             return redirect($this->redirectToDashboard($user));
         }
 
         throw ValidationException::withMessages([
             'email' => __('auth.failed'),
         ]);
+    }
+
+    private function registerJobseekerProfile(User $user, Request $request): void
+    {
+        $validated = $request->validate([
+            'course_completed' => 'nullable|string|max:255',
+            'student_id' => 'nullable|string|max:50',
+            'completed_month' => 'nullable|date_format:Y-m',
+            'do_not_remember' => 'boolean',
+        ]);
+
+        $user->profile()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'course_completed' => $validated['course_completed'] ?? null,
+                'student_id' => $validated['student_id'] ?? null,
+                'completed_month' => $validated['completed_month'] ?? null,
+                'do_not_remember' => $validated['do_not_remember'] ?? false,
+            ]
+        );
     }
 
     private function saveUser($user)
@@ -74,7 +101,7 @@ final class RemoteLoginController extends Controller
             'super_admin' => route('admin.dashboard'),
             'jobseeker' => route('jobseeker.explore.index'),
             'employer' => route('employer.dashboard'),
-            default => '/'
+            default => '/',
         };
     }
 }
