@@ -31,7 +31,6 @@ export default function StudentRegistration() {
         do_not_remember: false,
     } );
 
-
     const submit: FormEventHandler = ( e ) => {
         e.preventDefault();
         post( '/remote/login', {
@@ -96,13 +95,14 @@ export default function StudentRegistration() {
                         <InputError message={ errors.phone } />
                     </div>
 
+                    {/* Password */ }
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
                             id="password"
                             type="password"
                             required
-                            tabIndex={ 3 }
+                            tabIndex={ 4 }
                             autoComplete="current-password"
                             value={ data.password ?? '' }
                             onChange={ ( e ) => setData( 'password', e.target.value ) }
@@ -116,7 +116,8 @@ export default function StudentRegistration() {
                         <Label htmlFor="course_completed">Course Completed</Label>
                         <Input
                             id="course_completed"
-                            tabIndex={ 4 }
+                            required
+                            tabIndex={ 5 }
                             value={ data.course_completed }
                             onChange={ ( e ) => setData( 'course_completed', e.target.value ) }
                             placeholder="e.g., B.Sc Computer Science"
@@ -129,7 +130,8 @@ export default function StudentRegistration() {
                         <Label htmlFor="student_id">Student ID</Label>
                         <Input
                             id="student_id"
-                            tabIndex={ 5 }
+                            required
+                            tabIndex={ 6 }
                             value={ data.student_id }
                             onChange={ ( e ) => setData( 'student_id', e.target.value ) }
                             placeholder="e.g., 20231234"
@@ -143,7 +145,8 @@ export default function StudentRegistration() {
                         <Input
                             id="completed_month"
                             type="month"
-                            tabIndex={ 6 }
+                            required
+                            tabIndex={ 7 }
                             value={ data.completed_month }
                             onChange={ ( e ) => setData( 'completed_month', e.target.value ) }
                         />
@@ -155,9 +158,10 @@ export default function StudentRegistration() {
                         <Checkbox
                             id="do_not_remember"
                             name="do_not_remember"
+                            required
                             checked={ data.do_not_remember }
                             onClick={ () => setData( 'do_not_remember', !data.do_not_remember ) }
-                            tabIndex={ 7 }
+                            tabIndex={ 8 }
                             className="h-4 w-4"
                         />
                         <Label
@@ -171,15 +175,11 @@ export default function StudentRegistration() {
                         </Label>
                     </div>
 
-                    <p className="text-sm text-muted-foreground mt-2">
-                        Post verification you will be given access. We may contact you for additional details.
-                    </p>
-
                     {/* Submit Button */ }
                     <Button
                         type="submit"
                         className="mt-4 w-full"
-                        tabIndex={ 8 }
+                        tabIndex={ 9 }
                         disabled={ processing }
                     >
                         { processing && (

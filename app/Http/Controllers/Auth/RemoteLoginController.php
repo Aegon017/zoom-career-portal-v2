@@ -64,11 +64,15 @@ final class RemoteLoginController extends Controller
     private function registerJobseekerProfile(User $user, Request $request): void
     {
         $validated = $request->validate([
+            'phone' => 'nullable|string|max:15',
             'course_completed' => 'nullable|string|max:255',
             'student_id' => 'nullable|string|max:50',
             'completed_month' => 'nullable|date_format:Y-m',
             'do_not_remember' => 'boolean',
         ]);
+
+        $user->phone = $validated['phone'] ?? $user->phone;
+        $user->save();
 
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
