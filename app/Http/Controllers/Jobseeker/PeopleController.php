@@ -14,7 +14,7 @@ final class PeopleController extends Controller
 {
     public function index()
     {
-        $feature = SiteSetting::where('name', 'People feature in student dashboard')->first();
+        $feature = SiteSetting::where('name', 'people_feature')->first();
 
         if (! $feature || ! $feature->status) {
             abort(403, 'Feature is disabled.');
