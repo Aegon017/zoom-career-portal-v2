@@ -58,7 +58,7 @@ final class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'features' => [
-                'people_feature' => (bool) SiteSetting::where('name', 'People feature in student dashboard')->value('status'),
+                'people_feature' => (bool) SiteSetting::where('name', 'people_feature')->value('status'),
             ],
             'url' => fn () => request()->getRequestUri(),
         ];
