@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('student_id')->nullable()->after('course_completed');
             $table->string('completed_month')->nullable()->after('student_id');
             $table->boolean('do_not_remember')->default(false)->after('completed_month');
+            $table->boolean('is_verified')->default(false)->after('do_not_remember');
         });
     }
 

@@ -1,68 +1,48 @@
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { LoaderCircle } from 'lucide-react';
+import { useEffect } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
-import { PhoneInput } from '@/components/phone-input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { router } from '@inertiajs/react';
 
-export default function StudentRegistration() {
-    const { data, setData, post, processing, errors, reset } = useForm<{
-        name: string;
+export default function StudentLogin() {
+    const { data, setData, post, processing, errors } = useForm<{
         email: string;
         password: string;
-        phone: string;
-        course_completed: string;
-        student_id: string;
-        completed_month: string;
         do_not_remember: boolean;
     }>( {
-        name: '',
         email: '',
         password: '',
-        phone: '',
-        course_completed: '',
-        student_id: '',
-        completed_month: '',
         do_not_remember: false,
     } );
 
+    useEffect( () => {
+        if ( data.do_not_remember ) {
+            router.visit( '/student/register' );
+        }
+    }, [ data.do_not_remember ] );
+
     const submit: FormEventHandler = ( e ) => {
         e.preventDefault();
-        post( '/remote/login', {
-            onFinish: () => reset( 'phone' ),
-        } );
+        post( '/remote/login' );
     };
 
     return (
         <AuthLayout
-            title="Student Registration"
-            description="Fill in your details below"
-            instruction="Please enter accurate details for verification purposes."
+            title="Student Login"
+            description="Login with your credentials"
+            instruction="If you don’t remember your login details, you can register below."
         >
-            <Head title="Student Registration" />
+            <Head title="Student Login" />
 
             <form className="flex flex-col gap-6" onSubmit={ submit }>
                 <div className="grid gap-6">
-                    {/* Name */ }
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                            id="name"
-                            required
-                            autoFocus
-                            tabIndex={ 1 }
-                            value={ data.name }
-                            onChange={ ( e ) => setData( 'name', e.target.value ) }
-                            placeholder="John Doe"
-                        />
-                        <InputError message={ errors.name } />
-                    </div>
-
                     {/* Email */ }
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email Address</Label>
@@ -70,29 +50,13 @@ export default function StudentRegistration() {
                             id="email"
                             type="email"
                             required
-                            tabIndex={ 2 }
+                            tabIndex={ 1 }
                             autoComplete="email"
                             value={ data.email }
                             onChange={ ( e ) => setData( 'email', e.target.value ) }
                             placeholder="email@example.com"
                         />
                         <InputError message={ errors.email } />
-                    </div>
-
-                    {/* Phone Number */ }
-                    <div className="grid gap-2">
-                        <Label htmlFor="phone">Phone Number (with country code)</Label>
-                        <PhoneInput
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            required
-                            tabIndex={ 3 }
-                            placeholder="+1 234 567 8901"
-                            value={ data.phone }
-                            onChange={ ( e: any ) => setData( 'phone', e?.target?.value ?? '' ) }
-                        />
-                        <InputError message={ errors.phone } />
                     </div>
 
                     {/* Password */ }
@@ -102,66 +66,25 @@ export default function StudentRegistration() {
                             id="password"
                             type="password"
                             required
-                            tabIndex={ 4 }
+                            tabIndex={ 2 }
                             autoComplete="current-password"
-                            value={ data.password ?? '' }
+                            value={ data.password }
                             onChange={ ( e ) => setData( 'password', e.target.value ) }
                             placeholder="••••••••"
                         />
                         <InputError message={ errors.password } />
                     </div>
 
-                    {/* Course Completed */ }
-                    <div className="grid gap-2">
-                        <Label htmlFor="course_completed">Course Completed</Label>
-                        <Input
-                            id="course_completed"
-                            required
-                            tabIndex={ 5 }
-                            value={ data.course_completed }
-                            onChange={ ( e ) => setData( 'course_completed', e.target.value ) }
-                            placeholder="e.g., B.Sc Computer Science"
-                        />
-                        <InputError message={ errors.course_completed } />
-                    </div>
-
-                    {/* Student ID */ }
-                    <div className="grid gap-2">
-                        <Label htmlFor="student_id">Student ID</Label>
-                        <Input
-                            id="student_id"
-                            required
-                            tabIndex={ 6 }
-                            value={ data.student_id }
-                            onChange={ ( e ) => setData( 'student_id', e.target.value ) }
-                            placeholder="e.g., 20231234"
-                        />
-                        <InputError message={ errors.student_id } />
-                    </div>
-
-                    {/* Month-Year of Completion */ }
-                    <div className="grid gap-2">
-                        <Label htmlFor="completed_month">Month & Year of Completion</Label>
-                        <Input
-                            id="completed_month"
-                            type="month"
-                            required
-                            tabIndex={ 7 }
-                            value={ data.completed_month }
-                            onChange={ ( e ) => setData( 'completed_month', e.target.value ) }
-                        />
-                        <InputError message={ errors.completed_month } />
-                    </div>
-
-                    {/* Do Not Remember Checkbox */ }
+                    {/* Checkbox: go to register */ }
                     <div className="flex items-center space-x-2">
                         <Checkbox
                             id="do_not_remember"
                             name="do_not_remember"
-                            required
                             checked={ data.do_not_remember }
-                            onClick={ () => setData( 'do_not_remember', !data.do_not_remember ) }
-                            tabIndex={ 8 }
+                            onClick={ () =>
+                                setData( 'do_not_remember', !data.do_not_remember )
+                            }
+                            tabIndex={ 3 }
                             className="h-4 w-4"
                         />
                         <Label
@@ -170,7 +93,7 @@ export default function StudentRegistration() {
                         >
                             Don’t remember my login details —{ ' ' }
                             <span className="text-primary underline hover:text-primary/80">
-                                click here
+                                click here to register
                             </span>
                         </Label>
                     </div>
@@ -179,13 +102,13 @@ export default function StudentRegistration() {
                     <Button
                         type="submit"
                         className="mt-4 w-full"
-                        tabIndex={ 9 }
+                        tabIndex={ 4 }
                         disabled={ processing }
                     >
                         { processing && (
                             <LoaderCircle className="h-4 w-4 animate-spin mr-2" />
                         ) }
-                        Submit
+                        Login
                     </Button>
                 </div>
             </form>

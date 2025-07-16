@@ -18,6 +18,7 @@ final class Profile extends Model
         'student_id',
         'completed_month',
         'do_not_remember',
+        'is_verified',
     ];
 
     protected $casts = [

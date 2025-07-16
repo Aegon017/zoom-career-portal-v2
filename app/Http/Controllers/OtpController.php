@@ -72,7 +72,15 @@ final class OtpController extends Controller
                 ]);
         }
 
-        return redirect()->route('employer.dashboard')->with([
+        if ($user->hasRole('employer')) {
+            $route = 'employer.dashboard';
+        } elseif ($user->hasRole('jobseeker')) {
+            $route = 'jobseeker.explore.index';
+        } else {
+            $route = '/';
+        }
+
+        return redirect()->route($route)->with([
             'step' => 'verified',
             'expires_at' => null,
         ]);
