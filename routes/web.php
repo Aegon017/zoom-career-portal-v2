@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
@@ -48,6 +49,7 @@ Route::get('/', fn() => view('home'))->name('home');
 Route::redirect('/admin', '/admin/dashboard');
 
 Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -119,7 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker', 'verified.phone')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware('role:jobseeker', 'verified.phone', 'verified.student')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
         Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
@@ -174,6 +176,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
         Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
+        Route::get('/students/verify/{student}', [StudentVerificationController::class, 'show'])->name('students.verify');
+        Route::post('/students/verify/{student}', [StudentVerificationController::class, 'verify'])->name('students.verify.approve');
+        Route::delete('/students/reject/{student}', [StudentVerificationController::class, 'reject'])->name('students.verify.reject');
     });
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');

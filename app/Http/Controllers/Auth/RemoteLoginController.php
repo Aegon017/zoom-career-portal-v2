@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +22,6 @@ final class RemoteLoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             Session::regenerate();
-
-            if ($user->hasRole('jobseeker')) {
-                $this->registerJobseekerProfile($user, $request);
-            }
 
             return redirect($this->redirectToDashboard($user));
         }
@@ -45,13 +42,16 @@ final class RemoteLoginController extends Controller
 
             $role = Role::findOrCreate($role_name);
             $user = $this->saveUser($remote_user);
+            Profile::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'is_verified' => true,
+                ]
+            );
+
             $user->assignRole($role);
             Auth::login($user);
             Session::regenerate();
-
-            if ($role_name === 'jobseeker') {
-                $this->registerJobseekerProfile($user, $request);
-            }
 
             return redirect($this->redirectToDashboard($user));
         }
@@ -59,31 +59,6 @@ final class RemoteLoginController extends Controller
         throw ValidationException::withMessages([
             'email' => __('auth.failed'),
         ]);
-    }
-
-    private function registerJobseekerProfile(User $user, Request $request): void
-    {
-
-        $validated = $request->validate([
-            'phone' => 'nullable|string|max:15',
-            'course_completed' => 'nullable|string|max:255',
-            'student_id' => 'nullable|string|max:50',
-            'completed_month' => 'nullable|date_format:Y-m',
-            'do_not_remember' => 'boolean',
-        ]);
-
-        $user->phone = $validated['phone'];
-        $user->save();
-
-        $user->profile()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'course_completed' => $validated['course_completed'] ?? null,
-                'student_id' => $validated['student_id'] ?? null,
-                'completed_month' => $validated['completed_month'] ?? null,
-                'do_not_remember' => $validated['do_not_remember'] ?? false,
-            ]
-        );
     }
 
     private function saveUser($user)

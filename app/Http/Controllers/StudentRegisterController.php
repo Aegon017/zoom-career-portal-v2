@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\Admin\StudentVerifyNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -29,7 +31,6 @@ class StudentRegisterController extends Controller
             'course_completed' => 'nullable|string|max:255',
             'student_id' => 'nullable|string|max:50',
             'completed_month' => 'nullable|string|max:20',
-            'do_not_remember' => 'boolean',
         ]);
 
         $user = User::create([
@@ -50,9 +51,11 @@ class StudentRegisterController extends Controller
             'course_completed' => $data['course_completed'] ?? null,
             'student_id' => $data['student_id'] ?? null,
             'completed_month' => $data['completed_month'] ?? null,
-            'do_not_remember' => $data['do_not_remember'] ?? false,
             'is_verified' => false,
         ]);
+
+        $admins = User::role('super_admin')->get();
+        Notification::send($admins, new StudentVerifyNotification($user));
 
         Auth::login($user);
 

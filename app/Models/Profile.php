@@ -17,12 +17,11 @@ final class Profile extends Model
         'course_completed',
         'student_id',
         'completed_month',
-        'do_not_remember',
         'is_verified',
     ];
 
     protected $casts = [
-        'do_not_remember' => 'boolean',
+        'is_verified' => 'boolean',
     ];
 
     public function user()

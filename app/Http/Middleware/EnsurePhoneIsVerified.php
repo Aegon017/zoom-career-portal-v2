@@ -19,7 +19,7 @@ final class EnsurePhoneIsVerified
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::user()->phone_verified_at) {
-            return redirect('/otp')->with('error', 'Please verify your phone number.');
+            return redirect('/otp');
         }
 
         return $next($request);
