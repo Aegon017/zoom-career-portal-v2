@@ -1,32 +1,21 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router, Link } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { LoaderCircle } from 'lucide-react';
-import { useEffect } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
-import { Checkbox } from '@/components/ui/checkbox';
-import { router } from '@inertiajs/react';
 
 export default function StudentLogin() {
     const { data, setData, post, processing, errors } = useForm<{
         email: string;
         password: string;
-        do_not_remember: boolean;
     }>( {
         email: '',
         password: '',
-        do_not_remember: false,
     } );
-
-    useEffect( () => {
-        if ( data.do_not_remember ) {
-            router.visit( '/student/register' );
-        }
-    }, [ data.do_not_remember ] );
 
     const submit: FormEventHandler = ( e ) => {
         e.preventDefault();
@@ -75,34 +64,22 @@ export default function StudentLogin() {
                         <InputError message={ errors.password } />
                     </div>
 
-                    {/* Checkbox: go to register */ }
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="do_not_remember"
-                            name="do_not_remember"
-                            checked={ data.do_not_remember }
-                            onClick={ () =>
-                                setData( 'do_not_remember', !data.do_not_remember )
-                            }
-                            tabIndex={ 3 }
-                            className="h-4 w-4"
-                        />
-                        <Label
-                            htmlFor="do_not_remember"
-                            className="text-sm text-muted-foreground cursor-pointer select-none"
+                    {/* Registration link instead of checkbox */ }
+                    <div className="text-sm text-muted-foreground">
+                        Don’t remember your login details?{ ' ' }
+                        <Link
+                            href="/student/register"
+                            className="text-primary underline hover:text-primary/80"
                         >
-                            Don’t remember my login details —{ ' ' }
-                            <span className="text-primary underline hover:text-primary/80">
-                                click here to register
-                            </span>
-                        </Label>
+                            Click here to register
+                        </Link>
                     </div>
 
                     {/* Submit Button */ }
                     <Button
                         type="submit"
                         className="mt-4 w-full"
-                        tabIndex={ 4 }
+                        tabIndex={ 3 }
                         disabled={ processing }
                     >
                         { processing && (
