@@ -5,7 +5,7 @@ import JobseekerLayout from '@/layouts/jobseeker-layout';
 import { useEffect, useRef, useState, useCallback } from 'react';
 
 const Employers = () => {
-    const { companies: initialCompanies, filters } = usePage().props as any;
+    const { companies: initialCompanies = { data: [], next_page_url: null }, filters = {} } = usePage().props as any;
     const [ companies, setCompanies ] = useState( initialCompanies.data );
     const [ nextPageUrl, setNextPageUrl ] = useState( initialCompanies.next_page_url );
     const [ loading, setLoading ] = useState( false );
@@ -16,7 +16,9 @@ const Employers = () => {
         return path.split( '.' ).reduce( ( acc, part ) => acc?.[ part ], obj );
     };
 
-    const getUniqueValues = ( keyPath: string ): string[] => {
+    const getUniqueValues = useCallback( ( keyPath: string ): string[] => {
+        if ( !companies.length ) return [];
+
         const values = companies
             .map( ( company: any ) => getValueByPath( company, keyPath ) )
             .flat()
@@ -39,7 +41,7 @@ const Employers = () => {
             if ( !aIsNum && bIsNum ) return 1;
             return a.toLowerCase().localeCompare( b.toLowerCase() );
         } );
-    };
+    }, [ companies ] );
 
     const { data, setData } = useForm( {
         keyword: filters.keyword || '',
@@ -166,61 +168,64 @@ const Employers = () => {
         } );
     }, [ nextPageUrl, loading ] );
 
+    // Calculate unique values once at the component level
+    const uniqueIndustries = getUniqueValues( 'industry.name' );
+    const uniqueLocations = getUniqueValues( 'address.location.city' );
+    const uniqueSizes = getUniqueValues( 'size' );
+
     return (
         <JobseekerLayout>
             <Head title="Employers" />
             <div className="zc-container">
                 <div className="page-title mb-3">
                     <h2>Employers</h2>
-                    <p>Search and connect with Employer using Zoom’s advanced search.</p>
+                    <p>Search and connect with Employer using Zoom's advanced search.</p>
                 </div>
                 <div className="zc-employer-list-wrapper">
                     <div className="row">
-                        { companies.length > 0 && (
-                            <div className="col-lg-4 col-md-4 col-sm-12">
-                                <div className="zc-search-wrapper mb-3">
-                                    <input
-                                        type="text"
-                                        className="w-100"
-                                        placeholder="Search by keyword"
-                                        value={ data.keyword }
-                                        onChange={ ( e ) => setData( 'keyword', e.target.value ) }
-                                    />
+                        <div className="col-lg-4 col-md-4 col-sm-12" >
+                            <div className="zc-search-wrapper mb-3">
+                                <input
+                                    type="text"
+                                    className="w-100"
+                                    placeholder="Search by keyword"
+                                    value={ data.keyword }
+                                    onChange={ ( e ) => setData( 'keyword', e.target.value ) }
+                                />
+                            </div>
+                            <div className="zc-filter-wrapper">
+                                <div className="filter-header">
+                                    <FilterIcon />
+                                    <span className="text">Filters</span>
                                 </div>
-                                <div className="zc-filter-wrapper">
-                                    <div className="filter-header">
-                                        <FilterIcon />
-                                        <span className="text">Filters</span>
-                                    </div>
-                                    <div className="filter-content">
-                                        <div className="zc-filter-accordion">
-                                            <div className="zc-accordion-item">
-                                                <div className="zc-accordion-header active">
-                                                    <h3>Activity</h3>
-                                                    <i className="fa-solid fa-angle-down"></i>
-                                                </div>
-                                                <div className="zc-accordion-content">
-                                                    <div className="zc-field check-box-field">
-                                                        <input
-                                                            type="checkbox"
-                                                            id="followed-employers"
-                                                            checked={ data.followed }
-                                                            onChange={ ( e ) => setData( 'followed', e.target.checked ) }
-                                                        />
-                                                        <label htmlFor="followed-employers">Employers You Follow</label>
-                                                    </div>
+                                <div className="filter-content">
+                                    <div className="zc-filter-accordion">
+                                        <div className="zc-accordion-item">
+                                            <div className="zc-accordion-header active">
+                                                <h3>Activity</h3>
+                                                <i className="fa-solid fa-angle-down"></i>
+                                            </div>
+                                            <div className="zc-accordion-content">
+                                                <div className="zc-field check-box-field">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="followed-employers"
+                                                        checked={ data.followed }
+                                                        onChange={ ( e ) => setData( 'followed', e.target.checked ) }
+                                                    />
+                                                    <label htmlFor="followed-employers">Employers You Follow</label>
                                                 </div>
                                             </div>
-                                            { renderMultiSelect( 'Industry', 'industries', getUniqueValues( 'industry.name' ) ) }
-                                            { renderMultiSelect( 'Location', 'locations', getUniqueValues( 'address.location.city' ) ) }
-                                            { renderMultiSelect( 'Employer Size', 'sizes', getUniqueValues( 'size' ) ) }
                                         </div>
+                                        { renderMultiSelect( 'Industry', 'industries', uniqueIndustries ) }
+                                        { renderMultiSelect( 'Location', 'locations', uniqueLocations ) }
+                                        { renderMultiSelect( 'Employer Size', 'sizes', uniqueSizes ) }
                                     </div>
                                 </div>
                             </div>
-                        ) }
+                        </div>
 
-                        <div className={ companies.length > 0 ? "col-lg-8 col-md-8 col-sm-12" : "col-lg-12" }>
+                        <div className="col-lg-8 col-md-8 col-sm-12">
                             <div className="zc-employer-list">
                                 { companies.length === 0 ? (
                                     <div className="text-center py-5 bg-white rounded-md shadow-md">
@@ -228,18 +233,17 @@ const Employers = () => {
                                     </div>
                                 ) : (
                                     <>
-                                        {
-                                            companies.map( ( company: any ) => (
-                                                <CompanyItem key={ company.id } company={ company } />
-                                            ) )
-                                        }
+                                        { companies.map( ( company: any ) => (
+                                            <CompanyItem key={ company.id } company={ company } />
+                                        ) ) }
                                         { nextPageUrl && (
                                             <div className="load-more-wrapper text-center">
                                                 <button onClick={ loadMore } disabled={ loading }>
                                                     { loading ? 'Loading...' : 'Load More' }
                                                 </button>
                                             </div>
-                                        ) }</>
+                                        ) }
+                                    </>
                                 ) }
                             </div>
                         </div>
