@@ -16,9 +16,9 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        commands: __DIR__ . '/../routes/console.php',
-        channels: __DIR__ . '/../routes/channels.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -40,11 +40,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(
             except: [
+                'chat',
                 'temp-upload',
                 'employer/profile/image-upload',
                 'employer/profile/image-remove',
                 'company/profile/logo-upload',
                 'company/profile/logo-remove',
+                'employer/ai/job-description',
             ]
         );
     })

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Admin;
 
 use App\Models\User;
@@ -8,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class StudentVerifyNotification extends Notification implements ShouldQueue
+final class StudentVerifyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -48,7 +50,7 @@ class StudentVerifyNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New student registered: ' . $this->user->name,
+            'message' => 'New student registered: '.$this->user->name,
             'url' => route('admin.students.verify', ['student' => $this->user->id]),
         ];
     }

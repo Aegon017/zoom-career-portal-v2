@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @props(['url', 'color' => 'default', 'align' => 'center'])
 <table class="action" align="{{ $align }}" width="100%" cellpadding="0" cellspacing="0" role="presentation">
     <tr>
@@ -19,3 +24,4 @@
         </td>
     </tr>
 </table>
+<?php 

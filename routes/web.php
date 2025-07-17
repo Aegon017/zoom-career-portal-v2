@@ -19,6 +19,7 @@ use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
+use App\Http\Controllers\Employer\JobDescriptionStreamController;
 use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\OpeningController;
@@ -40,16 +41,15 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', fn () => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/dashboard');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -118,10 +118,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::get('/', [ApplicationsController::class, 'index'])->name('index');
             Route::post('/', [ApplicationsController::class, 'store'])->name('store');
         });
+
+        Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker', 'verified.phone', 'verified.student')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
         Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
@@ -183,15 +185,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
-
-    Route::get('/test', function (): void {
-        $onboard = new OnboardingController;
-
-        $onboard->sendNotification(Auth::user(), Auth::user()->companies()->latest()->first());
-    });
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

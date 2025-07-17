@@ -1,3 +1,7 @@
+declare(strict_types=1);
+
+declare(strict_types=1);
+
 <x-mail::message>
 {{-- Greeting --}}
 @if (! empty($greeting))

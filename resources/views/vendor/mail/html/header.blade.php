@@ -1,3 +1,8 @@
+<?php
+
+declare(strict_types=1);
+
+?>
 @props(['url'])
 <tr>
     <td class="header">
@@ -10,3 +15,4 @@
         </a>
     </td>
 </tr>
+<?php 
