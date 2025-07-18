@@ -21,10 +21,10 @@ final class JobseekerDashboardController extends Controller
             ->with(['jobTitles', 'industries', 'locations', 'employmentTypes'])
             ->first();
 
-        $careerInterest?->jobTitles->pluck('opening_title_id')->toArray() ?? [];
-        $careerInterest?->industries->pluck('industry_id')->toArray() ?? [];
-        $careerInterest?->locations->pluck('location_id')->toArray() ?? [];
-        $careerInterest?->employmentTypes->pluck('employment_type')->toArray() ?? [];
+        $jobTitleIds =  $careerInterest?->jobTitles->pluck('opening_title_id')->toArray() ?? [];
+        $industryIds = $careerInterest?->industries->pluck('industry_id')->toArray() ?? [];
+        $locationIds = $careerInterest?->locations->pluck('location_id')->toArray() ?? [];
+        $employmentTypes = $careerInterest?->employmentTypes->pluck('employment_type')->toArray() ?? [];
 
         $jobsQuery = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now());
@@ -41,19 +41,25 @@ final class JobseekerDashboardController extends Controller
         //     $jobsQuery->whereIn('location_id', $locationIds);
         // }
 
-        // if (!empty($employmentTypes)) {
-        //     $jobsQuery->whereIn('employment_type', $employmentTypes);
-        // }
+        if (!empty($employmentTypes)) {
+            $jobsQuery->whereIn('employment_type', $employmentTypes);
+        }
 
         $jobs = $jobsQuery->latest()
             ->with('company')
             ->get();
 
+        $industries = $careerInterest?->industries()->with('industry')->get() ?? collect();
+
+        $locations = $careerInterest?->locations()->with('location')->get() ?? collect();
+
+        $employmentTypes = $careerInterest?->employmentTypes->pluck('employment_type')->toArray() ?? [];
+
         return Inertia::render('jobseeker/explore', [
             'openings' => $jobs,
             'interests' => [
-                'categories' => $careerInterest?->industries()->pluck('name')->toArray() ?? [],
-                'locations' => $careerInterest?->locations()->pluck('city')->toArray() ?? [],
+                'categories' => $employmentTypes ?? [],
+                'locations' => $locations->pluck('location.city')->toArray() ?? [],
             ],
         ]);
     }

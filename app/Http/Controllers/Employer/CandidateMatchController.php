@@ -38,7 +38,7 @@ Candidate:
 EOT;
 
         $response = Prism::text()
-            ->using('ollama', 'llama3:latest')
+            ->using('ollama', 'phi:latest')
             ->withPrompt($prompt)
             ->asText();
 

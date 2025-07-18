@@ -68,16 +68,28 @@ const CreateOrEditJob = ( {
 
     useEffect( () => {
         if ( !isStreaming && !generatedDescription ) return;
-
-        const prev = form.getValues( "description" ) ?? "";
         form.setValue( "description", generatedDescription );
     }, [ generatedDescription ] );
 
     const form = useForm<Opening>( {
         defaultValues: {
             ...job,
-            skills: job?.skills ?? [],
-        },
+            title: job.title ?? '',
+            employment_type: job.employment_type ?? '',
+            work_model: job.work_model ?? '',
+            salary_min: job.salary_min ?? '',
+            salary_max: job.salary_max ?? '',
+            salary_unit: job.salary_unit ?? '',
+            currency: job.currency ?? '',
+            country: job.country ?? '',
+            state: job.state ?? '',
+            city: job.city ?? '',
+            expires_at: job.expires_at ? new Date( job.expires_at ) : undefined,
+            apply_link: job.apply_link ?? '',
+            status: job.status ?? '',
+            description: job.description ?? '',
+            skills: job.skills ?? [],
+        }
     } );
 
     const { handleSubmit, control, setError, setValue, watch } = form;
