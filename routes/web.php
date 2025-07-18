@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
+use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
 use App\Http\Controllers\Employer\JobDescriptionStreamController;
@@ -120,6 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         });
 
         Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
+        Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
     });
 
     // jobseeker routes

@@ -229,16 +229,18 @@ export interface Opening {
     application_created_at: string;
 }
 
-interface Application {
+export interface Application {
     id: number;
-    opening_id: number;
-    user_id: number;
-    status: string;
-    cover_letter: string;
-    resume_url: string;
     user: User;
     created_at: string;
-    updated_at: string;
+    resume_url?: string;
+    resume_text?: string;
+    match_score?: {
+        score: number;
+        reason: string;
+        shortlist: boolean;
+        shortlist_reason: string;
+    };
 }
 
 export interface Education {

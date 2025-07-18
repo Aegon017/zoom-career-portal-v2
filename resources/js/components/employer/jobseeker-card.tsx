@@ -1,4 +1,4 @@
-import { Jobseeker, User } from "@/types"
+import { User } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Card, CardContent, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"

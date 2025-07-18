@@ -47,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'company/profile/logo-upload',
                 'company/profile/logo-remove',
                 'employer/ai/job-description',
+                'employer/ai/match-score/*',
             ]
         );
     })
