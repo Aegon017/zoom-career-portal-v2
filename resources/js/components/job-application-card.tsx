@@ -106,7 +106,12 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                         </div>
                     </div>
                 </div>
-                { ( matchScore === null ) && (
+                { loading ? (
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                        <span>Analyzing with AI... ({ elapsedTime }s)</span>
+                    </div>
+                ) : matchScore === null && (
                     <Button
                         variant="ghost"
                         size="sm"
@@ -123,12 +128,7 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
             <CardContent className="px-0 space-y-4">
                 {/* Match Score */ }
                 <div>
-                    { loading ? (
-                        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                            <span>Analyzing with AI... ({ elapsedTime }s)</span>
-                        </div>
-                    ) : ( matchScore !== null ) && (
+                    { ( matchScore !== null ) && (
                         <div className="text-sm font-medium text-green-700">
                             🧠 Match Score: <span className="font-bold">{ matchScore }/100</span>
                             <span className="ml-2 text-xs text-muted-foreground">⏱ { elapsedTime }s</span>
