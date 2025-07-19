@@ -6,13 +6,18 @@ namespace App\Http\Controllers\Jobseeker;
 
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Industry;
+use App\Models\Location;
 use App\Models\Opening;
+use App\Models\OpeningTitle;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class JobseekerDashboardController extends Controller
 {
+    // JobseekerDashboardController.php
+    // JobseekerDashboardController.php
     public function index(): Response
     {
         $user = Auth::user();
@@ -21,45 +26,77 @@ final class JobseekerDashboardController extends Controller
             ->with(['jobTitles', 'industries', 'locations', 'employmentTypes'])
             ->first();
 
-        $jobTitleIds =  $careerInterest?->jobTitles->pluck('opening_title_id')->toArray() ?? [];
-        $industryIds = $careerInterest?->industries->pluck('industry_id')->toArray() ?? [];
-        $locationIds = $careerInterest?->locations->pluck('location_id')->toArray() ?? [];
-        $employmentTypes = $careerInterest?->employmentTypes->pluck('employment_type')->toArray() ?? [];
-
-        $jobsQuery = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
-            ->where('expires_at', '>', now());
-
-        // if (!empty($jobTitleIds)) {
-        //     $jobsQuery->whereIn('opening_title_id', $jobTitleIds);
-        // }
-
-        // if (!empty($industryIds)) {
-        //     $jobsQuery->whereIn('industry_id', $industryIds);
-        // }
-
-        // if (!empty($locationIds)) {
-        //     $jobsQuery->whereIn('location_id', $locationIds);
-        // }
-
-        if (!empty($employmentTypes)) {
-            $jobsQuery->whereIn('employment_type', $employmentTypes);
+        if (!$careerInterest) {
+            return Inertia::render('jobseeker/explore', [
+                'openings' => [],
+                'interests' => [
+                    'categories' => [],
+                    'locations' => [],
+                ],
+            ]);
         }
 
-        $jobs = $jobsQuery->latest()
-            ->with('company')
+        // Get user's interest data
+        $jobTitleIds = $careerInterest->jobTitles->pluck('opening_title_id')->toArray();
+        $industryIds = $careerInterest->industries->pluck('industry_id')->toArray();
+        $locationIds = $careerInterest->locations->pluck('location_id')->toArray();
+        $employmentTypes = $careerInterest->employmentTypes
+            ->map(fn($type) => $type->employment_type->value)
+            ->toArray();
+
+        $jobTitles = OpeningTitle::whereIn('id', $jobTitleIds)->pluck('name')->toArray();
+        $industryNames = Industry::whereIn('id', $industryIds)->pluck('name')->toArray();
+        $locationNames = Location::whereIn('id', $locationIds)->pluck('city')->toArray();
+
+        // Get all openings that match user's interests
+        $jobs = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
+            ->where('expires_at', '>', now())
+            ->where(function ($query) use ($jobTitles, $industryIds, $employmentTypes, $locationNames) {
+                // Job titles condition
+                if (!empty($jobTitles)) {
+                    $query->whereIn('title', $jobTitles);
+                }
+
+                // Industry condition
+                if (!empty($industryIds)) {
+                    $query->orWhereHas('company', function ($q) use ($industryIds) {
+                        $q->whereHas('industry', function ($q) use ($industryIds) {
+                            $q->whereIn('id', $industryIds);
+                        });
+                    });
+                }
+
+                // Employment type condition
+                if (!empty($employmentTypes)) {
+                    $query->orWhereIn('employment_type', $employmentTypes);
+                }
+
+                // Location condition
+                if (!empty($locationNames)) {
+                    $query->where(function ($q) use ($locationNames) {
+                        foreach ($locationNames as $location) {
+                            $q->orWhere('city', 'like', "%$location%");
+                        }
+                    });
+                }
+            })
+            ->with(['company', 'company.industry'])
+            ->latest()
+            ->take(6)
             ->get();
 
-        $industries = $careerInterest?->industries()->with('industry')->get() ?? collect();
-
-        $locations = $careerInterest?->locations()->with('location')->get() ?? collect();
-
-        $employmentTypes = $careerInterest?->employmentTypes->pluck('employment_type')->toArray() ?? [];
+        // Prepare interests for the View More link
+        $viewMoreFilters = [
+            'job_title' => count($jobTitles) > 0 ? $jobTitles[0] : '',
+            'industries' => $industryIds,
+        ];
 
         return Inertia::render('jobseeker/explore', [
             'openings' => $jobs,
             'interests' => [
-                'categories' => $employmentTypes ?? [],
-                'locations' => $locations->pluck('location.city')->toArray() ?? [],
+                'categories' => array_unique(array_merge($jobTitles, $industryNames)),
+                'locations' => $locationNames,
+                'viewMoreFilters' => $viewMoreFilters, // NEW: Added for View More link
             ],
         ]);
     }

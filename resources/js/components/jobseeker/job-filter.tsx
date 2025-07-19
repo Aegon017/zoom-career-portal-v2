@@ -1,7 +1,7 @@
+import { Option } from '@/types'
 import { router, useForm } from '@inertiajs/react'
 import { useEffect, useRef, useState } from 'react'
 
-// Debounce hook
 function useDebounce<T>( value: T, delay: number ): T {
     const [ debouncedValue, setDebouncedValue ] = useState( value )
 
@@ -13,9 +13,16 @@ function useDebounce<T>( value: T, delay: number ): T {
     return debouncedValue
 }
 
-const JobFilters = ( { filters }: { filters: any } ) => {
+type JobFiltersProps = {
+    filters: any;
+    employmentOptions: Option[];
+    industries: Array<{ id: number; name: string }>;
+};
+
+const JobFilters = ( { filters, employmentOptions, industries }: JobFiltersProps ) => {
     const [ isIndustryDropdownOpen, setIsIndustryDropdownOpen ] = useState( false )
     const [ isEmploymentDropdownOpen, setIsEmploymentDropdownOpen ] = useState( false )
+    const [ industrySearch, setIndustrySearch ] = useState( '' )
 
     const industryRef = useRef<HTMLDivElement>( null )
     const employmentRef = useRef<HTMLDivElement>( null )
@@ -30,23 +37,27 @@ const JobFilters = ( { filters }: { filters: any } ) => {
     const debouncedCompany = useDebounce( data.company, 500 )
     const debouncedJobTitle = useDebounce( data.job_title, 500 )
 
+    // Filter industries based on search
+    const filteredIndustries = industries.filter( industry =>
+        industry.name.toLowerCase().includes( industrySearch.toLowerCase() )
+    )
+
+    // Single optimized effect for all filters
     useEffect( () => {
-        router.get( "/jobseeker/jobs", {
-            ...data,
+        const params = {
             company: debouncedCompany,
             job_title: debouncedJobTitle,
-        }, {
-            preserveState: true,
-            replace: true,
-        } )
-    }, [ debouncedCompany, debouncedJobTitle ] )
+            employment_types: data.employment_types,
+            industries: data.industries,
+        }
 
-    useEffect( () => {
-        router.get( "/jobseeker/jobs", data, {
+        router.get( "/jobseeker/jobs", params, {
             preserveState: true,
             replace: true,
+            preserveScroll: true,
+            only: [ 'initialJobs', 'filters' ],
         } )
-    }, [ data.employment_types, data.industries ] )
+    }, [ debouncedCompany, debouncedJobTitle, data.employment_types, data.industries ] )
 
     const toggleFilter = ( field: 'employment_types' | 'industries', value: string ) => {
         const current = data[ field ]
@@ -58,17 +69,11 @@ const JobFilters = ( { filters }: { filters: any } ) => {
     }
 
     const handleClickOutside = ( e: MouseEvent ) => {
-        if (
-            employmentRef.current &&
-            !employmentRef.current.contains( e.target as Node )
-        ) {
+        if ( employmentRef.current && !employmentRef.current.contains( e.target as Node ) ) {
             setIsEmploymentDropdownOpen( false )
         }
 
-        if (
-            industryRef.current &&
-            !industryRef.current.contains( e.target as Node )
-        ) {
+        if ( industryRef.current && !industryRef.current.contains( e.target as Node ) ) {
             setIsIndustryDropdownOpen( false )
         }
     }
@@ -85,7 +90,8 @@ const JobFilters = ( { filters }: { filters: any } ) => {
             <div className="widget-header d-block mb-3">
                 <div className="icon-text d-flex align-items-center gap-1">
                     <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none">
-                        <path d="M4 5L10 5M10 5C10 6.10457 10.8954 7 12 7C13.1046 7 14 6.10457 14 5M10 5C10 3.89543 10.8954 3 12 3C13.1046 3 14 3.89543 14 5M14 5L20 5M4 12H16M16 12C16 13.1046 16.8954 14 18 14C19.1046 14 20 13.1046 20 12C20 10.8954 19.1046 10 18 10C16.8954 10 16 10.8954 16 12ZM8 19H20M8 19C8 17.8954 7.10457 17 6 17C4.89543 17 4 17.8954 4 19C4 20.1046 4.89543 21 6 21C7.10457 21 8 20.1046 8 19Z" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" />
+                        <path d="M4 5L10 5M10 5C10 6.10457 10.8954 7 12 7C13.1046 7 14 6.10457 14 5M10 5C10 3.89543 10.8954 3 12 3C13.1046 3 14 3.89543 14 5M14 5L20 5M4 12H16M16 12C16 13.1046 16.8954 14 18 14C19.1046 14 20 13.1046 20 12C20 10.8954 19.1046 10 18 10C16.8954 10 16 10.8954 16 12ZM8 19H20M8 19C8 17.8954 7.10457 17 6 17C4.89543 17 4 17.8954 4 19C4 20.1046 4.89543 21 6 21C7.10457 21 8 20.1046 8 19Z"
+                            stroke="#000000" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
                     Filter By
                 </div>
@@ -125,8 +131,11 @@ const JobFilters = ( { filters }: { filters: any } ) => {
                         id="search_by_emptype"
                         className="dropdown-toggle"
                         readOnly
+                        value={ data.employment_types.length
+                            ? `${ data.employment_types.length } selected`
+                            : "" }
                         onClick={ () => {
-                            setIsEmploymentDropdownOpen( ( prev ) => !prev )
+                            setIsEmploymentDropdownOpen( prev => !prev )
                             setIsIndustryDropdownOpen( false )
                         } }
                     />
@@ -135,13 +144,14 @@ const JobFilters = ( { filters }: { filters: any } ) => {
                         style={ { display: isEmploymentDropdownOpen ? 'block' : 'none' } }
                     >
                         <div className="dropdown-options">
-                            { [ "Full Time", "Part Time", "Freelance", "Government" ].map( ( type ) => (
-                                <label className="option" key={ type }>
+                            { employmentOptions.map( ( { label, value } ) => (
+                                <label className="option" key={ value }>
                                     <input
                                         type="checkbox"
-                                        checked={ data.employment_types.includes( type ) }
-                                        onChange={ () => toggleFilter( 'employment_types', type ) }
-                                    /> { type }
+                                        checked={ data.employment_types.includes( value ) }
+                                        onChange={ () => toggleFilter( 'employment_types', value ) }
+                                    />
+                                    { label }
                                 </label>
                             ) ) }
                         </div>
@@ -156,9 +166,13 @@ const JobFilters = ( { filters }: { filters: any } ) => {
                         id="search_by_industry"
                         className="dropdown-toggle"
                         readOnly
+                        value={ data.industries.length
+                            ? `${ data.industries.length } selected`
+                            : "" }
                         onClick={ () => {
-                            setIsIndustryDropdownOpen( ( prev ) => !prev )
+                            setIsIndustryDropdownOpen( prev => !prev )
                             setIsEmploymentDropdownOpen( false )
+                            setIndustrySearch( '' )
                         } }
                     />
                     <div
@@ -168,18 +182,25 @@ const JobFilters = ( { filters }: { filters: any } ) => {
                         <input
                             type="text"
                             className="zc-dropdown-search"
-                            placeholder="Search"
+                            placeholder="Search industries..."
+                            value={ industrySearch }
+                            onChange={ ( e ) => setIndustrySearch( e.target.value ) }
                         />
                         <div className="dropdown-options">
-                            { [ "IT", "Marketing", "Real Estate", "Government", "Freelance" ].map( ( industry ) => (
-                                <label className="option" key={ industry }>
-                                    <input
-                                        type="checkbox"
-                                        checked={ data.industries.includes( industry ) }
-                                        onChange={ () => toggleFilter( 'industries', industry ) }
-                                    /> { industry }
-                                </label>
-                            ) ) }
+                            { filteredIndustries.length === 0 ? (
+                                <div className="option text-center py-2">No industries found</div>
+                            ) : (
+                                filteredIndustries.map( industry => (
+                                    <label className="option" key={ industry.id }>
+                                        <input
+                                            type="checkbox"
+                                            checked={ data.industries.includes( industry.id.toString() ) }
+                                            onChange={ () => toggleFilter( 'industries', industry.id.toString() ) }
+                                        />
+                                        { industry.name }
+                                    </label>
+                                ) )
+                            ) }
                         </div>
                     </div>
                 </div>

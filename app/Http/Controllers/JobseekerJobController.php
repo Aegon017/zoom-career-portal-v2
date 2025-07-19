@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\EmploymentTypeEnum;
 use App\Enums\VerificationStatusEnum;
+use App\Models\Industry;
 use App\Models\Opening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,32 +20,63 @@ final class JobseekerJobController extends Controller
         $query = Opening::query()
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
-            ->with('company');
+            ->with('company.industry'); // Eager load company's industry
 
+        // Company filter
         if ($request->filled('company')) {
-            $query->whereHas(
-                'company',
-                fn ($q) => $q->where('name', 'like', '%'.$request->company.'%')
-            );
+            $query->whereHas('company', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->company . '%');
+            });
         }
 
+        // Job title filter
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%'.$request->job_title.'%');
+            $query->where('title', 'like', '%' . $request->job_title . '%');
         }
 
-        if ($request->filled('employment_types')) {
-            $query->whereIn('employment_type', $request->employment_types);
+        // Employment types filter
+        $employmentTypes = $request->input('employment_types', []);
+        if (!empty($employmentTypes)) {
+            if (!is_array($employmentTypes)) {
+                $employmentTypes = [$employmentTypes];
+            }
+            $query->whereIn('employment_type', $employmentTypes);
         }
 
-        if ($request->filled('industries')) {
-            $query->whereIn('industry', $request->industries);
+        // Industries filter - now using industry IDs
+        $industryIds = $request->input('industries', []);
+        if (!empty($industryIds)) {
+            if (!is_array($industryIds)) {
+                $industryIds = [$industryIds];
+            }
+            $query->whereHas('company', function ($q) use ($industryIds) {
+                $q->whereHas('industry', function ($q) use ($industryIds) {
+                    $q->whereIn('id', $industryIds);
+                });
+            });
         }
+
+        // Get distinct industries with active openings
+        $industries = Industry::whereHas('companies.openings', function ($q) {
+            $q->where('verification_status', VerificationStatusEnum::Verified->value)
+                ->where('expires_at', '>', now());
+        })
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
 
         $initialJobs = $query->latest()->paginate(10);
 
         return inertia('jobseeker/jobs/all-jobs', [
             'initialJobs' => $initialJobs,
-            'filters' => $request->only('company', 'job_title', 'employment_types', 'industries'),
+            'employmentTypes' => EmploymentTypeEnum::options(),
+            'industries' => $industries, // Pass industries to frontend
+            'filters' => [
+                'company' => $request->input('company', ''),
+                'job_title' => $request->input('job_title', ''),
+                'employment_types' => $employmentTypes,
+                'industries' => $industryIds, // Use IDs instead of names
+            ],
         ]);
     }
 
@@ -53,7 +86,7 @@ final class JobseekerJobController extends Controller
 
         Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
