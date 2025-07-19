@@ -91,6 +91,21 @@ final class JobseekerDashboardController extends Controller
             'industries' => $industryIds,
         ];
 
+        if (!$careerInterest) {
+            return Inertia::render('jobseeker/explore', [
+                'openings' => [],
+                'interests' => [
+                    'categories' => [],
+                    'locations' => [],
+                    'viewMoreFilters' => [
+                        'job_title' => '',
+                        'industries' => [],
+                    ],
+                ],
+            ]);
+        }
+
+
         return Inertia::render('jobseeker/explore', [
             'openings' => $jobs,
             'interests' => [

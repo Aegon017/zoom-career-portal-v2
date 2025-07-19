@@ -25,16 +25,15 @@ const Explore = ( { openings, interests }: ExploreProps ) => {
         ? interests.locations.join( ', ' )
         : 'Various Locations';
 
-    // Generate query parameters for View More link using existing filters
     const query = new URLSearchParams();
 
-    // Add job_title if it exists
-    if ( interests.viewMoreFilters.job_title ) {
+    // Safely access viewMoreFilters
+    if ( interests.viewMoreFilters?.job_title ) {
         query.append( 'job_title', interests.viewMoreFilters.job_title );
     }
 
-    // Add industries
-    interests.viewMoreFilters.industries.forEach( industryId => {
+    // Safely iterate over industries
+    interests.viewMoreFilters?.industries?.forEach( industryId => {
         query.append( 'industries[]', industryId.toString() );
     } );
 
@@ -77,8 +76,7 @@ const Explore = ( { openings, interests }: ExploreProps ) => {
                         <div className="text-center py-5">
                             <p>No jobs found based on your career interests.</p>
                             <Link
-                                href="/jobseeker/profile/career-interests"
-                                className="btn btn-primary"
+                                    href="/jobseeker/career-interests"
                             >
                                 Update Career Interests
                             </Link>
