@@ -17,6 +17,7 @@ use App\Http\Requests\EditOpeningRequest;
 use App\Http\Resources\SkillResource;
 use App\Mail\Admin\JobVerifyMail;
 use App\Mail\Employer\JobVerificationStatusMail;
+use App\Models\Industry;
 use App\Models\Opening;
 use App\Models\Skill;
 use App\Models\User;
@@ -39,7 +40,7 @@ final class OpeningController extends Controller
         $jobs = Opening::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
             )
             ->where('user_id', Auth::id())
             ->paginate($request->perPage ?? 10)
@@ -57,22 +58,28 @@ final class OpeningController extends Controller
     public function create(): Response
     {
         $operation = OperationsEnum::Create;
-        $employementTypes = EmploymentTypeEnum::options();
-        $workModel = WorkModelEnum::options();
-        $salaryUnits = SalaryUnitEnum::options();
-        $currencies = CurrencyEnum::options();
-        $jobStatuses = JobStatusEnum::options();
-        $skills = SkillResource::collection(Skill::query()->orderBy('name')->get());
+        $employmentTypeOptions = EmploymentTypeEnum::options();
+        $workModelOptions = WorkModelEnum::options();
+        $salaryUnitOptions = SalaryUnitEnum::options();
+        $currencyOptions = CurrencyEnum::options();
+        $jobStatusOptions = JobStatusEnum::options();
+
+        $skillOptions = Skill::get()->map(function ($skill) {
+            return [
+                'value' => $skill->id,
+                'label' => $skill->name,
+            ];
+        })->toArray();
 
         return Inertia::render('employer/jobs/create-or-edit-job', [
             'operation' => $operation->value,
             'operationLabel' => $operation->label(),
-            'employementTypes' => $employementTypes,
-            'workModel' => $workModel,
-            'salaryUnits' => $salaryUnits,
-            'currencies' => $currencies,
-            'jobStatuses' => $jobStatuses,
-            'skills' => $skills,
+            'employmentTypeOptions' => $employmentTypeOptions,
+            'workModelOptions' => $workModelOptions,
+            'salaryUnitOptions' => $salaryUnitOptions,
+            'currencyOptions' => $currencyOptions,
+            'jobStatusOptions' => $jobStatusOptions,
+            'skillOptions' => $skillOptions
         ]);
     }
 
@@ -92,8 +99,10 @@ final class OpeningController extends Controller
         $data['company_id'] = $company->id;
         $data['verification_status'] = VerificationStatusEnum::Pending->value;
         $job = Opening::create($data);
-        $skills = array_column($data['skills'], 'id');
-        $job->skills()->sync($skills);
+        $job->skills()->sync($data['skills']);
+        $job->address()->create([
+            'location_id' => $data['location_id'],
+        ]);
 
         $this->sendNotification($job->user, $job);
 
@@ -114,23 +123,29 @@ final class OpeningController extends Controller
     public function edit(Opening $job)
     {
         $operation = OperationsEnum::Edit;
-        $employementTypes = EmploymentTypeEnum::options();
-        $workModel = WorkModelEnum::options();
-        $salaryUnits = SalaryUnitEnum::options();
-        $currencies = CurrencyEnum::options();
-        $jobStatuses = JobStatusEnum::options();
-        $skills = SkillResource::collection(Skill::get());
+        $employmentTypeOptions = EmploymentTypeEnum::options();
+        $workModelOptions = WorkModelEnum::options();
+        $salaryUnitOptions = SalaryUnitEnum::options();
+        $currencyOptions = CurrencyEnum::options();
+        $jobStatusOptions = JobStatusEnum::options();
+
+        $skillOptions = Skill::get()->map(function ($skill) {
+            return [
+                'value' => $skill->id,
+                'label' => $skill->name,
+            ];
+        })->toArray();
 
         return Inertia::render('employer/jobs/create-or-edit-job', [
-            'job' => $job->load('skills'),
+            'job' => $job->load('skills', 'address', 'address.location', 'industry'),
             'operation' => $operation->value,
             'operationLabel' => $operation->label(),
-            'employementTypes' => $employementTypes,
-            'workModel' => $workModel,
-            'salaryUnits' => $salaryUnits,
-            'currencies' => $currencies,
-            'jobStatuses' => $jobStatuses,
-            'skills' => $skills,
+            'employmentTypeOptions' => $employmentTypeOptions,
+            'workModelOptions' => $workModelOptions,
+            'salaryUnitOptions' => $salaryUnitOptions,
+            'currencyOptions' => $currencyOptions,
+            'jobStatusOptions' => $jobStatusOptions,
+            'skillOptions' => $skillOptions
         ]);
     }
 
@@ -151,8 +166,11 @@ final class OpeningController extends Controller
             $job->save();
         }
 
-        $skills = array_column($data['skills'], 'id');
-        $job->skills()->sync($skills);
+        $job->skills()->sync($data['skills']);
+
+        $job->address()->update([
+            'location_id' => $data['location_id'],
+        ]);
 
         $this->sendNotification($job->user, $job);
 

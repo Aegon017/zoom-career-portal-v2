@@ -1,20 +1,26 @@
 import { useEffect, useRef } from "react";
 import Quill from "quill";
-
 import "quill/dist/quill.snow.css";
 
 interface QuillEditorProps {
     value: string;
     onChange: ( value: string ) => void;
     disabled: boolean;
+    placeholder?: string;
 }
 
-const TextEditor: React.FC<QuillEditorProps> = ( { value, onChange, disabled } ) => {
+const TextEditor: React.FC<QuillEditorProps> = ( {
+    value,
+    onChange,
+    disabled,
+    placeholder = ""
+} ) => {
     const editorRef = useRef<HTMLDivElement | null>( null );
     const quillRef = useRef<Quill | null>( null );
 
     useEffect( () => {
         if ( editorRef.current && !quillRef.current ) {
+            // Initialize Quill with placeholder support
             quillRef.current = new Quill( editorRef.current, {
                 theme: "snow",
                 modules: {
@@ -26,22 +32,25 @@ const TextEditor: React.FC<QuillEditorProps> = ( { value, onChange, disabled } )
                         [ "clean" ],
                     ],
                 },
+                placeholder,  // Set the placeholder
                 readOnly: disabled,
             } );
+
+            // Set initial value if provided
+            if ( value ) {
+                quillRef.current.root.innerHTML = value;
+            }
 
             quillRef.current.on( "text-change", () => {
                 const html = editorRef.current!.querySelector( ".ql-editor" )?.innerHTML || "";
                 onChange( html );
             } );
         }
-    }, [ onChange, disabled ] );
+    }, [ onChange, disabled, placeholder ] );  // Add placeholder to dependencies
 
     useEffect( () => {
-        if ( quillRef.current ) {
-            const currentHtml = quillRef.current.root.innerHTML;
-            if ( value !== currentHtml ) {
-                quillRef.current.root.innerHTML = value;
-            }
+        if ( quillRef.current && value !== quillRef.current.root.innerHTML ) {
+            quillRef.current.root.innerHTML = value;
         }
     }, [ value ] );
 
@@ -52,30 +61,38 @@ const TextEditor: React.FC<QuillEditorProps> = ( { value, onChange, disabled } )
     }, [ disabled ] );
 
     return (
-        <div className="rounded-xl border bg-background shadow-sm" >
+        <div className="rounded-xl border bg-background shadow-sm">
             <style>{ `
-        .ql-toolbar {
-          border-radius: 0.75rem 0.75rem 0 0;
-          background-color: #f6f6f6;
-          border: none !important;
-          padding: 0.5rem;
-        }
+                .ql-toolbar {
+                    border-radius: 0.75rem 0.75rem 0 0;
+                    background-color: #f6f6f6;
+                    border: none !important;
+                    padding: 0.5rem;
+                }
 
-        .ql-container {
-          border: none !important;
-          font-family: inherit;
-        }
+                .ql-container {
+                    border: none !important;
+                    font-family: inherit;
+                }
 
-        .ql-editor {
-          min-height: 10rem;
-          font-size: 1rem;
-          padding: 0.75rem 1rem;
-        }
+                .ql-editor {
+                    min-height: 10rem;
+                    font-size: 1rem;
+                    padding: 0.75rem 1rem;
+                }
 
-        .ql-editor:focus {
-          outline: none;
-        }
-      `}</style>
+                .ql-editor:focus {
+                    outline: none;
+                }
+
+                /* Style for placeholder */
+                .ql-editor.ql-blank::before {
+                    color: rgba(0, 0, 0, 0.6);
+                    font-style: normal;
+                    left: 1rem;
+                    right: 1rem;
+                }
+            `}</style>
 
             <div
                 ref={ editorRef }

@@ -201,8 +201,8 @@ export interface Skill {
 
 export interface Opening {
     id: number;
-    id: number;
     user_id: number;
+    industry_id: number;
     title: string;
     employment_type: string;
     work_model: string;
@@ -211,9 +211,6 @@ export interface Opening {
     salary_max: number;
     salary_unit: string;
     currency: string;
-    city: string | null;
-    state: string | null;
-    country: string | null;
     published_at: string;
     expires_at: Date;
     apply_link?: string;
@@ -223,6 +220,8 @@ export interface Opening {
     updated_at: string;
     skills: Skill[];
     company: Company;
+    address: Address;
+    industry: Industry;
     is_saved: boolean;
     has_applied: boolean;
     application_status: string;
@@ -329,6 +328,7 @@ export interface JobSeekerProfile {
 export interface Industry {
     id: number;
     name: string;
+    jobs: Opening[];
 }
 
 export interface JobFunction {

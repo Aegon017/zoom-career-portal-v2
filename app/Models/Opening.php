@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 final class Opening extends Model
@@ -18,6 +20,7 @@ final class Opening extends Model
     protected $fillable = [
         'company_id',
         'user_id',
+        'industry_id',
         'title',
         'employment_type',
         'work_model',
@@ -26,9 +29,6 @@ final class Opening extends Model
         'salary_max',
         'salary_unit',
         'currency',
-        'city',
-        'state',
-        'country',
         'published_at',
         'expires_at',
         'apply_link',
@@ -80,7 +80,7 @@ final class Opening extends Model
         return $application?->status;
     }
 
-    public function getApplicationCreatedAtAttribute(): ?\Illuminate\Support\Carbon
+    public function getApplicationCreatedAtAttribute(): ?Carbon
     {
         $user = Auth::user();
 
@@ -105,7 +105,18 @@ final class Opening extends Model
 
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class);
+        return $this->belongsToMany(Skill::class, 'opening_skills', 'opening_id', 'skill_id')
+            ->withTimestamps();
+    }
+
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class);
     }
 
     public function savedByUsers(): HasMany

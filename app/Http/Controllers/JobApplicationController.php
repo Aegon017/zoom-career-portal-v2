@@ -7,55 +7,67 @@ namespace App\Http\Controllers;
 use App\Enums\JobApplicationStatusEnum;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
+use App\Models\Resume;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 final class JobApplicationController extends Controller
 {
-    public function store(Request $request, string $jobId)
+    public function store(Request $request, int $jobId)
     {
         $request->validate([
             'cover_letter' => 'nullable|string',
-            'resume_id' => 'required_without:resume|nullable|integer|exists:media,id',
+            'resume_id' => 'required_without:resume|nullable|integer',
             'resume' => 'required_without:resume_id|nullable|string',
         ]);
 
         $user = Auth::user();
-
-        $application = OpeningApplication::create([
-            'user_id' => $user->id,
-            'opening_id' => $jobId,
-            'cover_letter' => $request->cover_letter,
-            'status' => JobApplicationStatusEnum::Applied->value,
-        ]);
+        $resumeId = null;
 
         try {
             if ($request->filled('resume_id')) {
-                $resume = $user->getMedia('resumes')->firstWhere('id', $request->resume_id);
-
-                if (! $resume) {
+                $media = Media::find($request->resume_id);
+                $resume = Resume::find($media->model_id);
+                if (!$resume) {
                     throw new Exception('Resume not found or does not belong to you.');
                 }
+                $resumeId = $resume->id;
+            } elseif ($request->filled('resume')) {
+                $path = $request->resume;
 
-                $resume->copy($application, 'resumes');
-            } elseif ($request->filled('resume') && Storage::disk('public')->exists($request->resume)) {
-                $application
-                    ->addMedia(storage_path('app/public/'.$request->resume))
-                    ->preservingOriginal()
-                    ->toMediaCollection('resumes');
-                $user->addMedia(storage_path('app/public/'.$request->resume))
-                    ->preservingOriginal()
-                    ->toMediaCollection('resumes');
+                if (!Storage::disk('public')->exists($path)) {
+                    throw new Exception('File not found. Please upload again.');
+                }
+
+                $resume = $user->resumes()->create();
+
+                try {
+                    $resume->addMedia(Storage::disk('public')->path($path))
+                        ->toMediaCollection('resumes');
+                } catch (FileCannotBeAdded $e) {
+                    $resume->delete();
+                    throw new Exception('Invalid file type. Only PDF resumes are allowed.');
+                }
+
+                $resumeId = $resume->id;
             } else {
                 throw new Exception('No valid resume provided.');
             }
 
+            OpeningApplication::create([
+                'user_id' => $user->id,
+                'opening_id' => $jobId,
+                'resume_id' => $resumeId,
+                'cover_letter' => $request->cover_letter,
+                'status' => JobApplicationStatusEnum::Applied->value,
+            ]);
+
             return back()->with('success', 'Application submitted successfully.');
         } catch (Exception $exception) {
-            $application->delete();
-
             return back()->withErrors(['resume' => $exception->getMessage()]);
         }
     }

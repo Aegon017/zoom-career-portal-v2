@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('industry_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('employment_type');
             $table->string('work_model');
@@ -25,9 +26,6 @@ return new class extends Migration
             $table->decimal('salary_max', 10)->nullable();
             $table->string('salary_unit')->nullable();
             $table->char('currency', 3);
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('country')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->string('apply_link')->nullable();

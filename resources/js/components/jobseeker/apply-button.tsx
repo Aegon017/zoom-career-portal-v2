@@ -145,9 +145,9 @@ export default function ApplyButton({ jobId, hasApplied, status }: ApplyButtonPr
                                                     value={field.value || ""}
                                                     onChange={(e) => {
                                                         const val = e.target.value;
-                                                        const id = val ? parseInt(val) : null;
+                                                        const id = val ? parseInt( val ) : null;;
                                                         setValue("selectedResumeId", id);
-                                                        setValue("resume", ""); // Clear file if selecting existing
+                                                        setValue("resume", "");
                                                     }}
                                                 >
                                                     <option value="">-- Select an existing resume --</option>
@@ -175,13 +175,11 @@ export default function ApplyButton({ jobId, hasApplied, status }: ApplyButtonPr
                                                     name="file"
                                                     acceptedFileTypes={[
                                                         "application/pdf",
-                                                        "application/msword",
-                                                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                                     ]}
-                                                    placeholder="Drag & Drop your resume (PDF/DOC)"
+                                                    placeholder="Drag & Drop your resume (PDF)"
                                                     onUploaded={(file) => {
                                                         setValue("resume", file);
-                                                        setValue("selectedResumeId", null); // Deselect existing
+                                                        setValue("selectedResumeId", null);
                                                     }}
                                                 />
                                             </FormControl>

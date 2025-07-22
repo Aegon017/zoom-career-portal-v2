@@ -1,154 +1,137 @@
-import DeleteAlert from '@/components/delete-alert';
-import { SelectPopoverField } from '@/components/select-popover-field';
-import QuillEditor from '@/components/text-editor';
-import { Button } from '@/components/ui/button';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/employer-layout';
-import { Opening, Skill, type BreadcrumbItem } from '@/types';
+import { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { MultiSelect } from '@/components/multi-select';
-import axios from 'axios';
 import { useStream } from '@laravel/stream-react';
 import { toast } from 'sonner';
-
-interface Props {
-    job: Opening;
-    operation: 'Create' | 'Edit';
-    operationLabel: string;
-    employementTypes: Array<{ value: string; label: string }>;
-    workModel: Array<{ value: string; label: string }>;
-    salaryUnits: Array<{ value: string; label: string }>;
-    currencies: Array<{ value: string; label: string }>;
-    jobStatuses: Array<{ value: string; label: string }>;
-    skills: Skill[];
-}
-
-interface Location {
-    value: string;
-    label: string;
-}
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import axios from 'axios';
+import DeleteAlert from '@/components/delete-alert';
+import QuillEditor from '@/components/text-editor';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import AppLayout from '@/layouts/employer-layout';
+import MultipleSelector from '@/components/multiple-selector';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Opening, Option, BreadcrumbItem } from '@/types';
+import { cn } from '@/lib/utils';
 
 const CreateOrEditJob = ( {
     job,
     operation,
     operationLabel,
-    employementTypes,
-    workModel,
-    salaryUnits,
-    currencies,
-    jobStatuses,
-    skills,
-}: Props ) => {
-    const skillOptions = skills.map( skill => ( {
-        label: skill.name,
-        value: String( skill.id ),
-    } ) );
-
-    const [ countries, setCountries ] = useState<Location[]>( [] );
-    const [ states, setStates ] = useState<Record<string, Location[]>>( {} );
-    const [ cities, setCities ] = useState<Record<string, Location[]>>( {} );
+    skillOptions,
+    employmentTypeOptions,
+    workModelOptions,
+    salaryUnitOptions,
+    currencyOptions,
+    jobStatusOptions,
+}: {
+    job?: Opening;
+    operation: string;
+    operationLabel: string;
+    skillOptions: Option[];
+    employmentTypeOptions: Option[];
+    workModelOptions: Option[];
+    salaryUnitOptions: Option[];
+    currencyOptions: Option[];
+    jobStatusOptions: Option[];
+} ) => {
     const [ alertOpen, setAlertOpen ] = useState( false );
+    const { data: generatedDescription, isStreaming, send: generateDescription } =
+        useStream( "/employer/ai/job-description" );
 
-    const { data: generatedDescription, isStreaming, send: generateDescription } = useStream( "/employer/ai/job-description" );
-
-    useEffect( () => {
-        if ( !isStreaming && !generatedDescription ) return;
-        form.setValue( "description", generatedDescription );
-    }, [ generatedDescription ] );
-
-    const form = useForm<Opening>( {
+    const form = useForm( {
         defaultValues: {
-            ...job,
-            title: job.title ?? '',
-            employment_type: job.employment_type ?? '',
-            work_model: job.work_model ?? '',
-            salary_min: job.salary_min ?? '',
-            salary_max: job.salary_max ?? '',
-            salary_unit: job.salary_unit ?? '',
-            currency: job.currency ?? '',
-            country: job.country ?? '',
-            state: job.state ?? '',
-            city: job.city ?? '',
-            expires_at: job.expires_at ? new Date( job.expires_at ) : undefined,
-            apply_link: job.apply_link ?? '',
-            status: job.status ?? '',
-            description: job.description ?? '',
-            skills: job.skills ?? [],
+            title: job?.title || '',
+            skills: job?.skills.map( s => ( { value: String( s.id ), label: s.name } ) ) || [],
+            description: job?.description || '',
+            employment_type: job?.employment_type ?
+                [ { value: job.employment_type, label: job.employment_type } ] : [],
+            work_model: job?.work_model ?
+                [ { value: job.work_model, label: job.work_model } ] : [],
+            salary_min: job?.salary_min || 0,
+            salary_max: job?.salary_max || 0,
+            salary_unit: job?.salary_unit ?
+                [ { value: job.salary_unit, label: job.salary_unit } ] : [],
+            currency: job?.currency ?
+                [ { value: job.currency, label: job.currency } ] : [],
+            location_id: job?.address.location_id ?
+                [ { value: String( job.address.location.id ), label: job.address.location.full_name } ] : [],
+            industry_id: job?.industry ?
+                [ { value: String( job.industry.id ), label: job.industry.name } ] : [],
+            expires_at: job?.expires_at ? new Date( job.expires_at ) : null,
+            apply_link: job?.apply_link || '',
+            status: job?.status ?
+                [ { value: job.status, label: job.status } ] : [],
         }
     } );
 
-    const { handleSubmit, control, setError, setValue, watch } = form;
+    const { handleSubmit, control, watch, setValue, setError } = form;
 
-    const selectedCountry = watch( 'country' );
-    const selectedState = watch( 'state' );
-
-    const fetchCountries = async () => {
-        try {
-            const res = await axios.get( "/location/countries" );
-            setCountries( res.data?.data || [] );
-        } catch ( error ) {
-            console.error( 'Error fetching countries:', error );
+    useEffect( () => {
+        if ( generatedDescription ) {
+            setValue( "description", generatedDescription );
         }
-    };
-
-    const fetchStates = async ( countryName: string ) => {
-        try {
-            const res = await axios.post( "/location/states", { country: countryName } );
-            setStates( prev => ( { ...prev, [ countryName ]: res.data?.data || [] } ) );
-        } catch ( error ) {
-            console.error( 'Error fetching states:', error );
-        }
-    };
-
-    const fetchCities = async ( countryName: string, stateName: string ) => {
-        try {
-            const res = await axios.post( "/location/cities", { country: countryName, state: stateName } );
-            setCities( prev => ( { ...prev, [ stateName ]: res.data?.data || [] } ) );
-        } catch ( error ) {
-            console.error( 'Error fetching cities:', error );
-        }
-    };
-
-    useEffect( () => { fetchCountries(); }, [] );
-    useEffect( () => { if ( selectedCountry ) fetchStates( selectedCountry ); }, [ selectedCountry ] );
-    useEffect( () => { if ( selectedCountry && selectedState ) fetchCities( selectedCountry, selectedState ); }, [ selectedState ] );
+    }, [ generatedDescription, setValue ] );
 
     const onSubmit = ( data: any ) => {
-        const handleErrors = ( errors: Record<string, string> ) => {
-            Object.entries( errors ).forEach( ( [ field, message ] ) => {
-                setError( field as keyof Opening, { type: 'server', message } );
+        const handleErrors = ( errors: any ) => {
+            if ( errors && typeof errors === 'object' ) {
+                Object.entries( errors ).forEach( ( [ field, message ] ) => {
+                    setError( field as any, { type: 'server', message: message as string } );
+                } );
+            }
+        };
+
+        const formData = {
+            ...data,
+            skills: data.skills.map( ( s: Option ) => s.value ),
+            employment_type: data.employment_type[ 0 ]?.value,
+            work_model: data.work_model[ 0 ]?.value,
+            salary_unit: data.salary_unit[ 0 ]?.value,
+            currency: data.currency[ 0 ]?.value,
+            location_id: data.location_id[ 0 ]?.value,
+            industry_id: data.industry_id[ 0 ]?.value,
+            status: data.status[ 0 ]?.value,
+        };
+
+        if ( operation === 'Edit' && job?.id ) {
+            router.put( `/employer/jobs/${ job.id }`, formData, {
+                onSuccess: () => toast.success( 'Job updated successfully' ),
+                onError: handleErrors,
             } );
-        };
-
-        const routes = {
-            Create: () => router.post( "/employer/jobs", data, { onError: handleErrors } ),
-            Edit: () => router.put( `/employer/jobs/${ job.id }`, data, { onError: handleErrors } ),
-        };
-
-        routes[ operation ]?.();
+        } else {
+            router.post( '/employer/jobs', formData, {
+                onSuccess: () => toast.success( 'Job created successfully' ),
+                onError: handleErrors,
+            } );
+        }
     };
 
-    const handleDelete = ( id: number ) => router.delete( `/employer/jobs/${ id }` );
+    const handleDelete = ( id: number ) => {
+        router.delete( `/employer/jobs/${ id }`, {
+            onSuccess: () => toast.success( 'Job deleted successfully' ),
+            onError: () => toast.error( 'Failed to delete job' ),
+        } );
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Jobs', href: "/employer/jobs" },
         { title: operation, href: '' },
     ];
+
+    const searchLocations = async ( searchTerm: string ) => {
+        const response = await axios.get( '/locations/search', { params: { search: searchTerm } } );
+        return response.data;
+    };
+
+    const searchIndustries = async ( searchTerm: string ) => {
+        const response = await axios.get( '/industries/search', { params: { search: searchTerm } } );
+        return response.data;
+    };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
@@ -158,117 +141,207 @@ const CreateOrEditJob = ( {
                     <form onSubmit={ handleSubmit( onSubmit ) } className="space-y-8">
                         <div className="flex justify-between items-center">
                             <h1 className="text-3xl font-semibold">{ operation } Job</h1>
-                            { operation === 'Edit' && (
+                            { operation === 'Edit' && job?.id && (
                                 <>
-                                    <Button variant="destructive" onClick={ ( e ) => { e.preventDefault(); setAlertOpen( true ); } }>Delete</Button>
-                                    <DeleteAlert key={ job.id } alertOpen={ alertOpen } setAlertOpen={ setAlertOpen } onDelete={ () => handleDelete( job.id ) } />
+                                    <Button variant="destructive" onClick={ ( e ) => { e.preventDefault(); setAlertOpen( true ); } }>
+                                        Delete
+                                    </Button>
+                                    <DeleteAlert alertOpen={ alertOpen } setAlertOpen={ setAlertOpen } onDelete={ () => job.id && handleDelete( job.id ) } />
                                 </>
                             ) }
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-6">
-                            {/* Title, Skills, Description */ }
-                            <FormField name="title" control={ control } rules={ { required: 'Job title is required' } } render={ ( { field } ) => (
-                                <FormItem className="col-span-2">
-                                    <FormLabel>Job Title</FormLabel>
-                                    <FormControl><Input { ...field } /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            ) } />
+                            <div className="md:col-span-2 space-y-6">
+                                <FormField name="title" control={ control } rules={ { required: 'Job title is required' } } render={ ( { field } ) => (
+                                    <FormItem>
+                                        <FormLabel>Job Title</FormLabel>
+                                        <FormControl><Input { ...field } /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                ) } />
 
-                            <FormField name="skills" control={ control } render={ ( { field } ) => (
-                                <FormItem className="col-span-2">
-                                    <FormLabel>Required skills</FormLabel>
-                                    <FormControl>
-                                        <MultiSelect
-                                            options={ skillOptions }
-                                            defaultValue={ field.value.map( ( v: any ) => String( v.id ) ) }
-                                            value={ field.value.map( ( v: any ) => String( v.id ) ) }
-                                            onValueChange={ ( values ) => field.onChange( values.map( id => ( { id: parseInt( id ) } ) ) ) }
-                                            placeholder="Select skills required"
-                                            variant="inverted"
-                                            maxCount={ 3 }
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            ) } />
+                                <FormField name="skills" control={ control } render={ ( { field } ) => (
+                                    <FormItem>
+                                        <FormLabel>Required Skills</FormLabel>
+                                        <FormControl>
+                                            <MultipleSelector options={ skillOptions } value={ field.value } onChange={ field.onChange } placeholder="Select skills..." />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                ) } />
 
-                            <FormField name="description" control={ control } rules={ { required: 'Job description is required' } } render={ ( { field } ) => (
-                                <FormItem className="col-span-2">
-                                    <FormLabel>Job Description</FormLabel>
-                                    <FormControl>
-                                        <div className="space-y-2">
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                disabled={ isStreaming }
-                                                onClick={ () => {
-                                                    const jobTitle = watch( 'title' );
-                                                    const selectedSkills = watch( 'skills' ) || [];
-                                                    if ( !jobTitle || selectedSkills.length === 0 ) {
-                                                        toast.error( 'Please enter a job title and select skills.' );
-                                                        return;
-                                                    }
-                                                    field.onChange( '' );
-                                                    generateDescription( {
-                                                        title: jobTitle,
-                                                        skills: selectedSkills.map( ( s: any ) => s.name || s.id ),
-                                                    } );
-                                                } }
-                                            >
+                                <FormField name="description" control={ control } rules={ { required: 'Job description is required' } } render={ ( { field } ) => (
+                                    <FormItem>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <FormLabel>Job Description</FormLabel>
+                                            <Button type="button" variant="outline" size="sm" disabled={ isStreaming } onClick={ () => {
+                                                const jobTitle = watch( 'title' );
+                                                const selectedSkills = watch( 'skills' ) || [];
+                                                if ( !jobTitle || selectedSkills.length === 0 ) {
+                                                    toast.error( 'Please enter a job title and select skills.' );
+                                                    return;
+                                                }
+                                                generateDescription( { title: jobTitle, skills: selectedSkills.map( ( s: Option ) => s.label ) } );
+                                            } }>
                                                 { isStreaming ? <span className="animate-pulse">Generating...</span> : 'Generate with AI' }
                                             </Button>
-                                            <QuillEditor value={ field.value } onChange={ field.onChange } disabled={ isStreaming } />
-                                            { isStreaming && <p className="text-sm text-muted-foreground italic">Streaming job description...</p> }
                                         </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            ) } />
+                                        <FormControl>
+                                            <QuillEditor value={ field.value } onChange={ field.onChange } disabled={ isStreaming } placeholder="Enter job description..." />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                ) } />
+                            </div>
 
-                            {/* Select Fields */ }
-                            <SelectPopoverField control={ control } name="employment_type" label="Employment Type" options={ employementTypes } placeholder="Select employment type" rules={ { required: true } } />
-                            <SelectPopoverField control={ control } name="work_model" label="Work Model" options={ workModel } placeholder="Select work model" rules={ { required: true } } />
-                            <FormField name="salary_min" control={ control } render={ ( { field } ) => (
-                                <FormItem><FormLabel>Min Salary</FormLabel><FormControl><Input type="number" { ...field } /></FormControl><FormMessage /></FormItem>
-                            ) } />
-                            <FormField name="salary_max" control={ control } render={ ( { field } ) => (
-                                <FormItem><FormLabel>Max Salary</FormLabel><FormControl><Input type="number" { ...field } /></FormControl><FormMessage /></FormItem>
-                            ) } />
-                            <SelectPopoverField control={ control } name="salary_unit" label="Salary Unit" options={ salaryUnits } placeholder="Select unit" rules={ { required: true } } />
-                            <SelectPopoverField control={ control } name="currency" label="Currency" options={ currencies } placeholder="Select currency" rules={ { required: true } } />
-                            <SelectPopoverField control={ control } name="country" label="Country" options={ countries } placeholder="Select country" onChange={ () => { setValue( 'state', '' ); setValue( 'city', '' ); } } rules={ { required: true } } />
-                            <SelectPopoverField control={ control } name="state" label="State" options={ states[ selectedCountry ?? '' ] || [] } placeholder="Select state" disabled={ !selectedCountry } onChange={ () => setValue( 'city', '' ) } rules={ { required: true } } />
-                            <SelectPopoverField control={ control } name="city" label="City" options={ cities[ selectedState ?? '' ] || [] } placeholder="Select city" disabled={ !selectedState } rules={ { required: true } } />
-
-                            <FormField name="expires_at" control={ control } rules={ { required: 'Please select expiry date' } } render={ ( { field } ) => (
-                                <FormItem className="col-span-1">
-                                    <FormLabel>Expiry Date</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
+                            <div className="border-t pt-6 md:col-span-2">
+                                <h2 className="text-xl font-semibold mb-4">Employment Details</h2>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField control={ control } name="employment_type" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Employment Type</FormLabel>
                                             <FormControl>
-                                                <Button variant="outline" className={ cn( "w-full text-left", !field.value && "text-muted-foreground" ) }>{ field.value ? format( field.value, "PPP" ) : "Pick a date" }<CalendarIcon className="ml-auto h-4 w-4 opacity-50" /></Button>
+                                                <MultipleSelector options={ employmentTypeOptions } value={ field.value } onChange={ field.onChange } maxSelected={ 1 } placeholder="Select type..." />
                                             </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent align="start" className="w-auto p-0">
-                                            <Calendar mode="single" selected={ field.value } onSelect={ field.onChange } disabled={ ( date: any ) => date < new Date() } />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            ) } />
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
 
-                            <FormField name="apply_link" control={ control } render={ ( { field } ) => (
-                                <FormItem><FormLabel>External Apply Link (optional)</FormLabel><FormControl><Input type="url" placeholder="https://example.com/apply" { ...field } /></FormControl><FormMessage /></FormItem>
-                            ) } />
-                            <SelectPopoverField control={ control } name="status" label="Status" options={ jobStatuses } placeholder="Select status" rules={ { required: true } } />
+                                    <FormField control={ control } name="work_model" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Work Model</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector options={ workModelOptions } value={ field.value } onChange={ field.onChange } maxSelected={ 1 } placeholder="Select model..." />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField control={ control } name="location_id" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Location</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector value={ field.value } onChange={ field.onChange } onSearch={ searchLocations } maxSelected={ 1 } triggerSearchOnFocus placeholder="Search location..."
+                                                    loadingIndicator={ <p className="py-2 text-center text-muted-foreground">Searching locations...</p> }
+                                                    emptyIndicator={ <p className="w-full text-center text-muted-foreground">No locations found</p> }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField control={ control } name="industry_id" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Industry</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector value={ field.value } onChange={ field.onChange } onSearch={ searchIndustries } maxSelected={ 1 } triggerSearchOnFocus placeholder="Search industry..."
+                                                    loadingIndicator={ <p className="py-2 text-center text-muted-foreground">Searching industries...</p> }
+                                                    emptyIndicator={ <p className="w-full text-center text-muted-foreground">No industries found</p> }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+                                </div>
+                            </div>
+
+                            <div className="border-t pt-6 md:col-span-2">
+                                <h2 className="text-xl font-semibold mb-4">Compensation</h2>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField name="salary_min" control={ control } render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Min Salary</FormLabel>
+                                            <FormControl>
+                                                <Input { ...field } onChange={ e => field.onChange( Number( e.target.value ) ) } />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField name="salary_max" control={ control } render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Max Salary</FormLabel>
+                                            <FormControl>
+                                                <Input { ...field } onChange={ e => field.onChange( Number( e.target.value ) ) } />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField control={ control } name="salary_unit" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Salary Unit</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector options={ salaryUnitOptions } value={ field.value } onChange={ field.onChange } maxSelected={ 1 } placeholder="Select unit..." />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField control={ control } name="currency" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Currency</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector options={ currencyOptions } value={ field.value } onChange={ field.onChange } maxSelected={ 1 } placeholder="Select currency..." />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+                                </div>
+                            </div>
+
+                            <div className="border-t pt-6 md:col-span-2">
+                                <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField name="expires_at" control={ control } rules={ { required: 'Please select expiry date' } } render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Expiry Date</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button variant="outline" className={ cn( "w-full text-left", !field.value && "text-muted-foreground" ) }>
+                                                            { field.value ? format( field.value, "PPP" ) : "Pick a date" }
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent align="start" className="w-auto p-0">
+                                                    <Calendar mode="single" selected={ field.value ?? undefined } onSelect={ field.onChange } disabled={ ( date ) => date < new Date() } autoFocus />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField name="apply_link" control={ control } render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>External Apply Link (optional)</FormLabel>
+                                            <FormControl>
+                                                <Input type="url" placeholder="https://example.com/apply" { ...field } />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+
+                                    <FormField control={ control } name="status" render={ ( { field } ) => (
+                                        <FormItem>
+                                            <FormLabel>Status</FormLabel>
+                                            <FormControl>
+                                                <MultipleSelector options={ jobStatusOptions } value={ field.value } onChange={ field.onChange } maxSelected={ 1 } placeholder="Select status..." />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    ) } />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="flex gap-4 justify-start">
+                        <div className="flex gap-4 justify-start pt-6">
                             <Button type="submit">{ operationLabel }</Button>
-                            <Button type="button" variant="outline" onClick={ () => router.get( "/employer/jobs" ) }>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={ () => router.get( "/employer/jobs" ) }>
+                                Cancel
+                            </Button>
                         </div>
                     </form>
                 </Form>

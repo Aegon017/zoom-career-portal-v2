@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
 final class JobDescriptionStreamController extends Controller
@@ -14,10 +15,10 @@ final class JobDescriptionStreamController extends Controller
     {
         $title = $request->input('title');
         $skills = implode(', ', $request->input('skills', []));
-        $prompt = sprintf('Write a professional job description for a %s requiring skills in: %s. The output should be formatted as HTML compatible with the Quill rich text editor.', $title, $skills);
+        $prompt = sprintf('Write a professional job description for a %s requiring skills in: %s.', $title, $skills);
 
         $response = Prism::text()
-            ->using('ollama', 'mistral:latest')
+            ->using(Provider::OpenAI, 'gpt-4.1')
             ->withPrompt($prompt)
             ->asStream();
 

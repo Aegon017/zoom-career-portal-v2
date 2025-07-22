@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('opening_skill', function (Blueprint $table): void {
+        Schema::create('opening_skills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('opening_id')->constrained()->cascadeOnDelete();
             $table->foreignId('skill_id')->constrained()->cascadeOnDelete();
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('opening_skill');
+        Schema::dropIfExists('opening_skills');
     }
 };

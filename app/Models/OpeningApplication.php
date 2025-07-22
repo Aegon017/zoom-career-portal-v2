@@ -13,23 +13,16 @@ final class OpeningApplication extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['user_id', 'opening_id', 'cover_letter', 'status'];
-
-    protected $appends = ['resume_url'];
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('resumes')->singleFile();
-    }
-
-    public function getResumeUrlAttribute(): string
-    {
-        return $this->getFirstMediaUrl('resumes');
-    }
+    protected $fillable = ['user_id', 'opening_id', 'resume_id', 'cover_letter', 'status'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function resume(): BelongsTo
+    {
+        return $this->belongsTo(Resume::class);
     }
 
     public function opening(): BelongsTo

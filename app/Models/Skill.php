@@ -15,9 +15,10 @@ final class Skill extends Model
 
     protected $fillable = ['name'];
 
-    public function opening(): BelongsToMany
+    public function openings(): BelongsToMany
     {
-        return $this->belongsToMany(Opening::class);
+        return $this->belongsToMany(Opening::class, 'opening_skills', 'skill_id', 'opening_id')
+            ->withTimestamps();
     }
 
     public function skillUsers(): HasMany

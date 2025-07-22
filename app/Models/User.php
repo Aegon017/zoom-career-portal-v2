@@ -58,14 +58,12 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     protected $appends = [
         'avatar_url',
         'banner_url',
-        'resume_urls',
     ];
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatars')->singleFile();
         $this->addMediaCollection('banners')->singleFile();
-        $this->addMediaCollection('resumes');
     }
 
     public function getAvatarUrlAttribute(): ?string
@@ -76,11 +74,6 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function getBannerUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('banners');
-    }
-
-    public function getResumeUrlsAttribute(): array
-    {
-        return $this->getMedia('resumes')->map->getUrl()->toArray();
     }
 
     public function otps(): HasMany
@@ -106,6 +99,11 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');
+    }
+
+    public function resumes(): HasMany
+    {
+        return $this->hasMany(Resume::class);
     }
 
     public function companyUsers(): HasMany

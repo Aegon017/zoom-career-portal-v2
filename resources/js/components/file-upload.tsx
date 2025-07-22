@@ -4,11 +4,12 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 
 import { useState } from 'react';
 import axios from 'axios';
 
-registerPlugin( FilePondPluginImagePreview, FilePondPluginFileValidateType );
+registerPlugin( FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFileValidateSize );
 
 interface Props {
     placeholder: string;
@@ -28,6 +29,8 @@ const FileUpload: React.FC<Props> = ( { placeholder, name, onUploaded, acceptedF
             onupdatefiles={ setFiles }
             acceptedFileTypes={ acceptedFileTypes }
             labelIdle={ placeholder }
+            maxFileSize="1MB"
+            allowFileSizeValidation={ true }
             server={ {
                 process: {
                     url: '/temp-upload',

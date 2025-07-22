@@ -31,22 +31,21 @@ final class CreateOpeningRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'skills' => 'required|array',
+            'skills.*' => 'exists:skills,id',
+            'description' => 'required|string',
             'employment_type' => ['required', Rule::enum(EmploymentTypeEnum::class)],
             'work_model' => ['required', Rule::enum(WorkModelEnum::class)],
-            'description' => 'required|string',
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|gte:salary_min',
             'salary_unit' => 'nullable|string|max:50',
             'currency' => ['required', Rule::enum(CurrencyEnum::class)],
-            'city' => 'nullable|string|max:100',
-            'state' => 'nullable|string|max:100',
-            'country' => 'nullable|string|max:100',
-            'published_at' => 'date',
-            'expires_at' => 'required|date|after:published_at',
-            'apply_link' => 'nullable|string|max:255',
+            'location_id' => 'required|exists:locations,id',
+            'industry_id' => 'required|exists:industries,id',
+            'expires_at' => 'required|date|after:today',
+            'apply_link' => 'nullable|url|max:255',
             'status' => ['required', Rule::enum(JobStatusEnum::class)],
-            'verification_status' => [Rule::enum(VerificationStatusEnum::class)],
-            'skills' => 'required|array',
+            'verification_status' => ['nullable', Rule::enum(VerificationStatusEnum::class)],
         ];
     }
 }

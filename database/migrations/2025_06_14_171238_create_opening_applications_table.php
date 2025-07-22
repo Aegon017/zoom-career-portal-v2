@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('opening_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('resume_id')->nullable()->constrained()->nullOnDelete();
             $table->text('cover_letter')->nullable();
             $table->string('status');
             $table->timestamps();

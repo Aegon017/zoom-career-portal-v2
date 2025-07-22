@@ -34,8 +34,8 @@ use App\Http\Controllers\Jobseeker\EmployerController;
 use App\Http\Controllers\Jobseeker\JobseekerDashboardController;
 use App\Http\Controllers\Jobseeker\PeopleController;
 use App\Http\Controllers\Jobseeker\ProfileController;
+use App\Http\Controllers\Jobseeker\ResumeController;
 use App\Http\Controllers\JobseekerJobController;
-use App\Http\Controllers\JobseekerResumeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OtpController;
@@ -45,14 +45,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login' , fn () => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -148,10 +148,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::post('/{jobId}/apply', [JobApplicationController::class, 'store'])->name('apply');
             Route::post('/{job}/withdraw', [JobApplicationController::class, 'destroy'])->name('withdraw');
         });
-        Route::get('/resumes', [JobseekerResumeController::class, 'index'])->name('resumes.index');
-        Route::get('/resumes/data', [JobseekerResumeController::class, 'data'])->name('resumes.data');
-        Route::post('/resumes', [JobseekerResumeController::class, 'store'])->name('resumes.store');
-        Route::delete('/resumes/destroy/{id}', [JobseekerResumeController::class, 'destroy'])->name('resumes.destroy');
+        Route::get('/resumes', [ResumeController::class, 'index'])->name('resumes.index');
+        Route::get('/resumes/data', [ResumeController::class, 'data'])->name('resumes.data');
+        Route::post('/resumes', [ResumeController::class, 'store'])->name('resumes.store');
+        Route::delete('/resumes/destroy/{id}', [ResumeController::class, 'destroy'])->name('resumes.destroy');
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/employers', [EmployerController::class, 'index'])->name('employers.index');
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
@@ -191,7 +191,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
 use App\Models\OpeningApplication;
+use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
 final class CandidateMatchController extends Controller
@@ -38,7 +39,7 @@ Candidate:
 EOT;
 
         $response = Prism::text()
-            ->using('ollama', 'phi:latest')
+            ->using(Provider::OpenAI, 'gpt-4.1')
             ->withPrompt($prompt)
             ->asText();
 
