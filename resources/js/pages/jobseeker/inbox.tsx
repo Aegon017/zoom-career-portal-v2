@@ -3,7 +3,7 @@ import BackIcon from "@/icons/back-icon";
 import JobseekerLayout from "@/layouts/jobseeker-layout";
 import { Head, router } from "@inertiajs/react";
 import { Chat, User } from "@/types";
-import { format } from "date-fns";
+import { format, isToday, isYesterday } from "date-fns";
 import SendIcon from "@/icons/send-icon";
 import { useEcho, useEchoPublic } from "@laravel/echo-react";
 import MailIcon from "@/icons/mail-icon";
@@ -127,6 +127,43 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
         }
     }, [ activeChat?.messages?.length ] );
 
+
+    // Group messages by date
+    const groupMessagesByDate = () => {
+        if ( !activeChat?.messages?.length ) return [];
+
+        const grouped: { date: string; messages: any[] }[] = [];
+        let currentGroup: any[] = [];
+        let currentDate: string | null = null;
+
+        activeChat.messages.forEach( ( msg, index ) => {
+            const msgDate = format( new Date( msg.created_at ), "yyyy-MM-dd" );
+
+            if ( msgDate !== currentDate ) {
+                if ( currentGroup.length > 0 ) {
+                    grouped.push( { date: currentDate!, messages: [ ...currentGroup ] } );
+                    currentGroup = [];
+                }
+                currentDate = msgDate;
+            }
+
+            currentGroup.push( msg );
+
+            if ( index === activeChat.messages.length - 1 ) {
+                grouped.push( { date: currentDate!, messages: [ ...currentGroup ] } );
+            }
+        } );
+
+        return grouped;
+    };
+
+    const getDateLabel = ( dateString: string ) => {
+        const date = new Date( dateString );
+        if ( isToday( date ) ) return "Today";
+        if ( isYesterday( date ) ) return "Yesterday";
+        return format( date, "MMMM d, yyyy" );
+    };
+
     return (
         <JobseekerLayout>
             <Head title="Inbox" />
@@ -215,32 +252,41 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
                                         { activeChat.messages.length === 0 ? (
                                             <p className="text-muted p-4">No messages yet. Start the conversation!</p>
                                         ) : (
-                                            activeChat.messages.map( ( msg ) => {
-                                                const isMe = msg.user_id === currentUserId;
-                                                return (
-                                                    <div key={ msg.id } className={ `chat-message ${ isMe ? "me" : "other" }` }>
-                                                        <div className="d-flex align-items-end gap-2 text-secondary text-sm">
-                                                            { isMe ? (
-                                                                <>
-                                                                    <small className="text-secondary">
-                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                                    </small>
-                                                                    <div className="message-bubble">{ msg.message }</div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <div className="message-bubble">{ msg.message }</div>
-                                                                    <small className="text-secondary">
-                                                                        { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                                    </small>
-                                                                </>
-                                                            ) }
-                                                        </div>
-                                                        <div ref={ messagesEndRef } />
+                                            groupMessagesByDate().map( ( group ) => (
+                                                <div key={ group.date }>
+                                                    <div className="date-divider">
+                                                        <span className="date-label">
+                                                            { getDateLabel( group.date ) }
+                                                        </span>
                                                     </div>
-                                                );
-                                            } )
+                                                    { group.messages.map( ( msg ) => {
+                                                        const isMe = msg.user_id === currentUserId;
+                                                        return (
+                                                            <div key={ msg.id } className={ `chat-message ${ isMe ? "me" : "other" }` }>
+                                                                <div className="d-flex align-items-end gap-2 text-secondary text-sm">
+                                                                    { isMe ? (
+                                                                        <>
+                                                                            <small className="text-secondary">
+                                                                                { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                            </small>
+                                                                            <div className="message-bubble">{ msg.message }</div>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <div className="message-bubble">{ msg.message }</div>
+                                                                            <small className="text-secondary">
+                                                                                { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                            </small>
+                                                                        </>
+                                                                    ) }
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    } ) }
+                                                </div>
+                                            ) )
                                         ) }
+                                        <div ref={ messagesEndRef } />
                                     </div>
 
                                     <div className="zc-message-box d-flex align-items-center">

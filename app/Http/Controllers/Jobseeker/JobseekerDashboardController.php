@@ -46,12 +46,11 @@ final class JobseekerDashboardController extends Controller
 
         $jobTitles = OpeningTitle::whereIn('id', $jobTitleIds)->pluck('name')->toArray();
         $industryNames = Industry::whereIn('id', $industryIds)->pluck('name')->toArray();
-        $locationNames = Location::whereIn('id', $locationIds)->pluck('city')->toArray();
 
         // Get all openings that match user's interests
         $jobs = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
-            ->where(function ($query) use ($jobTitles, $industryIds, $employmentTypes, $locationNames) {
+            ->where(function ($query) use ($jobTitles, $industryIds, $employmentTypes) {
                 // Job titles condition
                 if (!empty($jobTitles)) {
                     $query->whereIn('title', $jobTitles);
@@ -110,8 +109,7 @@ final class JobseekerDashboardController extends Controller
             'openings' => $jobs,
             'interests' => [
                 'categories' => array_unique(array_merge($jobTitles, $industryNames)),
-                'locations' => $locationNames,
-                'viewMoreFilters' => $viewMoreFilters, // NEW: Added for View More link
+                'viewMoreFilters' => $viewMoreFilters,
             ],
         ]);
     }

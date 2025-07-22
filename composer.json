@@ -19,6 +19,7 @@
         "maatwebsite/excel": "^3.1",
         "prism-php/prism": "^0.80.0",
         "pusher/pusher-php-server": "^7.2",
+        "smalot/pdfparser": "^2.12",
         "spatie/laravel-medialibrary": "^11.13",
         "spatie/laravel-permission": "^6.19"
     },

@@ -41,9 +41,11 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TempUploadController;
+use App\Models\Resume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Smalot\PdfParser\Parser;
 
 Route::get('/', fn() => view('home'))->name('home');
 

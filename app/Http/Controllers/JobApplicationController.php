@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\JobApplicationStatusEnum;
+use App\Jobs\ProcessResume;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
 use App\Models\Resume;
@@ -58,6 +59,8 @@ final class JobApplicationController extends Controller
                 throw new Exception('No valid resume provided.');
             }
 
+            ProcessResume::dispatch($resume);
+
             OpeningApplication::create([
                 'user_id' => $user->id,
                 'opening_id' => $jobId,
@@ -95,7 +98,7 @@ final class JobApplicationController extends Controller
 
         $applications = $job->applications()->with('user')->latest()->get();
 
-        return inertia('Employer/JobApplications', [
+        return inertia('employer/applications/index', [
             'job' => $job,
             'applications' => $applications,
         ]);

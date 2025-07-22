@@ -12,7 +12,7 @@ class Resume extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id', 'text'];
 
     protected $appends = ['resume_url'];
 

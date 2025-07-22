@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Jobseeker;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessResume;
 use App\Models\Resume;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -79,6 +80,7 @@ class ResumeController extends Controller
             $resume = $user->resumes()->create();
             $resume->addMedia(Storage::disk('public')->path($path))->toMediaCollection('resumes');
             Storage::disk('public')->delete($path);
+            ProcessResume::dispatch($resume);
 
             return back()->with('success', 'Resume uploaded successfully');
         } catch (FileCannotBeAdded $e) {

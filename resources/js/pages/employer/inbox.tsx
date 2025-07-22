@@ -1,16 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AppLayout from "@/layouts/employer-layout";
@@ -18,15 +9,8 @@ import MailIcon from "@/icons/mail-icon";
 import { BreadcrumbItem, Chat, User } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { useEcho } from "@laravel/echo-react";
-import { format } from "date-fns";
-import {
-    ArrowLeft,
-    EllipsisVertical,
-    Send,
-    TriangleAlert,
-    User as UserIcon,
-    SearchIcon,
-} from "lucide-react";
+import { format, isToday, isYesterday, differenceInCalendarDays } from "date-fns";
+import { ArrowLeft, EllipsisVertical, Send, TriangleAlert, User as UserIcon, SearchIcon } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [ { title: "Inbox", href: "/inbox" } ];
 
@@ -45,6 +29,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
 
     const messageInputRef = useRef<HTMLDivElement>( null );
     const messagesEndRef = useRef<HTMLDivElement>( null );
+    const scrollAreaRef = useRef<HTMLDivElement>( null );
 
     useEffect( () => {
         if ( !activeChat && targetUser ) {
@@ -153,6 +138,42 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
         }
     }, [ activeChat?.messages?.length ] );
 
+    // Group messages by date
+    const groupMessagesByDate = () => {
+        if ( !activeChat?.messages?.length ) return [];
+
+        const grouped: { date: string; messages: any[] }[] = [];
+        let currentGroup: any[] = [];
+        let currentDate: string | null = null;
+
+        activeChat.messages.forEach( ( msg, index ) => {
+            const msgDate = format( new Date( msg.created_at ), "yyyy-MM-dd" );
+
+            if ( msgDate !== currentDate ) {
+                if ( currentGroup.length > 0 ) {
+                    grouped.push( { date: currentDate!, messages: [ ...currentGroup ] } );
+                    currentGroup = [];
+                }
+                currentDate = msgDate;
+            }
+
+            currentGroup.push( msg );
+
+            if ( index === activeChat.messages.length - 1 ) {
+                grouped.push( { date: currentDate!, messages: [ ...currentGroup ] } );
+            }
+        } );
+
+        return grouped;
+    };
+
+    const getDateLabel = ( dateString: string ) => {
+        const date = new Date( dateString );
+        if ( isToday( date ) ) return "Today";
+        if ( isYesterday( date ) ) return "Yesterday";
+        return format( date, "MMMM d, yyyy" );
+    };
+
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Inbox" />
@@ -166,7 +187,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                     </div>
                     <ScrollArea>
                         <div className="p-2 space-y-1">
-                            { chatsState.map( chat => {
+                            { chatsState.map( ( chat ) => {
                                 const other = getOtherParticipant( chat );
                                 if ( !other ) return null;
                                 const last = chat.messages?.at( -1 )?.message || "No messages yet";
@@ -182,7 +203,9 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                     >
                                         <Avatar className="h-12 w-12">
                                             <AvatarImage src={ other.avatar_url } />
-                                            <AvatarFallback>{ other.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
+                                            <AvatarFallback>
+                                                { other.name.split( " " ).map( ( n ) => n[ 0 ] ).join( "" ) }
+                                            </AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between mb-1">
@@ -203,7 +226,12 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                         <>
                             <div className="flex items-center justify-between p-4 border-b bg-white">
                                 <div className="flex items-center gap-3">
-                                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={ () => router.get( "/inbox" ) }>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="lg:hidden"
+                                        onClick={ () => router.get( "/inbox" ) }
+                                    >
                                         <ArrowLeft />
                                     </Button>
                                     { ( () => {
@@ -213,7 +241,9 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                             <>
                                                 <Avatar className="h-10 w-10">
                                                     <AvatarImage src={ usr.avatar_url } />
-                                                    <AvatarFallback>{ usr.name.split( " " ).map( n => n[ 0 ] ).join( "" ) }</AvatarFallback>
+                                                    <AvatarFallback>
+                                                        { usr.name.split( " " ).map( ( n ) => n[ 0 ] ).join( "" ) }
+                                                    </AvatarFallback>
                                                 </Avatar>
                                                 <h3 className="font-semibold text-foreground">{ usr.name }</h3>
                                             </>
@@ -237,30 +267,44 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                 </DropdownMenu>
                             </div>
 
-                            <ScrollArea className="flex-1 overflow-y-auto bg-gray-100 p-4">
+                            <ScrollArea ref={ scrollAreaRef } className="flex-1 overflow-y-auto bg-gray-100 p-4">
                                 <div className="space-y-4 pb-24">
-                                    { activeChat.messages?.map( msg => {
-                                        const isMe = msg.user_id === currentUserId;
-                                        return (
-                                            <div key={ msg.id } className={ `flex ${ isMe ? "justify-end" : "justify-start" }` }>
-                                                <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
-                                                    { isMe && (
-                                                        <span className="text-xs text-gray-500 text-nowrap">
-                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                        </span>
-                                                    ) }
-                                                    <div className={ `px-4 py-2 rounded-tr-2xl rounded-tl-2xl ${ isMe ? "bg-primary text-white rounded-bl-2xl" : "bg-white text-foreground rounded-br-2xl" }` }>
-                                                        <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
-                                                    </div>
-                                                    { !isMe && (
-                                                        <span className="text-xs text-gray-500 text-nowrap">
-                                                            { format( new Date( msg.created_at ), "hh:mm a" ) }
-                                                        </span>
-                                                    ) }
-                                                </div>
+                                    { groupMessagesByDate().map( ( group ) => (
+                                        <div key={ group.date }>
+                                            <div className="sticky top-0 z-10 flex justify-center my-4">
+                                                <span className="px-3 py-1 text-xs bg-gray-200 rounded-full text-muted-foreground">
+                                                    { getDateLabel( group.date ) }
+                                                </span>
                                             </div>
-                                        );
-                                    } ) }
+                                            { group.messages.map( ( msg ) => {
+                                                const isMe = msg.user_id === currentUserId;
+                                                return (
+                                                    <div key={ msg.id } className={ `flex ${ isMe ? "justify-end" : "justify-start" }` }>
+                                                        <div className="flex items-end gap-2 max-w-xs lg:max-w-lg">
+                                                            { isMe && (
+                                                                <span className="text-xs text-gray-500 text-nowrap">
+                                                                    { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                </span>
+                                                            ) }
+                                                            <div
+                                                                className={ `px-4 py-2 rounded-tr-2xl rounded-tl-2xl ${ isMe
+                                                                        ? "bg-primary text-white rounded-bl-2xl"
+                                                                        : "bg-white text-foreground rounded-br-2xl"
+                                                                    }` }
+                                                            >
+                                                                <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
+                                                            </div>
+                                                            { !isMe && (
+                                                                <span className="text-xs text-gray-500 text-nowrap">
+                                                                    { format( new Date( msg.created_at ), "hh:mm a" ) }
+                                                                </span>
+                                                            ) }
+                                                        </div>
+                                                    </div>
+                                                );
+                                            } ) }
+                                        </div>
+                                    ) ) }
                                     <div ref={ messagesEndRef } />
                                 </div>
                             </ScrollArea>
