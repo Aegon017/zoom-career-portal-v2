@@ -262,7 +262,7 @@ const Inbox = ( { chats, currentUserId, activeChat: initialChat, targetUser }: P
                                                     { group.messages.map( ( msg ) => {
                                                         const isMe = msg.user_id === currentUserId;
                                                         return (
-                                                            <div key={ msg.id } className={ `chat-message ${ isMe ? "me" : "other" }` }>
+                                                            <div key={ msg.id } className={ `chat-message my-3 ${ isMe ? "me" : "other" }` }>
                                                                 <div className="d-flex align-items-end gap-2 text-secondary text-sm">
                                                                     { isMe ? (
                                                                         <>
