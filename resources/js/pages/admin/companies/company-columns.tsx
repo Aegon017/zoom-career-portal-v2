@@ -1,30 +1,36 @@
-"use client"
+'use client';
 
-import DataTableActions from "@/components/data-table-actions";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Company } from "@/types";
-import { Link, router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Company } from '@/types';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
 
-const goToShow = ( id: number ) => {
-    router.get( `/admin/companies/${ id }` );
-}
+const goToShow = (id: number) => {
+    router.get(`/admin/companies/${id}`);
+};
 
 export const columns: ColumnDef<Company>[] = [
     {
-        accessorFn: ( row, index ) => index + 1,
-        header: "S.No.",
+        accessorFn: (row, index) => index + 1,
+        header: 'S.No.',
     },
     {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: 'name',
+        header: 'Name',
         enableGlobalFilter: true,
     },
     {
-        id: "actions",
-        cell: ( { row } ) => {
+        id: 'actions',
+        cell: ({ row }) => {
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -36,10 +42,15 @@ export const columns: ColumnDef<Company>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer text-sm text-foreground hover:bg-muted transition-colors" onClick={ () => goToShow( row.original.id ) }>Show</DropdownMenuItem>
+                        <DropdownMenuItem
+                            className="text-foreground hover:bg-muted cursor-pointer text-sm transition-colors"
+                            onClick={() => goToShow(row.original.id)}
+                        >
+                            Show
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
-                </DropdownMenu >
-            )
-        }
-    }
-]
+                </DropdownMenu>
+            );
+        },
+    },
+];

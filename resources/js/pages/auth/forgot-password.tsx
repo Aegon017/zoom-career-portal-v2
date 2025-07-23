@@ -18,15 +18,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post("/forgot-password");
+        post('/forgot-password');
     };
 
     return (
-        <AuthLayout
-            title="Forgot password"
-            description="Enter your email to receive a password reset link"
-            instruction=""
-        >
+        <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link" instruction="">
             <Head title="Forgot password" />
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}

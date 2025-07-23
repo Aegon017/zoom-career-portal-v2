@@ -8,20 +8,19 @@ export interface Auth {
 }
 
 export interface PaginatedData<T> {
-    data: T[]
-    current_page: number
-    from: number | null
-    last_page: number
-    per_page: number
-    to: number | null
-    total: number
+    data: T[];
+    current_page: number;
+    from: number | null;
+    last_page: number;
+    per_page: number;
+    to: number | null;
+    total: number;
     links: {
-        url: string | null
-        label: string
-        active: boolean
-    }[]
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
 }
-
 
 export interface BreadcrumbItem {
     title: string;
@@ -51,9 +50,9 @@ export interface SharedData {
     ziggy: Config & { location: string };
     features: {
         people_feature: boolean;
-    }
+    };
     sidebarOpen: boolean;
-    [ key: string ]: unknown;
+    [key: string]: unknown;
 }
 
 export interface User {
@@ -62,11 +61,11 @@ export interface User {
     email: string;
     phone?: string;
     avatar_url?: string;
-    banner_url?: string,
-    password?: string,
-    followers: User[],
-    followingUsers: User[],
-    followingCompanies: Company[],
+    banner_url?: string;
+    password?: string;
+    followers: User[];
+    followingUsers: User[];
+    followingCompanies: Company[];
     email_verified_at: string | null;
     work_experiences: WorkExperience[];
     careerInterest: CareerInterest;
@@ -80,7 +79,7 @@ export interface User {
     skills?: Skill[];
     created_at: string;
     updated_at: string;
-    [ key: string ]: unknown;
+    [key: string]: unknown;
 }
 
 export interface PersonalDetails {
@@ -144,7 +143,7 @@ export interface Company {
     is_followed: boolean;
     created_at: string;
     updated_at: string;
-    [ key: string ]: unknown;
+    [key: string]: unknown;
 }
 
 export interface CompanyUser {
@@ -195,8 +194,8 @@ export interface AppNotification {
 }
 
 export interface Skill {
-    id: number,
-    name: string
+    id: number;
+    name: string;
 }
 
 export interface Opening {
@@ -231,15 +230,16 @@ export interface Opening {
 export interface Application {
     id: number;
     user: User;
+    opening: Opening;
     created_at: string;
+    updated_at: string;
+    resume_id?: number | null;
     resume_url?: string;
     resume_text?: string;
-    match_score?: {
-        score: number;
-        reason: string;
-        shortlist: boolean;
-        shortlist_reason: string;
-    };
+    cover_letter?: string | null;
+    status: string;
+    match_score?: number | null;
+    match_summary?: string | null;
 }
 
 export interface Education {
@@ -255,7 +255,7 @@ export interface Education {
 }
 
 interface OpeningTItle {
-    id: number,
+    id: number;
     name: string;
 }
 
@@ -290,7 +290,6 @@ export interface Chat {
     messages: Message[];
 }
 
-
 export interface WorkExperience {
     id?: number;
     user_id?: number;
@@ -321,8 +320,8 @@ export interface JobSeekerProfile {
     marital_status: 'single' | 'married' | 'divorced' | 'widowed';
     work_permit: string;
     differently_abled: boolean;
-    created_at: string,
-    updated_at: string | null
+    created_at: string;
+    updated_at: string | null;
 }
 
 export interface Industry {
@@ -360,18 +359,18 @@ export interface Option {
     label: string;
     disable?: boolean;
     fixed?: boolean;
-    [ key: string ]: string | boolean | undefined;
+    [key: string]: string | boolean | undefined;
 }
 
 export interface Role {
-    id: number,
-    name: string,
-    permissions: Permission[]
+    id: number;
+    name: string;
+    permissions: Permission[];
 }
 
 export interface Permission {
-    id: number,
-    name: string
+    id: number;
+    name: string;
 }
 
 export interface Language {
@@ -402,4 +401,3 @@ export interface Certificate {
     created_at?: string;
     updated_at?: string;
 }
-

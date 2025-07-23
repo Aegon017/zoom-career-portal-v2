@@ -1,50 +1,58 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Opening } from "@/types"
-import { Link } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table"
-import { format } from "date-fns";
-import { MoreHorizontal } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Opening } from '@/types';
+import { Link } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<Opening>[] = [
     {
-        accessorFn: ( row, index ) => index + 1,
-        header: "S.No.",
+        accessorFn: (row, index) => index + 1,
+        header: 'S.No.',
         enableGlobalFilter: false,
     },
     {
-        accessorKey: "title",
-        header: "Job Title",
+        accessorKey: 'title',
+        header: 'Job Title',
         enableGlobalFilter: true,
     },
     {
-        accessorKey: "employment_type",
-        header: "Employment Type",
+        accessorKey: 'employment_type',
+        header: 'Employment Type',
     },
     {
-        accessorKey: "work_model",
-        header: "Work Model",
+        accessorKey: 'work_model',
+        header: 'Work Model',
     },
     {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: 'status',
+        header: 'Status',
     },
     {
-        accessorKey: "verification_status",
-        header: "Verification status",
+        accessorKey: 'verification_status',
+        header: 'Verification status',
     },
     {
-        accessorKey: "published_at",
-        header: "Published at",
-        cell: ( { row } ) => {
-            return format( new Date( row.getValue( "published_at" ) ), "dd MMM yyyy" );
-        }
-    }, {
-        id: "actions",
-        cell: ( { row } ) => {
-            const job = row.original
+        accessorKey: 'published_at',
+        header: 'Published at',
+        cell: ({ row }) => {
+            return format(new Date(row.getValue('published_at')), 'dd MMM yyyy');
+        },
+    },
+    {
+        id: 'actions',
+        cell: ({ row }) => {
+            const job = row.original;
 
             return (
                 <DropdownMenu>
@@ -57,17 +65,17 @@ export const columns: ColumnDef<Opening>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                        >
-                            <Link href={ `/admin/jobs/${ job.id }` } className="flex-1">Show</Link>
+                        <DropdownMenuItem>
+                            <Link href={`/admin/jobs/${job.id}`} className="flex-1">
+                                Show
+                            </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                        >
-                            <Link href={ `/admin/jobs/${ job.id }/applications` }>Applications</Link>
+                        <DropdownMenuItem>
+                            <Link href={`/admin/jobs/${job.id}/applications`}>Applications</Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )
+            );
         },
-    }
-]
+    },
+];

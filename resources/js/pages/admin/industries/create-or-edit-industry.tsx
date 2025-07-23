@@ -1,4 +1,3 @@
-
 import DeleteAlert from '@/components/delete-alert';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -10,16 +9,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-    industry: Industry,
-    operation: string,
-    operationLabel: string
+    industry: Industry;
+    operation: string;
+    operationLabel: string;
 }
 
 const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Industries',
-            href: "/admin/industries",
+            href: '/admin/industries',
         },
         {
             title: operation,
@@ -29,8 +28,8 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
 
     const form = useForm<Industry>({
         defaultValues: {
-            name: industry?.name ?? "",
-        }
+            name: industry?.name ?? '',
+        },
     });
 
     const { handleSubmit, control, setError } = form;
@@ -48,7 +47,7 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
         };
 
         const routes = {
-            Create: () => router.post("/admin/industries", data, { onError: handleErrors }),
+            Create: () => router.post('/admin/industries', data, { onError: handleErrors }),
             Edit: () => router.put(`/admin/industries/${industry.id}`, data, { onError: handleErrors }),
         };
 
@@ -57,7 +56,7 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
 
     const handleDelete = (id: number) => {
         router.delete(`/admin/industries/${id}`);
-    }
+    };
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
@@ -71,7 +70,15 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
                             <h1 className="text-2xl font-bold">{operation} industry</h1>
                             {operation === 'Edit' && (
                                 <>
-                                    <Button variant="destructive" onClick={(e) => { e.preventDefault(); setAlertOpen(true) }}>Delete</Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setAlertOpen(true);
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
                                     <DeleteAlert
                                         key={industry.id}
                                         alertOpen={alertOpen}
@@ -82,7 +89,7 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
                             )}
                         </div>
                         <div className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid gap-4 md:grid-cols-2">
                                 <FormField
                                     control={control}
                                     name="name"
@@ -100,13 +107,15 @@ const CreateOrEditIndustry = ({ industry, operation, operationLabel }: Props) =>
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get("/admin/industries")}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get('/admin/industries')}>
+                                Cancel
+                            </Button>
                         </div>
                     </form>
                 </Form>
             </div>
-        </AppLayout >
+        </AppLayout>
     );
-}
+};
 
-export default CreateOrEditIndustry
+export default CreateOrEditIndustry;

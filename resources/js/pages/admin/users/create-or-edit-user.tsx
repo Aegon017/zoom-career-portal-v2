@@ -1,21 +1,20 @@
-
 import DeleteAlert from '@/components/delete-alert';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { User, type BreadcrumbItem } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, operation: string, operationLabel: string }) => {
+const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User; operation: string; operationLabel: string }) => {
     const { errors } = usePage().props;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Users',
-            href: "/admin/users",
+            href: '/admin/users',
         },
         {
             title: operation,
@@ -25,10 +24,10 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
 
     const form = useForm<User>({
         defaultValues: {
-            name: user?.name ?? "",
-            email: user?.email ?? "",
-            password: user?.password ?? ""
-        }
+            name: user?.name ?? '',
+            email: user?.email ?? '',
+            password: user?.password ?? '',
+        },
     });
 
     const { handleSubmit, control, setError } = form;
@@ -46,7 +45,7 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
         };
 
         const routes = {
-            Create: () => router.post("/admin/users", data, { onError: handleErrors }),
+            Create: () => router.post('/admin/users', data, { onError: handleErrors }),
             Edit: () => router.put(`admin/users/${user.id}`, data, { onError: handleErrors }),
         };
 
@@ -55,10 +54,9 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
 
     const handleDelete = (id: number) => {
         router.delete(`/admin/users/${id}`);
-    }
+    };
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -70,7 +68,15 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
                             <h1 className="text-2xl font-bold">{operation} user</h1>
                             {operation === 'Edit' && (
                                 <>
-                                    <Button variant="destructive" onClick={(e) => { e.preventDefault(); setAlertOpen(true) }}>Delete</Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setAlertOpen(true);
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
                                     <DeleteAlert
                                         key={user.id}
                                         alertOpen={alertOpen}
@@ -81,7 +87,7 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
                             )}
                         </div>
                         <div className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid gap-4 md:grid-cols-2">
                                 <FormField
                                     control={control}
                                     name="name"
@@ -125,13 +131,15 @@ const CreateOrEditUser = ({ user, operation, operationLabel }: { user: User, ope
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get("/admin/users")}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get('/admin/users')}>
+                                Cancel
+                            </Button>
                         </div>
                     </form>
                 </Form>
             </div>
-        </AppLayout >
+        </AppLayout>
     );
-}
+};
 
-export default CreateOrEditUser
+export default CreateOrEditUser;

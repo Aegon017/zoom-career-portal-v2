@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('resume_id')->nullable()->constrained()->nullOnDelete();
             $table->text('cover_letter')->nullable();
             $table->string('status');
+            $table->float('match_score')->nullable();
+            $table->text('match_summary')->nullable();
             $table->timestamps();
         });
     }

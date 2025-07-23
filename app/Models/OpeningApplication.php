@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Jobs\CalculateApplicationMatch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
@@ -13,7 +14,7 @@ final class OpeningApplication extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['user_id', 'opening_id', 'resume_id', 'cover_letter', 'status'];
+    protected $fillable = ['user_id', 'opening_id', 'resume_id', 'cover_letter', 'status', 'match_score', 'match_summary'];
 
     public function user(): BelongsTo
     {
@@ -28,5 +29,12 @@ final class OpeningApplication extends Model implements HasMedia
     public function opening(): BelongsTo
     {
         return $this->belongsTo(Opening::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (OpeningApplication $openingApplication) {
+            CalculateApplicationMatch::dispatch($openingApplication)->delay(now()->addSeconds(10));
+        });
     }
 }

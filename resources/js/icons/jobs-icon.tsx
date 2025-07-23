@@ -1,19 +1,15 @@
 export default function JobsIcon() {
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlSpace="preserve"
-            width="32"
-            height="32"
-            viewBox="0 0 6.827 6.827"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="32" height="32" viewBox="0 0 6.827 6.827">
             <defs>
-                <style dangerouslySetInnerHTML={{
-                    __html: `
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `
         .fil1, .fil2 { fill: #fffffe; }
         .fil1 { fill-rule: nonzero; }
-      `
-                }} />
+      `,
+                    }}
+                />
             </defs>
             <g id="Layer_x0020_1">
                 <rect width="6.827" height="6.827" rx=".853" ry=".853" />

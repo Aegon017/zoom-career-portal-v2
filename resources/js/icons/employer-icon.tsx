@@ -21,7 +21,7 @@ const EmployerIcon = () => {
                 />
             </g>
         </svg>
-    )
-}
+    );
+};
 
-export default EmployerIcon
+export default EmployerIcon;

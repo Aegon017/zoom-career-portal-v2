@@ -37,7 +37,6 @@
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -146,10 +145,8 @@
 }
 
 @layer components {
-
     /* Floating animations */
     @keyframes float {
-
         0%,
         100% {
             transform: translateY(0px) rotate(0deg);
@@ -161,7 +158,6 @@
     }
 
     @keyframes float-delayed {
-
         0%,
         100% {
             transform: translateY(0px) rotate(0deg);
@@ -173,7 +169,6 @@
     }
 
     @keyframes float-slow {
-
         0%,
         100% {
             transform: translateY(0px) rotate(0deg);
@@ -284,9 +279,7 @@
 
     /* Background patterns */
     .bg-pattern-dots {
-        background-image: radial-gradient(circle,
-                color-mix(in srgb, var(--muted-foreground) 15%, transparent) 1px,
-                transparent 1px);
+        background-image: radial-gradient(circle, color-mix(in srgb, var(--muted-foreground) 15%, transparent) 1px, transparent 1px);
         background-size: 20px 20px;
     }
 
@@ -299,12 +292,14 @@
 
     /* Hero gradient background */
     .hero-gradient-bg {
-        background: linear-gradient(135deg,
-                var(--background) 0%,
-                color-mix(in srgb, var(--muted) 50%, var(--background)) 25%,
-                var(--background) 50%,
-                color-mix(in srgb, var(--accent) 10%, var(--background)) 75%,
-                var(--background) 100%);
+        background: linear-gradient(
+            135deg,
+            var(--background) 0%,
+            color-mix(in srgb, var(--muted) 50%, var(--background)) 25%,
+            var(--background) 50%,
+            color-mix(in srgb, var(--accent) 10%, var(--background)) 75%,
+            var(--background) 100%
+        );
     }
 
     /* Feature icon backgrounds */
@@ -339,14 +334,16 @@
     }
 
     .section-bg-gradient {
-        background: linear-gradient(90deg,
-                color-mix(in srgb, var(--muted) 30%, transparent) 0%,
-                color-mix(in srgb, var(--accent) 5%, transparent) 100%);
+        background: linear-gradient(
+            90deg,
+            color-mix(in srgb, var(--muted) 30%, transparent) 0%,
+            color-mix(in srgb, var(--accent) 5%, transparent) 100%
+        );
     }
 
     /* Utility classes for consistent spacing and effects */
     .container-padding {
-        @apply px-6 mx-auto max-w-7xl;
+        @apply mx-auto max-w-7xl px-6;
     }
 
     .section-spacing {
@@ -376,6 +373,6 @@
 
     /* Focus states for accessibility */
     .focus-ring {
-        @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+        @apply focus:ring-2 focus:ring-offset-2 focus:outline-none;
     }
 }

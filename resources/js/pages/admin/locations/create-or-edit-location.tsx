@@ -3,22 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { JobType, Location, type BreadcrumbItem } from '@/types';
+import { Location, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-    location: Location,
-    operation: string,
-    operationLabel: string
+    location: Location;
+    operation: string;
+    operationLabel: string;
 }
 
 const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Locations',
-            href: "/admin/locations",
+            href: '/admin/locations',
         },
         {
             title: operation,
@@ -28,10 +28,10 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
 
     const form = useForm<Location>({
         defaultValues: {
-            country: location?.country ?? "",
-            state: location?.state ?? "",
-            city: location?.city ?? "",
-        }
+            country: location?.country ?? '',
+            state: location?.state ?? '',
+            city: location?.city ?? '',
+        },
     });
 
     const { handleSubmit, control, setError } = form;
@@ -49,7 +49,7 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
         };
 
         const routes = {
-            Create: () => router.post("/admin/locations", data, { onError: handleErrors }),
+            Create: () => router.post('/admin/locations', data, { onError: handleErrors }),
             Edit: () => router.put(`/admin/locations/${location.id}`, data, { onError: handleErrors }),
         };
 
@@ -58,7 +58,7 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
 
     const handleDelete = (id: number) => {
         router.delete(`/admin/locations/${location.id}`);
-    }
+    };
 
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
@@ -72,7 +72,15 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
                             <h1 className="text-2xl font-bold">{operation} location</h1>
                             {operation === 'Edit' && (
                                 <>
-                                    <Button variant="destructive" onClick={(e) => { e.preventDefault(); setAlertOpen(true) }}>Delete</Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setAlertOpen(true);
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
                                     <DeleteAlert
                                         key={location.id}
                                         alertOpen={alertOpen}
@@ -83,7 +91,7 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
                             )}
                         </div>
                         <div className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid gap-4 md:grid-cols-2">
                                 <FormField
                                     control={control}
                                     name="country"
@@ -127,13 +135,15 @@ const CreateOrEditIndustry = ({ location, operation, operationLabel }: Props) =>
                         </div>
                         <div className="flex gap-4">
                             <Button type="submit">{operationLabel}</Button>
-                            <Button type="button" variant="outline" onClick={() => router.get("/admin/locations")}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={() => router.get('/admin/locations')}>
+                                Cancel
+                            </Button>
                         </div>
                     </form>
                 </Form>
             </div>
-        </AppLayout >
+        </AppLayout>
     );
-}
+};
 
-export default CreateOrEditIndustry
+export default CreateOrEditIndustry;

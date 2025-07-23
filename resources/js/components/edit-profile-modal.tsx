@@ -1,31 +1,15 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import FileUpload from "@/components/file-upload";
-import { useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import FileUpload from '@/components/file-upload';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
+    name: z.string().min(1, 'Name is required'),
     headline: z.string().optional(),
     pronouns: z.string().optional(),
     location: z.string().optional(),
@@ -49,11 +33,11 @@ export default function EditProfileModal({ open, onClose, onSave, user }: Props)
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            headline: "",
-            pronouns: "",
-            location: "",
-            profile_image: "",
+            name: '',
+            headline: '',
+            pronouns: '',
+            location: '',
+            profile_image: '',
         },
     });
 
@@ -68,11 +52,11 @@ export default function EditProfileModal({ open, onClose, onSave, user }: Props)
     useEffect(() => {
         if (user) {
             reset({
-                name: user.name || "",
-                headline: user.headline || "",
-                pronouns: user.pronouns || "",
-                location: user.location || "",
-                profile_image: user.profile_image || "",
+                name: user.name || '',
+                headline: user.headline || '',
+                pronouns: user.pronouns || '',
+                location: user.location || '',
+                profile_image: user.profile_image || '',
             });
         }
     }, [user, reset]);
@@ -89,9 +73,7 @@ export default function EditProfileModal({ open, onClose, onSave, user }: Props)
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <DialogHeader>
                             <DialogTitle>Edit profile</DialogTitle>
-                            <DialogDescription>
-                                Make changes to your profile. Click save when done.
-                            </DialogDescription>
+                            <DialogDescription>Make changes to your profile. Click save when done.</DialogDescription>
                         </DialogHeader>
 
                         <FormField
@@ -105,7 +87,7 @@ export default function EditProfileModal({ open, onClose, onSave, user }: Props)
                                             acceptedFileTypes={['image/*']}
                                             placeholder="Upload profile image"
                                             name="file"
-                                            onUploaded={(url) => setValue("profile_image", url)}
+                                            onUploaded={(url) => setValue('profile_image', url)}
                                         />
                                     </FormControl>
                                     <FormMessage />

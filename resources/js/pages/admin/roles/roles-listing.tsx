@@ -7,39 +7,39 @@ import { columns } from './role-columns';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Roles',
-        href: "/admin/roles",
+        href: '/admin/roles',
     },
 ];
 
 interface Props {
     roles: {
-        data: Role[],
-        current_page: number,
-        last_page: number,
-        per_page: number,
-        total: number,
-    },
+        data: Role[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
     filters: {
-        search?: string,
-        perPage?: number,
-    }
+        search?: string;
+        perPage?: number;
+    };
 }
 
-export default function RolesListing( { roles, filters }: Props ) {
+export default function RolesListing({ roles, filters }: Props) {
     return (
-        <AppLayout breadcrumbs={ breadcrumbs }>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Roles" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
-                    columns={ columns }
-                    data={ roles.data }
-                    pagination={ {
+                    columns={columns}
+                    data={roles.data}
+                    pagination={{
                         current_page: roles.current_page,
                         last_page: roles.last_page,
                         per_page: roles.per_page,
                         total: roles.total,
-                    } }
-                    filters={ filters }
+                    }}
+                    filters={filters}
                     routeName="/admin/roles"
                     listingName="role"
                     createUrl="/admin/roles/create"

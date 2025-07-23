@@ -5,19 +5,14 @@ export function useSidebarToggle() {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const toggleRef = useRef<HTMLButtonElement>(null);
 
-    const toggle = () => setCollapsed(prev => !prev);
+    const toggle = () => setCollapsed((prev) => !prev);
     const open = () => setCollapsed(true);
     const close = () => setCollapsed(false);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
-            if (
-                sidebarRef.current &&
-                !sidebarRef.current.contains(target) &&
-                toggleRef.current &&
-                !toggleRef.current.contains(target)
-            ) {
+            if (sidebarRef.current && !sidebarRef.current.contains(target) && toggleRef.current && !toggleRef.current.contains(target)) {
                 setCollapsed(false);
             }
         };

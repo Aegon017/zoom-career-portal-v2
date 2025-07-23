@@ -1,14 +1,6 @@
 // components/ui/Modal.tsx
 
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from "@/components/ui/dialog";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function Modal({
     isOpen,
@@ -24,7 +16,7 @@ export default function Modal({
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-md">
-                <DialogHeader className="flex flex-row justify-between items-center">
+                <DialogHeader className="flex flex-row items-center justify-between">
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
 

@@ -1,146 +1,146 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import AppLayout from "@/layouts/app-layout"
-import { BreadcrumbItem, Opening } from "@/types"
-import { Head, router } from "@inertiajs/react"
-import { formatDate } from "date-fns"
-import { Briefcase, CheckCircle, Shield } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem, Opening } from '@/types';
+import { Head, router } from '@inertiajs/react';
+import { formatDate } from 'date-fns';
+import { Briefcase, CheckCircle, Shield } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Job Verify",
-        href: "",
+        title: 'Job Verify',
+        href: '',
     },
 ];
 
 interface Props {
-    job: Opening
+    job: Opening;
 }
 
-const Verify = ( { job }: Props ) => {
+const Verify = ({ job }: Props) => {
     const form = useForm();
 
     const { control, handleSubmit, watch } = form;
 
-    const onSubmit = ( data: any ) => {
-        router.post( `/admin/job/verify/${ job.id }`, data );
-    }
+    const onSubmit = (data: any) => {
+        router.post(`/admin/job/verify/${job.id}`, data);
+    };
 
-    const verificationStatus = watch( "verification_status" );
+    const verificationStatus = watch('verification_status');
 
     return (
-        <AppLayout breadcrumbs={ breadcrumbs }>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Employer Verify" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="min-h-screen bg-background">
-                    <div className="container mx-auto px-4 py-8 max-w-6xl">
-                        <Form { ...form }>
-                            <form onSubmit={ handleSubmit( onSubmit ) }>
+                <div className="bg-background min-h-screen">
+                    <div className="container mx-auto max-w-6xl px-4 py-8">
+                        <Form {...form}>
+                            <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="mb-8">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="p-2 bg-primary/10 rounded-lg">
-                                            <Shield className="w-6 h-6 text-primary" />
+                                    <div className="mb-2 flex items-center gap-3">
+                                        <div className="bg-primary/10 rounded-lg p-2">
+                                            <Shield className="text-primary h-6 w-6" />
                                         </div>
                                         <div>
-                                            <h1 className="text-3xl font-bold text-foreground">Job Verification</h1>
+                                            <h1 className="text-foreground text-3xl font-bold">Job Verification</h1>
                                             <p className="text-muted-foreground">Review job information</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 mt-4">
-                                        <CheckCircle className="w-5 h-5 text-success" />
-                                        <Badge variant="secondary" className="bg-success/10 text-success border border-success/20">
+                                    <div className="mt-4 flex items-center gap-2">
+                                        <CheckCircle className="text-success h-5 w-5" />
+                                        <Badge variant="secondary" className="bg-success/10 text-success border-success/20 border">
                                             Pending Verification
                                         </Badge>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    <div className="lg:col-span-3 space-y-6">
+                                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                                    <div className="space-y-6 lg:col-span-3">
                                         <Card className="shadow-lg backdrop-blur-sm">
                                             <CardHeader className="pb-4">
-                                                <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                                                    <Briefcase className="w-5 h-5 text-primary" />
+                                                <CardTitle className="text-foreground flex items-center gap-2 text-lg font-semibold">
+                                                    <Briefcase className="text-primary h-5 w-5" />
                                                     Job Details
                                                 </CardTitle>
                                             </CardHeader>
                                             <CardContent className="space-y-6">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                                     <div className="space-y-4">
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Job Title</p>
-                                                            <p className="text-sm text-foreground">{ job.title }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Job Title</p>
+                                                            <p className="text-foreground text-sm">{job.title}</p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Employment Type</p>
-                                                            <p className="text-sm text-foreground capitalize">{ job.employment_type }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Employment Type</p>
+                                                            <p className="text-foreground text-sm capitalize">{job.employment_type}</p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Work Model</p>
-                                                            <p className="text-sm text-foreground capitalize">{ job.work_model }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Work Model</p>
+                                                            <p className="text-foreground text-sm capitalize">{job.work_model}</p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Status</p>
-                                                            <p className="text-sm text-foreground capitalize">{ job.status }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Status</p>
+                                                            <p className="text-foreground text-sm capitalize">{job.status}</p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Verification Status</p>
-                                                            <p className="text-sm text-foreground capitalize">{ job.verification_status }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Verification Status</p>
+                                                            <p className="text-foreground text-sm capitalize">{job.verification_status}</p>
                                                         </div>
                                                     </div>
 
                                                     <div className="space-y-4">
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Location</p>
-                                                            <p className="text-sm text-foreground">{ `${ job.city }, ${ job.state }, ${ job.country }` }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Location</p>
+                                                            <p className="text-foreground text-sm">{`${job.city}, ${job.state}, ${job.country}`}</p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Salary</p>
-                                                            <p className="text-sm text-foreground">
-                                                                { job.currency } { job.salary_min } – { job.salary_max } { job.salary_unit }
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Salary</p>
+                                                            <p className="text-foreground text-sm">
+                                                                {job.currency} {job.salary_min} – {job.salary_max} {job.salary_unit}
                                                             </p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Published At</p>
-                                                            <p className="text-sm text-foreground">{ formatDate( new Date( job.published_at ), "dd MMM yyyy" ) }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Published At</p>
+                                                            <p className="text-foreground text-sm">
+                                                                {formatDate(new Date(job.published_at), 'dd MMM yyyy')}
+                                                            </p>
                                                         </div>
 
-                                                        <div className="p-3 bg-muted rounded-lg border border-muted/30">
-                                                            <p className="text-xs text-muted-foreground font-medium">Expires At</p>
-                                                            <p className="text-sm text-foreground">{ formatDate( new Date( job.expires_at ), "dd MMM yyyy" ) }</p>
+                                                        <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                            <p className="text-muted-foreground text-xs font-medium">Expires At</p>
+                                                            <p className="text-foreground text-sm">
+                                                                {formatDate(new Date(job.expires_at), 'dd MMM yyyy')}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="p-3 bg-muted rounded-lg border border-muted/30 mt-4">
-                                                    <p className="text-xs text-muted-foreground font-medium mb-1">Job Description</p>
-                                                    <div
-                                                        className="text-sm text-foreground"
-                                                        dangerouslySetInnerHTML={ { __html: job.description } }
-                                                    />
+                                                <div className="bg-muted border-muted/30 mt-4 rounded-lg border p-3">
+                                                    <p className="text-muted-foreground mb-1 text-xs font-medium">Job Description</p>
+                                                    <div className="text-foreground text-sm" dangerouslySetInnerHTML={{ __html: job.description }} />
                                                 </div>
                                             </CardContent>
                                             <Separator />
 
                                             <FormField
-                                                control={ control }
+                                                control={control}
                                                 name="verification_status"
-                                                render={ ( { field } ) => (
+                                                render={({ field }) => (
                                                     <FormItem className="p-4">
                                                         <FormLabel>Verification Status</FormLabel>
                                                         <FormControl>
-                                                            <Select defaultValue={ job.verification_status } onValueChange={ field.onChange }>
+                                                            <Select defaultValue={job.verification_status} onValueChange={field.onChange}>
                                                                 <SelectTrigger className="w-full">
                                                                     <SelectValue placeholder="Select status" />
                                                                 </SelectTrigger>
@@ -153,34 +153,36 @@ const Verify = ( { job }: Props ) => {
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
-                                                ) }
+                                                )}
                                             />
-                                            { verificationStatus === "rejected" && (
+                                            {verificationStatus === 'rejected' && (
                                                 <FormField
-                                                    control={ control }
+                                                    control={control}
                                                     name="rejection_reason"
-                                                    rules={ { required: "Rejection reason is required when rejecting a job" } }
-                                                    render={ ( { field } ) => (
+                                                    rules={{ required: 'Rejection reason is required when rejecting a job' }}
+                                                    render={({ field }) => (
                                                         <FormItem className="px-4 pb-4">
                                                             <FormLabel>Rejection Reason</FormLabel>
                                                             <FormControl>
                                                                 <textarea
-                                                                    className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                                    className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-[100px] w-full rounded-md border px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
                                                                     placeholder="Enter the reason for rejection..."
-                                                                    { ...field }
+                                                                    {...field}
                                                                 />
                                                             </FormControl>
                                                             <FormMessage />
                                                         </FormItem>
-                                                    ) }
+                                                    )}
                                                 />
-                                            ) }
+                                            )}
                                         </Card>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4 justify-end mt-8">
-                                    <Button type="button" variant="outline" onClick={ () => router.get( "/admin/dashboard" ) }>Cancel</Button>
+                                <div className="mt-8 flex justify-end gap-4">
+                                    <Button type="button" variant="outline" onClick={() => router.get('/admin/dashboard')}>
+                                        Cancel
+                                    </Button>
                                     <Button type="submit">Save</Button>
                                 </div>
                             </form>
@@ -189,7 +191,7 @@ const Verify = ( { job }: Props ) => {
                 </div>
             </div>
         </AppLayout>
-    )
-}
+    );
+};
 
-export default Verify
+export default Verify;

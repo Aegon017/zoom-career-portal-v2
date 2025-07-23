@@ -26,17 +26,13 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post("/register", {
+        post('/register', {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
-            instruction=""
-        >
+        <AuthLayout title="Create an account" description="Enter your details below to create your account" instruction="">
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">

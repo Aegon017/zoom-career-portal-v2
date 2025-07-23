@@ -1,47 +1,47 @@
-import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form"
-import { SelectPopoverField } from "@/components/select-popover-field"
-import FileUpload from "@/components/file-upload"
-import { WorkExperience, Company } from "@/types"
-import { DatePicker } from "./date-picker"
-import { DialogClose, DialogFooter } from "./ui/dialog"
+import FileUpload from '@/components/file-upload';
+import { SelectPopoverField } from '@/components/select-popover-field';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Company, WorkExperience } from '@/types';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { DatePicker } from './date-picker';
+import { DialogClose, DialogFooter } from './ui/dialog';
 
 interface Props {
-    companies: Company[]
-    onSubmit: (data: WorkExperience) => void
-    defaultValues?: Partial<WorkExperience>
+    companies: Company[];
+    onSubmit: (data: WorkExperience) => void;
+    defaultValues?: Partial<WorkExperience>;
 }
 
 export default function WorkExperienceForm({ companies, onSubmit, defaultValues }: Props) {
-    const [manualEntry, setManualEntry] = useState(false)
+    const [manualEntry, setManualEntry] = useState(false);
     const form = useForm<WorkExperience>({
         defaultValues: {
             ...defaultValues,
             is_current: defaultValues?.is_current ?? false,
-        }
-    })
+        },
+    });
 
-    const { control, handleSubmit, watch, setValue } = form
+    const { control, handleSubmit, watch, setValue } = form;
 
-    const is_current = watch("is_current")
+    const is_current = watch('is_current');
 
     return (
         <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid md:grid-cols-1 gap-4">
+                <div className="grid gap-4 md:grid-cols-1">
                     {!manualEntry ? (
                         <SelectPopoverField
                             label="Select Company"
                             name="company_id"
                             control={control}
                             placeholder="Search company..."
-                            options={companies.map(c => ({
+                            options={companies.map((c) => ({
                                 value: String(c.id),
-                                label: c.company_name
+                                label: c.company_name,
                             }))}
                         />
                     ) : (
@@ -69,7 +69,7 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                                                 acceptedFileTypes={['image/*']}
                                                 placeholder="Upload logo"
                                                 name="file"
-                                                onUploaded={(url) => setValue("company_logo", url)}
+                                                onUploaded={(url) => setValue('company_logo', url)}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -79,16 +79,18 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                         </>
                     )}
 
-                    <div className="md:col-span-2 flex items-center gap-2">
+                    <div className="flex items-center gap-2 md:col-span-2">
                         <Checkbox
                             checked={manualEntry}
                             onCheckedChange={(v) => {
-                                setManualEntry(Boolean(v))
-                                setValue("company_id", undefined)
+                                setManualEntry(Boolean(v));
+                                setValue('company_id', undefined);
                             }}
                             id="manualCompany"
                         />
-                        <label htmlFor="manualCompany" className="text-sm text-muted-foreground">Company not listed? Add manually</label>
+                        <label htmlFor="manualCompany" className="text-muted-foreground text-sm">
+                            Company not listed? Add manually
+                        </label>
                     </div>
                 </div>
 
@@ -105,7 +107,7 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                     )}
                 />
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                     <FormField
                         name="start_date"
                         render={({ field }) => (
@@ -145,11 +147,7 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-2">
                             <FormControl>
-                                <Checkbox
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                    id="is_current"
-                                />
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} id="is_current" />
                             </FormControl>
                             <FormLabel htmlFor="is_current">I currently work here</FormLabel>
                         </FormItem>
@@ -159,12 +157,14 @@ export default function WorkExperienceForm({ companies, onSubmit, defaultValues 
                 <div className="flex justify-end">
                     <DialogFooter className="mt-4">
                         <DialogClose asChild>
-                            <Button type="button" variant="ghost">Cancel</Button>
+                            <Button type="button" variant="ghost">
+                                Cancel
+                            </Button>
                         </DialogClose>
                         <Button type="submit">Save</Button>
                     </DialogFooter>
                 </div>
             </form>
         </Form>
-    )
+    );
 }

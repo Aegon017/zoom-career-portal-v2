@@ -1,8 +1,7 @@
 :root {
-
-    --zc-gradient: linear-gradient(180deg, hsla(0, 0%, 100%, .15), hsla(0, 0%, 100%, 0));
-    --zc-title-font-family: "Poppins", sans-serif;
-    --zc-body-font-family: "Roboto", sans-serif;
+    --zc-gradient: linear-gradient(180deg, hsla(0, 0%, 100%, 0.15), hsla(0, 0%, 100%, 0));
+    --zc-title-font-family: 'Poppins', sans-serif;
+    --zc-body-font-family: 'Roboto', sans-serif;
     --zc-body-font-size: 16px;
     --zc-body-font-weight: 400;
     --zc-body-line-height: 1.6;
@@ -22,7 +21,7 @@
     box-sizing: border-box;
 }
 
-@media(prefers-reduced-motion:no-preference) {
+@media (prefers-reduced-motion: no-preference) {
     :root {
         scroll-behavior: smooth;
     }
@@ -47,7 +46,7 @@ hr {
     border-top: var(--zc-border-width) solid;
     color: inherit;
     margin: 16px 0;
-    opacity: .25;
+    opacity: 0.25;
 }
 
 .h1,
@@ -99,7 +98,7 @@ h6 {
 
 p {
     margin-bottom: 10px;
-    margin-top: 0
+    margin-top: 0;
 }
 
 .bb-style-2 {
@@ -179,7 +178,11 @@ a.zc-btn-add:hover i {
 /** Sidebar **/
 .zc-sidebar {
     background: #222e3c;
-    transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+    transition:
+        margin-left 0.35s ease-in-out,
+        left 0.35s ease-in-out,
+        margin-right 0.35s ease-in-out,
+        right 0.35s ease-in-out;
     direction: ltr;
     max-width: 260px;
     min-width: 260px;
@@ -254,16 +257,16 @@ a.zc-btn-add:hover i {
     font-weight: 500;
 }
 
-.zc-sidebar ul.sidebar-nav li.sidebar-item>a {
+.zc-sidebar ul.sidebar-nav li.sidebar-item > a {
     background: transparent;
     border-left: 3px solid transparent;
-    transition: background .1s ease-in-out;
+    transition: background 0.1s ease-in-out;
 }
 
-.zc-sidebar ul.sidebar-nav li.sidebar-item.active>a,
-.zc-sidebar ul.sidebar-nav li.sidebar-item>a:hover {
+.zc-sidebar ul.sidebar-nav li.sidebar-item.active > a,
+.zc-sidebar ul.sidebar-nav li.sidebar-item > a:hover {
     color: #ff5520;
-    background: linear-gradient(90deg, rgba(59, 125, 221, .1), rgba(59, 125, 221, .088) 50%, transparent);
+    background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), rgba(59, 125, 221, 0.088) 50%, transparent);
     border-left-color: #ff5520;
 }
 
@@ -293,7 +296,7 @@ a.zc-btn-add:hover i {
     height: 24px;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    transition: .3s;
+    transition: 0.3s;
 }
 
 .zc-sidebar ul.sidebar-nav li.sidebar-item.has-childern.active a .dropdown-icon {
@@ -321,7 +324,11 @@ a.zc-btn-add:hover i {
     min-height: 100vh;
     min-width: 0;
     overflow: hidden;
-    transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+    transition:
+        margin-left 0.35s ease-in-out,
+        left 0.35s ease-in-out,
+        margin-right 0.35s ease-in-out,
+        right 0.35s ease-in-out;
     width: 100%;
 }
 
@@ -333,7 +340,7 @@ a.zc-btn-add:hover i {
     justify-content: space-between;
     padding: 14px 22px;
     background-color: #fff;
-    box-shadow: 0 0 2rem 0 rgba(33, 37, 41, .1);
+    box-shadow: 0 0 2rem 0 rgba(33, 37, 41, 0.1);
 }
 
 .zc-main-top-nav .brand-logo {
@@ -386,17 +393,17 @@ a.zc-btn-add:hover i {
 .zc-dropdown.user-notification .zc-dropdown-btn .nicon-box .indicator {
     background: #ff5520;
     border-radius: 50%;
-    box-shadow: 0 .1rem .2rem rgba(0, 0, 0, .05);
+    box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
     color: #fff;
     display: block;
-    font-size: .675rem;
+    font-size: 0.675rem;
     height: 18px;
     padding: 1px;
     position: absolute;
     right: -8px;
     text-align: center;
     top: 0;
-    transition: top .1s ease-out;
+    transition: top 0.1s ease-out;
     width: 18px;
 }
 
@@ -407,7 +414,7 @@ a.zc-btn-add:hover i {
 /** Dropdownmenu **/
 .zc-dropdown-menu {
     display: none;
-    box-shadow: 0 .1rem .2rem rgba(0, 0, 0, .05);
+    box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
     position: absolute;
     left: auto;
     right: 0;
@@ -427,7 +434,7 @@ a.zc-btn-add:hover i {
 
 .zc-dropdown-menu.show {
     display: block;
-    animation-duration: .25s;
+    animation-duration: 0.25s;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
     animation-name: dropdownAnimation;
@@ -437,7 +444,7 @@ a.zc-btn-add:hover i {
 .zc-dropdown-menu .zc-dropdown-menu-header {
     border-bottom: 1px solid #dee2e6;
     font-weight: 600;
-    padding: .75rem;
+    padding: 0.75rem;
     text-align: center;
 }
 
@@ -460,8 +467,8 @@ a.zc-btn-add:hover i {
 
 .zc-dropdown-menu .zc-dropdown-menu-footer {
     display: block;
-    font-size: .75rem;
-    padding: .5rem;
+    font-size: 0.75rem;
+    padding: 0.5rem;
     text-align: center;
 }
 
@@ -489,7 +496,9 @@ a.zc-btn-add:hover i {
     text-decoration: none;
     width: 100%;
     background-color: transparent;
-    transition: background .1s ease-in-out, color .1s ease-in-out;
+    transition:
+        background 0.1s ease-in-out,
+        color 0.1s ease-in-out;
     padding: 5px 16px;
     color: #495057;
     font-weight: 400;
@@ -504,7 +513,7 @@ a.zc-btn-add:hover i {
     background-color: #f8f9fa;
 }
 
-@media(max-width:1040px) {
+@media (max-width: 1040px) {
     .zc-sidebar {
         left: -260px;
         margin-left: -260px;
@@ -711,7 +720,7 @@ a.zc-btn-add:hover i {
     background: #fff;
     padding: 20px;
     border-radius: 20px;
-    box-shadow: 0 6px 12px rgba(30, 10, 58, .04);
+    box-shadow: 0 6px 12px rgba(30, 10, 58, 0.04);
 }
 
 .zc-card-style-2 {
@@ -719,7 +728,7 @@ a.zc-btn-add:hover i {
     width: 100%;
     position: relative;
     background-color: #ffffff;
-    box-shadow: 0 6px 12px rgba(30, 10, 58, .04);
+    box-shadow: 0 6px 12px rgba(30, 10, 58, 0.04);
 }
 
 .zc-card-style-2 .zc-card-header {
@@ -776,27 +785,29 @@ a.zc-btn-add:hover i {
     border-bottom: 1px solid;
 }
 
-.zc-job-filter-widget .zc-field-wrap>label {
+.zc-job-filter-widget .zc-field-wrap > label {
     background-color: transparent;
-    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+        transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+        color 150ms cubic-bezier(0.4, 0, 0.2, 1);
     bottom: -10px;
 }
 
-.zc-job-filter-widget .zc-field-wrap>label,
-.zc-job-filter-widget .zc-field-wrap>input,
-.zc-field-wrap>input {
+.zc-job-filter-widget .zc-field-wrap > label,
+.zc-job-filter-widget .zc-field-wrap > input,
+.zc-field-wrap > input {
     display: block;
     position: relative;
     width: 100%;
     background: transparent;
 }
 
-.zc-job-filter-widget .zc-field-wrap>input {
+.zc-job-filter-widget .zc-field-wrap > input {
     border: 0;
     outline: none;
 }
 
-.zc-job-filter-widget .zc-field-wrap:focus+label,
+.zc-job-filter-widget .zc-field-wrap:focus + label,
 .zc-job-filter-widget .zc-field-wrap:focus-within label {
     bottom: 0;
 }
@@ -1079,7 +1090,7 @@ a.zc-btn-add:hover i {
     gap: 10px;
 }
 
-.zc-filter-accordion .zc-accordion-item .zc-accordion-content .check-box-field input[type="checkbox"] {
+.zc-filter-accordion .zc-accordion-item .zc-accordion-content .check-box-field input[type='checkbox'] {
     width: 20px;
     height: 20px;
 }
@@ -1088,7 +1099,7 @@ a.zc-btn-add:hover i {
     margin-bottom: 10px;
 }
 
-.zc-filter-accordion .zc-accordion-item .zc-accordion-content input[type="text"] {
+.zc-filter-accordion .zc-accordion-item .zc-accordion-content input[type='text'] {
     border: 1px solid rgb(187, 189, 209);
 }
 
@@ -1197,7 +1208,7 @@ a.zc-btn-add:hover i {
 
 .zc-filter-search-dropdown .filter-dropdown-wrapper ul::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: var(--zc-secondary-color);
 }
 
@@ -1279,7 +1290,7 @@ a.zc-btn-add:hover i {
     width: 100%;
     position: relative;
     background-color: #ffffff;
-    box-shadow: 0 6px 12px rgba(30, 10, 58, .04);
+    box-shadow: 0 6px 12px rgba(30, 10, 58, 0.04);
 }
 
 .zc-candidate-profile-header .top-cover {
@@ -1289,7 +1300,7 @@ a.zc-btn-add:hover i {
     min-height: 50px;
     /*background: #2A7B9B;
     background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);*/
-    background: #FF5520;
+    background: #ff5520;
     background: linear-gradient(90deg, rgba(255, 85, 32, 1) 0%, rgba(34, 46, 60, 1) 50%, rgba(4, 100, 200, 1) 100%);
 }
 
@@ -1446,7 +1457,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-profile-education .education-list .education-list-item .course-type-year span.divider::before {
-    content: "";
+    content: '';
     height: 8px;
     border-right: 1px solid var(--N700);
 }
@@ -1572,7 +1583,7 @@ ul.zc-certificate-list li {
     font-size: 14px;
 }
 
-.zc-candidate-profile-resume .zc-resume-upload-wrapper input[type="file"] {
+.zc-candidate-profile-resume .zc-resume-upload-wrapper input[type='file'] {
     display: none;
 }
 
@@ -1760,7 +1771,7 @@ ul.zc-certificate-list li {
     z-index: 2;
     width: 100%;
     background-color: #fff;
-    box-shadow: 0 6px 25px rgba(30, 10, 58, .08);
+    box-shadow: 0 6px 25px rgba(30, 10, 58, 0.08);
     border-radius: 16px;
     display: none;
     transition: all 0.3 ease;
@@ -1870,7 +1881,7 @@ ul.zc-certificate-list li {
     display: block;
     width: 100%;
     background-color: #ffffff;
-    box-shadow: 0 6px 12px rgba(30, 10, 58, .04);
+    box-shadow: 0 6px 12px rgba(30, 10, 58, 0.04);
 }
 
 .zc-candidate-profile-view-header {
@@ -2038,7 +2049,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-candidate-language-card h3::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     bottom: 0;
@@ -2079,7 +2090,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-candidate-language-card ul li i.fa-xmark {
-    color: #FF0000;
+    color: #ff0000;
 }
 
 /*** Employer List And Details Page ***/
@@ -2359,7 +2370,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-chat-side-header .chat-search-widget::before {
-    content: "🔎";
+    content: '🔎';
     position: absolute;
     left: 15px;
     top: 10px;
@@ -2394,7 +2405,6 @@ ul.zc-certificate-list li {
     gap: 8px;
     padding: 10px 10px 60px 10px;
     height: calc(100vh - 180px);
-
 }
 
 /* Scrollbar styles for WebKit browsers */
@@ -2485,7 +2495,7 @@ ul.zc-certificate-list li {
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    background-color: #F7F5F3;
+    background-color: #f7f5f3;
     padding-bottom: 16px;
 }
 
@@ -2545,7 +2555,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-chat-common-header .zc-chat-user-menu .menu-toggle:hover {
-    background-color: #F7F5F3;
+    background-color: #f7f5f3;
 }
 
 .zc-chat-common-header .zc-chat-user-menu .user-dropdown-menu {
@@ -2606,7 +2616,7 @@ ul.zc-certificate-list li {
 }
 
 .zc-chat-content .zc-messanger .chat-message.me .message-bubble {
-    background-color: #467CFD;
+    background-color: #467cfd;
     color: #fff;
     border-bottom-right-radius: 4px;
 }
@@ -2688,7 +2698,7 @@ ul.zc-certificate-list li {
 }
 
 /*** Responsive ***/
-@media(max-width:920px) {
+@media (max-width: 920px) {
     .zc-candidate-profile-header .candidate-basic-details .candidate-info .other-details ul {
         gap: 10px;
     }
@@ -2699,7 +2709,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:575px) {
+@media (max-width: 575px) {
     .zc-candidate-profile-header .candidate-basic-details {
         text-align: center;
     }
@@ -2710,7 +2720,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:991px) {
+@media (max-width: 991px) {
     .zc-filter-wrapper .filter-header {
         cursor: pointer;
         position: relative;
@@ -2718,7 +2728,7 @@ ul.zc-certificate-list li {
     }
 
     .zc-filter-wrapper .filter-header::after {
-        content: "+";
+        content: '+';
         position: absolute;
         top: 50%;
         right: 10px;
@@ -2727,7 +2737,7 @@ ul.zc-certificate-list li {
     }
 
     .zc-filter-wrapper .filter-header.active::after {
-        content: "-";
+        content: '-';
     }
 
     .zc-filter-wrapper .filter-content {
@@ -2735,7 +2745,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:767px) {
+@media (max-width: 767px) {
     .zc-chat-main .zc-chat-side {
         width: 100%;
     }
@@ -2799,7 +2809,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:620px) {
+@media (max-width: 620px) {
     .zc-applied-job-item .top {
         flex-direction: column;
     }
@@ -2830,7 +2840,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:575px) {
+@media (max-width: 575px) {
     .zc-employer-list-item .top-sec {
         display: block;
     }
@@ -2871,7 +2881,7 @@ ul.zc-certificate-list li {
     }
 }
 
-@media(max-width:490px) {
+@media (max-width: 490px) {
     .zc-student-list-item.style-2 {
         flex-direction: column;
         gap: 10px;
@@ -2915,7 +2925,7 @@ ul.zc-certificate-list li {
 }
 
 .date-divider::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     left: 0;

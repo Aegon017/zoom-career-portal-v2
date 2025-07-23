@@ -1,19 +1,14 @@
-import { FilePond, registerPlugin } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import 'filepond/dist/filepond.min.css';
+import { FilePond, registerPlugin } from 'react-filepond';
 
-
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 
 import { useState } from 'react';
 
-registerPlugin(
-    FilePondPluginImagePreview,
-    FilePondPluginFileValidateType,
-    FilePondPluginImageExifOrientation,
-);
+registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginImageExifOrientation);
 
 interface Props {
     placeholder: string;
@@ -41,7 +36,7 @@ const ProfileImageUpload: React.FC<Props> = ({ placeholder, initialImageUrl, upl
                         const { url } = JSON.parse(response);
                         onUploaded?.(url);
                         return url;
-                    }
+                    },
                 },
                 revert: (uniqueFileId: string) => {
                     fetch(removeUrl, {
@@ -50,12 +45,11 @@ const ProfileImageUpload: React.FC<Props> = ({ placeholder, initialImageUrl, upl
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ fileUrl: uniqueFileId }),
-                    })
-                        .then(() => {
-                            onUploaded?.('');
-                            setFiles([]);
-                        })
-                }
+                    }).then(() => {
+                        onUploaded?.('');
+                        setFiles([]);
+                    });
+                },
             }}
             acceptedFileTypes={['image/*']}
             name="file"

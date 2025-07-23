@@ -7,22 +7,17 @@ interface EditButtonProps {
     ariaLabel?: string;
 }
 
-const EditButton: React.FC<EditButtonProps> = ( {
-    onClick,
-    id,
-    className = 'zc-btn-edit',
-    ariaLabel = 'Edit',
-} ) => {
+const EditButton: React.FC<EditButtonProps> = ({ onClick, id, className = 'zc-btn-edit', ariaLabel = 'Edit' }) => {
     return (
         <a
             href="#"
-            onClick={ ( e ) => {
+            onClick={(e) => {
                 e.preventDefault();
                 onClick();
-            } }
-            id={ id }
-            className={ className }
-            aria-label={ ariaLabel }
+            }}
+            id={id}
+            className={className}
+            aria-label={ariaLabel}
         >
             <i className="fa-solid fa-pencil"></i>
         </a>

@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import { CalendarDays, Eye, Loader2, Sparkles } from "lucide-react";
-import { Button } from "./ui/button";
-import JobStatus from "./job-status";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-} from "./ui/card";
-import MessageButton from "./message-button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Application, ApplicationStatus } from "@/types";
+'use client';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import type { Application, ApplicationStatus } from '@/types';
+import { CalendarDays, ChevronDown, ChevronUp, ExternalLink, FileText, Mail, Sparkles, TrendingUp, User } from 'lucide-react';
+import { useState } from 'react';
+import JobStatus from './job-status';
+import MessageButton from './message-button';
 
 interface Props {
     application: Application;
@@ -18,183 +18,206 @@ interface Props {
     message?: boolean;
 }
 
-const JobApplicationCard = ( { application, statuses, message = true }: Props ) => {
-    const [ matchScore, setMatchScore ] = useState<number | null>(
-        application.match_score?.score ?? null
-    );
-    const [ reason, setReason ] = useState( application.match_score?.reason ?? "" );
-    const [ shortlistSuggested, setShortlistSuggested ] = useState<boolean | null>(
-        application.match_score?.shortlist ?? null
-    );
-    const [ shortlistReason, setShortlistReason ] = useState(
-        application.match_score?.shortlist_reason ?? ""
-    );
-    const [ loading, setLoading ] = useState( false );
-    const [ elapsedTime, setElapsedTime ] = useState<number>( 0 );
-    const timerRef = useRef<NodeJS.Timeout | null>( null );
+const JobApplicationCard = ({ application, statuses, message = true }: Props) => {
+    const [expanded, setExpanded] = useState(false);
+    const toggleExpand = () => setExpanded(!expanded);
 
-    useEffect( () => {
-        if ( loading ) {
-            timerRef.current = setInterval( () => {
-                setElapsedTime( prev => prev + 1 );
-            }, 1000 );
-        } else {
-            if ( timerRef.current ) {
-                clearInterval( timerRef.current );
-                timerRef.current = null;
-            }
-        }
+    const getMatchColor = (score: number | null | undefined) => {
+        if (!score) return 'bg-muted/50 text-muted-foreground border-muted';
+        if (score >= 80)
+            return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800';
+        if (score >= 60) return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800';
+        if (score >= 40) return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800';
+        return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800';
+    };
 
-        return () => {
-            if ( timerRef.current ) clearInterval( timerRef.current );
-        };
-    }, [ loading ] );
+    const getMatchLabel = (score: number | null | undefined) => {
+        if (!score) return 'Not scored';
+        if (score >= 80) return 'Excellent';
+        if (score >= 60) return 'Good';
+        if (score >= 40) return 'Fair';
+        return 'Low';
+    };
 
-    const handleAnalyzeClick = async () => {
-        setLoading( true );
-        setElapsedTime( 0 );
-        setReason( "" );
-        setShortlistSuggested( null );
-        setShortlistReason( "" );
+    const getProgressColor = (score: number | null | undefined) => {
+        if (!score) return '';
+        if (score >= 80) return 'bg-emerald-500';
+        if (score >= 60) return 'bg-blue-500';
+        if (score >= 40) return 'bg-amber-500';
+        return 'bg-red-500';
+    };
 
-        try {
-            const res = await fetch( `/employer/ai/match-score/${ application.id }` );
-            const text = await res.text();
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        });
+    };
 
-            try {
-                const parsed = JSON.parse( text );
-                setMatchScore( parsed.score ?? null );
-                setReason( parsed.reason ?? "" );
-                setShortlistSuggested( parsed.shortlist ?? null );
-                setShortlistReason( parsed.shortlist_reason ?? "" );
-            } catch {
-                setReason( text );
-            }
-        } finally {
-            setLoading( false );
-        }
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
     };
 
     return (
-        <Card className="rounded-xl border bg-background p-4 shadow-sm hover:shadow-md transition-shadow duration-200 w-full max-w-2xl mx-auto space-y-4 gap-0">
-            {/* Top Row: Applicant Info + Message Button */ }
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
-                <div className="flex items-start gap-4">
-                    <Avatar className="h-12 w-12 ring ring-muted-foreground/10">
-                        <AvatarImage src={ application.user.avatar_url } />
-                        <AvatarFallback>
-                            { application.user.name
-                                .split( " " )
-                                .map( ( n ) => n[ 0 ] )
-                                .join( "" )
-                                .toUpperCase() }
-                        </AvatarFallback>
-                    </Avatar>
+        <Card className="group border-border/60 hover:border-primary/30 bg-background/95 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md">
+            <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                    <div className="space-y-0.5">
-                        <h3 className="text-base font-semibold">{ application.user.name }</h3>
-                        <div className="text-xs text-muted-foreground flex items-center gap-1 flex-wrap">
-                            <CalendarDays className="w-4 h-4" />
-                            <span>
-                                Applied on{ " " }
-                                { new Date( application.created_at ).toLocaleDateString( "en-US", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                } ) }
-                            </span>
+            <CardHeader className="relative pb-4">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 flex-1 items-start gap-4">
+                        <div className="relative">
+                            <Avatar className="border-muted ring-primary/10 group-hover:ring-primary/20 h-12 w-12 border ring-1 transition-transform duration-300 group-hover:scale-105">
+                                <AvatarImage
+                                    src={application.user.avatar_url || '/placeholder.svg'}
+                                    alt={application.user.name}
+                                    className="object-cover"
+                                />
+                                <AvatarFallback className="from-primary to-primary/80 text-primary-foreground bg-gradient-to-br text-sm font-semibold">
+                                    {getInitials(application.user.name)}
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                            <h3 className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
+                                {application.user.name}
+                            </h3>
+                            <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                                <CalendarDays className="h-4 w-4" />
+                                <span>Applied {formatDate(application.created_at)}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                { loading ? (
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                        <span>Analyzing with AI... ({ elapsedTime }s)</span>
-                    </div>
-                ) : matchScore === null && (
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-sm px-2 h-auto text-primary hover:text-secondary transition-colors ease"
-                        onClick={ handleAnalyzeClick }
-                        disabled={ loading }
-                    >
-                        <Sparkles className="w-4 h-4 mr-1" />
-                        Analyze with AI
-                    </Button>
-                ) }
-            </div>
 
-            <CardContent className="px-0 space-y-4">
-                {/* Match Score */ }
-                <div>
-                    { ( matchScore !== null ) && (
-                        <div className="text-sm font-medium text-green-700">
-                            🧠 Match Score: <span className="font-bold">{ matchScore }/100</span>
-                            <span className="ml-2 text-xs text-muted-foreground">⏱ { elapsedTime }s</span>
-                        </div>
-                    ) }
-
-                    { reason && (
-                        <p className="text-sm text-muted-foreground whitespace-pre-line mt-2">
-                            { reason }
-                        </p>
-                    ) }
-                </div>
-
-                {/* Shortlist Suggestion */ }
-                { shortlistSuggested !== null && !loading && (
-                    <div className="rounded-md border px-4 py-2 bg-muted/30 space-y-1">
-                        <span
-                            className={ `text-sm font-semibold ${ shortlistSuggested ? "text-green-700" : "text-red-600"
-                                }` }
-                        >
-                            { shortlistSuggested ? "✅ Suggest Shortlisting" : "❌ Do Not Shortlist" }
-                        </span>
-                        { shortlistReason && (
-                            <p className="text-xs text-muted-foreground">{ shortlistReason }</p>
-                        ) }
-                    </div>
-                ) }
-            </CardContent>
-
-            <CardFooter className="flex flex-row justify-between items-center gap-3 px-0">
-                <div className="w-full sm:w-auto flex justify-start sm:justify-start gap-2">
-                    { application.resume_url && (
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                        {message && (
+                            <MessageButton userId={application.user.id}>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="hover:bg-primary hover:text-primary-foreground hover:border-primary px-2 py-1 text-xs"
+                                >
+                                    <Mail className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Message</span>
+                                </Button>
+                            </MessageButton>
+                        )}
                         <Button
-                            variant="outline"
-                            size="sm"
-                            asChild
-                            className="h-8 w-full sm:w-auto"
-                            disabled={ loading }
+                            variant="ghost"
+                            size="icon"
+                            onClick={toggleExpand}
+                            className="text-muted-foreground hover:text-foreground hover:bg-muted h-8 w-8 rounded-md p-0"
+                            aria-label={expanded ? 'Collapse details' : 'Expand details'}
                         >
-                            <a
-                                href={ application.resume_url }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center"
-                            >
-                                <Eye className="h-3 w-3 mr-1" />
-                                View Resume
-                            </a>
+                            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                         </Button>
-                    ) }
-                </div>
-
-                <div className="w-full sm:w-auto">
-                    <JobStatus statuses={ statuses } application={ application } />
-                </div>
-
-                { message && (
-                    <div className="sm:ml-auto sm:mt-0 mt-2">
-                        <MessageButton userId={ application.user.id }>
-                            <Button size="sm" variant="outline" disabled={ loading }>
-                                Message
-                            </Button>
-                        </MessageButton>
                     </div>
-                ) }
-            </CardFooter>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div className="space-y-2">
+                        <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                            <div className="bg-primary/10 rounded-md p-1.5">
+                                <User className="text-primary h-4 w-4" />
+                            </div>
+                            <span>Status</span>
+                        </div>
+                        <div className="pl-7">
+                            <JobStatus statuses={statuses} application={application} />
+                        </div>
+                    </div>
+
+                    {application.match_score !== null && (
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                                    <div className="bg-primary/10 rounded-md p-1.5">
+                                        <TrendingUp className="text-primary h-4 w-4" />
+                                    </div>
+                                    <span>Match Score</span>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-foreground text-xl font-semibold">{application.match_score}</div>
+                                    <div className="text-muted-foreground text-xs">out of 100</div>
+                                </div>
+                            </div>
+                            <div className="space-y-2 pl-7">
+                                <Progress value={application.match_score} className="bg-muted h-2 rounded-full" />
+                                <Badge variant="outline" className={`rounded-full px-2 py-1 text-xs ${getMatchColor(application.match_score)}`}>
+                                    <Sparkles className="mr-1.5 h-3 w-3" />
+                                    {getMatchLabel(application.match_score)} match
+                                </Badge>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </CardHeader>
+
+            {expanded && (
+                <>
+                    <Separator />
+                    <CardContent className="bg-muted/10 space-y-5 rounded-b-xl p-4 sm:p-5">
+                        {application.match_summary && (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-primary rounded-md p-2 shadow">
+                                        <Sparkles className="h-4 w-4 text-white" />
+                                    </div>
+                                    <h4 className="text-foreground text-sm font-semibold">Match Analysis</h4>
+                                </div>
+                                <Card className="bg-card/50 border-0 shadow-sm backdrop-blur-sm">
+                                    <CardContent className="text-muted-foreground p-4 text-sm leading-relaxed">
+                                        {application.match_summary}
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
+
+                        {application.resume_text && (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="rounded-md bg-emerald-500 p-2 shadow">
+                                        <FileText className="h-4 w-4 text-white" />
+                                    </div>
+                                    <h4 className="text-foreground text-sm font-semibold">Resume Highlights</h4>
+                                </div>
+                                <Card className="bg-card/50 border-0 shadow-sm backdrop-blur-sm">
+                                    <CardContent className="p-4">
+                                        <div className="text-muted-foreground scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent max-h-36 overflow-y-auto text-sm leading-relaxed whitespace-pre-line">
+                                            {application.resume_text.substring(0, 500)}
+                                            {application.resume_text.length > 500 && <span className="text-primary font-medium">... read more</span>}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
+
+                        {application.resume_url && (
+                            <div className="flex justify-start">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    asChild
+                                    className="rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400"
+                                >
+                                    <a href={application.resume_url} target="_blank" rel="noopener noreferrer">
+                                        <FileText className="h-4 w-4" />
+                                        <span>View Resume</span>
+                                        <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                </Button>
+                            </div>
+                        )}
+                    </CardContent>
+                </>
+            )}
         </Card>
     );
 };

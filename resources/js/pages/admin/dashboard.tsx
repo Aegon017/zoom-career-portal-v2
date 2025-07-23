@@ -31,7 +31,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
         </AppLayout>
-    )
-}
+    );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

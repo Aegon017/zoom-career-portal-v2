@@ -1,8 +1,15 @@
-import React, { useState } from 'react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { Button } from './ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 import DeleteAlert from './delete-alert';
+import { Button } from './ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface DataTableActionsProps {
     onEdit: () => void;
@@ -10,7 +17,6 @@ interface DataTableActionsProps {
 }
 
 const DataTableActions = ({ onEdit, onDelete }: DataTableActionsProps) => {
-
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
     return (
@@ -25,13 +31,20 @@ const DataTableActions = ({ onEdit, onDelete }: DataTableActionsProps) => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer mb-1" onClick={() => onEdit()}>Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="bg-red-600 focus:bg-red-500 dark:focus:bg-red-700 focus:text-white dark:focus:text-black text-white dark:text-black cursor-pointer" onClick={() => setTimeout(() => setAlertOpen(true), 0)}>Delete</DropdownMenuItem>
+                    <DropdownMenuItem className="mb-1 cursor-pointer" onClick={() => onEdit()}>
+                        Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        className="cursor-pointer bg-red-600 text-white focus:bg-red-500 focus:text-white dark:text-black dark:focus:bg-red-700 dark:focus:text-black"
+                        onClick={() => setTimeout(() => setAlertOpen(true), 0)}
+                    >
+                        Delete
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
-            </DropdownMenu >
+            </DropdownMenu>
             <DeleteAlert alertOpen={alertOpen} setAlertOpen={setAlertOpen} onDelete={onDelete} />
         </>
-    )
-}
+    );
+};
 
-export default DataTableActions
+export default DataTableActions;

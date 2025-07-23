@@ -1,12 +1,12 @@
-import { NavItem, SharedData } from "@/types";
-import { BookUser, BriefcaseBusiness, LayoutGrid, LayoutList, MailOpen } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
-import { Link, usePage } from "@inertiajs/react";
-import AppLogo from "../app-logo";
-import { NavMain } from "../nav-main";
-import { NavFooter } from "../nav-footer";
-import { Separator } from "../ui/separator";
-import { NavUser } from "../nav-user";
+import { NavItem, SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { BookUser, BriefcaseBusiness, LayoutGrid, LayoutList, MailOpen } from 'lucide-react';
+import AppLogo from '../app-logo';
+import { NavFooter } from '../nav-footer';
+import { NavMain } from '../nav-main';
+import { NavUser } from '../nav-user';
+import { Separator } from '../ui/separator';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from '../ui/sidebar';
 
 export function AppSidebar() {
     const isVerified = usePage<SharedData>().props.auth.isEmployerVerified;
@@ -17,34 +17,31 @@ export function AppSidebar() {
             href: '/employer/dashboard',
             icon: LayoutGrid,
         },
-        ...(
-            isVerified
-                ? [
-                    {
-                        title: 'Inbox',
-                        href: '/inbox',
-                        icon: MailOpen,
-                    },
-                    {
-                        title: 'Jobs',
-                        href: '/employer/jobs',
-                        icon: BriefcaseBusiness,
-                    },
-                    {
-                        title: 'Jobseekers',
-                        href: '/employer/jobseekers',
-                        icon: BookUser,
-                    },
-                    {
-                        title: 'Applications',
-                        href: '/employer/applications',
-                        icon: LayoutList,
-                    },
-                ]
-                : []
-        ),
+        ...(isVerified
+            ? [
+                  {
+                      title: 'Inbox',
+                      href: '/inbox',
+                      icon: MailOpen,
+                  },
+                  {
+                      title: 'Jobs',
+                      href: '/employer/jobs',
+                      icon: BriefcaseBusiness,
+                  },
+                  {
+                      title: 'Jobseekers',
+                      href: '/employer/jobseekers',
+                      icon: BookUser,
+                  },
+                  {
+                      title: 'Applications',
+                      href: '/employer/applications',
+                      icon: LayoutList,
+                  },
+              ]
+            : []),
     ];
-
 
     const footerNavItems: NavItem[] = [];
 
@@ -61,11 +58,11 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={ mainNavItems } groupName="Employer Panel" />
+                <NavMain items={mainNavItems} groupName="Employer Panel" />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={ footerNavItems } className="mt-auto" />
+                <NavFooter items={footerNavItems} className="mt-auto" />
                 <Separator />
                 <NavUser />
             </SidebarFooter>

@@ -13,7 +13,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post("/email/verification-notification");
+        post('/email/verification-notification');
     };
 
     return (

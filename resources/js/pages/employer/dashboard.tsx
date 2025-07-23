@@ -31,7 +31,7 @@ const EmployerDashboard = () => {
                 </div>
             </div>
         </AppLayout>
-    )
-}
+    );
+};
 
-export default EmployerDashboard
+export default EmployerDashboard;

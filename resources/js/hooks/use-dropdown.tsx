@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 const useDropdown = <T extends HTMLElement>() => {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,10 +10,7 @@ const useDropdown = <T extends HTMLElement>() => {
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         }
@@ -31,6 +28,6 @@ const useDropdown = <T extends HTMLElement>() => {
         close,
         dropdownRef,
     };
-}
+};
 
-export default useDropdown
+export default useDropdown;

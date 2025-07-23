@@ -1,68 +1,63 @@
-import { useEffect, useRef } from "react";
-import Quill from "quill";
-import "quill/dist/quill.snow.css";
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+import { useEffect, useRef } from 'react';
 
 interface QuillEditorProps {
     value: string;
-    onChange: ( value: string ) => void;
+    onChange: (value: string) => void;
     disabled: boolean;
     placeholder?: string;
 }
 
-const TextEditor: React.FC<QuillEditorProps> = ( {
-    value,
-    onChange,
-    disabled,
-    placeholder = ""
-} ) => {
-    const editorRef = useRef<HTMLDivElement | null>( null );
-    const quillRef = useRef<Quill | null>( null );
+const TextEditor: React.FC<QuillEditorProps> = ({ value, onChange, disabled, placeholder = '' }) => {
+    const editorRef = useRef<HTMLDivElement | null>(null);
+    const quillRef = useRef<Quill | null>(null);
 
-    useEffect( () => {
-        if ( editorRef.current && !quillRef.current ) {
+    useEffect(() => {
+        if (editorRef.current && !quillRef.current) {
             // Initialize Quill with placeholder support
-            quillRef.current = new Quill( editorRef.current, {
-                theme: "snow",
+            quillRef.current = new Quill(editorRef.current, {
+                theme: 'snow',
                 modules: {
                     toolbar: [
-                        [ { header: [ 1, 2, 3, false ] } ],
-                        [ "bold", "italic", "underline", "strike" ],
-                        [ { list: "ordered" }, { list: "bullet" } ],
-                        [ "link", "image", "code-block" ],
-                        [ "clean" ],
+                        [{ header: [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['link', 'image', 'code-block'],
+                        ['clean'],
                     ],
                 },
-                placeholder,  // Set the placeholder
+                placeholder, // Set the placeholder
                 readOnly: disabled,
-            } );
+            });
 
             // Set initial value if provided
-            if ( value ) {
+            if (value) {
                 quillRef.current.root.innerHTML = value;
             }
 
-            quillRef.current.on( "text-change", () => {
-                const html = editorRef.current!.querySelector( ".ql-editor" )?.innerHTML || "";
-                onChange( html );
-            } );
+            quillRef.current.on('text-change', () => {
+                const html = editorRef.current!.querySelector('.ql-editor')?.innerHTML || '';
+                onChange(html);
+            });
         }
-    }, [ onChange, disabled, placeholder ] );  // Add placeholder to dependencies
+    }, [onChange, disabled, placeholder]); // Add placeholder to dependencies
 
-    useEffect( () => {
-        if ( quillRef.current && value !== quillRef.current.root.innerHTML ) {
+    useEffect(() => {
+        if (quillRef.current && value !== quillRef.current.root.innerHTML) {
             quillRef.current.root.innerHTML = value;
         }
-    }, [ value ] );
+    }, [value]);
 
-    useEffect( () => {
-        if ( quillRef.current ) {
-            quillRef.current.enable( !disabled );
+    useEffect(() => {
+        if (quillRef.current) {
+            quillRef.current.enable(!disabled);
         }
-    }, [ disabled ] );
+    }, [disabled]);
 
     return (
-        <div className="rounded-xl border bg-background shadow-sm">
-            <style>{ `
+        <div className="bg-background rounded-xl border shadow-sm">
+            <style>{`
                 .ql-toolbar {
                     border-radius: 0.75rem 0.75rem 0 0;
                     background-color: #f6f6f6;
@@ -94,10 +89,7 @@ const TextEditor: React.FC<QuillEditorProps> = ( {
                 }
             `}</style>
 
-            <div
-                ref={ editorRef }
-                className="min-h-[10rem] rounded-b-xl px-0 py-0"
-            />
+            <div ref={editorRef} className="min-h-[10rem] rounded-b-xl px-0 py-0" />
         </div>
     );
 };

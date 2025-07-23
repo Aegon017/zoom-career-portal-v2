@@ -1,16 +1,15 @@
-import { NavItem, SharedData } from "@/types";
-import { BriefcaseBusiness, ChartBar, ClipboardList, CodeXml, Factory, Languages, LayoutGrid, ListTree, MapPin, Settings2, TableProperties, Users2 } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
-import { Link, usePage } from "@inertiajs/react";
-import AppLogo from "./app-logo";
-import { NavMain } from "./nav-main";
-import { NavFooter } from "./nav-footer";
-import { Separator } from "./ui/separator";
-import { NavUser } from "./nav-user";
-import useRoles from "@/hooks/use-roles";
+import useRoles from '@/hooks/use-roles';
+import { NavItem } from '@/types';
+import { Link } from '@inertiajs/react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, Languages, LayoutGrid, MapPin, Settings2, Users2 } from 'lucide-react';
+import AppLogo from './app-logo';
+import { NavFooter } from './nav-footer';
+import { NavMain } from './nav-main';
+import { NavUser } from './nav-user';
+import { Separator } from './ui/separator';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from './ui/sidebar';
 
 export function AppSidebar() {
-
     const roles = useRoles();
 
     const mainNavItems: NavItem[] = [
@@ -27,11 +26,12 @@ export function AppSidebar() {
                 {
                     title: 'Users',
                     href: '/admin/users',
-                }, {
+                },
+                {
                     title: 'Roles',
                     href: '/admin/roles',
                 },
-            ]
+            ],
         },
         {
             title: 'Employer',
@@ -41,11 +41,12 @@ export function AppSidebar() {
                 {
                     title: 'Employees',
                     href: '/admin/employees',
-                }, {
+                },
+                {
                     title: 'Companies',
                     href: '/admin/companies',
                 },
-            ]
+            ],
         },
         {
             title: 'Job Management',
@@ -84,7 +85,7 @@ export function AppSidebar() {
             title: 'Site settings',
             href: '/admin/site-settings',
             icon: Settings2,
-        }
+        },
     ];
 
     return (
@@ -100,12 +101,12 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={ mainNavItems } groupName="Admin Panel" />
+                <NavMain items={mainNavItems} groupName="Admin Panel" />
             </SidebarContent>
 
             <SidebarFooter>
                 <Separator />
-                <NavFooter items={ footerNavItems } className="mt-auto" />
+                <NavFooter items={footerNavItems} className="mt-auto" />
                 <Separator />
                 <NavUser />
             </SidebarFooter>
