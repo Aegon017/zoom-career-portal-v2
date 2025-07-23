@@ -38,7 +38,22 @@ final class LocationsImport implements ToModel, WithBatchInserts, WithChunkReadi
             return null;
         }
 
-        $plain = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $string);
+        $map = [
+            'ō' => 'o',
+            'Ō' => 'O',
+            'ū' => 'u',
+            'Ū' => 'U',
+            'ā' => 'a',
+            'Ā' => 'A',
+            'ē' => 'e',
+            'Ē' => 'E',
+            'ī' => 'i',
+            'Ī' => 'I',
+            'ñ' => 'n',
+            'Ñ' => 'N',
+        ];
+
+        $plain = strtr($string, $map);
 
         return Str::title(mb_strtolower(mb_trim($plain)));
     }
