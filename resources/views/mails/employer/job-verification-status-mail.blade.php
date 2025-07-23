@@ -1,8 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
 @extends('mails.layout')
 @section('title', 'Application Update')
 @section('body')

@@ -33,7 +33,7 @@ final class OpeningApplication extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        static::created(function (OpeningApplication $openingApplication) {
+        self::created(function (OpeningApplication $openingApplication): void {
             CalculateApplicationMatch::dispatch($openingApplication)->delay(now()->addSeconds(10));
         });
     }

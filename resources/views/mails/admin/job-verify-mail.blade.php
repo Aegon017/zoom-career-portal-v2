@@ -1,8 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
 @extends('mails.layout')
 @section('title', 'New Job Posting Pending Approval')
 @section('body')

@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Jobseeker;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessResume;
 use App\Models\Resume;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,14 +18,14 @@ use Inertia\Response;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ResumeController extends Controller
+final class ResumeController extends Controller
 {
     public function index(): Response
     {
         $resumes = Auth::user()->resumes()
             ->with('media')
             ->get()
-            ->map(function ($resume) {
+            ->map(function ($resume): ?array {
                 $media = $resume->getFirstMedia('resumes');
 
                 return $media ? [
@@ -45,8 +48,9 @@ class ResumeController extends Controller
         $resumes = Auth::user()->resumes()
             ->with('media')
             ->get()
-            ->map(function ($resume) {
+            ->map(function ($resume): ?array {
                 $media = $resume->getFirstMedia('resumes');
+
                 return $media ? [
                     'id' => $media->id,
                     'name' => $media->file_name,
@@ -72,7 +76,7 @@ class ResumeController extends Controller
         $path = $request->resume;
         $user = Auth::user();
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (! Storage::disk('public')->exists($path)) {
             return back()->withErrors(['resume' => 'File not found. Please upload again.']);
         }
 
@@ -83,8 +87,8 @@ class ResumeController extends Controller
             ProcessResume::dispatch($resume);
 
             return back()->with('success', 'Resume uploaded successfully');
-        } catch (FileCannotBeAdded $e) {
-            return back()->withErrors(['resume' => 'Upload failed: ' . $e->getMessage()]);
+        } catch (FileCannotBeAdded $fileCannotBeAdded) {
+            return back()->withErrors(['resume' => 'Upload failed: '.$fileCannotBeAdded->getMessage()]);
         }
     }
 
@@ -92,22 +96,22 @@ class ResumeController extends Controller
     {
         $user = Auth::user();
 
-        $media = Media::where('id', $id)
+        Media::where('id', $id)
             ->whereHasMorph(
                 'model',
                 [Resume::class],
-                fn($query) => $query->where('user_id', $user->id)
+                fn ($query) => $query->where('user_id', $user->id)
             )->firstOrFail();
 
         try {
             $user->resumes()
-                ->whereHas('media', fn($q) => $q->where('id', $id))
+                ->whereHas('media', fn ($q) => $q->where('id', $id))
                 ->firstOrFail()
                 ->delete();
 
             return back()->with('success', 'Resume deleted successfully.');
-        } catch (\Exception $e) {
-            return back()->withErrors(['message' => 'Failed to delete resume: ' . $e->getMessage()]);
+        } catch (Exception $exception) {
+            return back()->withErrors(['message' => 'Failed to delete resume: '.$exception->getMessage()]);
         }
     }
 }

@@ -33,14 +33,15 @@ final class JobApplicationController extends Controller
             if ($request->filled('resume_id')) {
                 $media = Media::find($request->resume_id);
                 $resume = Resume::find($media->model_id);
-                if (!$resume) {
+                if (! $resume) {
                     throw new Exception('Resume not found or does not belong to you.');
                 }
+
                 $resumeId = $resume->id;
             } elseif ($request->filled('resume')) {
                 $path = $request->resume;
 
-                if (!Storage::disk('public')->exists($path)) {
+                if (! Storage::disk('public')->exists($path)) {
                     throw new Exception('File not found. Please upload again.');
                 }
 
@@ -49,7 +50,7 @@ final class JobApplicationController extends Controller
                 try {
                     $resume->addMedia(Storage::disk('public')->path($path))
                         ->toMediaCollection('resumes');
-                } catch (FileCannotBeAdded $e) {
+                } catch (FileCannotBeAdded) {
                     $resume->delete();
                     throw new Exception('Invalid file type. Only PDF resumes are allowed.');
                 }

@@ -26,7 +26,7 @@ final class JobseekerDashboardController extends Controller
             ->with(['jobTitles', 'industries', 'locations', 'employmentTypes'])
             ->first();
 
-        if (!$careerInterest) {
+        if (! $careerInterest) {
             return Inertia::render('jobseeker/explore', [
                 'openings' => [],
                 'interests' => [
@@ -39,9 +39,9 @@ final class JobseekerDashboardController extends Controller
         // Get user's interest data
         $jobTitleIds = $careerInterest->jobTitles->pluck('opening_title_id')->toArray();
         $industryIds = $careerInterest->industries->pluck('industry_id')->toArray();
-        $locationIds = $careerInterest->locations->pluck('location_id')->toArray();
+        $careerInterest->locations->pluck('location_id')->toArray();
         $employmentTypes = $careerInterest->employmentTypes
-            ->map(fn($type) => $type->employment_type->value)
+            ->map(fn ($type) => $type->employment_type->value)
             ->toArray();
 
         $jobTitles = OpeningTitle::whereIn('id', $jobTitleIds)->pluck('name')->toArray();
@@ -50,31 +50,31 @@ final class JobseekerDashboardController extends Controller
         // Get all openings that match user's interests
         $jobs = Opening::where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
-            ->where(function ($query) use ($jobTitles, $industryIds, $employmentTypes) {
+            ->where(function ($query) use ($jobTitles, $industryIds, $employmentTypes): void {
                 // Job titles condition
-                if (!empty($jobTitles)) {
+                if (! empty($jobTitles)) {
                     $query->whereIn('title', $jobTitles);
                 }
 
                 // Industry condition
-                if (!empty($industryIds)) {
-                    $query->orWhereHas('company', function ($q) use ($industryIds) {
-                        $q->whereHas('industry', function ($q) use ($industryIds) {
+                if (! empty($industryIds)) {
+                    $query->orWhereHas('company', function ($q) use ($industryIds): void {
+                        $q->whereHas('industry', function ($q) use ($industryIds): void {
                             $q->whereIn('id', $industryIds);
                         });
                     });
                 }
 
                 // Employment type condition
-                if (!empty($employmentTypes)) {
+                if (! empty($employmentTypes)) {
                     $query->orWhereIn('employment_type', $employmentTypes);
                 }
 
                 // Location condition
-                if (!empty($locationNames)) {
-                    $query->where(function ($q) use ($locationNames) {
+                if (! empty($locationNames)) {
+                    $query->where(function ($q) use ($locationNames): void {
                         foreach ($locationNames as $location) {
-                            $q->orWhere('city', 'like', "%$location%");
+                            $q->orWhere('city', 'like', sprintf('%%%s%%', $location));
                         }
                     });
                 }
@@ -90,7 +90,7 @@ final class JobseekerDashboardController extends Controller
             'industries' => $industryIds,
         ];
 
-        if (!$careerInterest) {
+        if (! $careerInterest) {
             return Inertia::render('jobseeker/explore', [
                 'openings' => [],
                 'interests' => [
@@ -103,7 +103,6 @@ final class JobseekerDashboardController extends Controller
                 ],
             ]);
         }
-
 
         return Inertia::render('jobseeker/explore', [
             'openings' => $jobs,

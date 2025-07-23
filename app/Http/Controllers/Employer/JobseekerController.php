@@ -19,7 +19,7 @@ final class JobseekerController extends Controller
         $query = User::query()->role('jobseeker');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('skill') && $request->skill !== 'all') {
@@ -39,7 +39,7 @@ final class JobseekerController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'skill' => 'required|string'
+            'skill' => 'required|string',
         ]);
 
         $user = User::findOrFail($request->user_id);
@@ -49,7 +49,7 @@ final class JobseekerController extends Controller
         if (empty($resumeText)) {
             return response()->json([
                 'summary' => 'No resume text available to analyze',
-                'skill' => $request->skill
+                'skill' => $request->skill,
             ], 400);
         }
 
@@ -61,8 +61,8 @@ final class JobseekerController extends Controller
             ->asText();
 
         return response()->json([
-            'summary' => trim($response->text),
-            'skill' => $request->skill
+            'summary' => mb_trim($response->text),
+            'skill' => $request->skill,
         ]);
     }
 

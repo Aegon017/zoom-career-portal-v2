@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\Resume;
@@ -7,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Smalot\PdfParser\Parser;
 
-class ProcessResume implements ShouldQueue
+final class ProcessResume implements ShouldQueue
 {
     use Queueable;
 

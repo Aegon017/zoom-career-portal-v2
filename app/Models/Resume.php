@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Resume extends Model implements HasMedia
+final class Resume extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
@@ -25,7 +27,7 @@ class Resume extends Model implements HasMedia
     {
         $this->addMediaCollection('resumes')
             ->acceptsMimeTypes([
-                'application/pdf'
+                'application/pdf',
             ])
             ->singleFile();
     }

@@ -14,10 +14,8 @@ use App\Enums\WorkModelEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateOpeningRequest;
 use App\Http\Requests\EditOpeningRequest;
-use App\Http\Resources\SkillResource;
 use App\Mail\Admin\JobVerifyMail;
 use App\Mail\Employer\JobVerificationStatusMail;
-use App\Models\Industry;
 use App\Models\Opening;
 use App\Models\Skill;
 use App\Models\User;
@@ -40,7 +38,7 @@ final class OpeningController extends Controller
         $jobs = Opening::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->where('user_id', Auth::id())
             ->paginate($request->perPage ?? 10)
@@ -64,12 +62,10 @@ final class OpeningController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(function ($skill) {
-            return [
-                'value' => $skill->id,
-                'label' => $skill->name,
-            ];
-        })->toArray();
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
+            'value' => $skill->id,
+            'label' => $skill->name,
+        ])->toArray();
 
         return Inertia::render('employer/jobs/create-or-edit-job', [
             'operation' => $operation->value,
@@ -79,7 +75,7 @@ final class OpeningController extends Controller
             'salaryUnitOptions' => $salaryUnitOptions,
             'currencyOptions' => $currencyOptions,
             'jobStatusOptions' => $jobStatusOptions,
-            'skillOptions' => $skillOptions
+            'skillOptions' => $skillOptions,
         ]);
     }
 
@@ -129,12 +125,10 @@ final class OpeningController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(function ($skill) {
-            return [
-                'value' => $skill->id,
-                'label' => $skill->name,
-            ];
-        })->toArray();
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
+            'value' => $skill->id,
+            'label' => $skill->name,
+        ])->toArray();
 
         return Inertia::render('employer/jobs/create-or-edit-job', [
             'job' => $job->load('skills', 'address', 'address.location', 'industry'),
@@ -145,7 +139,7 @@ final class OpeningController extends Controller
             'salaryUnitOptions' => $salaryUnitOptions,
             'currencyOptions' => $currencyOptions,
             'jobStatusOptions' => $jobStatusOptions,
-            'skillOptions' => $skillOptions
+            'skillOptions' => $skillOptions,
         ]);
     }
 
