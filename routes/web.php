@@ -69,6 +69,7 @@ Route::get('/skills/search', [SkillController::class, 'search']);
 Route::get('/companies', [CompanyController::class, 'search']);
 Route::get('/industries/search', [IndustryController::class, 'search']);
 Route::get('/languages/search', [LanguageController::class, 'search']);
+Route::post('/ai/summary', [JobseekerController::class, 'generateSummary']);
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     // otp routes

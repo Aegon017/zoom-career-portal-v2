@@ -81,7 +81,7 @@ export function AppSidebar({ sidebarToggle }: { sidebarToggle: ReturnType<typeof
                     {sidebarItems.map((item) => (
                         <li
                             key={item.key}
-                            className={`sidebar-item${item.children ? 'has-children' : ''}${item.isActive || activeItem === item.key ? 'active' : ''}`}
+                            className={`sidebar-item ${item.children ? 'has-children' : ''}${item.isActive || activeItem === item.key ? 'active' : ''}`}
                         >
                             {item.children ? (
                                 <>

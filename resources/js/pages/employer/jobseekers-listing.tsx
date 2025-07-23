@@ -9,7 +9,7 @@ import { Head, router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Jobseekers', href: '/employer/jobseekers' }];
+const breadcrumbs: BreadcrumbItem[] = [ { title: 'Jobseekers', href: '/employer/jobseekers' } ];
 
 interface Props {
     initialUsers: {
@@ -19,79 +19,79 @@ interface Props {
     };
 }
 
-export default function JobseekersListing({ initialUsers }: Props) {
-    const [users, setUsers] = useState<User[]>(initialUsers.data);
-    const [total, setTotal] = useState(initialUsers.total);
-    const [nextPageUrl, setNextPageUrl] = useState(initialUsers.next_page_url);
-    const [loading, setLoading] = useState(false);
-    const [search, setSearch] = useState('');
-    const [skill, setSkill] = useState('all');
+export default function JobseekersListing( { initialUsers }: Props ) {
+    const [ users, setUsers ] = useState<User[]>( initialUsers.data );
+    const [ total, setTotal ] = useState( initialUsers.total );
+    const [ nextPageUrl, setNextPageUrl ] = useState( initialUsers.next_page_url );
+    const [ loading, setLoading ] = useState( false );
+    const [ search, setSearch ] = useState( '' );
+    const [ skill, setSkill ] = useState( 'all' );
 
-    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceRef = useRef<NodeJS.Timeout | null>( null );
 
-    const fetchFilteredUsers = useCallback((query: { search?: string; skill?: string }) => {
-        setLoading(true);
-        router.get('/employer/jobseekers', query, {
+    const fetchFilteredUsers = useCallback( ( query: { search?: string; skill?: string } ) => {
+        setLoading( true );
+        router.get( '/employer/jobseekers', query, {
             preserveState: true,
             replace: true,
-            only: ['initialUsers'],
-            onSuccess: (page) => {
+            only: [ 'initialUsers' ],
+            onSuccess: ( page ) => {
                 const data = page.props.initialUsers as {
                     data: User[];
                     total: number;
                     next_page_url: string | null;
                 };
-                setUsers(data.data);
-                setTotal(data.total);
-                setNextPageUrl(data.next_page_url);
-                setLoading(false);
+                setUsers( data.data );
+                setTotal( data.total );
+                setNextPageUrl( data.next_page_url );
+                setLoading( false );
             },
-        });
-    }, []);
+        } );
+    }, [] );
 
-    useEffect(() => {
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => {
-            fetchFilteredUsers({ search, skill });
-        }, 500);
+    useEffect( () => {
+        if ( debounceRef.current ) clearTimeout( debounceRef.current );
+        debounceRef.current = setTimeout( () => {
+            fetchFilteredUsers( { search, skill } );
+        }, 500 );
         return () => {
-            if (debounceRef.current) clearTimeout(debounceRef.current);
+            if ( debounceRef.current ) clearTimeout( debounceRef.current );
         };
-    }, [search, skill, fetchFilteredUsers]);
+    }, [ search, skill, fetchFilteredUsers ] );
 
-    const loadMore = useCallback(() => {
-        if (!nextPageUrl || loading) return;
+    const loadMore = useCallback( () => {
+        if ( !nextPageUrl || loading ) return;
 
-        setLoading(true);
+        setLoading( true );
         router.get(
             nextPageUrl,
             { search, skill },
             {
                 preserveScroll: true,
                 preserveState: true,
-                only: ['initialUsers'],
-                onSuccess: (page) => {
+                only: [ 'initialUsers' ],
+                onSuccess: ( page ) => {
                     const data = page.props.initialUsers as {
                         data: User[];
                         total: number;
                         next_page_url: string | null;
                     };
-                    setUsers((prev) => [...prev, ...data.data]);
-                    setNextPageUrl(data.next_page_url);
-                    setLoading(false);
+                    setUsers( ( prev ) => [ ...prev, ...data.data ] );
+                    setNextPageUrl( data.next_page_url );
+                    setLoading( false );
                 },
             },
         );
-    }, [nextPageUrl, loading, search, skill]);
+    }, [ nextPageUrl, loading, search, skill ] );
 
     const uniqueSkills = Array.from(
         new Set(
-            initialUsers.data.flatMap((user) => user.skills?.map((skill) => skill.name)).filter((name): name is string => typeof name === 'string'),
+            initialUsers.data.flatMap( ( user ) => user.skills?.map( ( skill ) => skill.name ) ).filter( ( name ): name is string => typeof name === 'string' ),
         ),
     ).sort();
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Jobseekers" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <Card className="mb-6 rounded-none border-0 border-b-2 p-0 shadow-none">
@@ -102,21 +102,21 @@ export default function JobseekersListing({ initialUsers }: Props) {
                                 <Input
                                     placeholder="Search candidates..."
                                     className="pl-10"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
+                                    value={ search }
+                                    onChange={ ( e ) => setSearch( e.target.value ) }
                                 />
                             </div>
-                            <Select value={skill} onValueChange={(val) => setSkill(val)}>
+                            <Select value={ skill } onValueChange={ ( val ) => setSkill( val ) }>
                                 <SelectTrigger className="sm:w-40">
                                     <SelectValue placeholder="Skill" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All</SelectItem>
-                                    {uniqueSkills.map((s) => (
-                                        <SelectItem key={s} value={s}>
-                                            {s.charAt(0).toUpperCase() + s.slice(1)}
+                                    { uniqueSkills.map( ( s ) => (
+                                        <SelectItem key={ s } value={ s }>
+                                            { s.charAt( 0 ).toUpperCase() + s.slice( 1 ) }
                                         </SelectItem>
-                                    ))}
+                                    ) ) }
                                 </SelectContent>
                             </Select>
                         </div>
@@ -124,25 +124,32 @@ export default function JobseekersListing({ initialUsers }: Props) {
                 </Card>
 
                 <div className="mx-auto flex w-full flex-col md:w-2xl">
-                    {users.length !== 0 && (
+                    { users.length !== 0 && (
                         <span className="text-muted-foreground mb-4 text-sm">
-                            {users.length} of {total}
+                            { users.length } of { total }
                         </span>
-                    )}
-                    {users.length === 0 ? (
+                    ) }
+                    { users.length === 0 ? (
                         <div className="text-muted-foreground py-12 text-center text-sm">No jobseekers found.</div>
                     ) : (
-                        users.map((user) => <JobseekerCard key={user.id} user={user} />)
-                    )}
+                        users.map( ( user ) => (
+                            <JobseekerCard
+                                key={ user.id }
+                                user={ user }
+                                selectedSkill={ skill }
+                            />
+
+                        ) )
+                    ) }
                 </div>
 
-                {nextPageUrl && (
+                { nextPageUrl && (
                     <div className="mt-6 flex justify-center">
-                        <Button variant="outline" onClick={loadMore} disabled={loading}>
-                            {loading ? 'Loading...' : 'Load More'}
+                        <Button variant="outline" onClick={ loadMore } disabled={ loading }>
+                            { loading ? 'Loading...' : 'Load More' }
                         </Button>
                     </div>
-                )}
+                ) }
             </div>
         </AppLayout>
     );
