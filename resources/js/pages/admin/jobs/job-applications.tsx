@@ -4,6 +4,7 @@ import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { User, X } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
 import MultipleSelector from '@/components/multiple-selector';
@@ -20,9 +21,23 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import AppLayout from '@/layouts/app-layout';
-
 import { Application, ApplicationStatus, BreadcrumbItem, Opening, Option } from '@/types';
-import { User } from 'lucide-react';
+
+const formSchema = z.object( {
+    users: z
+        .array(
+            z.object( {
+                value: z.string(),
+                label: z.string(),
+            } ),
+        )
+        .min( 1, { message: 'Please select at least one user.' } ),
+} );
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Jobs', href: '/admin/jobs' },
+    { title: 'Applications', href: '' },
+];
 
 interface Props {
     applications: Application[];
@@ -31,121 +46,127 @@ interface Props {
     job: Opening;
 }
 
-const formSchema = z.object({
-    users: z
-        .array(
-            z.object({
-                value: z.string(),
-                label: z.string(),
-            }),
-        )
-        .min(1, { message: 'Please select at least one user.' }),
-});
+export default function JobApplications( { applications, statuses, users, job }: Props ) {
+    const [ open, setOpen ] = useState( false );
+    const [ loading, setLoading ] = useState( false );
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'jobs', href: '/admin/jobs' },
-    { title: 'applications', href: '' },
-];
-
-const JobApplications = ({ applications, statuses, users, job }: Props) => {
-    const [open, setOpen] = useState(false);
-
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<z.infer<typeof formSchema>>( {
         defaultValues: { users: [] },
-    });
+    } );
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        const userIds = values.users.map((user) => user.value);
+    const onSubmit = async ( values: z.infer<typeof formSchema> ) => {
+        setLoading( true );
+        const userIds = values.users.map( ( user ) => user.value );
 
-        router.post(
-            `/admin/jobs/${job.id}/applications`,
-            { user_ids: userIds },
-            {
-                onSuccess: () => {
-                    setOpen(false);
-                    form.reset();
-                },
-            },
-        );
+        try {
+            await router.post(
+                `/admin/jobs/${ job.id }/applications`,
+                { user_ids: userIds },
+                {
+                    onSuccess: () => {
+                        setOpen( false );
+                        form.reset();
+                    },
+                }
+            );
+        } finally {
+            setLoading( false );
+        }
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
 
             <div className="flex h-full flex-col gap-4 rounded-xl p-4">
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="default" className="ml-auto">
-                            Apply
-                        </Button>
-                    </DialogTrigger>
+                <div className="flex items-center justify-between">
+                    <h1 className="text-2xl font-semibold">Applications for { job.title }</h1>
+                    <Dialog open={ open } onOpenChange={ setOpen }>
+                        <DialogTrigger asChild>
+                            <Button variant="default" className="ml-auto">
+                                Apply for Candidates
+                            </Button>
+                        </DialogTrigger>
 
-                    <DialogContent className="sm:max-w-[425px]">
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <DialogHeader>
-                                    <DialogTitle>Apply for job</DialogTitle>
-                                    <DialogDescription>
-                                        You are applying on behalf of a candidate. Review the details before submission.
-                                    </DialogDescription>
-                                </DialogHeader>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <Form { ...form }>
+                                <form onSubmit={ form.handleSubmit( onSubmit ) }>
+                                    <DialogHeader>
+                                        <DialogTitle>Apply for Job</DialogTitle>
+                                        <DialogDescription>
+                                            Select candidates to apply for this position.
+                                        </DialogDescription>
+                                    </DialogHeader>
 
-                                <div className="grid gap-4 py-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="users"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Select Users</FormLabel>
-                                                <FormControl>
-                                                    <MultipleSelector
-                                                        options={users}
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        placeholder="Select users to apply..."
-                                                        emptyIndicator={
-                                                            <p className="w-full text-center text-sm text-gray-600 dark:text-gray-400">
-                                                                No results found.
-                                                            </p>
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                    <div className="grid gap-4 py-4">
+                                        <FormField
+                                            control={ form.control }
+                                            name="users"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Select Candidates</FormLabel>
+                                                    <FormControl>
+                                                        <MultipleSelector
+                                                            options={ users }
+                                                            value={ field.value }
+                                                            onChange={ field.onChange }
+                                                            placeholder="Search candidates..."
+                                                            emptyIndicator={
+                                                                <p className="w-full text-center text-sm text-muted-foreground">
+                                                                    No candidates found
+                                                                </p>
+                                                            }
+                                                            hidePlaceholderWhenSelected
+                                                            creatable={ false }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+                                    </div>
 
-                                <DialogFooter>
-                                    <DialogClose asChild>
-                                        <Button variant="outline" type="button">
-                                            Cancel
+                                    <DialogFooter>
+                                        <DialogClose asChild>
+                                            <Button variant="outline" type="button" disabled={ loading }>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button type="submit" disabled={ loading }>
+                                            { loading ? 'Applying...' : 'Apply' }
                                         </Button>
-                                    </DialogClose>
-                                    <Button type="submit">Save changes</Button>
-                                </DialogFooter>
-                            </form>
-                        </Form>
-                    </DialogContent>
-                </Dialog>
+                                    </DialogFooter>
+                                </form>
+                            </Form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
 
-                {applications?.length > 0 ? (
+                { applications?.length > 0 ? (
                     <div className="grid gap-4 lg:grid-cols-2">
-                        {applications.map((application) => (
-                            <JobApplicationCard key={application.id} application={application} statuses={statuses} message={false} />
-                        ))}
+                        { applications.map( ( application ) => (
+                            <JobApplicationCard
+                                key={ application.id }
+                                application={ application }
+                                statuses={ statuses }
+                                message={ false }
+                            />
+                        ) ) }
                     </div>
                 ) : (
-                    <div className="m-auto text-center">
-                        <User className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
-                        <h3 className="mb-2 text-lg font-semibold">No applications found</h3>
-                        <p className="text-muted-foreground">Applications will appear here once candidates start applying.</p>
+                    <div className="flex h-full flex-col items-center justify-center space-y-4">
+                        <div className="rounded-full bg-muted p-4">
+                            <User className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                        <div className="space-y-1 text-center">
+                            <h3 className="text-lg font-semibold">No applications yet</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Applications will appear here once candidates apply for this position.
+                            </p>
+                        </div>
                     </div>
-                )}
+                ) }
             </div>
         </AppLayout>
     );
-};
-
-export default JobApplications;
+}

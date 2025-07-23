@@ -75,7 +75,7 @@ const JobApplicationCard = ({ application, statuses, message = true }: Props) =>
                         <div className="relative">
                             <Avatar className="border-muted ring-primary/10 group-hover:ring-primary/20 h-12 w-12 border ring-1 transition-transform duration-300 group-hover:scale-105">
                                 <AvatarImage
-                                    src={application.user.avatar_url || '/placeholder.svg'}
+                                    src={application.user.avatar_url}
                                     alt={application.user.name}
                                     className="object-cover"
                                 />

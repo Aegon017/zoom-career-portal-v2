@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Employer;
 
 use App\Enums\JobApplicationStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Mail\Application\RejectedMail;
 use App\Mail\Application\ShortlistedMail;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
@@ -27,7 +26,6 @@ final class ApplicationsController extends Controller
         $skills = collect();
 
         if ($job) {
-            // Load applications with user and skills
             $applicationsQuery = $job->applications()->with(['user.skills']);
 
             if ($request->filled('skill') && $request->skill !== 'all') {
@@ -36,7 +34,7 @@ final class ApplicationsController extends Controller
                 });
             }
 
-            $applications = $applicationsQuery->get();
+            $applications = $applicationsQuery->orderBy('match_score', 'desc')->get();
 
             $skills = $job->skills()->pluck('name')->unique()->values();
         }
@@ -71,7 +69,6 @@ final class ApplicationsController extends Controller
 
         match ($application->status) {
             JobApplicationStatusEnum::Shortlisted->value => Mail::to($user)->send(new ShortlistedMail($user->name, $opening->title, $company->name)),
-            // JobApplicationStatusEnum::Rejected->value => Mail::to($user)->send(new RejectedMail($user->name, $opening->title, $company->name)),
             default => '',
         };
 
