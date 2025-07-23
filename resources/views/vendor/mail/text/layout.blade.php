@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 ?>
-{!! strip_tags($header ?? '') !!}
+{!! strip_tags((string) ($header ?? '')) !!}
 
 {!! strip_tags($slot) !!}
 @isset($subcopy)
