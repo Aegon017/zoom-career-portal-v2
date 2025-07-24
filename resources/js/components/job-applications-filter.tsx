@@ -20,7 +20,7 @@ interface FilterFormValues {
 
 interface JobApplicationsFilterProps {
     jobOptions: JobOption[];
-    skills: Skill[];
+    skills: string[];
     defaultValue?: number;
     selectedSkill?: string;
 }
@@ -100,8 +100,8 @@ export const JobApplicationsFilter = ( {
                                         options={ [
                                             { value: '', label: 'All Skills' },
                                             ...skills.map( ( s ) => ( {
-                                                value: s.name,
-                                                label: s.name.charAt( 0 ).toUpperCase() + s.name.slice( 1 ),
+                                                value: s,
+                                                label: s,
                                             } ) ),
                                         ] }
                                         placeholder="Select skill"
