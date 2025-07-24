@@ -84,7 +84,7 @@ final class JobseekerJobController extends Controller
 
     public function show(string $jobId): Response
     {
-        $job = Opening::with(['company', 'skills', 'company.industry'])->find($jobId);
+        $job = Opening::with(['company', 'skills', 'company.industry', 'address.location'])->find($jobId);
 
         Auth::user();
 
