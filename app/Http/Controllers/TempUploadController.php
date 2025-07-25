@@ -13,7 +13,7 @@ final class TempUploadController extends Controller
     {
         $file = $request->file('file');
 
-        $tempPath = $file->storeAs('temp', $file->getClientOriginalName(), 's3');
+        $tempPath = $file->storeAs('temp', $file->getClientOriginalName());
 
         return response()->json([
             'temp_path' => $tempPath,
