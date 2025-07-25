@@ -82,13 +82,13 @@ final class ResumeController extends Controller
 
         try {
             $resume = $user->resumes()->create();
-            $resume->addMedia(Storage::disk('s3')->path($path))->toMediaCollection('resumes');
+            $resume->addMediaFromDisk($path, 's3')->toMediaCollection('resumes');
             Storage::disk('s3')->delete($path);
             ProcessResume::dispatch($resume);
 
             return back()->with('success', 'Resume uploaded successfully');
         } catch (FileCannotBeAdded $fileCannotBeAdded) {
-            return back()->withErrors(['resume' => 'Upload failed: '.$fileCannotBeAdded->getMessage()]);
+            return back()->withErrors(['resume' => 'Upload failed: ' . $fileCannotBeAdded->getMessage()]);
         }
     }
 
@@ -100,18 +100,18 @@ final class ResumeController extends Controller
             ->whereHasMorph(
                 'model',
                 [Resume::class],
-                fn ($query) => $query->where('user_id', $user->id)
+                fn($query) => $query->where('user_id', $user->id)
             )->firstOrFail();
 
         try {
             $user->resumes()
-                ->whereHas('media', fn ($q) => $q->where('id', $id))
+                ->whereHas('media', fn($q) => $q->where('id', $id))
                 ->firstOrFail()
                 ->delete();
 
             return back()->with('success', 'Resume deleted successfully.');
         } catch (Exception $exception) {
-            return back()->withErrors(['message' => 'Failed to delete resume: '.$exception->getMessage()]);
+            return back()->withErrors(['message' => 'Failed to delete resume: ' . $exception->getMessage()]);
         }
     }
 }

@@ -48,8 +48,8 @@ final class Company extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('logos')->singleFile();
-        $this->addMediaCollection('banners')->singleFile();
+        $this->addMediaCollection('logos')->useDisk('s3')->singleFile();
+        $this->addMediaCollection('banners')->useDisk('s3')->singleFile();
     }
 
     public function getLogoUrlAttribute(): string
