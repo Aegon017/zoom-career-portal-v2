@@ -62,8 +62,8 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('avatars')->useDisk('s3')->singleFile();
-        $this->addMediaCollection('banners')->useDisk('s3')->singleFile();
+        $this->addMediaCollection('avatars')->singleFile();
+        $this->addMediaCollection('banners')->singleFile();
     }
 
     public function getAvatarUrlAttribute(): ?string
