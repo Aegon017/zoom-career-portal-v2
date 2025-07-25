@@ -12,20 +12,14 @@ enum JobApplicationStatusEnum: string
 
     case Applied = 'applied';
     case Shortlisted = 'shortlisted';
-    // case UnderReview = 'under_review';
-    // case InterviewScheduled = 'interview_scheduled';
-    // case Offered = 'offered';
-    // case Rejected = 'rejected';
+    case Hired = 'hired';
 
     public function label(): string
     {
         return match ($this) {
             self::Applied => 'Applied',
             self::Shortlisted => 'Shortlisted',
-            // self::UnderReview => 'Under Review',
-            // self::InterviewScheduled => 'Interview Scheduled',
-            // self::Offered => 'Offered',
-            // self::Rejected => 'Rejected',
+            self::Hired => 'Hired',
         };
     }
 }

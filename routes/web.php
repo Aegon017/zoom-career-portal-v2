@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobController;
@@ -163,7 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     // admin routes
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/roles', RoleController::class);
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/skills', SkillController::class);

@@ -17,7 +17,7 @@ import { MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<Opening>[] = [
     {
-        accessorFn: (row, index) => index + 1,
+        accessorFn: ( row, index ) => index + 1,
         header: 'S.No.',
         enableGlobalFilter: false,
     },
@@ -25,6 +25,16 @@ export const columns: ColumnDef<Opening>[] = [
         accessorKey: 'title',
         header: 'Job Title',
         enableGlobalFilter: true,
+    },
+    {
+        accessorFn: row => row.company?.name ?? 'N/A',
+        header: 'Company',
+        enableGlobalFilter: false,
+    },
+    {
+        accessorFn: row => row.user?.name ?? 'N/A',
+        header: 'Recruiter',
+        enableGlobalFilter: false,
     },
     {
         accessorKey: 'employment_type',
@@ -45,13 +55,13 @@ export const columns: ColumnDef<Opening>[] = [
     {
         accessorKey: 'published_at',
         header: 'Published at',
-        cell: ({ row }) => {
-            return format(new Date(row.getValue('published_at')), 'dd MMM yyyy');
+        cell: ( { row } ) => {
+            return format( new Date( row.getValue( 'published_at' ) ), 'dd MMM yyyy' );
         },
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: ( { row } ) => {
             const job = row.original;
 
             return (
@@ -66,12 +76,12 @@ export const columns: ColumnDef<Opening>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={`/admin/jobs/${job.id}`} className="flex-1">
+                            <Link href={ `/admin/jobs/${ job.id }` } className="flex-1">
                                 Show
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link href={`/admin/jobs/${job.id}/applications`}>Applications</Link>
+                            <Link href={ `/admin/jobs/${ job.id }/applications` }>Applications</Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
