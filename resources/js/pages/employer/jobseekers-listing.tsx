@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/employer-layout';
 import { BreadcrumbItem, User } from '@/types';
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Search, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -29,7 +29,7 @@ export default function JobseekersListing( { initialUsers }: Props ) {
     const [ search, setSearch ] = useState( '' );
     const [ selectedSkill, setSelectedSkill ] = useState<string>( '' );
 
-    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceRef = useRef<NodeJS.Timeout | null>( null );
 
     // Extract and sort unique skills from all users
     const uniqueSkills = Array.from(
@@ -195,11 +195,13 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                     ) : (
                         <div className="space-y-4">
                             { users.map( ( user ) => (
-                                <JobseekerCard
-                                    key={ user.id }
-                                    user={ user }
-                                    selectedSkill={ selectedSkill }
-                                />
+                                <Link href={ `/employer/jobseekers/${ user.id }` }>
+                                    <JobseekerCard
+                                        key={ user.id }
+                                        user={ user }
+                                        selectedSkill={ selectedSkill }
+                                    />
+                                </Link>
                             ) ) }
                         </div>
                     ) }

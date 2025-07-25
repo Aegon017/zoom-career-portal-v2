@@ -116,6 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function (): void {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
+            Route::get('/{user}', [JobseekerController::class, 'show'])->name('show');
         });
 
         Route::prefix('/applications')->name('applications.')->group(function (): void {

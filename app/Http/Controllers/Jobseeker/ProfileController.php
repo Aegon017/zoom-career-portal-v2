@@ -50,7 +50,7 @@ final class ProfileController extends Controller
             'phone' => $data['phone'],
         ]);
 
-        if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
+        if (! empty($data['avatar']) && Storage::disk('s3')->exists($data['avatar'])) {
             $user->addMedia(storage_path('app/public/'.$data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');

@@ -35,6 +35,15 @@ final class JobseekerController extends Controller
         ]);
     }
 
+    public function show(User $user): Response
+    {
+        $user->load(['skills', 'profile', 'resumes']);
+
+        return Inertia::render('employer/jobseeker-profile', [
+            'user' => $user,
+        ]);
+    }
+
     public function generateSummary(Request $request)
     {
         $request->validate([

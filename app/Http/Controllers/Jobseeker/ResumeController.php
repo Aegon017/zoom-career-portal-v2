@@ -76,14 +76,14 @@ final class ResumeController extends Controller
         $path = $request->resume;
         $user = Auth::user();
 
-        if (! Storage::disk('public')->exists($path)) {
+        if (! Storage::disk('s3')->exists($path)) {
             return back()->withErrors(['resume' => 'File not found. Please upload again.']);
         }
 
         try {
             $resume = $user->resumes()->create();
-            $resume->addMedia(Storage::disk('public')->path($path))->toMediaCollection('resumes');
-            Storage::disk('public')->delete($path);
+            $resume->addMedia(Storage::disk('s3')->path($path))->toMediaCollection('resumes');
+            Storage::disk('s3')->delete($path);
             ProcessResume::dispatch($resume);
 
             return back()->with('success', 'Resume uploaded successfully');

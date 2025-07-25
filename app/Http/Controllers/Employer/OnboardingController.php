@@ -56,7 +56,7 @@ final class OnboardingController extends Controller
             'job_title' => $data['job_title'],
         ]);
 
-        if (! empty($data['avatar']) && Storage::disk('public')->exists($data['avatar'])) {
+        if (! empty($data['avatar']) && Storage::disk('s3')->exists($data['avatar'])) {
             $user->addMedia(storage_path('app/public/'.$data['avatar']))
                 ->preservingOriginal()
                 ->toMediaCollection('avatars');
@@ -152,13 +152,13 @@ final class OnboardingController extends Controller
             'location_id' => $data['location_id'],
         ]);
 
-        if (! empty($data['logo_url']) && Storage::disk('public')->exists($data['logo_url'])) {
+        if (! empty($data['logo_url']) && Storage::disk('s3')->exists($data['logo_url'])) {
             $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
-        if (! empty($data['banner_url']) && Storage::disk('public')->exists($data['banner_url'])) {
+        if (! empty($data['banner_url']) && Storage::disk('s3')->exists($data['banner_url'])) {
             $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
