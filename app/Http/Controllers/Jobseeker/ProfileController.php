@@ -51,8 +51,7 @@ final class ProfileController extends Controller
         ]);
 
         if (! empty($data['avatar']) && Storage::exists($data['avatar'])) {
-            $user->addMediaFromDisk(storage_path('app/public/' . $data['avatar']))
-                ->toMediaCollection('avatars');
+            $user->addMediaFromDisk($data['avatar'])->toMediaCollection('avatars');
         }
 
         $user->address()->updateOrCreate([], [
