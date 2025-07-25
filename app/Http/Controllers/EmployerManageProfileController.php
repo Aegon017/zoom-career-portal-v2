@@ -47,7 +47,7 @@ final class EmployerManageProfileController extends Controller
         $user = Auth::user();
         $user->update($validated);
 
-        if (! empty($validated['profile_image']) && Storage::disk('s3')->exists($validated['profile_image'])) {
+        if (! empty($validated['profile_image']) && Storage::exists($validated['profile_image'])) {
             $user->addMedia(storage_path('app/public/'.$validated['profile_image']))
                 ->preservingOriginal()
                 ->toMediaCollection('profile_images');
@@ -64,7 +64,7 @@ final class EmployerManageProfileController extends Controller
 
         $work_experience = $user->workExperiences()->create($data);
 
-        if (! empty($data['company_logo']) && Storage::disk('s3')->exists($data['company_logo'])) {
+        if (! empty($data['company_logo']) && Storage::exists($data['company_logo'])) {
             $work_experience->addMedia(storage_path('app/public/'.$data['company_logo']))
                 ->preservingOriginal()
                 ->toMediaCollection('company_logos');

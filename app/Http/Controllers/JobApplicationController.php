@@ -41,15 +41,14 @@ final class JobApplicationController extends Controller
             } elseif ($request->filled('resume')) {
                 $path = $request->resume;
 
-                if (! Storage::disk('s3')->exists($path)) {
+                if (! Storage::exists($path)) {
                     throw new Exception('File not found. Please upload again.');
                 }
 
                 $resume = $user->resumes()->create();
 
                 try {
-                    $resume->addMedia(Storage::disk('s3')->path($path))
-                        ->toMediaCollection('resumes');
+                    $resume->addMediaFromDisk($path)->toMediaCollection('resumes');
                 } catch (FileCannotBeAdded) {
                     $resume->delete();
                     throw new Exception('Invalid file type. Only PDF resumes are allowed.');

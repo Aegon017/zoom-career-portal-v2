@@ -23,8 +23,8 @@ final class TempUploadController extends Controller
     public function destroy(Request $request)
     {
         $fileUrl = $request->input('fileUrl');
-        if (Storage::disk('s3')->exists($fileUrl)) {
-            Storage::disk('s3')->delete($fileUrl);
+        if (Storage::exists($fileUrl)) {
+            Storage::delete($fileUrl);
 
             return response()->json(['message' => 'File deleted successfully.']);
         }
