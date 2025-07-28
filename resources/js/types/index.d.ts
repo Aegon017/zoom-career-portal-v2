@@ -234,13 +234,21 @@ export interface Application {
     opening: Opening;
     created_at: string;
     updated_at: string;
-    resume_id?: number | null;
-    resume_url?: string;
-    resume_text?: string;
-    cover_letter?: string | null;
+    resume_id?: number;
+    resume: Resume;
+    cover_letter: string;
     status: string;
-    match_score?: number | null;
-    match_summary?: string | null;
+    match_score: number;
+    match_summary: string;
+}
+
+export interface Resume {
+    id: number;
+    user_id: number;
+    resume_text?: string | null;
+    resume_url?: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Education {
@@ -302,11 +310,6 @@ export interface WorkExperience {
     is_current: boolean;
     logo_url?: string | null;
     company: Company;
-}
-
-export interface ApplicationStatus {
-    value: string;
-    label: string;
 }
 
 export interface JobSeekerProfile {

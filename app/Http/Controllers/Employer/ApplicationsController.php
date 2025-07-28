@@ -26,12 +26,16 @@ final class ApplicationsController extends Controller
         $skills = collect();
 
         if ($job) {
-            $applicationsQuery = $job->applications()->with(['user.skills']);
+            $applicationsQuery = $job->applications()->with(['user.skills', 'resume']);
 
             if ($request->filled('skill') && $request->skill !== 'all') {
                 $applicationsQuery->whereHas('user.skills', function ($q) use ($request): void {
                     $q->where('name', $request->skill);
                 });
+            }
+
+            if ($request->filled('status') && $request->status !== 'all') {
+                $applicationsQuery->where('status', $request->status);
             }
 
             $applications = $applicationsQuery->orderBy('match_score', 'desc')->get();

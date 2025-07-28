@@ -1,7 +1,7 @@
 import JobApplicationCard from '@/components/job-application-card';
 import { JobApplicationsFilter } from '@/components/job-applications-filter';
 import AppLayout from '@/layouts/employer-layout';
-import { Application, ApplicationStatus, BreadcrumbItem, Opening, Skill } from '@/types';
+import { Application, BreadcrumbItem, Opening, Option } from '@/types';
 import { Head } from '@inertiajs/react';
 import { User } from 'lucide-react';
 
@@ -16,8 +16,8 @@ interface Props {
     jobs: Opening[];
     job_id?: number;
     applications: Application[];
-    statuses: ApplicationStatus[];
-    skills: Skill[];
+    statuses: Option[];
+    skills: string[];
 }
 
 export default function ApplicationsIndex( { jobs, job_id, applications, statuses, skills }: Props ) {
@@ -31,6 +31,7 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                 <div className="flex flex-col gap-4">
                     <h1 className="text-2xl font-semibold">Candidate Applications</h1>
                     <JobApplicationsFilter
+                        statuses={ statuses }
                         skills={ skills }
                         defaultValue={ job_id }
                         jobOptions={ jobs.map( ( job ) => ( {
@@ -44,7 +45,6 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 lg:gap-6 xl:grid-cols-2">
                         { applications.map( ( application ) => (
                             <JobApplicationCard
-                                key={ `application-${ application.id }` }
                                 application={ application }
                                 statuses={ statuses }
                             />

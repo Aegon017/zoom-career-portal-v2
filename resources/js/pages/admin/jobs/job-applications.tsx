@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import AppLayout from '@/layouts/app-layout';
-import { Application, ApplicationStatus, BreadcrumbItem, Opening, Option } from '@/types';
+import { Application, BreadcrumbItem, Opening, Option } from '@/types';
 
 const formSchema = z.object( {
     users: z
@@ -41,7 +41,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     applications: Application[];
-    statuses: ApplicationStatus[];
+    statuses: Option[];
     users: Option[];
     job: Opening;
 }
