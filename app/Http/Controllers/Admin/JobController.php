@@ -63,7 +63,7 @@ final class JobController extends Controller
     public function applications(Opening $job, Request $request)
     {
         $statuses = JobApplicationStatusEnum::options();
-        $applications = $job->applications()->with('user')->get();
+        $applications = $job->applications()->with('user', 'resume')->get();
         $appliedUserIds = $applications->pluck('user_id')->toArray();
 
         $users = User::role('jobseeker')

@@ -91,16 +91,4 @@ final class JobApplicationController extends Controller
 
         return back()->with('success', 'Application withdrawn.');
     }
-
-    public function index(string $jobId)
-    {
-        $job = Opening::find($jobId);
-
-        $applications = $job->applications()->with('user')->latest()->get();
-
-        return inertia('employer/applications/index', [
-            'job' => $job,
-            'applications' => $applications,
-        ]);
-    }
 }

@@ -135,7 +135,7 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                         <div className="pl-7">
                             <JobStatus statuses={ statuses } application={ application } />
                         </div>
-                        { application.resume.resume_url && (
+                        { application.resume?.resume_url && (
                             <div className="flex justify-end">
                                 <Button
                                     variant="ghost"
@@ -143,7 +143,7 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                                     asChild
                                     className="rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400"
                                 >
-                                    <a href={ application.resume.resume_url } target="_blank" rel="noopener noreferrer">
+                                    <a href={ application.resume?.resume_url } target="_blank" rel="noopener noreferrer">
                                         <FileText className="h-4 w-4" />
                                         <span>View Resume</span>
                                         <ExternalLink className="h-3 w-3" />
