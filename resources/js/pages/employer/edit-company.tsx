@@ -26,7 +26,9 @@ interface FormValues {
     email: string;
 }
 
-const EditCompany = ({ company, industries, locations, sizes, types }: Props) => {
+const EditCompany = ( { company, industries, locations, sizes, types }: Props ) => {
+    console.log(company);
+    
     const form = useForm<FormValues>({
         defaultValues: {
             name: company.name || '',

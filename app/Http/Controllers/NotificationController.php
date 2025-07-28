@@ -27,7 +27,7 @@ final class NotificationController extends Controller
 
     public function markAllAsRead()
     {
-        Auth::user()->notifications()->markAsRead();
+        Auth::user()->notifications->markAsRead();
 
         return back();
     }
