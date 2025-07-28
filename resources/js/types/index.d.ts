@@ -82,7 +82,7 @@ export interface User {
     [ key: string ]: unknown;
 }
 
-export interface PersonalDetails {
+export interface PersonalDetail {
     user_id: number;
     gender: string;
     date_of_birth: Date;

@@ -19,7 +19,7 @@ final class JobseekerController extends Controller
         $query = User::query()->role('jobseeker');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         if ($request->filled('skill') && $request->skill !== 'all') {
@@ -37,7 +37,7 @@ final class JobseekerController extends Controller
 
     public function show(User $user): Response
     {
-        $user->load(['skills', 'profile', 'resumes']);
+        $user->load(['skills', 'profile', 'resumes', 'workExperiences.company', 'educations', 'personalDetail', 'address.location', 'workPermits', 'userLanguages.language', 'certificates']);
 
         return Inertia::render('employer/jobseeker-profile', [
             'user' => $user,

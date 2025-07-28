@@ -131,9 +131,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware('role:jobseeker', 'profile.complete')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
-        Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
@@ -162,6 +161,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/career-interests', [CareerInterestController::class, 'index'])->name('career-interests.index');
         Route::post('/career-interests/update', [CareerInterestController::class, 'update'])->name('career-interests.update');
     });
+
+    Route::middleware('role:jobseeker')->get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
+
 
     // admin routes
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
