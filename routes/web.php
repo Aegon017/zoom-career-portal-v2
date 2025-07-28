@@ -45,14 +45,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login', fn () => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     // notification routes
     Route::get('/notifications/{notificationId}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::get('/notifications/markAllAsRead', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     // employer routes
     Route::middleware('role:employer|super_admin')->prefix('employer')->name('employer.')->group(function (): void {
@@ -169,6 +170,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
         Route::resource('/employees', AdminEmployeeController::class);
+        Route::get('/companies/export', [CompanyController::class, 'export']);
         Route::resource('/companies', CompanyController::class);
         Route::resource('/jobs', JobController::class);
         Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
@@ -193,7 +195,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

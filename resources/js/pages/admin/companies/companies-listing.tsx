@@ -1,8 +1,9 @@
 import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { Company, type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { columns } from './company-columns';
+import { Button } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,25 +26,27 @@ interface Props {
     };
 }
 
-export default function CompaniesListing({ companies, filters }: Props) {
+export default function CompaniesListing( { companies, filters }: Props ) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Companies" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
-                    hasCreate={false}
-                    columns={columns}
-                    data={companies.data}
-                    pagination={{
+                    hasCreate={ false }
+                    columns={ columns }
+                    data={ companies.data }
+                    pagination={ {
                         current_page: companies.current_page,
                         last_page: companies.last_page,
                         per_page: companies.per_page,
                         total: companies.total,
-                    }}
-                    filters={filters}
+                    } }
+                    filters={ filters }
                     routeName="/admin/companies"
                     listingName="company"
                     createUrl="/admin/companies/create"
+                    hasExport={ true }
+                    exportUrl="/admin/companies/export"
                 />
             </div>
         </AppLayout>

@@ -24,4 +24,11 @@ final class NotificationController extends Controller
 
         return back();
     }
+
+    public function markAllAsRead()
+    {
+        Auth::user()->notifications()->markAsRead();
+
+        return back();
+    }
 }
