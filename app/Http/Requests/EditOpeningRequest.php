@@ -32,13 +32,17 @@ final class EditOpeningRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'skills' => 'required|array',
-            'skills.*' => 'exists:skills,id',
-            'description' => 'required|string',
+            'skills.*' => 'required|exists:skills,id',
+            'description' => ['required', 'string', function ($value, $fail) {
+                if (trim(strip_tags($value)) === '') {
+                    $fail('The job description field is required.');
+                }
+            }],
             'employment_type' => ['required', Rule::enum(EmploymentTypeEnum::class)],
             'work_model' => ['required', Rule::enum(WorkModelEnum::class)],
-            'salary_min' => 'nullable|numeric|min:0',
-            'salary_max' => 'nullable|numeric|gte:salary_min',
-            'salary_unit' => 'nullable|string|max:50',
+            'salary_min' => 'required|numeric|min:0',
+            'salary_max' => 'required|numeric|gte:salary_min',
+            'salary_unit' => 'required|string|max:50',
             'currency' => ['required', Rule::enum(CurrencyEnum::class)],
             'location_id' => 'required|exists:locations,id',
             'industry_id' => 'required|exists:industries,id',
