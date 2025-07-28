@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\EmploymentTypeEnum;
+use App\Enums\JobApplicationStatusEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Models\Industry;
 use App\Models\Opening;
@@ -25,13 +26,13 @@ final class JobseekerJobController extends Controller
         // Company filter
         if ($request->filled('company')) {
             $query->whereHas('company', function ($q) use ($request): void {
-                $q->where('name', 'like', '%'.$request->company.'%');
+                $q->where('name', 'like', '%' . $request->company . '%');
             });
         }
 
         // Job title filter
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%'.$request->job_title.'%');
+            $query->where('title', 'like', '%' . $request->job_title . '%');
         }
 
         // Employment types filter
@@ -88,7 +89,7 @@ final class JobseekerJobController extends Controller
 
         Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
@@ -115,11 +116,38 @@ final class JobseekerJobController extends Controller
     public function appliedJobs()
     {
         $user = Auth::user();
-        $jobs = $user->openingApplications()->with('opening.company')->paginate(10);
-        $initialJobs = $jobs->pluck('opening')->filter()->values();
+
+        $applications = $user->openingApplications()
+            ->with(['opening.company', 'opening.address'])
+            ->when(request('search'), function ($query, $search) {
+                $query->whereHas('opening', fn($q) => $q->where('title', 'like', "%{$search}%"));
+            })
+            ->when(request('status'), fn($query, $status) => $query->where('status', $status))
+            ->when(request('after_date'), fn($query, $date) => $query->whereDate('created_at', '>=', $date))
+            ->when(request('before_date'), fn($query, $date) => $query->whereDate('created_at', '<=', $date))
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        $jobs = $applications->getCollection()->map(fn($application) => [
+            'id' => $application->opening_id,
+            'title' => $application->opening->title,
+            'description' => $application->opening->description,
+            'company' => $application->opening->company,
+            'city' => $application->opening->address?->city,
+            'country' => $application->opening->address?->country,
+            'application_status' => $application->status,
+            'application_created_at' => $application->created_at,
+        ]);
 
         return Inertia::render('jobseeker/jobs/applied-jobs', [
-            'initialJobs' => $initialJobs,
+            'initialJobs' => $jobs,
+            'pagination' => [
+                'current_page' => $applications->currentPage(),
+                'last_page' => $applications->lastPage(),
+                'per_page' => $applications->perPage(),
+                'total' => $applications->total(),
+            ],
+            'applicationStatusOptions' => JobApplicationStatusEnum::options()
         ]);
     }
 }
