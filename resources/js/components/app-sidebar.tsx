@@ -1,7 +1,7 @@
 import useRoles from '@/hooks/use-roles';
 import { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, ChartBar, CodeXml, Factory, Languages, LayoutGrid, MapPin, Settings2, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Languages, LayoutGrid, MapPin, Settings2, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
@@ -47,6 +47,11 @@ export function AppSidebar() {
                     href: '/admin/companies',
                 },
             ],
+        },
+        {
+            title: 'Student Management',
+            href: '/admin/students',
+            icon: GraduationCap,
         },
         {
             title: 'Job Management',
@@ -101,12 +106,12 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} groupName="Admin Panel" />
+                <NavMain items={ mainNavItems } groupName="Admin Panel" />
             </SidebarContent>
 
             <SidebarFooter>
                 <Separator />
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <NavFooter items={ footerNavItems } className="mt-auto" />
                 <Separator />
                 <NavUser />
             </SidebarFooter>

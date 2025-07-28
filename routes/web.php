@@ -40,6 +40,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TempUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -172,6 +173,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/employees', AdminEmployeeController::class);
         Route::get('/companies/export', [CompanyController::class, 'export']);
         Route::resource('/companies', CompanyController::class);
+        Route::get('/students/export', [StudentController::class, 'export']);
+        Route::resource('/students', StudentController::class);
         Route::resource('/jobs', JobController::class);
         Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
         Route::post('/jobs/{job}/applications', [JobController::class, 'storeApplications'])->name('jobs.applications.store');
