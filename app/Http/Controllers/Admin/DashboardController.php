@@ -25,17 +25,17 @@ final class DashboardController extends Controller
         $noOfActiveJobs = Opening::where('status', JobStatusEnum::Published->value)->count();
         $noOfClosedJobs = Opening::where('status', JobStatusEnum::Closed->value)->count();
         $noOfActiveApplicants = OpeningApplication::where('status', JobApplicationStatusEnum::Applied->value)
-            ->whereHas('opening', function ($query) {
+            ->whereHas('opening', function ($query): void {
                 $query->where('status', JobStatusEnum::Published->value);
             })
             ->count();
         $noOfShortlistedApplicants = OpeningApplication::where('status', JobApplicationStatusEnum::Shortlisted->value)
-            ->whereHas('opening', function ($query) {
+            ->whereHas('opening', function ($query): void {
                 $query->where('status', JobStatusEnum::Published->value);
             })
             ->count();
         $noOfHiredApplicants = OpeningApplication::where('status', JobApplicationStatusEnum::Hired->value)
-            ->whereHas('opening', function ($query) {
+            ->whereHas('opening', function ($query): void {
                 $query->where('status', JobStatusEnum::Published->value);
             })
             ->count();

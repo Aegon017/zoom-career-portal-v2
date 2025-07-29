@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { CalendarDays, ChevronDown, ChevronUp, ExternalLink, FileText, Mail, Pho
 import { useState } from 'react';
 import JobStatus from './job-status';
 import MessageButton from './message-button';
+import { Link } from '@inertiajs/react';
 
 interface Props {
     application: Application;
@@ -86,9 +87,11 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                         </div>
 
                         <div className="min-w-0 flex-1 space-y-1.5">
-                            <h3 className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
-                                { application.user.name }
-                            </h3>
+                            <Link href={ `/employer/jobseekers/${ application.user.id }` }>
+                                <h3 className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
+                                    { application.user.name }
+                                </h3>
+                            </Link>
                             <span className='text-muted-foreground flex items-center gap-1 text-xs'><Phone className="h-4 w-4" /> { application.user.phone }</span>
                             <span className='text-muted-foreground flex items-center gap-1 text-xs'><Mail className="h-4 w-4" /> { application.user.email }</span>
                             <div className="text-muted-foreground flex items-center gap-1 text-xs">
@@ -122,7 +125,7 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                         </Button>
                     </div>
                 </div>
-                <Separator className='mt-6'/>
+                <Separator className='mt-6' />
 
                 <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <div className="space-y-2">

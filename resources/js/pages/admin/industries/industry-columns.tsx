@@ -1,4 +1,4 @@
-'use client';
+
 
 import DataTableActions from '@/components/data-table-actions';
 import { Industry } from '@/types';

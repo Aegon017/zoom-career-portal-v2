@@ -18,7 +18,7 @@ final class CompanyController extends Controller
         $companies = Company::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -53,7 +53,7 @@ final class CompanyController extends Controller
         }
 
         $companies = Company::query()
-            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->where('name', 'LIKE', '%'.$searchTerm.'%')
             ->limit(10)
             ->get(['id', 'name']);
 

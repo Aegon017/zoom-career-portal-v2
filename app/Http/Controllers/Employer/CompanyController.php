@@ -14,7 +14,6 @@ use App\Models\CompanyUser;
 use App\Models\Industry;
 use App\Models\Location;
 use App\Models\User;
-use App\Notifications\Admin\CompanyVerification;
 use App\Notifications\Admin\CompanyVerificationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
@@ -36,11 +35,11 @@ final class CompanyController extends Controller
     public function edit(): Response
     {
         $company = CompanyUser::where('user_id', Auth::id())->latest()->first()->company;
-        $industries = Industry::get()->map(fn($industry): array => [
+        $industries = Industry::get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
-        $locations = Location::get()->map(fn($location): array => [
+        $locations = Location::get()->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
@@ -67,13 +66,13 @@ final class CompanyController extends Controller
         ]);
 
         if (! empty($data['logo_url']) && Storage::exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }

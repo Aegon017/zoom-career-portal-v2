@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Employer;
 
 use App\Enums\JobApplicationStatusEnum;
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Mail\Application\ShortlistedMail;
+use App\Models\Chat;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 final class ApplicationsController extends Controller
 {
@@ -77,5 +82,49 @@ final class ApplicationsController extends Controller
         };
 
         return back()->with('success', 'Status updated successfully');
+    }
+
+    public function messageShortlisted(Request $request, Opening $job)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        $shortlistedUsers = User::whereIn('id', OpeningApplication::where('opening_id', $job->id)
+            ->where('status', JobApplicationStatusEnum::Shortlisted->value)
+            ->pluck('user_id'))
+            ->get();
+
+        $htmlSanitizer = new HtmlSanitizer((new HtmlSanitizerConfig())->allowSafeElements());
+
+        $safeMessage = $htmlSanitizer->sanitize($request->message);
+
+        $combinedMessage = sprintf('<strong>Subject:</strong> %s<br><br>%s', $request->subject, $safeMessage);
+
+        foreach ($shortlistedUsers as $user) {
+            $chat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
+                ->withCount('participants')
+                ->get()
+                ->first(fn ($chat): bool => $chat->participants_count === 2);
+
+            if (! $chat) {
+                $chat = Chat::create();
+                $chat->participants()->createMany([
+                    ['user_id' => Auth::id()],
+                    ['user_id' => $user->id],
+                ]);
+            }
+
+            $message = $chat->messages()->create([
+                'user_id' => Auth::id(),
+                'message' => $combinedMessage,
+            ]);
+
+            MessageSent::dispatch($message);
+        }
+
+        return back()->with('success', 'Message sent to all shortlisted candidates.');
     }
 }

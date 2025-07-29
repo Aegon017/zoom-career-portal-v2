@@ -26,7 +26,7 @@ final class Resume extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('resumes')
-            
+
             ->acceptsMimeTypes([
                 'application/pdf',
             ])

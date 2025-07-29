@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-final class CompanyVerificationNotification extends Notification implements ShouldQueue
+final class CompanyVerification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -37,7 +37,7 @@ final class CompanyVerificationNotification extends Notification implements Shou
         return (new MailMessage)
             ->subject('Company Verification Required')
             ->greeting('Hello Admin,')
-            ->line(sprintf('The company %s has updated its details and is pending verification.', $this->company->name))
+            ->line(sprintf('The company <strong>%s</strong> has updated its details and is pending verification.', $this->company->name))
             ->action('Review Company', route('admin.companies.show', $this->company->id))
             ->line('Please review and verify the updated company information.');
     }

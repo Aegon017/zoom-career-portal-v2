@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
 use App\Models\Company;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class EmployerExport implements FromCollection, WithHeadings
+final class EmployerExport implements FromCollection, WithHeadings
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -15,15 +17,13 @@ class EmployerExport implements FromCollection, WithHeadings
     {
         return Company::select('name', 'email', 'phone', 'verification_status')
             ->get()
-            ->map(function ($company, $index) {
-                return [
-                    'serial' => $index + 1,
-                    'name' => $company->name,
-                    'email' => $company->email,
-                    'phone' => $company->phone,
-                    'verification_status' => $company->verification_status,
-                ];
-            });
+            ->map(fn($company, $index): array => [
+                'serial' => $index + 1,
+                'name' => $company->name,
+                'email' => $company->email,
+                'phone' => $company->phone,
+                'verification_status' => $company->verification_status,
+            ]);
     }
 
     public function headings(): array

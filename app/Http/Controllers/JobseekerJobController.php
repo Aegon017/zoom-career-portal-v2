@@ -26,13 +26,13 @@ final class JobseekerJobController extends Controller
         // Company filter
         if ($request->filled('company')) {
             $query->whereHas('company', function ($q) use ($request): void {
-                $q->where('name', 'like', '%' . $request->company . '%');
+                $q->where('name', 'like', '%'.$request->company.'%');
             });
         }
 
         // Job title filter
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%' . $request->job_title . '%');
+            $query->where('title', 'like', '%'.$request->job_title.'%');
         }
 
         // Employment types filter
@@ -89,7 +89,7 @@ final class JobseekerJobController extends Controller
 
         Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
@@ -119,16 +119,16 @@ final class JobseekerJobController extends Controller
 
         $applications = $user->openingApplications()
             ->with(['opening.company', 'opening.address'])
-            ->when(request('search'), function ($query, $search) {
-                $query->whereHas('opening', fn($q) => $q->where('title', 'like', "%{$search}%"));
+            ->when(request('search'), function ($query, $search): void {
+                $query->whereHas('opening', fn ($q) => $q->where('title', 'like', sprintf('%%%s%%', $search)));
             })
-            ->when(request('status'), fn($query, $status) => $query->where('status', $status))
-            ->when(request('after_date'), fn($query, $date) => $query->whereDate('created_at', '>=', $date))
-            ->when(request('before_date'), fn($query, $date) => $query->whereDate('created_at', '<=', $date))
+            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
+            ->when(request('after_date'), fn ($query, $date) => $query->whereDate('created_at', '>=', $date))
+            ->when(request('before_date'), fn ($query, $date) => $query->whereDate('created_at', '<=', $date))
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $jobs = $applications->getCollection()->map(fn($application) => [
+        $jobs = $applications->getCollection()->map(fn ($application): array => [
             'id' => $application->opening_id,
             'title' => $application->opening->title,
             'description' => $application->opening->description,
@@ -147,7 +147,7 @@ final class JobseekerJobController extends Controller
                 'per_page' => $applications->perPage(),
                 'total' => $applications->total(),
             ],
-            'applicationStatusOptions' => JobApplicationStatusEnum::options()
+            'applicationStatusOptions' => JobApplicationStatusEnum::options(),
         ]);
     }
 }

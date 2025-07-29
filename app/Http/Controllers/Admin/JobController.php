@@ -23,7 +23,7 @@ final class JobController extends Controller
             ->with('company', 'user')
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -69,7 +69,7 @@ final class JobController extends Controller
         $users = User::role('jobseeker')
             ->whereNotIn('id', $appliedUserIds)
             ->get()
-            ->map(fn($user): array => [
+            ->map(fn ($user): array => [
                 'value' => $user->id,
                 'label' => $user->email,
             ]);

@@ -19,7 +19,7 @@ final class JobseekerController extends Controller
         $query = User::query()->role('jobseeker');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('skill') && $request->skill !== 'all') {

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class StudentsExport implements FromCollection, WithHeadings
+final class StudentsExport implements FromCollection, WithHeadings
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -15,16 +17,14 @@ class StudentsExport implements FromCollection, WithHeadings
     {
         return User::role('jobseeker')->with('profile')->select('id', 'name', 'email', 'phone')
             ->get()
-            ->map(function ($user, $index) {
-                return [
-                    'serial' => $index + 1,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'phone' => $user->phone,
-                    'status' => $user->profile?->is_verified ? 'Verified' : 'Pending',
-                    'source' => $user->profile?->student_id ? 'Outside' : 'Zoom',
-                ];
-            });
+            ->map(fn($user, $index): array => [
+                'serial' => $index + 1,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'status' => $user->profile?->is_verified ? 'Verified' : 'Pending',
+                'source' => $user->profile?->student_id ? 'Outside' : 'Zoom',
+            ]);
     }
 
     public function headings(): array

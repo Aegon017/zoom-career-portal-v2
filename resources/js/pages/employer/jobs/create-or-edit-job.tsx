@@ -1,6 +1,6 @@
 import DeleteAlert from '@/components/delete-alert';
 import MultipleSelector from '@/components/multiple-selector';
-import QuillEditor from '@/components/text-editor';
+import TextEditor from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -186,7 +186,7 @@ const CreateOrEditJob = ( {
                                         <FormItem>
                                             <FormLabel>Job Description</FormLabel>
                                             <FormControl>
-                                                <QuillEditor
+                                                <TextEditor
                                                     disabled={ false }
                                                     value={ field.value }
                                                     onChange={ field.onChange }

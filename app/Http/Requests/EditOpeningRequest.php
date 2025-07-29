@@ -33,8 +33,8 @@ final class EditOpeningRequest extends FormRequest
             'title' => 'required|string|max:255',
             'skills' => 'required|array',
             'skills.*' => 'required|exists:skills,id',
-            'description' => ['required', 'string', function ($value, $fail) {
-                if (trim(strip_tags($value)) === '') {
+            'description' => ['required', 'string', function ($value, $fail): void {
+                if (mb_trim(strip_tags($value)) === '') {
                     $fail('The job description field is required.');
                 }
             }],

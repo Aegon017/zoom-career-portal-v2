@@ -203,7 +203,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                 <h3 className="text-foreground truncate text-sm font-semibold">{ other.name }</h3>
                                                 <span className="text-muted-foreground text-xs">{ dateStr }</span>
                                             </div>
-                                            <p className="text-muted-foreground line-clamp-1 truncate text-sm text-wrap">{ last }</p>
+                                            <div className="text-muted-foreground line-clamp-1 truncate text-sm text-wrap" dangerouslySetInnerHTML={ { __html: last } } />
                                         </div>
                                     </div>
                                 );
@@ -251,9 +251,6 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                 <UserIcon className="mr-2 h-4 w-4" /> View Profile
                                             </Link>
                                         </DropdownMenuItem>
-                                        {/* <DropdownMenuItem className="text-destructive focus:text-destructive">
-                                            <TriangleAlert className="mr-2 h-4 w-4 text-red-500" /> Report
-                                        </DropdownMenuItem> */}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -271,7 +268,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                 const isMe = msg.user_id === currentUserId;
                                                 return (
                                                     <div key={ msg.id } className={ `flex my-4 ${ isMe ? 'justify-end' : 'justify-start' }` }>
-                                                        <div className="flex max-w-xs items-end gap-2 lg:max-w-lg">
+                                                        <div className="flex max-w-full items-end gap-2">
                                                             { isMe && (
                                                                 <span className="text-xs text-nowrap text-gray-500">
                                                                     { format( new Date( msg.created_at ), 'hh:mm a' ) }
@@ -279,11 +276,11 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                                             ) }
                                                             <div
                                                                 className={ `rounded-tl-2xl rounded-tr-2xl px-4 py-2 ${ isMe
-                                                                    ? 'bg-primary rounded-bl-2xl text-white'
+                                                                    ? 'bg-secondary rounded-bl-2xl text-white'
                                                                     : 'text-foreground rounded-br-2xl bg-white'
                                                                     }` }
                                                             >
-                                                                <p className="text-sm whitespace-pre-wrap">{ msg.message }</p>
+                                                                <div className="text-sm whitespace-pre-wrap" dangerouslySetInnerHTML={ { __html: msg.message } } />
                                                             </div>
                                                             { !isMe && (
                                                                 <span className="text-xs text-nowrap text-gray-500">
@@ -326,7 +323,7 @@ export default function Inbox( { chats, currentUserId, activeChat: initialChat, 
                                             disabled={ isSending }
                                             size="icon"
                                             aria-label="Send message"
-                                            className="absolute right-2 bottom-2"
+                                            className="absolute right-2 bottom-2 bg-secondary hover:bg-secondary/80"
                                         >
                                             <Send />
                                         </Button>

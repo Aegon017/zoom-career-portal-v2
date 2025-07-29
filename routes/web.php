@@ -46,14 +46,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', fn () => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn () => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -126,12 +126,14 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::post('/', [ApplicationsController::class, 'store'])->name('store');
         });
 
+        Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
+
         Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
         Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker', 'profile.complete')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/explore', [JobseekerDashboardController::class, 'index'])->name('explore.index');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
@@ -163,7 +165,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     Route::middleware('role:jobseeker')->get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
-
 
     // admin routes
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
@@ -200,7 +201,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

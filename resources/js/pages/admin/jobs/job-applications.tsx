@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -144,9 +144,9 @@ export default function JobApplications( { applications, statuses, users, job }:
 
                 { applications?.length > 0 ? (
                     <div className="grid gap-4 lg:grid-cols-2">
-                        { applications.map( ( application ) => (
+                        { applications.map( ( application, index ) => (
                             <JobApplicationCard
-                                key={ application.id }
+                                key={ index }
                                 application={ application }
                                 statuses={ statuses }
                                 message={ false }

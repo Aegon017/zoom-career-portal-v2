@@ -1,4 +1,4 @@
-import { Application, ApplicationStatus } from '@/types';
+import { Application, Option } from '@/types';
 import { router } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,7 +7,7 @@ import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface JobStatusProps {
-    statuses: ApplicationStatus[];
+    statuses: Option[];
     application: Application;
 }
 

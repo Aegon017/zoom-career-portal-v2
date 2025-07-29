@@ -229,4 +229,15 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     {
         return $this->hasMany(WorkPermit::class);
     }
+
+    public function hasCompleteProfile(): bool
+    {
+        return filled($this->name)
+            && filled($this->email)
+            && filled($this->phone)
+            && $this->address()
+            && $this->resumes()->exists()
+            && $this->educations()->exists()
+            && $this->workExperiences()->exists();
+    }
 }
