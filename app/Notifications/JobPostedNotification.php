@@ -52,7 +52,7 @@ final class JobPostedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New job posted: '.$this->opening->title.' by '.$this->user->name.' at '.($this->user->company->name ?? 'Unknown Company'),
+            'message' => 'New job posted: '.$this->opening->title.' by '.$this->user->name.' at '.($this->user->company->name ?? ''),
             'url' => route('admin.job.verify', ['job' => $this->opening->id]),
         ];
     }
