@@ -240,4 +240,9 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
             && $this->educations()->exists()
             && $this->workExperiences()->exists();
     }
+
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

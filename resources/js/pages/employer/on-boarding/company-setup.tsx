@@ -26,7 +26,7 @@ interface FormValues {
     email: string;
 }
 
-const CompanySetup = ({ name, industries, sizes, types }: Props) => {
+const CompanySetup = ({ name, industries, sizes, types, locations }: Props) => {
     const form = useForm<FormValues>({
         defaultValues: {
             name: name,
@@ -72,7 +72,8 @@ const CompanySetup = ({ name, industries, sizes, types }: Props) => {
                             setValue={setValue}
                             industries={industries}
                             sizes={sizes}
-                            types={types}
+                            types={ types }
+                            locations={locations}
                         />
                     </div>
                 </div>

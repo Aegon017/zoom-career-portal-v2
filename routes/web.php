@@ -6,6 +6,7 @@ use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\JobVerifyController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\EmployerDashboardController;
+use App\Http\Controllers\Employer\FeedbackController;
 use App\Http\Controllers\Employer\JobDescriptionStreamController;
 use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OnboardingController;
@@ -133,6 +135,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
         Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
+        Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
+        Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
     });
 
     // jobseeker routes
@@ -198,6 +202,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/students/verify/{student}', [StudentVerificationController::class, 'show'])->name('students.verify');
         Route::post('/students/verify/{student}', [StudentVerificationController::class, 'verify'])->name('students.verify.approve');
         Route::delete('/students/reject/{student}', [StudentVerificationController::class, 'reject'])->name('students.verify.reject');
+        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
+        Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
     });
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');

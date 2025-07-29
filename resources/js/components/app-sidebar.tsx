@@ -1,7 +1,7 @@
 import useRoles from '@/hooks/use-roles';
 import { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Languages, LayoutGrid, MapPin, Settings2, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Languages, LayoutGrid, MapPin, Notebook, Settings2, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
@@ -82,6 +82,11 @@ export function AppSidebar() {
             title: 'Languages',
             href: '/admin/languages',
             icon: Languages,
+        },
+        {
+            title: 'Feedback',
+            href: '/admin/feedback',
+            icon: Notebook,
         },
     ];
 

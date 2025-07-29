@@ -138,4 +138,9 @@ final class Opening extends Model
     {
         return $this->belongsToMany(User::class, 'shortlists', 'opening_id', 'user_id')->withTimestamps();
     }
+
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

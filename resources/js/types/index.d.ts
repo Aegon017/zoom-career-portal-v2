@@ -419,3 +419,24 @@ export interface Pagination {
     total: number;
     links: PaginationLink[];
 }
+
+export interface Feedback {
+    id: number;
+    feedback: string;
+    hired_details: string;
+    selected_candidates: {
+        value: number | string;
+        label: string;
+    }[];
+    additional_comments: string;
+    created_at: string;
+    user: {
+        name: string;
+        email: string;
+    };
+    opening: {
+        id: number;
+        title: string;
+    };
+}
+
