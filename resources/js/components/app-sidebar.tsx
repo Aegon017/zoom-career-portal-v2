@@ -91,11 +91,11 @@ export function AppSidebar() {
     ];
 
     const footerNavItems: NavItem[] = [
-        {
-            title: 'Site settings',
-            href: '/admin/site-settings',
-            icon: Settings2,
-        },
+        // {
+        //     title: 'Site settings',
+        //     href: '/admin/site-settings',
+        //     icon: Settings2,
+        // },
     ];
 
     return (
