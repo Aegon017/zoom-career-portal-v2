@@ -40,7 +40,7 @@ final class Opening extends Model
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2',
         'published_at' => 'datetime',
-        'expires_at' => 'datetime',
+        'expires_at' => 'date',
     ];
 
     protected $appends = ['is_saved', 'has_applied', 'application_status', 'application_created_at'];

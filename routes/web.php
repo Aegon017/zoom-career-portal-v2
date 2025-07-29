@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
@@ -42,18 +43,20 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TempUploadController;
+use App\Models\Opening;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login', fn () => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -201,7 +204,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

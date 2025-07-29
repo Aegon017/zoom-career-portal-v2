@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('salary_unit')->nullable();
             $table->char('currency', 3);
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->date('expires_at')->nullable();
             $table->string('apply_link')->nullable();
             $table->string('status');
             $table->string('verification_status');
