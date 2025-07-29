@@ -2,7 +2,7 @@ import StatsWidget from '@/components/widgets/stats-widget';
 import AppLayout from '@/layouts/employer-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Briefcase } from 'lucide-react';
+import { BadgeCheck, Briefcase, CheckCircle, FileMinus, FileText, UserCheck, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,49 +35,55 @@ const EmployerDashboard = ( { noOfJobs, noOfShortlisted, noOfPublishedJobs, noOf
                         bgColor="bg-sky-600"
                         textColor="text-sky-600"
                     />
+
                     <StatsWidget
                         title="Total Published Jobs"
-                        icon={ Briefcase }
+                        icon={ CheckCircle }
                         stat={ noOfPublishedJobs }
                         description="Total number of published jobs"
-                        bgColor="bg-amber-600"
-                        textColor="text-amber-600"
+                        bgColor="bg-emerald-600"
+                        textColor="text-emerald-600"
                     />
+
                     <StatsWidget
                         title="Total Closed Jobs"
-                        icon={ Briefcase }
+                        icon={ FileMinus }
                         stat={ noOfClosedJobs }
                         description="Total number of closed jobs"
                         bgColor="bg-indigo-600"
                         textColor="text-indigo-600"
                     />
+
                     <StatsWidget
                         title="Total Drafted Jobs"
-                        icon={ Briefcase }
+                        icon={ FileText }
                         stat={ noOfDraftJobs }
                         description="Total number of draft jobs"
                         bgColor="bg-rose-600"
                         textColor="text-rose-600"
                     />
+
                     <StatsWidget
                         title="Total Applications"
-                        icon={ Briefcase }
+                        icon={ Users }
                         stat={ noOfApplications }
-                        description="Total number of job applicaions"
+                        description="Total number of job applications"
                         bgColor="bg-yellow-600"
                         textColor="text-yellow-600"
                     />
+
                     <StatsWidget
                         title="Total Shortlisted"
-                        icon={ Briefcase }
+                        icon={ UserCheck }
                         stat={ noOfShortlisted }
-                        description="Total number of shortilisted job applicaions"
+                        description="Total number of shortlisted job applications"
                         bgColor="bg-blue-600"
                         textColor="text-blue-600"
                     />
+
                     <StatsWidget
                         title="Total Hired"
-                        icon={ Briefcase }
+                        icon={ BadgeCheck }
                         stat={ noOfHired }
                         description="Total number of hired candidates"
                         bgColor="bg-orange-600"

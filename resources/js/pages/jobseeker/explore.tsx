@@ -10,7 +10,6 @@ interface ExploreProps {
         categories: string[];
         locations: string[];
         viewMoreFilters: {
-            // NEW: Added type for viewMoreFilters
             job_title: string;
             industries: number[];
         };

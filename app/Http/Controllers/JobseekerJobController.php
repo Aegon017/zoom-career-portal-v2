@@ -21,7 +21,7 @@ final class JobseekerJobController extends Controller
         $query = Opening::query()
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
-            ->with('company.industry'); // Eager load company's industry
+            ->with('company.industry');
 
         // Company filter
         if ($request->filled('company')) {
