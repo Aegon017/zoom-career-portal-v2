@@ -21,7 +21,7 @@ use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
-use App\Http\Controllers\Employer\EmployerDashboardController;
+use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\FeedbackController;
 use App\Http\Controllers\Employer\JobDescriptionStreamController;
 use App\Http\Controllers\Employer\JobseekerController;

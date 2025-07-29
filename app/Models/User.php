@@ -133,6 +133,11 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(WorkExperience::class);
     }
 
+    public function openings(): HasMany
+    {
+        return $this->hasMany(Opening::class);
+    }
+
     public function savedOpenings(): HasMany
     {
         return $this->hasMany(SavedOpening::class);
