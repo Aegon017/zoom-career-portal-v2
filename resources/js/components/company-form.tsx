@@ -45,13 +45,11 @@ const CompanyForm = ( {
     setValue,
     sizes,
     types,
-    industries,
-    locations,
 }: Props ) => {
     const [ locationSearch, setLocationSearch ] = useState( '' );
-    const [ locationOptions, setLocationOptions ] = useState<Option[]>( locations );
+    const [ locationOptions, setLocationOptions ] = useState<Option[]>( [] );
     const [ industrySearch, setIndustrySearch ] = useState( '' );
-    const [ industryOptions, setIndustryOptions ] = useState<Option[]>( industries );
+    const [ industryOptions, setIndustryOptions ] = useState<Option[]>( [] );
 
     const fetchLocations = useCallback( async ( search: string ) => {
         try {
@@ -76,22 +74,22 @@ const CompanyForm = ( {
             if ( locationSearch.trim() ) {
                 fetchLocations( locationSearch );
             } else {
-                setLocationOptions( locations );
+                setLocationOptions( [] );
             }
         }, 300 );
         return () => clearTimeout( timeout );
-    }, [ locationSearch, fetchLocations, locations ] );
+    }, [ locationSearch, fetchLocations ] );
 
     useEffect( () => {
         const timeout = setTimeout( () => {
             if ( industrySearch.trim() ) {
                 fetchIndustries( industrySearch );
             } else {
-                setIndustryOptions( industries );
+                setIndustryOptions( [] );
             }
         }, 300 );
         return () => clearTimeout( timeout );
-    }, [ industrySearch, fetchIndustries, industries ] );
+    }, [ industrySearch, fetchIndustries ] );
 
     const handleFileUpload = useCallback( ( field: keyof FormValues ) => ( tempPath: string ) => {
         setValue( field, tempPath );

@@ -1,26 +1,23 @@
-
-
-import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import DataTableActions from '@/components/data-table-actions';
 import { Company } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
 
-const goToShow = (id: number) => {
-    router.get(`/admin/companies/${id}`);
+const goToShow = ( id: number ) => {
+    router.get( `/admin/companies/${ id }` );
+};
+
+const handleEdit = ( id: number ) => {
+    router.get( `/admin/companies/${ id }/edit` );
+};
+
+const handleDelete = ( id: number ) => {
+    router.delete( `/admin/companies/${ id }` );
 };
 
 export const columns: ColumnDef<Company>[] = [
     {
-        accessorFn: (row, index) => index + 1,
+        accessorFn: ( row, index ) => index + 1,
         header: 'S.No.',
     },
     {
@@ -30,27 +27,8 @@ export const columns: ColumnDef<Company>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            className="text-foreground hover:bg-muted cursor-pointer text-sm transition-colors"
-                            onClick={() => goToShow(row.original.id)}
-                        >
-                            Show
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
+        cell: ( { row } ) => {
+            return <DataTableActions hasShow={ true } onShow={ () => goToShow( row.original.id ) } onEdit={ () => handleEdit( row.original.id ) } onDelete={ () => handleDelete( row.original.id ) } />
         },
     },
 ];

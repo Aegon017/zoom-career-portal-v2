@@ -112,9 +112,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             });
         });
 
-        Route::get('/company', (new EmployerCompanyController())->index(...))->name('company.index');
-        Route::get('/company/edit', (new EmployerCompanyController())->edit(...))->name('company.edit');
-        Route::put('/company/{company}', (new EmployerCompanyController())->update(...))->name('company.update');
+        Route::get('/company', [EmployerCompanyController::class, 'index'])->name('company.index');
+        Route::get('/company/edit', [EmployerCompanyController::class, 'edit'])->name('company.edit');
+        Route::put('/company/{company}', [EmployerCompanyController::class, 'update'])->name('company.update');
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');

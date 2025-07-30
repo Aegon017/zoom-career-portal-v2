@@ -32,7 +32,7 @@ export default function CompaniesListing( { companies, filters }: Props ) {
             <Head title="Companies" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
-                    hasCreate={ false }
+                    hasCreate={ true }
                     columns={ columns }
                     data={ companies.data }
                     pagination={ {

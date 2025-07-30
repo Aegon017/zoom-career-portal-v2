@@ -32,7 +32,7 @@ final class CareerInterestController extends Controller
             'label' => $industry->name,
         ]);
 
-        $locations = Location::get()->take(100)->map(fn ($location): array => [
+        $locations = Location::get()->take(10)->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);

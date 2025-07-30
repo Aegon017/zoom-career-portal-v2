@@ -11,13 +11,15 @@ import {
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
-interface DataTableActionsProps {
+interface Props {
+    hasShow?: boolean;
+    onShow?: () => void;
     onEdit: () => void;
     onDelete: () => void;
 }
 
-const DataTableActions = ({ onEdit, onDelete }: DataTableActionsProps) => {
-    const [alertOpen, setAlertOpen] = useState<boolean>(false);
+const DataTableActions = ( { onShow, onEdit, onDelete, hasShow = false }: Props ) => {
+    const [ alertOpen, setAlertOpen ] = useState<boolean>( false );
 
     return (
         <>
@@ -31,18 +33,23 @@ const DataTableActions = ({ onEdit, onDelete }: DataTableActionsProps) => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="mb-1 cursor-pointer" onClick={() => onEdit()}>
+                    {hasShow && (
+                        <DropdownMenuItem className="mb-1 cursor-pointer" onClick={() => onShow ? onShow() : null}>
+                            Show
+                        </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem className="mb-1 cursor-pointer" onClick={ () => onEdit() }>
                         Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className="cursor-pointer bg-red-600 text-white focus:bg-red-500 focus:text-white dark:text-black dark:focus:bg-red-700 dark:focus:text-black"
-                        onClick={() => setTimeout(() => setAlertOpen(true), 0)}
+                        onClick={ () => setTimeout( () => setAlertOpen( true ), 0 ) }
                     >
                         Delete
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <DeleteAlert alertOpen={alertOpen} setAlertOpen={setAlertOpen} onDelete={onDelete} />
+            <DeleteAlert alertOpen={ alertOpen } setAlertOpen={ setAlertOpen } onDelete={ onDelete } />
         </>
     );
 };

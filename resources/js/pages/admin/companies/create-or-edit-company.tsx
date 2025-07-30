@@ -1,4 +1,5 @@
-import AppLayout from '@/layouts/employer-layout';
+import AppLayout from '@/layouts/app-layout';
+import DeleteAlert from '@/components/delete-alert';
 import FileUpload from '@/components/file-upload';
 import { PhoneInput } from '@/components/phone-input';
 import { SelectPopoverField } from '@/components/select-popover-field';
@@ -8,10 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Company, Option, type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { useForm } from 'react-hook-form';
-import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface FormValues {
     name: string;
@@ -25,6 +26,7 @@ interface FormValues {
     type: string;
     phone: string;
     email: string;
+    verification_status: string;
 }
 
 interface Props {
@@ -35,17 +37,21 @@ interface Props {
     sizes: Option[];
     types: Option[];
     locations: Option[];
+    statusOptions: Option[];
 }
 
-const EditCompany = ( { company,
+const CreateOrEditCompany = ( {
+    company,
     operation,
     operationLabel,
     industries,
     sizes,
     types,
-    locations, }: Props ) => {
+    locations,
+    statusOptions
+}: Props ) => {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Company', href: '/employer/company' },
+        { title: 'Companies', href: '/admin/companies' },
         { title: operation, href: '' },
     ];
 
@@ -62,9 +68,11 @@ const EditCompany = ( { company,
             size: company?.size || '',
             phone: company?.phone || '',
             email: company?.email || '',
+            verification_status: company?.verification_status || '',
         }
     } );
 
+    const [ alertOpen, setAlertOpen ] = useState( false );
     const [ locationOptions, setLocationOptions ] = useState<Option[]>( locations );
     const [ industryOptions, setIndustryOptions ] = useState<Option[]>( industries );
     const [ locationSearch, setLocationSearch ] = useState( '' );
@@ -129,14 +137,39 @@ const EditCompany = ( { company,
             industry_id: data.industry_id || null
         };
 
-        router.put( `/employer/company/${ company?.id }`, submitData, { onError: handleErrors } );
+        operation === 'Create'
+            ? router.post( '/admin/companies', submitData, { onError: handleErrors } )
+            : router.put( `/admin/companies/${ company?.id }`, submitData, { onError: handleErrors } );
+    };
+
+    const handleDelete = () => {
+        company && router.delete( `/admin/companies/${ company.id }` );
     };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
-            <Head title="Setup Company" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl px-16 py-8">
-                <h1 className="text-2xl font-bold">Edit Company details</h1>
+            <Head title={ `${ operation } Company` } />
+            <div className="flex flex-col gap-6 p-4 rounded-xl">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-foreground">{ operation } Company</h1>
+
+                    { operation === 'Edit' && company && (
+                        <>
+                            <Button
+                                variant="destructive"
+                                onClick={ () => setAlertOpen( true ) }
+                            >
+                                Delete
+                            </Button>
+                            <DeleteAlert
+                                alertOpen={ alertOpen }
+                                setAlertOpen={ setAlertOpen }
+                                onDelete={ () => handleDelete() }
+                            />
+                        </>
+                    ) }
+                </div>
+
                 <Form { ...form }>
                     <form
                         onSubmit={ form.handleSubmit( onSubmit ) }
@@ -273,6 +306,33 @@ const EditCompany = ( { company,
 
                             <FormField
                                 control={ form.control }
+                                name="verification_status"
+                                render={ ( { field } ) => (
+                                    <FormItem>
+                                        <FormLabel>Verification Status</FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={ field.onChange } defaultValue={ field.value }>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    { statusOptions.map( option => (
+                                                        <SelectItem key={ option.value } value={ option.value }>
+                                                            { option.label }
+                                                        </SelectItem>
+                                                    ) ) }
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                ) }
+                            />
+
+                            <FormField
+                                control={ form.control }
                                 name="size"
                                 render={ ( { field } ) => (
                                     <FormItem>
@@ -335,4 +395,4 @@ const EditCompany = ( { company,
     );
 };
 
-export default EditCompany;
+export default CreateOrEditCompany;

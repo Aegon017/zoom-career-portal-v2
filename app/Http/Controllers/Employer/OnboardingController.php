@@ -14,6 +14,7 @@ use App\Mail\Admin\EmployerRegisteredMail as AdminEmployerRegisteredMail;
 use App\Mail\EmployerRegisteredMail;
 use App\Models\Company;
 use App\Models\Industry;
+use App\Models\Location;
 use App\Models\OpeningTitle;
 use App\Models\User;
 use App\Notifications\EmployerVerifyNotification;
@@ -117,14 +118,8 @@ final class OnboardingController extends Controller
 
     public function setupCompany(Request $request): Response|RedirectResponse
     {
-        $industries = Industry::get()->map(fn ($industry): array => [
-            'value' => $industry->id,
-            'label' => $industry->name,
-        ]);
-
         return Inertia::render('employer/on-boarding/company-setup', [
             'name' => $request->name,
-            'industries' => $industries,
             'sizes' => CompanySizeEnum::options(),
             'types' => CompanyTypeEnum::options(),
         ]);
