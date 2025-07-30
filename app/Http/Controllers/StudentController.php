@@ -8,6 +8,7 @@ use App\Exports\StudentsExport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
 final class StudentController extends Controller
@@ -21,7 +22,7 @@ final class StudentController extends Controller
             ->role('jobseeker')
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -35,9 +36,9 @@ final class StudentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): void
+    public function create(): Response
     {
-        //
+        return Inertia::render('admin/students/create-or-edit-student');
     }
 
     /**
@@ -51,9 +52,13 @@ final class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user): void
+    public function show(User $student): Response
     {
-        //
+        $student->load(['skills', 'profile', 'resumes', 'workExperiences.company', 'educations', 'personalDetail', 'address.location', 'workPermits', 'userLanguages.language', 'certificates']);
+
+        return Inertia::render('admin/students/student-profile', [
+            'user' => $student,
+        ]);
     }
 
     /**

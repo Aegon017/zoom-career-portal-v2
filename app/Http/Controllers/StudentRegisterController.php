@@ -63,6 +63,6 @@ final class StudentRegisterController extends Controller
 
         event(new Registered($user));
 
-        return to_route('jobseeker.explore.index')->with('status', 'Registration successful. Please verify your email.');
+        return to_route('jobseeker.dashboard')->with('status', 'Registration successful. Please verify your email.');
     }
 }

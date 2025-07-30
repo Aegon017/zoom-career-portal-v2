@@ -81,7 +81,7 @@ final class RemoteLoginController extends Controller
 
         return match ($role) {
             'super_admin' => route('admin.dashboard'),
-            'jobseeker' => route('jobseeker.explore.index'),
+            'jobseeker' => route('jobseeker.dashboard'),
             'employer' => route('employer.dashboard'),
             default => '/',
         };

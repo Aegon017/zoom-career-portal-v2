@@ -75,7 +75,7 @@ final class OtpController extends Controller
         if ($user->hasRole('employer')) {
             $route = 'employer.dashboard';
         } elseif ($user->hasRole('jobseeker')) {
-            $route = 'jobseeker.explore.index';
+            $route = 'jobseeker.dashboard';
         } else {
             $route = '/';
         }
