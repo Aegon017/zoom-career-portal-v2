@@ -183,6 +183,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/users', UserController::class);
         Route::resource('/employees', AdminEmployeeController::class);
         Route::get('/companies/export', [CompanyController::class, 'export']);
+        Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');
         Route::resource('/companies', CompanyController::class);
         Route::get('/students/export', [StudentController::class, 'export']);
         Route::resource('/students', StudentController::class);

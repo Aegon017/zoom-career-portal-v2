@@ -208,6 +208,14 @@ final class CompanyController extends Controller
             ->with('success', 'Company deleted successfully.');
     }
 
+    public function updateStatus(Company $company, Request $request)
+    {
+        $company->verification_status = $request->verification_status;
+        $company->save();
+
+        return back()->with('success', 'Verification status updated successfully');
+    }
+
     public function search(Request $request)
     {
         $searchTerm = $request->input('search', '');
