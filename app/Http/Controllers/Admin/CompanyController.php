@@ -31,8 +31,10 @@ final class CompanyController extends Controller
 
     public function show(Company $company)
     {
+        $company->load(['users', 'industry', 'address.location']);
+        
         return Inertia::render('admin/companies/view-company', [
-            'company' => $company->load('users'),
+            'company' => $company,
         ]);
     }
 

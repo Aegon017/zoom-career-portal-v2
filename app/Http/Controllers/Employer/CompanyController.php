@@ -28,7 +28,7 @@ final class CompanyController extends Controller
         $company = CompanyUser::where('user_id', Auth::id())->latest()->first()->company;
 
         return Inertia::render('employer/company', [
-            'company' => $company->load('users'),
+            'company' => $company->load(['users', 'industry', 'address.location']),
         ]);
     }
 
