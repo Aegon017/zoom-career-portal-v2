@@ -22,7 +22,7 @@ final class EmployerExport implements FromCollection, WithHeadings
                 'name' => $company->name,
                 'email' => $company->email,
                 'phone' => $company->phone,
-                'verification_status' => $company->verification_status,
+                'verification_status' => $company->verification_status->value,
             ]);
     }
 
