@@ -12,13 +12,18 @@ import { useInitials } from '@/hooks/use-initials';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { User } from '@/types';
+import { BreadcrumbItem, User } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'students', href: '/admin/students' },
+    { title: 'profile', href: '' },
+];
 
 export default function StudentProfile( { user }: { user: User } ) {
     const getInitials = useInitials();
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={ `${ user.name }'s Profile` } />
             <div className="max-w-6xl mx-auto px-4 py-8">
                 <div className="relative mb-16">

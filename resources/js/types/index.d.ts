@@ -77,6 +77,7 @@ export interface User {
     certificates: Certificate[];
     educations: Education[];
     skills?: Skill[];
+    resumes: Resume[];
     created_at: string;
     updated_at: string;
     [ key: string ]: unknown;
