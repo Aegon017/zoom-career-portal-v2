@@ -78,6 +78,8 @@ export interface User {
     educations: Education[];
     skills?: Skill[];
     resumes: Resume[];
+    companies: Company[];
+    company_users: CompanyUser[];
     created_at: string;
     updated_at: string;
     [ key: string ]: unknown;
@@ -154,8 +156,8 @@ export interface CompanyUser {
     verified_at: string | null;
     verification_status: string;
     role: string;
-    created_at: string | null;
-    updated_at: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Profile {
