@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\IndustryController;
@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
@@ -45,8 +44,6 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TempUploadController;
-use App\Models\Opening;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -181,7 +178,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
-        Route::resource('/employees', AdminEmployeeController::class);
+        Route::resource('/employees', EmployeeController::class);
         Route::get('/companies/export', [CompanyController::class, 'export']);
         Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');
         Route::resource('/companies', CompanyController::class);

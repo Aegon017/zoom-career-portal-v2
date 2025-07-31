@@ -3,7 +3,7 @@ import { Company } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
-const goToShow = ( id: number ) => {
+const handleShow = ( id: number ) => {
     router.get( `/admin/companies/${ id }` );
 };
 
@@ -28,7 +28,14 @@ export const columns: ColumnDef<Company>[] = [
     {
         id: 'actions',
         cell: ( { row } ) => {
-            return <DataTableActions hasShow={ true } onShow={ () => goToShow( row.original.id ) } onEdit={ () => handleEdit( row.original.id ) } onDelete={ () => handleDelete( row.original.id ) } />
+            return (
+                <DataTableActions
+                    hasShow={ true }
+                    onShow={ () => handleShow( row.original.id ) }
+                    onEdit={ () => handleEdit( row.original.id ) }
+                    onDelete={ () => handleDelete( row.original.id ) }
+                />
+            )
         },
     },
 ];
