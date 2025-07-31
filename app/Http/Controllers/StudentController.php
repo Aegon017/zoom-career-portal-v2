@@ -89,33 +89,33 @@ class StudentController extends Controller
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8',
             'avatar_url' => 'nullable|string|max:500',
-            
+
             // Address
             'address' => 'nullable|array',
             'address.location_id' => 'nullable|string|exists:locations,id',
-            
+
             // Personal Details
             'personal_detail' => 'nullable|array',
             'personal_detail.gender' => 'required|string|in:Male,Female,Other',
             'personal_detail.date_of_birth' => 'nullable|date|before:today',
             'personal_detail.marital_status' => 'nullable|string|in:Single/unmarried,Married',
             'personal_detail.differently_abled' => 'boolean',
-            
+
             // Profile
             'profile' => 'nullable|array',
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
             'profile.summary' => 'nullable|string|max:2000',
-            
+
             // Skills
             'skills' => 'nullable|array',
             'skills.*' => 'string|exists:skills,id',
-            
+
             // Work Permits
             'work_permits' => 'nullable|array',
             'work_permits.*' => 'string|max:255',
-            
+
             // Work Experiences
             'work_experiences' => 'nullable|array',
             'work_experiences.*.title' => 'required|string|max:255',
@@ -123,7 +123,7 @@ class StudentController extends Controller
             'work_experiences.*.start_date' => 'required|date',
             'work_experiences.*.end_date' => 'nullable|date|after_or_equal:work_experiences.*.start_date',
             'work_experiences.*.is_current' => 'boolean',
-            
+
             // Education
             'educations' => 'nullable|array',
             'educations.*.course_title' => 'required|string|max:255',
@@ -132,11 +132,11 @@ class StudentController extends Controller
             'educations.*.end_date' => 'nullable|date|after_or_equal:educations.*.start_date',
             'educations.*.is_current' => 'boolean',
             'educations.*.course_type' => 'nullable|string|in:Full-time,Part-time,Online',
-            
+
             // Certificates
             'certificates' => 'nullable|array',
             'certificates.*.name' => 'required|string|max:255',
-            
+
             // Languages
             'user_languages' => 'nullable|array',
             'user_languages.*.language_id' => 'required|string|exists:languages,id',
@@ -170,14 +170,14 @@ class StudentController extends Controller
                 // Create personal details
                 if (isset($validated['personal_detail'])) {
                     $personalDetailData = $validated['personal_detail'];
-                    
+
                     // Format date of birth
                     if (isset($personalDetailData['date_of_birth']) && !empty($personalDetailData['date_of_birth'])) {
                         $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime($personalDetailData['date_of_birth']));
                     } else {
                         $personalDetailData['date_of_birth'] = null;
                     }
-                    
+
                     $user->personalDetail()->create([
                         'user_id' => $user->id,
                         'gender' => $personalDetailData['gender'],
@@ -189,10 +189,10 @@ class StudentController extends Controller
 
                 // Create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], function($value) {
+                    $profileData = array_filter($validated['profile'], function ($value) {
                         return !is_null($value) && $value !== '';
                     });
-                    
+
                     if (!empty($profileData)) {
                         $user->profile()->create([
                             'user_id' => $user->id,
@@ -288,22 +288,23 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $student)
+    public function show(User $student): Response
     {
         $student->load([
-            'address.location',
-            'personalDetail',
-            'profile',
             'skills',
-            'workPermits',
+            'profile',
+            'resumes',
             'workExperiences.company',
             'educations',
-            'certificates',
-            'userLanguages.language'
+            'personalDetail',
+            'address.location',
+            'workPermits',
+            'userLanguages.language',
+            'certificates'
         ]);
 
-        return Inertia::render('admin/students/show', [
-            'student' => $student,
+        return Inertia::render('admin/students/student-profile', [
+            'user' => $student,
         ]);
     }
 
@@ -369,33 +370,33 @@ class StudentController extends Controller
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8',
             'avatar_url' => 'nullable|string|max:500',
-            
+
             // Address
             'address' => 'nullable|array',
             'address.location_id' => 'nullable|string|exists:locations,id',
-            
+
             // Personal Details
             'personal_detail' => 'nullable|array',
             'personal_detail.gender' => 'required|string|in:Male,Female,Other',
             'personal_detail.date_of_birth' => 'nullable|date|before:today',
             'personal_detail.marital_status' => 'nullable|string|in:Single/unmarried,Married',
             'personal_detail.differently_abled' => 'boolean',
-            
+
             // Profile
             'profile' => 'nullable|array',
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
             'profile.summary' => 'nullable|string|max:2000',
-            
+
             // Skills
             'skills' => 'nullable|array',
             'skills.*' => 'string|exists:skills,id',
-            
+
             // Work Permits
             'work_permits' => 'nullable|array',
             'work_permits.*' => 'string|max:255',
-            
+
             // Work Experiences
             'work_experiences' => 'nullable|array',
             'work_experiences.*.title' => 'required|string|max:255',
@@ -403,7 +404,7 @@ class StudentController extends Controller
             'work_experiences.*.start_date' => 'required|date',
             'work_experiences.*.end_date' => 'nullable|date|after_or_equal:work_experiences.*.start_date',
             'work_experiences.*.is_current' => 'boolean',
-            
+
             // Education
             'educations' => 'nullable|array',
             'educations.*.course_title' => 'required|string|max:255',
@@ -412,11 +413,11 @@ class StudentController extends Controller
             'educations.*.end_date' => 'nullable|date|after_or_equal:educations.*.start_date',
             'educations.*.is_current' => 'boolean',
             'educations.*.course_type' => 'nullable|string|in:Full-time,Part-time,Online',
-            
+
             // Certificates
             'certificates' => 'nullable|array',
             'certificates.*.name' => 'required|string|max:255',
-            
+
             // Languages
             'user_languages' => 'nullable|array',
             'user_languages.*.language_id' => 'required|string|exists:languages,id',
@@ -456,14 +457,14 @@ class StudentController extends Controller
                 // Update or create personal details
                 if (isset($validated['personal_detail'])) {
                     $personalDetailData = $validated['personal_detail'];
-                    
+
                     // Format date of birth
                     if (isset($personalDetailData['date_of_birth']) && !empty($personalDetailData['date_of_birth'])) {
                         $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime($personalDetailData['date_of_birth']));
                     } else {
                         $personalDetailData['date_of_birth'] = null;
                     }
-                    
+
                     $student->personalDetail()->updateOrCreate(
                         ['user_id' => $student->id],
                         [
@@ -477,10 +478,10 @@ class StudentController extends Controller
 
                 // Update or create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], function($value) {
+                    $profileData = array_filter($validated['profile'], function ($value) {
                         return !is_null($value) && $value !== '';
                     });
-                    
+
                     if (!empty($profileData)) {
                         $student->profile()->updateOrCreate(
                             ['user_id' => $student->id],
@@ -579,6 +580,40 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to update student: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Failed to update student. Please try again.'])->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(User $student): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($student) {
+                // Delete related records first (if not using cascade delete)
+                $student->address()->delete();
+                $student->personalDetail()->delete();
+                $student->profile()->delete();
+                $student->workPermits()->delete();
+                $student->workExperiences()->delete();
+                $student->educations()->delete();
+                $student->certificates()->delete();
+                $student->userLanguages()->delete();
+
+                // Detach many-to-many relationships
+                $student->skills()->detach();
+
+                // Remove roles
+                $student->removeRole('jobseeker');
+
+                // Finally delete the user
+                $student->delete();
+            });
+
+            return to_route('admin.students.index')->with('success', 'Student deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete student: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to delete student. Please try again.']);
         }
     }
 }
