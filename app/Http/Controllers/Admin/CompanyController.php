@@ -56,6 +56,7 @@ final class CompanyController extends Controller
             'types' => CompanyTypeEnum::options(),
             'industries' => $industries,
             'locations' => $locations,
+            'statusOptions' => VerificationStatusEnum::options(),
         ]);
     }
 
