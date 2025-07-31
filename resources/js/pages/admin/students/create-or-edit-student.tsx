@@ -135,7 +135,7 @@ const CreateOrEditStudent = ( {
                     company_id: we.company_id?.toString() || '',
                     company_name: we.company?.name || we.company_name || '',
                     title: we.title || '',
-                    start_date: we.start_date ? new Date( we.start_date ) : undefined,
+                    start_date: we.start_date ? new Date( we.start_date ) : new Date(),
                     end_date: we.end_date ? new Date( we.end_date ) : undefined,
                     is_current: we.is_current || false,
                 } ) ) || [],
@@ -143,7 +143,7 @@ const CreateOrEditStudent = ( {
                 student?.educations?.map( ( edu ) => ( {
                     course_title: edu.course_title || '',
                     institution: edu.institution || '',
-                    start_date: edu.start_date ? new Date( edu.start_date ) : undefined,
+                    start_date: edu.start_date ? new Date( edu.start_date ) : new Date(),
                     end_date: edu.end_date ? new Date( edu.end_date ) : undefined,
                     is_current: edu.is_current || false,
                     course_type: edu.course_type || '',
@@ -152,17 +152,17 @@ const CreateOrEditStudent = ( {
                 name: cert.name || '',
             } ) ) || [],
             user_languages:
-                student?.user_languages?.map((ul) => ({
+                student?.user_languages?.map( ( ul ) => ( {
                     language_id: ul.language?.id?.toString() || '',
                     proficiency: ul.proficiency || '',
                     can_read: ul.can_read || false,
                     can_write: ul.can_write || false,
                     can_speak: ul.can_speak || false,
-                })) || [],
+                } ) ) || [],
         },
     } );
 
-    const { control, handleSubmit, setError, reset } = form;
+    const { control, handleSubmit, setError, reset, formState } = form;
 
     // Initialize field arrays
     const workExperienceFields = useFieldArray( {
@@ -180,11 +180,10 @@ const CreateOrEditStudent = ( {
         name: "certificates"
     } );
 
-    // Change languageFields to useFieldArray for 'user_languages'
-    const languageFields = useFieldArray({
+    const languageFields = useFieldArray( {
         control,
         name: "user_languages"
-    });
+    } );
 
     const fetchOptions = useCallback( async ( endpoint: string, search: string ) => {
         try {
@@ -223,14 +222,76 @@ const CreateOrEditStudent = ( {
     }, [ locationSearch, locations, fetchOptions ] );
 
     const onSubmit = ( data: FormValues ) => {
+        // Field to tab mapping for error navigation
+        const fieldToTabMapping: Record<string, number> = {
+            // Account tab (index 0)
+            'name': 0,
+            'email': 0,
+            'phone': 0,
+            'password': 0,
+            'avatar_url': 0,
+
+            // Personal tab (index 1)
+            'address.location_id': 1,
+            'personal_detail.gender': 1,
+            'personal_detail.date_of_birth': 1,
+            'personal_detail.marital_status': 1,
+            'personal_detail.differently_abled': 1,
+
+            // Profile tab (index 2)
+            'profile.job_title': 2,
+            'profile.experience': 2,
+            'profile.notice_period': 2,
+            'profile.summary': 2,
+
+            // Skills tab (index 3)
+            'skills': 3,
+
+            // Employment tab (index 4)
+            'work_permits': 4,
+            'work_experiences': 4,
+
+            // Education tab (index 5)
+            'educations': 5,
+
+            // Certifications tab (index 6)
+            'certificates': 6,
+
+            // Languages tab (index 7)
+            'user_languages': 7,
+        };
+
         const handleErrors = ( errors: any ) => {
             if ( errors && typeof errors === 'object' ) {
+                let firstErrorTab = -1;
+
                 Object.entries( errors ).forEach( ( [ field, message ] ) => {
-                    setError( field as keyof FormValues, {
+                    setError( field as any, {
                         type: 'server',
                         message: message as string,
                     } );
+
+                    // Find the tab for this field
+                    let tabIndex = fieldToTabMapping[ field ];
+
+                    // Handle nested array errors (e.g., work_experiences.0.title)
+                    if ( tabIndex === undefined ) {
+                        const fieldParts = field.split( '.' );
+                        if ( fieldParts.length >= 2 ) {
+                            const baseField = fieldParts[ 0 ];
+                            tabIndex = fieldToTabMapping[ baseField ];
+                        }
+                    }
+
+                    if ( tabIndex !== undefined && firstErrorTab === -1 ) {
+                        firstErrorTab = tabIndex;
+                    }
                 } );
+
+                // Navigate to the first tab with an error
+                if ( firstErrorTab !== -1 ) {
+                    setCurrentStep( firstErrorTab );
+                }
             }
         };
 
@@ -238,14 +299,20 @@ const CreateOrEditStudent = ( {
             ...data,
             work_experiences: data.work_experiences?.map( we => ( {
                 ...we,
-                start_date: we.start_date ? we.start_date.toISOString() : undefined,
-                end_date: we.end_date ? we.end_date.toISOString() : undefined,
+                start_date: we.start_date ? we.start_date.toISOString().split( 'T' )[ 0 ] : undefined,
+                end_date: we.end_date ? we.end_date.toISOString().split( 'T' )[ 0 ] : undefined,
             } ) ),
             educations: data.educations?.map( edu => ( {
                 ...edu,
-                start_date: edu.start_date ? edu.start_date.toISOString() : undefined,
-                end_date: edu.end_date ? edu.end_date.toISOString() : undefined,
+                start_date: edu.start_date ? edu.start_date.toISOString().split( 'T' )[ 0 ] : undefined,
+                end_date: edu.end_date ? edu.end_date.toISOString().split( 'T' )[ 0 ] : undefined,
             } ) ),
+            personal_detail: {
+                ...data.personal_detail,
+                date_of_birth: data.personal_detail.date_of_birth
+                    ? data.personal_detail.date_of_birth.toISOString().split( 'T' )[ 0 ]
+                    : undefined,
+            }
         };
 
         const routes = {
@@ -276,21 +343,63 @@ const CreateOrEditStudent = ( {
         { label: 'Review', key: 'review' },
     ];
 
-    const [currentStep, setCurrentStep] = useState(0);
+    const [ currentStep, setCurrentStep ] = useState( 0 );
+
+    // Helper function to check if a field has an error
+    const hasFieldError = ( fieldName: string ) => {
+        const fieldParts = fieldName.split( '.' );
+        let errors = formState.errors as any;
+
+        for ( const part of fieldParts ) {
+            if ( errors && typeof errors === 'object' && part in errors ) {
+                errors = errors[ part ];
+            } else {
+                return false;
+            }
+        }
+
+        return !!errors;
+    };
+
+    // Scroll to first error field when tab changes due to validation errors
+    useEffect( () => {
+        const timer = setTimeout( () => {
+            const firstErrorField = document.querySelector( '[data-error="true"]' );
+            if ( firstErrorField ) {
+                firstErrorField.scrollIntoView( {
+                    behavior: 'smooth',
+                    block: 'center'
+                } );
+            }
+        }, 100 );
+
+        return () => clearTimeout( timer );
+    }, [ currentStep ] );
+
+    // Format date helper function
+    const formatDateSafely = ( date: Date | string | undefined ) => {
+        if ( !date ) return 'N/A';
+        try {
+            const dateObj = date instanceof Date ? date : new Date( date );
+            return isNaN( dateObj.getTime() ) ? 'N/A' : format( dateObj, 'PPP' );
+        } catch {
+            return 'N/A';
+        }
+    };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${operation} student`} />
-            <div className="flex flex-1 flex-col gap-6 rounded-xl p-2 sm:p-6 w-full max-w-3xl mx-auto bg-background shadow-md">
-                <Form {...form}>
-                    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-                        {/* Stepper at the top, sticky and mobile-friendly */}
-                        <Stepper steps={steps} currentStep={currentStep} />
+        <AppLayout breadcrumbs={ breadcrumbs }>
+            <Head title={ `${ operation } student` } />
+            <div className="flex flex-1 flex-col gap-6 rounded-xl p-2 sm:p-6 w-full max-w-3xl mx-auto">
+                <Form { ...form }>
+                    <form onSubmit={ handleSubmit( onSubmit ) } className="w-full">
+                        {/* Stepper at the top, sticky and mobile-friendly */ }
+                        <Stepper steps={ steps } currentStep={ currentStep } />
                         <div className="w-full px-1 sm:px-0 mb-4">
-                            <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2 sm:h-2.5 rounded-full" />
+                            <Progress value={ ( ( currentStep + 1 ) / steps.length ) * 100 } className="h-2 sm:h-2.5 rounded-full" />
                         </div>
-                        <Tabs value={steps[currentStep].key} className="w-full">
-                            {/* Step 1: Account */}
+                        <Tabs value={ steps[ currentStep ].key } className="w-full">
+                            {/* Step 1: Account */ }
                             <TabsContent value="account" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Account Details</CardTitle>
@@ -304,7 +413,12 @@ const CreateOrEditStudent = ( {
                                                     <FormItem>
                                                         <FormLabel>Full name</FormLabel>
                                                         <FormControl>
-                                                            <Input type="text" { ...field } autoComplete="name" />
+                                                            <Input
+                                                                type="text"
+                                                                { ...field }
+                                                                autoComplete="name"
+                                                                data-error={ hasFieldError( 'name' ) ? 'true' : 'false' }
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -317,7 +431,12 @@ const CreateOrEditStudent = ( {
                                                     <FormItem>
                                                         <FormLabel>Email</FormLabel>
                                                         <FormControl>
-                                                            <Input type="email" { ...field } autoComplete="email" />
+                                                            <Input
+                                                                type="email"
+                                                                { ...field }
+                                                                autoComplete="email"
+                                                                data-error={ hasFieldError( 'email' ) ? 'true' : 'false' }
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -330,7 +449,11 @@ const CreateOrEditStudent = ( {
                                                     <FormItem>
                                                         <FormLabel>Phone</FormLabel>
                                                         <FormControl>
-                                                            <PhoneInput type='tel' { ...field } />
+                                                            <PhoneInput
+                                                                type='tel'
+                                                                { ...field }
+                                                                data-error={ hasFieldError( 'phone' ) ? 'true' : 'false' }
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -343,7 +466,11 @@ const CreateOrEditStudent = ( {
                                                     <FormItem>
                                                         <FormLabel>Password</FormLabel>
                                                         <FormControl>
-                                                            <Input type="password" { ...field } />
+                                                            <Input
+                                                                type="password"
+                                                                { ...field }
+                                                                data-error={ hasFieldError( 'password' ) ? 'true' : 'false' }
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -354,12 +481,13 @@ const CreateOrEditStudent = ( {
                                 </Card>
                                 <div className="flex justify-between mt-4">
                                     <span />
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 2: Personal */}
+
+                            {/* Step 2: Personal */ }
                             <TabsContent value="personal" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Personal Details</CardTitle>
@@ -373,7 +501,7 @@ const CreateOrEditStudent = ( {
                                                     <FormLabel>Gender</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={ field.onChange } value={ field.value }>
-                                                            <SelectTrigger>
+                                                            <SelectTrigger data-error={ hasFieldError( 'personal_detail.gender' ) ? 'true' : 'false' }>
                                                                 <SelectValue placeholder="Select gender" />
                                                             </SelectTrigger>
                                                             <SelectContent>
@@ -396,7 +524,7 @@ const CreateOrEditStudent = ( {
                                                     <FormLabel>Marital Status</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={ field.onChange } value={ field.value }>
-                                                            <SelectTrigger>
+                                                            <SelectTrigger data-error={ hasFieldError( 'personal_detail.marital_status' ) ? 'true' : 'false' }>
                                                                 <SelectValue placeholder="Select marital status" />
                                                             </SelectTrigger>
                                                             <SelectContent>
@@ -423,6 +551,7 @@ const CreateOrEditStudent = ( {
                                                                     <Button
                                                                         variant="outline"
                                                                         className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                        data-error={ hasFieldError( 'personal_detail.date_of_birth' ) ? 'true' : 'false' }
                                                                     >
                                                                         { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
                                                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -454,6 +583,7 @@ const CreateOrEditStudent = ( {
                                                         <Checkbox
                                                             checked={ field.value }
                                                             onCheckedChange={ field.onChange }
+                                                            data-error={ hasFieldError( 'personal_detail.differently_abled' ) ? 'true' : 'false' }
                                                         />
                                                     </FormControl>
                                                     <FormLabel className="text-sm font-normal">
@@ -470,19 +600,21 @@ const CreateOrEditStudent = ( {
                                             label="Address"
                                             placeholder="Select Address"
                                             onValueChange={ setLocationSearch }
+                                            data-error={ hasFieldError( 'address.location_id' ) ? 'true' : 'false' }
                                         />
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 3: Profile */}
+
+                            {/* Step 3: Profile */ }
                             <TabsContent value="profile" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Profile</CardTitle>
@@ -495,7 +627,11 @@ const CreateOrEditStudent = ( {
                                                 <FormItem>
                                                     <FormLabel>Experience</FormLabel>
                                                     <FormControl>
-                                                        <Input type="text" { ...field } />
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.experience' ) ? 'true' : 'false' }
+                                                        />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -509,7 +645,11 @@ const CreateOrEditStudent = ( {
                                                 <FormItem>
                                                     <FormLabel>Notice Period</FormLabel>
                                                     <FormControl>
-                                                        <Input type="text" { ...field } />
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.notice_period' ) ? 'true' : 'false' }
+                                                        />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -523,7 +663,28 @@ const CreateOrEditStudent = ( {
                                                 <FormItem>
                                                     <FormLabel>Job Title</FormLabel>
                                                     <FormControl>
-                                                        <Input type="text" { ...field } />
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.job_title' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="profile.summary"
+                                            render={ ( { field } ) => (
+                                                <FormItem className="md:col-span-2">
+                                                    <FormLabel>Summary</FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.summary' ) ? 'true' : 'false' }
+                                                        />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -532,15 +693,16 @@ const CreateOrEditStudent = ( {
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 4: Skills */}
+
+                            {/* Step 4: Skills */ }
                             <TabsContent value="skills" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Skills</CardTitle>
@@ -553,9 +715,9 @@ const CreateOrEditStudent = ( {
                                                 <FormLabel>Skills</FormLabel>
                                                 <FormControl>
                                                     <MultipleSelector
-                                                        options={skillOptions}
-                                                        value={skillOptions.filter(opt => field.value.includes(opt.value))}
-                                                        onChange={opts => field.onChange(opts.map(opt => opt.value))}
+                                                        options={ skillOptions }
+                                                        value={ skillOptions.filter( opt => field.value.includes( opt.value ) ) }
+                                                        onChange={ opts => field.onChange( opts.map( opt => opt.value ) ) }
                                                         triggerSearchOnFocus
                                                         placeholder="Search skill..."
                                                         loadingIndicator={
@@ -564,6 +726,7 @@ const CreateOrEditStudent = ( {
                                                         emptyIndicator={
                                                             <p className="text-muted-foreground w-full text-center">No skills found</p>
                                                         }
+                                                        data-error={ hasFieldError( 'skills' ) ? 'true' : 'false' }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -572,15 +735,16 @@ const CreateOrEditStudent = ( {
                                     />
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 5: Employment */}
+
+                            {/* Step 5: Employment */ }
                             <TabsContent value="employment" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Employment</CardTitle>
@@ -607,7 +771,7 @@ const CreateOrEditStudent = ( {
                                                             <FormItem>
                                                                 <FormLabel>Job Title</FormLabel>
                                                                 <FormControl>
-                                                                    <Input { ...field } />
+                                                                    <Input { ...field } data-error={ hasFieldError( `work_experiences.${ index }.title` ) ? 'true' : 'false' } />
                                                                 </FormControl>
                                                                 <FormMessage />
                                                             </FormItem>
@@ -620,7 +784,7 @@ const CreateOrEditStudent = ( {
                                                             <FormItem>
                                                                 <FormLabel>Company</FormLabel>
                                                                 <FormControl>
-                                                                    <Input { ...field } />
+                                                                    <Input { ...field } data-error={ hasFieldError( `work_experiences.${ index }.company_name` ) ? 'true' : 'false' } />
                                                                 </FormControl>
                                                                 <FormMessage />
                                                             </FormItem>
@@ -639,6 +803,7 @@ const CreateOrEditStudent = ( {
                                                                                 <Button
                                                                                     variant="outline"
                                                                                     className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    data-error={ hasFieldError( `work_experiences.${ index }.start_date` ) ? 'true' : 'false' }
                                                                                 >
                                                                                     { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
                                                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -674,6 +839,7 @@ const CreateOrEditStudent = ( {
                                                                                     variant="outline"
                                                                                     className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
                                                                                     disabled={ form.watch( `work_experiences.${ index }.is_current` ) }
+                                                                                    data-error={ hasFieldError( `work_experiences.${ index }.end_date` ) ? 'true' : 'false' }
                                                                                 >
                                                                                     { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
                                                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -704,6 +870,7 @@ const CreateOrEditStudent = ( {
                                                                     <Checkbox
                                                                         checked={ field.value }
                                                                         onCheckedChange={ field.onChange }
+                                                                        data-error={ hasFieldError( `work_experiences.${ index }.is_current` ) ? 'true' : 'false' }
                                                                     />
                                                                 </FormControl>
                                                                 <div className="space-y-1 leading-none">
@@ -732,15 +899,16 @@ const CreateOrEditStudent = ( {
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 6: Education */}
+
+                            {/* Step 6: Education */ }
                             <TabsContent value="education" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Education</CardTitle>
@@ -767,7 +935,7 @@ const CreateOrEditStudent = ( {
                                                             <FormItem>
                                                                 <FormLabel>Course Title</FormLabel>
                                                                 <FormControl>
-                                                                    <Input { ...field } />
+                                                                    <Input { ...field } data-error={ hasFieldError( `educations.${ index }.course_title` ) ? 'true' : 'false' } />
                                                                 </FormControl>
                                                                 <FormMessage />
                                                             </FormItem>
@@ -780,7 +948,7 @@ const CreateOrEditStudent = ( {
                                                             <FormItem>
                                                                 <FormLabel>Institution</FormLabel>
                                                                 <FormControl>
-                                                                    <Input { ...field } />
+                                                                    <Input { ...field } data-error={ hasFieldError( `educations.${ index }.institution` ) ? 'true' : 'false' } />
                                                                 </FormControl>
                                                                 <FormMessage />
                                                             </FormItem>
@@ -794,7 +962,7 @@ const CreateOrEditStudent = ( {
                                                                 <FormLabel>Course Type</FormLabel>
                                                                 <FormControl>
                                                                     <Select onValueChange={ field.onChange } value={ field.value }>
-                                                                        <SelectTrigger>
+                                                                        <SelectTrigger data-error={ hasFieldError( `educations.${ index }.course_type` ) ? 'true' : 'false' }>
                                                                             <SelectValue placeholder="Select course type" />
                                                                         </SelectTrigger>
                                                                         <SelectContent>
@@ -821,6 +989,7 @@ const CreateOrEditStudent = ( {
                                                                                 <Button
                                                                                     variant="outline"
                                                                                     className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    data-error={ hasFieldError( `educations.${ index }.start_date` ) ? 'true' : 'false' }
                                                                                 >
                                                                                     { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
                                                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -856,6 +1025,7 @@ const CreateOrEditStudent = ( {
                                                                                     variant="outline"
                                                                                     className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
                                                                                     disabled={ form.watch( `educations.${ index }.is_current` ) }
+                                                                                    data-error={ hasFieldError( `educations.${ index }.end_date` ) ? 'true' : 'false' }
                                                                                 >
                                                                                     { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
                                                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -886,6 +1056,7 @@ const CreateOrEditStudent = ( {
                                                                     <Checkbox
                                                                         checked={ field.value }
                                                                         onCheckedChange={ field.onChange }
+                                                                        data-error={ hasFieldError( `educations.${ index }.is_current` ) ? 'true' : 'false' }
                                                                     />
                                                                 </FormControl>
                                                                 <div className="space-y-1 leading-none">
@@ -915,15 +1086,16 @@ const CreateOrEditStudent = ( {
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 7: Certifications */}
+
+                            {/* Step 7: Certifications */ }
                             <TabsContent value="certifications" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Certifications</CardTitle>
@@ -949,7 +1121,7 @@ const CreateOrEditStudent = ( {
                                                         <FormItem>
                                                             <FormLabel>Certification Name</FormLabel>
                                                             <FormControl>
-                                                                <Input { ...field } />
+                                                                <Input { ...field } data-error={ hasFieldError( `certificates.${ index }.name` ) ? 'true' : 'false' } />
                                                             </FormControl>
                                                             <FormMessage />
                                                         </FormItem>
@@ -967,15 +1139,16 @@ const CreateOrEditStudent = ( {
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 8: Languages */}
+
+                            {/* Step 8: Languages */ }
                             <TabsContent value="languages" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Languages</CardTitle>
@@ -1003,7 +1176,7 @@ const CreateOrEditStudent = ( {
                                                                 <FormLabel>Language</FormLabel>
                                                                 <FormControl>
                                                                     <Select onValueChange={ field.onChange } value={ field.value }>
-                                                                        <SelectTrigger>
+                                                                        <SelectTrigger data-error={ hasFieldError( `user_languages.${ index }.language_id` ) ? 'true' : 'false' }>
                                                                             <SelectValue placeholder="Select language" />
                                                                         </SelectTrigger>
                                                                         <SelectContent>
@@ -1027,13 +1200,14 @@ const CreateOrEditStudent = ( {
                                                                 <FormLabel>Proficiency</FormLabel>
                                                                 <FormControl>
                                                                     <Select onValueChange={ field.onChange } value={ field.value }>
-                                                                        <SelectTrigger>
+                                                                        <SelectTrigger data-error={ hasFieldError( `user_languages.${ index }.proficiency` ) ? 'true' : 'false' }>
                                                                             <SelectValue placeholder="Select proficiency" />
                                                                         </SelectTrigger>
                                                                         <SelectContent>
-                                                                            <SelectItem value="basic">Basic</SelectItem>
+                                                                            <SelectItem value="beginner">Beginner</SelectItem>
                                                                             <SelectItem value="intermediate">Intermediate</SelectItem>
-                                                                            <SelectItem value="advanced">Advanced</SelectItem>
+                                                                            <SelectItem value="proficient">Proficient</SelectItem>
+                                                                            <SelectItem value="fluent">Fluent</SelectItem>
                                                                             <SelectItem value="native">Native</SelectItem>
                                                                         </SelectContent>
                                                                     </Select>
@@ -1054,6 +1228,7 @@ const CreateOrEditStudent = ( {
                                                                             <Checkbox
                                                                                 checked={ field.value }
                                                                                 onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_read` ) ? 'true' : 'false' }
                                                                             />
                                                                         </FormControl>
                                                                         <FormLabel>Can Read</FormLabel>
@@ -1069,6 +1244,7 @@ const CreateOrEditStudent = ( {
                                                                             <Checkbox
                                                                                 checked={ field.value }
                                                                                 onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_write` ) ? 'true' : 'false' }
                                                                             />
                                                                         </FormControl>
                                                                         <FormLabel>Can Write</FormLabel>
@@ -1084,6 +1260,7 @@ const CreateOrEditStudent = ( {
                                                                             <Checkbox
                                                                                 checked={ field.value }
                                                                                 onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_speak` ) ? 'true' : 'false' }
                                                                             />
                                                                         </FormControl>
                                                                         <FormLabel>Can Speak</FormLabel>
@@ -1111,15 +1288,16 @@ const CreateOrEditStudent = ( {
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
                                         Next
                                     </Button>
                                 </div>
                             </TabsContent>
-                            {/* Step 9: Review */}
+
+                            {/* Step 9: Review */ }
                             <TabsContent value="review" className="w-full">
                                 <Card className="p-4 sm:p-6">
                                     <CardTitle>Review & Submit</CardTitle>
@@ -1127,107 +1305,91 @@ const CreateOrEditStudent = ( {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <h3 className="font-medium">Account Details</h3>
-                                            <p><strong>Name:</strong> {form.watch('name')}</p>
-                                            <p><strong>Email:</strong> {form.watch('email')}</p>
-                                            <p><strong>Phone:</strong> {form.watch('phone')}</p>
-                                            <p><strong>Password:</strong> {form.watch('password') ? 'Set' : 'Not Set'}</p>
+                                            <p><strong>Name:</strong> { form.watch( 'name' ) }</p>
+                                            <p><strong>Email:</strong> { form.watch( 'email' ) }</p>
+                                            <p><strong>Phone:</strong> { form.watch( 'phone' ) }</p>
+                                            <p><strong>Password:</strong> { form.watch( 'password' ) ? 'Set' : 'Not Set' }</p>
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Personal Details</h3>
-                                            <p><strong>Gender:</strong> {form.watch('personal_detail.gender')}</p>
-                                            <p><strong>Marital Status:</strong> {form.watch('personal_detail.marital_status')}</p>
-                                            <p><strong>Date of Birth:</strong> {(() => {
-  const dob = form.watch('personal_detail.date_of_birth');
-  if (!dob) return 'N/A';
-  const dateObj = dob instanceof Date ? dob : new Date(dob);
-  return isNaN(dateObj.getTime()) ? 'N/A' : format(dateObj, 'PPP');
-})()}</p>
-                                            <p><strong>Differently Abled:</strong> {form.watch('personal_detail.differently_abled') ? 'Yes' : 'No'}</p>
-                                            <p><strong>Address:</strong> {form.watch('address.location_id') ? locationOptions.find(loc => loc.value === form.watch('address.location_id'))?.label : 'N/A'}</p>
+                                            <p><strong>Gender:</strong> { form.watch( 'personal_detail.gender' ) }</p>
+                                            <p><strong>Marital Status:</strong> { form.watch( 'personal_detail.marital_status' ) }</p>
+                                            <p><strong>Date of Birth:</strong> { formatDateSafely( form.watch( 'personal_detail.date_of_birth' ) ) }</p>
+                                            <p><strong>Differently Abled:</strong> { form.watch( 'personal_detail.differently_abled' ) ? 'Yes' : 'No' }</p>
+                                            <p><strong>Address:</strong> { form.watch( 'address.location_id' ) ? locationOptions.find( loc => loc.value === form.watch( 'address.location_id' ) )?.label : 'N/A' }</p>
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Profile</h3>
-                                            <p><strong>Job Title:</strong> {form.watch('profile.job_title')}</p>
-                                            <p><strong>Experience:</strong> {form.watch('profile.experience')}</p>
-                                            <p><strong>Notice Period:</strong> {form.watch('profile.notice_period')}</p>
-                                            <p><strong>Summary:</strong> {form.watch('profile.summary')}</p>
+                                            <p><strong>Job Title:</strong> { form.watch( 'profile.job_title' ) }</p>
+                                            <p><strong>Experience:</strong> { form.watch( 'profile.experience' ) }</p>
+                                            <p><strong>Notice Period:</strong> { form.watch( 'profile.notice_period' ) }</p>
+                                            <p><strong>Summary:</strong> { form.watch( 'profile.summary' ) }</p>
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Skills</h3>
-                                            <p>{form.watch('skills').map(skill => skillOptions.find(opt => opt.value === skill)?.label).join(', ')}</p>
+                                            <p>{ form.watch( 'skills' ).map( skill => skillOptions.find( opt => opt.value === skill )?.label ).join( ', ' ) }</p>
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Employment</h3>
-                                            {workExperienceFields.fields.map((we, index) => (
-                                                <div key={we.id} className="border-b last:border-b-0 py-2">
-                                                    <p><strong>Experience {index + 1}:</strong> {form.watch(`work_experiences.${index}.title`)} at {form.watch(`work_experiences.${index}.company_name`)}</p>
-                                                    <p>Start: {(() => {
-  const val = form.watch(`work_experiences.${index}.start_date`);
-  if (!val) return 'N/A';
-  const dateObj = val instanceof Date ? val : new Date(val);
-  return isNaN(dateObj.getTime()) ? 'N/A' : format(dateObj, 'PPP');
-})()}</p>
-                                                    <p>End: {(() => {
-  const val = form.watch(`work_experiences.${index}.end_date`);
-  if (!val) return 'N/A';
-  const dateObj = val instanceof Date ? val : new Date(val);
-  return isNaN(dateObj.getTime()) ? 'N/A' : format(dateObj, 'PPP');
-})()}</p>
-                                                    <p>Current: {form.watch(`work_experiences.${index}.is_current`) ? 'Yes' : 'No'}</p>
+                                            { workExperienceFields.fields.map( ( we, index ) => (
+                                                <div key={ we.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Experience { index + 1 }:</strong> { form.watch( `work_experiences.${ index }.title` ) } at { form.watch( `work_experiences.${ index }.company_name` ) }</p>
+                                                    <p>Start: { formatDateSafely( form.watch( `work_experiences.${ index }.start_date` ) ) }</p>
+                                                    <p>End: { formatDateSafely( form.watch( `work_experiences.${ index }.end_date` ) ) }</p>
+                                                    <p>Current: { form.watch( `work_experiences.${ index }.is_current` ) ? 'Yes' : 'No' }</p>
                                                 </div>
-                                            ))}
+                                            ) ) }
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Education</h3>
-                                            {educationFields.fields.map((edu, index) => (
-                                                <div key={edu.id} className="border-b last:border-b-0 py-2">
-                                                    <p><strong>Education {index + 1}:</strong> {form.watch(`educations.${index}.course_title`)} at {form.watch(`educations.${index}.institution`)}</p>
-                                                    <p>Course Type: {form.watch(`educations.${index}.course_type`)}</p>
-                                                    <p>Start: {(() => {
-  const val = form.watch(`educations.${index}.start_date`);
-  if (!val) return 'N/A';
-  const dateObj = val instanceof Date ? val : new Date(val);
-  return isNaN(dateObj.getTime()) ? 'N/A' : format(dateObj, 'PPP');
-})()}</p>
-                                                    <p>End: {(() => {
-  const val = form.watch(`educations.${index}.end_date`);
-  if (!val) return 'N/A';
-  const dateObj = val instanceof Date ? val : new Date(val);
-  return isNaN(dateObj.getTime()) ? 'N/A' : format(dateObj, 'PPP');
-})()}</p>
-                                                    <p>Current: {form.watch(`educations.${index}.is_current`) ? 'Yes' : 'No'}</p>
+                                            { educationFields.fields.map( ( edu, index ) => (
+                                                <div key={ edu.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Education { index + 1 }:</strong> { form.watch( `educations.${ index }.course_title` ) } at { form.watch( `educations.${ index }.institution` ) }</p>
+                                                    <p>Course Type: { form.watch( `educations.${ index }.course_type` ) }</p>
+                                                    <p>Start: { formatDateSafely( form.watch( `educations.${ index }.start_date` ) ) }</p>
+                                                    <p>End: { formatDateSafely( form.watch( `educations.${ index }.end_date` ) ) }</p>
+                                                    <p>Current: { form.watch( `educations.${ index }.is_current` ) ? 'Yes' : 'No' }</p>
                                                 </div>
-                                            ))}
+                                            ) ) }
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Certifications</h3>
-                                            {certificateFields.fields.map((cert, index) => (
-                                                <div key={cert.id} className="border-b last:border-b-0 py-2">
-                                                    <p><strong>Certification {index + 1}:</strong> {form.watch(`certificates.${index}.name`)}</p>
+                                            { certificateFields.fields.map( ( cert, index ) => (
+                                                <div key={ cert.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Certification { index + 1 }:</strong> { form.watch( `certificates.${ index }.name` ) }</p>
                                                 </div>
-                                            ))}
+                                            ) ) }
                                         </div>
                                         <div>
                                             <h3 className="font-medium">Languages</h3>
-                                            {languageFields.fields.map((lang, index) => (
-                                                <div key={lang.id} className="border-b last:border-b-0 py-2">
-                                                    <p><strong>Language {index + 1}:</strong> {languages.find(l => l.value === form.watch(`user_languages.${index}.language_id`))?.label} - Proficiency: {form.watch(`user_languages.${index}.proficiency`)}</p>
-                                                    <p>Can Read: {form.watch(`user_languages.${index}.can_read`) ? 'Yes' : 'No'}</p>
-                                                    <p>Can Write: {form.watch(`user_languages.${index}.can_write`) ? 'Yes' : 'No'}</p>
-                                                    <p>Can Speak: {form.watch(`user_languages.${index}.can_speak`) ? 'Yes' : 'No'}</p>
+                                            { languageFields.fields.map( ( lang, index ) => (
+                                                <div key={ lang.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Language { index + 1 }:</strong> { languages.find( l => l.value === form.watch( `user_languages.${ index }.language_id` ) )?.label } - Proficiency: { form.watch( `user_languages.${ index }.proficiency` ) }</p>
+                                                    <p>Can Read: { form.watch( `user_languages.${ index }.can_read` ) ? 'Yes' : 'No' }</p>
+                                                    <p>Can Write: { form.watch( `user_languages.${ index }.can_write` ) ? 'Yes' : 'No' }</p>
+                                                    <p>Can Speak: { form.watch( `user_languages.${ index }.can_speak` ) ? 'Yes' : 'No' }</p>
                                                 </div>
-                                            ))}
+                                            ) ) }
                                         </div>
                                     </div>
                                 </Card>
                                 <div className="flex justify-between mt-4">
-                                    <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
                                         Back
                                     </Button>
-                                    <Button type="submit">{operationLabel}</Button>
+                                    <Button type="submit">{ operationLabel }</Button>
                                 </div>
                             </TabsContent>
                         </Tabs>
+
+                        {/* Delete Alert */ }
+                        { operation === 'Edit' && (
+                            <DeleteAlert
+                                alertOpen={ alertOpen }
+                                setAlertOpen={ setAlertOpen }
+                                onDelete={ handleDelete }
+                            />
+                        ) }
                     </form>
                 </Form>
             </div>
