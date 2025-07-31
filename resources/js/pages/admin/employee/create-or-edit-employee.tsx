@@ -14,6 +14,7 @@ interface Props {
     employee?: User;
     operation: Option;
     companyOptions: Option[];
+    verificationStatusOptions: Option[];
     errors?: Record<string, string>;
 }
 
@@ -27,7 +28,7 @@ interface FormValues {
     verification_status: string;
 }
 
-const CreateOrEditEmployee = ( { employee, operation, companyOptions, errors: serverErrors }: Props ) => {
+const CreateOrEditEmployee = ( { employee, operation, companyOptions, verificationStatusOptions, errors: serverErrors }: Props ) => {
     const [ alertOpen, setAlertOpen ] = useState( false );
     const isEditMode = operation.value === 'Edit';
 
@@ -209,11 +210,7 @@ const CreateOrEditEmployee = ( { employee, operation, companyOptions, errors: se
                             control={ form.control }
                             label="Verification Status"
                             placeholder="Select status"
-                            options={ [
-                                { label: 'Pending', value: 'pending' },
-                                { label: 'Approved', value: 'approved' },
-                                { label: 'Rejected', value: 'rejected' },
-                            ] }
+                            options={ verificationStatusOptions }
                             rules={ { required: 'Verification status is required' } }
                         />
 

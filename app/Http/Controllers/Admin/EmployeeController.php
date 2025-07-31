@@ -48,7 +48,8 @@ final class EmployeeController extends Controller
 
         return Inertia::render('admin/employee/create-or-edit-employee', [
             'operation' => $operation,
-            'companyOptions' => $companyOptions
+            'companyOptions' => $companyOptions,
+            'verificationStatusOptions' => VerificationStatusEnum::options()
         ]);
     }
 
@@ -114,7 +115,8 @@ final class EmployeeController extends Controller
         return Inertia::render('admin/employee/create-or-edit-employee', [
             'employee' => $employee->load(['profile', 'companyUsers']),
             'operation' => $operation,
-            'companyOptions' => $companyOptions
+            'companyOptions' => $companyOptions,
+            'verificationStatusOptions' => VerificationStatusEnum::options()
         ]);
     }
 
