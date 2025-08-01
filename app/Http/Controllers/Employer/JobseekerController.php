@@ -38,7 +38,7 @@ final class JobseekerController extends Controller
     public function show(User $user): Response
     {
         $user->load(['skills', 'profile', 'resumes', 'workExperiences.company', 'educations', 'personalDetail', 'address.location', 'workPermits', 'userLanguages.language', 'certificates']);
-        $resume = $user->resumes()->with('media')->where('is_default', true)->first();
+        $resume = $user->resumes()->with('media')->latest()->first();
 
         return Inertia::render('employer/jobseeker-profile', [
             'user' => $user,
