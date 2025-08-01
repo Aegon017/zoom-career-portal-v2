@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Models\Skill;
 use App\Models\Language;
 use App\Enums\OperationsEnum;
+use App\Exports\StudentsExport;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -615,5 +617,10 @@ class StudentController extends Controller
             Log::error('Failed to delete student: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Failed to delete student. Please try again.']);
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new StudentsExport, 'students.xlsx');
     }
 }
