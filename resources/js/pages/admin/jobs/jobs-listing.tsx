@@ -25,21 +25,22 @@ interface Props {
     };
 }
 
-export default function jobsListing({ jobs, filters }: Props) {
+export default function jobsListing( { jobs, filters }: Props ) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="jobs" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
-                    columns={columns}
-                    data={jobs.data}
-                    pagination={{
+                    hasCreate={ false }
+                    columns={ columns }
+                    data={ jobs.data }
+                    pagination={ {
                         current_page: jobs.current_page,
                         last_page: jobs.last_page,
                         per_page: jobs.per_page,
                         total: jobs.total,
-                    }}
-                    filters={filters}
+                    } }
+                    filters={ filters }
                     routeName=""
                     listingName="job"
                     createUrl=""
