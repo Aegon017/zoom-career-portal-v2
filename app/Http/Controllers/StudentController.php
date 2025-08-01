@@ -295,7 +295,7 @@ class StudentController extends Controller
         $student->load([
             'skills',
             'profile',
-            'resumes',
+            'resumes.media',
             'workExperiences.company',
             'educations',
             'personalDetail',

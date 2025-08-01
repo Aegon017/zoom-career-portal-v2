@@ -23,7 +23,7 @@ export default function StudentProfile( { user }: { user: User } ) {
     const getInitials = useInitials();
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title={ `${ user.name }'s Profile` } />
             <div className="max-w-6xl mx-auto px-4 py-8">
                 <div className="relative mb-16">
@@ -77,29 +77,30 @@ export default function StudentProfile( { user }: { user: User } ) {
                         </Card>
 
                         <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-3">
+                            <CardHeader className="flex flex-row items-center justify-between">
                                 <CardTitle className="flex items-center gap-2 text-primary">
                                     <FileText className="h-5 w-5" />
                                     <span>Resume</span>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex items-center justify-between bg-muted rounded-lg p-4">
-                                    <div>
-                                        <div className="font-medium text-foreground">
-                                            sarahstefanski.pdf
+                                { user.resumes.map( ( resume, index ) => (
+                                    <div key={ index } className="flex items-center justify-between bg-muted rounded-lg p-4 mb-2">
+                                        <div>
+                                            <div className="font-medium text-foreground">
+                                                { resume.media[ 0 ].name }
+                                            </div>
+                                            <div className="text-sm text-muted-foreground mt-1">
+                                                { format( new Date( resume.updated_at ), 'dd MMM yyyy' ) }
+                                            </div>
                                         </div>
-                                        <div className="text-sm text-muted-foreground mt-1">
-                                            Uploaded on May 16, 2025
-                                        </div>
+                                        <a href={ resume.resume_url ? resume.resume_url : '' }>
+                                            <Button variant="outline">
+                                                <FileText className="h-4 w-4 mr-2" /> View
+                                            </Button>
+                                        </a>
                                     </div>
-                                    <Button variant="outline">
-                                        <FileText className="h-4 w-4 mr-2" /> View
-                                    </Button>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-3">
-                                    Supported Formats: PDF up to 1 MB
-                                </p>
+                                ) ) }
                             </CardContent>
                         </Card>
 
@@ -251,9 +252,11 @@ export default function StudentProfile( { user }: { user: User } ) {
                                     <div className="bg-muted p-2 rounded-lg">
                                         <Mail className="h-5 w-5 text-primary" />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <h4 className="text-sm text-muted-foreground">Email</h4>
-                                        <p className="font-medium text-foreground">{ user.email }</p>
+                                        <p className="font-medium text-foreground break-words whitespace-normal">
+                                            { user.email }
+                                        </p>
                                     </div>
                                 </div>
 

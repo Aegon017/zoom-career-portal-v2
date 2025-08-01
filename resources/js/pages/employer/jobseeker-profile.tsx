@@ -93,9 +93,6 @@ export default function Profile( { user, resume }: { user: User, resume: Resume 
                                         </Button>
                                     </a>
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-3">
-                                    Supported Formats: PDF up to 1 MB
-                                </p>
                             </CardContent>
                         </Card>
 
@@ -247,9 +244,11 @@ export default function Profile( { user, resume }: { user: User, resume: Resume 
                                     <div className="bg-muted p-2 rounded-lg">
                                         <Mail className="h-5 w-5 text-primary" />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <h4 className="text-sm text-muted-foreground">Email</h4>
-                                        <p className="font-medium text-foreground">{ user.email }</p>
+                                        <p className="font-medium text-foreground break-words whitespace-normal">
+                                            { user.email }
+                                        </p>
                                     </div>
                                 </div>
 
