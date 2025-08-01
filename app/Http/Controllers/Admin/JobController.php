@@ -56,7 +56,7 @@ final class JobController extends Controller
     public function show(Opening $job)
     {
         return Inertia::render('admin/jobs/view-job', [
-            'job' => $job,
+            'job' => $job->load('address.location'),
         ]);
     }
 
