@@ -11,12 +11,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
 import AppLayout from '@/layouts/employer-layout';
 import { Head } from '@inertiajs/react';
-import { format } from 'date-fns';
-import { User } from '@/types';
+import { format, formatDate } from 'date-fns';
+import { Resume, User } from '@/types';
 
-export default function Profile( { user }: { user: User } ) {
+export default function Profile( { user, resume }: { user: User, resume: Resume } ) {
     const getInitials = useInitials();
-
     return (
         <AppLayout>
             <Head title={ `${ user.name }'s Profile` } />
@@ -82,15 +81,17 @@ export default function Profile( { user }: { user: User } ) {
                                 <div className="flex items-center justify-between bg-muted rounded-lg p-4">
                                     <div>
                                         <div className="font-medium text-foreground">
-                                            sarahstefanski.pdf
+                                            { resume?.media[ 0 ].name }
                                         </div>
                                         <div className="text-sm text-muted-foreground mt-1">
-                                            Uploaded on May 16, 2025
+                                            { format( new Date( resume?.updated_at ?? "" ), 'dd MMM yyyy' ) }
                                         </div>
                                     </div>
-                                    <Button variant="outline">
-                                        <FileText className="h-4 w-4 mr-2" /> View
-                                    </Button>
+                                    <a href={ resume?.resume_url ? resume?.resume_url : '' }>
+                                        <Button variant="outline">
+                                            <FileText className="h-4 w-4 mr-2" /> View
+                                        </Button>
+                                    </a>
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-3">
                                     Supported Formats: PDF up to 1 MB

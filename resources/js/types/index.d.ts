@@ -250,6 +250,28 @@ export interface Resume {
     user_id: number;
     resume_text?: string | null;
     resume_url?: string | null;
+    media: Media[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Media {
+    id: number;
+    model_type: string;
+    model_id: number;
+    uuid: string;
+    collection_name: string;
+    name: string;
+    file_name: string;
+    mime_type: string;
+    disk: string;
+    conversions_disk: string;
+    size: number;
+    manipulations: string;
+    custom_properties: string;
+    generated_conversions: string;
+    responsive_images: string;
+    order_column: number;
     created_at: string;
     updated_at: string;
 }
