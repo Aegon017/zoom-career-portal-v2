@@ -1,14 +1,14 @@
-import { DataTable } from '@/components/data-table';
-import AppLayout from '@/layouts/app-layout';
-import { User, type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { columns } from './user-columns';
+import { DataTable } from "@/components/data-table"
+import AppLayout from "@/layouts/app-layout"
+import { BreadcrumbItem, User } from "@/types"
+import { Head } from "@inertiajs/react"
+import { columns } from "./user-columns"
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Users',
-        href: '/admin/users',
-    },
+        'title': 'Users',
+        'href': ''
+    }
 ];
 
 interface Props {
@@ -25,26 +25,29 @@ interface Props {
     };
 }
 
-export default function UsersListing({ users, filters }: Props) {
+const UsersListing = ( { users, filters }: Props ) => {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Users" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <DataTable
-                    columns={columns}
-                    data={users.data}
-                    pagination={{
+                    columns={ columns }
+                    data={ users.data }
+                    pagination={ {
                         current_page: users.current_page,
                         last_page: users.last_page,
                         per_page: users.per_page,
                         total: users.total,
-                    }}
-                    filters={filters}
+                    } }
+                    filters={ filters }
                     routeName="/admin/users"
                     listingName="user"
                     createUrl="/admin/users/create"
+                    hasCreate={ true }
                 />
             </div>
         </AppLayout>
-    );
+    )
 }
+
+export default UsersListing

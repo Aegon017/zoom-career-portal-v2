@@ -8,12 +8,14 @@ use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\EditUserRequest;
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 final class UserController extends Controller
 {
@@ -25,8 +27,8 @@ final class UserController extends Controller
         $users = User::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('email', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -43,28 +45,29 @@ final class UserController extends Controller
     public function create(): Response
     {
         $operation = OperationsEnum::Create;
+        $roleOptions = Role::get()->map(function ($role) {
+            return [
+                'value' => $role->id,
+                'label' => $role->name
+            ];
+        });
 
         return Inertia::render('admin/users/create-or-edit-user', [
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label(),
+            'roleOptions' => $roleOptions,
+            'operation' => $operation->option()
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateUserRequest $storeUserRequest): RedirectResponse
+    public function store(UserRequest $userRequest): RedirectResponse
     {
-        $data = $storeUserRequest->validated();
+        $data = $userRequest->validated();
         $user = User::create($data);
+        $user->syncRoles($data['roles']);
 
-        $operation = OperationsEnum::Edit;
-
-        return to_route('admin.users.edit', [
-            'user' => UserResource::make($user),
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label(),
-        ])->with('success', 'User record created successfully.');
+        return to_route('admin.users.index')->with('success', 'User record created successfully.');
     }
 
     /**
@@ -81,27 +84,35 @@ final class UserController extends Controller
     public function edit(User $user): Response
     {
         $operation = OperationsEnum::Edit;
+        $roleOptions = Role::get()->map(function ($role) {
+            return [
+                'value' => $role->id,
+                'label' => $role->name
+            ];
+        });
 
         return Inertia::render('admin/users/create-or-edit-user', [
-            'user' => UserResource::make($user),
-            'operation' => $operation->value,
-            'operationLabel' => $operation->label(),
+            'user' => UserResource::make($user)->load('roles'),
+            'roleOptions' => $roleOptions,
+            'operation' => $operation->option()
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(EditUserRequest $updateUserRequest, User $user): RedirectResponse
+    public function update(UserRequest $userRequest, User $user): RedirectResponse
     {
-        $data = $updateUserRequest->validated();
+        $data = $userRequest->validated();
         if (empty($data['password'])) {
             unset($data['password']);
         }
 
         $user->update($data);
 
-        return back()->with('success', 'User record updated successfully');
+        $user->syncRoles($data['roles']);
+
+        return to_route('admin.users.index')->with('success', 'User record updated successfully');
     }
 
     /**

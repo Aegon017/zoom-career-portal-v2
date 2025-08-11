@@ -1,6 +1,5 @@
 import { MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import DeleteAlert from './delete-alert';
 import { Button } from './ui/button';
 import {
     DropdownMenu,
@@ -10,6 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import DeleteAlert from './delete-alert';
 
 interface Props {
     hasShow?: boolean;
@@ -33,19 +33,22 @@ const DataTableActions = ( { onShow, onEdit, onDelete, hasShow = false }: Props 
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {hasShow && (
-                        <DropdownMenuItem className="mb-1 cursor-pointer" onClick={() => onShow ? onShow() : null}>
+                    { hasShow && (
+                        <DropdownMenuItem className="mb-1 cursor-pointer" onClick={ () => onShow ? onShow() : null }>
                             Show
                         </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem className="mb-1 cursor-pointer" onClick={ () => onEdit() }>
+                    ) }
+                    <DropdownMenuItem className="mb-1 cursor-pointer px-4 py-2" onClick={ () => onEdit() }>
                         Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        className="cursor-pointer bg-red-600 text-white focus:bg-red-500 focus:text-white dark:text-black dark:focus:bg-red-700 dark:focus:text-black"
-                        onClick={ () => setTimeout( () => setAlertOpen( true ), 0 ) }
+                        className='p-0'
                     >
-                        Delete
+                        <Button
+                            variant="destructive"
+                            className='w-full justify-start'
+                            onClick={ () => setTimeout( () => setAlertOpen( true ), 0 ) }
+                        >Delete</Button>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
