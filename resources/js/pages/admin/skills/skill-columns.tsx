@@ -1,5 +1,3 @@
-
-
 import DataTableActions from '@/components/data-table-actions';
 import { Skill } from '@/types';
 import { router } from '@inertiajs/react';
@@ -10,7 +8,7 @@ const handleEdit = (id: number) => {
 };
 
 const handleDelete = (id: number) => {
-    router.delete(`admin/skills/${id}`, { preserveScroll: true });
+    router.delete(`/admin/skills/${id}`, { preserveScroll: true });
 };
 
 export const columns: ColumnDef<Skill>[] = [

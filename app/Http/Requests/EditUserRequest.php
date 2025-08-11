@@ -6,6 +6,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read User $user
+ */
 final class EditUserRequest extends FormRequest
 {
     /**
@@ -25,7 +28,7 @@ final class EditUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$this->user->id,
+            'email' => 'required|email|unique:users,email,' . $this->user->id,
             'password' => 'nullable|string|min:8',
         ];
     }
