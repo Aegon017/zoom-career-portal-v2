@@ -61,9 +61,9 @@ final class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserRequest $userRequest): RedirectResponse
+    public function store(CreateUserRequest $request): RedirectResponse
     {
-        $data = $userRequest->validated();
+        $data = $request->validated();
         $user = User::create($data);
         $user->syncRoles($data['roles']);
 
@@ -101,9 +101,9 @@ final class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $userRequest, User $user): RedirectResponse
+    public function update(EditUserRequest $request, User $user): RedirectResponse
     {
-        $data = $userRequest->validated();
+        $data = $request->validated();
         if (empty($data['password'])) {
             unset($data['password']);
         }

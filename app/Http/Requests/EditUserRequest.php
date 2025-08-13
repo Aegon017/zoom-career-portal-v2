@@ -30,6 +30,8 @@ final class EditUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->user->id,
             'password' => 'nullable|string|min:8',
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:roles,id'
         ];
     }
 }
