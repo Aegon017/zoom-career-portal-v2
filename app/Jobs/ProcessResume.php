@@ -23,7 +23,7 @@ final class ProcessResume implements ShouldQueue
      */
     public function handle(Parser $parser): void
     {
-        $text = $parser->parseFile($this->resume->resume_url)->getText();
+        $text = $parser->parseFile($this->resume->getFirstMediaPath('resumes'))->getText();
 
         $this->resume->text = $text;
 
