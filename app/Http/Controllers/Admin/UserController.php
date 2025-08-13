@@ -13,17 +13,22 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
 
 final class UserController extends Controller
 {
+    public function __construct(private User $user) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
+        Gate::authorize('viewAny', $this->user);
+
         $users = User::query()
             ->when(
                 $request->search,
@@ -44,6 +49,8 @@ final class UserController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create', $this->user);
+
         $operation = OperationsEnum::Create;
         $roleOptions = Role::get()->map(function ($role) {
             return [
@@ -63,6 +70,8 @@ final class UserController extends Controller
      */
     public function store(CreateUserRequest $request): RedirectResponse
     {
+        Gate::authorize('create', $this->user);
+
         $data = $request->validated();
         $user = User::create($data);
         $user->syncRoles($data['roles']);
@@ -83,6 +92,8 @@ final class UserController extends Controller
      */
     public function edit(User $user): Response
     {
+        Gate::authorize('update', $this->user);
+
         $operation = OperationsEnum::Edit;
         $roleOptions = Role::get()->map(function ($role) {
             return [
@@ -103,6 +114,8 @@ final class UserController extends Controller
      */
     public function update(EditUserRequest $request, User $user): RedirectResponse
     {
+        Gate::authorize('update', $this->user);
+
         $data = $request->validated();
         if (empty($data['password'])) {
             unset($data['password']);
@@ -120,6 +133,8 @@ final class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
+        Gate::authorize('delete', $this->user);
+
         $user->delete();
 
         return to_route('admin.users.index')->with('success', 'User record delted successfully');

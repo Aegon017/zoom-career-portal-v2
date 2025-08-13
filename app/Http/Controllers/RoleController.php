@@ -109,6 +109,7 @@ final class RoleController extends Controller
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
         Gate::authorize('update', $this->user);
+        
         try {
             $this->roleService->updateRoleWithPermissions($id, $request->validated());
 
