@@ -88,7 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/notifications/markAllAsRead', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     // employer routes
-    Route::middleware('role:employer|super_admin')->prefix('employer')->name('employer.')->group(function (): void {
+    Route::prefix('employer')->name('employer.')->group(function (): void {
         Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware(['employer_is_verified'])->name('dashboard');
         Route::middleware('employer_is_verified')->resource('/jobs', OpeningController::class);
 
@@ -116,7 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
-        Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
+        Route::middleware(['auth'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
 
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function (): void {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
@@ -137,7 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/dashboard', [JobseekerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/explore', [JobseekerDashboardController::class, 'explore'])->name('dashboard.explore');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
@@ -169,10 +169,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/career-interests/update', [CareerInterestController::class, 'update'])->name('career-interests.update');
     });
 
-    Route::middleware('role:jobseeker')->get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
+    Route::get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
 
     // admin routes
-    Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
+    Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/roles', RoleController::class);
         Route::resource('/job-titles', OpeningTitleController::class);

@@ -23,7 +23,7 @@ final class VerifyEmailController extends Controller
         } elseif ($request->user()->hasRole('jobseeker')) {
             $redirect = 'jobseeker.dashboard';
         } else {
-            $redirect = '/';
+            $redirect = 'admin.dashboard';
         }
 
         if ($request->user()->hasVerifiedEmail()) {
