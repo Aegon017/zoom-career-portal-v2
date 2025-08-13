@@ -10,22 +10,27 @@ use App\Http\Requests\Skill\StoreSkillRequest;
 use App\Http\Requests\Skill\UpdateSkillRequest;
 use App\Http\Resources\SkillResource;
 use App\Models\Skill;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class SkillController extends Controller
 {
+    public function __construct(private User $user) {}
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
+        Gate::authorize('view_any_skill', $this->user);
+
         $skills = Skill::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -41,6 +46,8 @@ final class SkillController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create_skill', $this->user);
+
         $operation = OperationsEnum::Create;
 
         return Inertia::render('admin/skills/create-or-edit-skill', [
@@ -54,6 +61,8 @@ final class SkillController extends Controller
      */
     public function store(StoreSkillRequest $storeSkillRequest): RedirectResponse
     {
+        Gate::authorize('create_skill', $this->user);
+
         $data = $storeSkillRequest->validated();
         Skill::create($data);
 
@@ -73,6 +82,8 @@ final class SkillController extends Controller
      */
     public function edit(Skill $skill): Response
     {
+        Gate::authorize('update_skill', $this->user);
+
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/skills/create-or-edit-skill', [
@@ -87,6 +98,8 @@ final class SkillController extends Controller
      */
     public function update(UpdateSkillRequest $updateSkillRequest, Skill $skill): RedirectResponse
     {
+        Gate::authorize('update_skill', $this->user);
+
         $data = $updateSkillRequest->validated();
 
         $skill->update($data);
@@ -99,6 +112,8 @@ final class SkillController extends Controller
      */
     public function destroy(Skill $skill)
     {
+        Gate::authorize('delete_skill', $this->user);
+
         $skill->delete();
 
         return to_route('admin.skills.index')->with('success', 'Skill record delted successfully');
@@ -108,11 +123,11 @@ final class SkillController extends Controller
     {
         $query = $request->input('search', '');
 
-        $skills = Skill::where('name', 'like', '%'.$query.'%')
+        $skills = Skill::where('name', 'like', '%' . $query . '%')
             ->orderBy('name')
             ->limit(20)
             ->get()
-            ->map(fn ($skill): array => [
+            ->map(fn($skill): array => [
                 'label' => $skill->name,
                 'value' => $skill->name,
             ]);

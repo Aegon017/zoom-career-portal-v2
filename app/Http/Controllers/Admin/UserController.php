@@ -27,7 +27,7 @@ final class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        Gate::authorize('viewAny', $this->user);
+        Gate::authorize('view_any_user', $this->user);
 
         $users = User::query()
             ->when(
@@ -49,7 +49,7 @@ final class UserController extends Controller
      */
     public function create(): Response
     {
-        Gate::authorize('create', $this->user);
+        Gate::authorize('create_user', $this->user);
 
         $operation = OperationsEnum::Create;
         $roleOptions = Role::get()->map(function ($role) {
@@ -70,7 +70,7 @@ final class UserController extends Controller
      */
     public function store(CreateUserRequest $request): RedirectResponse
     {
-        Gate::authorize('create', $this->user);
+        Gate::authorize('create_user', $this->user);
 
         $data = $request->validated();
         $user = User::create($data);
@@ -92,7 +92,7 @@ final class UserController extends Controller
      */
     public function edit(User $user): Response
     {
-        Gate::authorize('update', $this->user);
+        Gate::authorize('update_user', $this->user);
 
         $operation = OperationsEnum::Edit;
         $roleOptions = Role::get()->map(function ($role) {
@@ -114,7 +114,7 @@ final class UserController extends Controller
      */
     public function update(EditUserRequest $request, User $user): RedirectResponse
     {
-        Gate::authorize('update', $this->user);
+        Gate::authorize('update_user', $this->user);
 
         $data = $request->validated();
         if (empty($data['password'])) {
@@ -133,7 +133,7 @@ final class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
-        Gate::authorize('delete', $this->user);
+        Gate::authorize('delete_user', $this->user);
 
         $user->delete();
 

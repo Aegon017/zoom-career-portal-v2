@@ -27,7 +27,7 @@ final class RoleController extends Controller
      */
     public function index(Request $request): Response
     {
-        Gate::authorize('viewAny', $this->user);
+        Gate::authorize('view_any_role', $this->user);
 
         $roles = Role::query()
             ->with('permissions')
@@ -49,7 +49,7 @@ final class RoleController extends Controller
      */
     public function create(): Response
     {
-        Gate::authorize('create', $this->user);
+        Gate::authorize('create_role', $this->user);
 
         $permissions = $this->permissionService->getGroupedPermissions();
         $role = [];
@@ -67,7 +67,7 @@ final class RoleController extends Controller
      */
     public function store(CreateRoleRequest $request): RedirectResponse
     {
-        Gate::authorize('create', $this->user);
+        Gate::authorize('create_role', $this->user);
 
         try {
             $this->roleService->createRoleWithPermissions($request->validated());
@@ -91,7 +91,7 @@ final class RoleController extends Controller
      */
     public function edit(string $id): Response
     {
-        Gate::authorize('update', $this->user);
+        Gate::authorize('update_role', $this->user);
 
         $permissions = $this->permissionService->getGroupedPermissions();
         $role = Role::with('permissions')->find($id);
@@ -109,7 +109,7 @@ final class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
-        Gate::authorize('update', $this->user);
+        Gate::authorize('update_role', $this->user);
 
         try {
             $this->roleService->updateRoleWithPermissions($id, $request->validated());
@@ -125,7 +125,7 @@ final class RoleController extends Controller
      */
     public function destroy(string $id): RedirectResponse
     {
-        Gate::authorize('delete', $this->user);
+        Gate::authorize('delete_role', $this->user);
 
         try {
             $this->roleService->deleteRole($id);
