@@ -34,7 +34,7 @@ const DataTableActions = ( { onShow, onEdit, onDelete, hasShow = false }: Props 
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     { hasShow && (
-                        <DropdownMenuItem className="mb-1 cursor-pointer" onClick={ () => onShow ? onShow() : null }>
+                        <DropdownMenuItem className="mb-1 cursor-pointer px-4 py-2" onClick={ () => onShow ? onShow() : null }>
                             Show
                         </DropdownMenuItem>
                     ) }
