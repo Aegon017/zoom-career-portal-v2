@@ -1,10 +1,10 @@
 import { LucideIcon } from 'lucide-react';
-import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
     isEmployerVerified: boolean;
     roles: string[];
+    permissions: string[];
 }
 
 export interface PaginatedData<T> {

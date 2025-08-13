@@ -12,6 +12,7 @@ use App\Models\Chat;
 use App\Models\Opening;
 use App\Models\OpeningApplication;
 use App\Models\User;
+use App\Notifications\ShortlistedMessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -103,11 +104,11 @@ final class ApplicationsController extends Controller
         $combinedMessage = sprintf('<strong>Subject:</strong> %s<br><br>%s', $request->subject, $safeMessage);
 
         foreach ($shortlistedUsers as $user) {
-            $chat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
-                ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
+            $chat = Chat::whereHas('participants', fn($q) => $q->where('user_id', Auth::id()))
+                ->whereHas('participants', fn($q) => $q->where('user_id', $user->id))
                 ->withCount('participants')
                 ->get()
-                ->first(fn ($chat): bool => $chat->participants_count === 2);
+                ->first(fn($chat): bool => $chat->participants_count === 2);
 
             if (! $chat) {
                 $chat = Chat::create();
@@ -121,6 +122,8 @@ final class ApplicationsController extends Controller
                 'user_id' => Auth::id(),
                 'message' => $combinedMessage,
             ]);
+
+            $user->notify(new ShortlistedMessageNotification($request->subject, $request->message));
 
             MessageSent::dispatch($message);
         }

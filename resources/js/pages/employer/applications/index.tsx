@@ -20,6 +20,7 @@ import AppLayout from '@/layouts/employer-layout';
 import { Application, BreadcrumbItem, Opening, Option } from '@/types';
 import { Input } from '@/components/ui/input';
 import TextEditor from '@/components/text-editor';
+import { useForm } from 'react-hook-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,30 +38,9 @@ interface Props {
 }
 
 export default function ApplicationsIndex( { jobs, job_id, applications, statuses, skills }: Props ) {
-    const [ openMessage, setOpenMessage ] = useState( false );
-    const [ message, setMessage ] = useState( '' );
-    const [ subject, setSubject ] = useState( '' );
-
     const hasApplications = applications?.length > 0;
     const hasSelectedJob = Boolean( job_id );
-
-    const handleMessageSubmit = ( e: React.FormEvent ) => {
-        e.preventDefault();
-        if ( !job_id ) return;
-
-        router.post(
-            `/employer/jobs/${ job_id }/shortlisted/message`,
-            { message, subject },
-            {
-                onSuccess: () => {
-                    setMessage( '' );
-                    setSubject( '' );
-                    setOpenMessage( false );
-                },
-            }
-        );
-    };
-
+    
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
@@ -79,44 +59,6 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                                 label: job.title,
                             } ) ) }
                         />
-
-                        { hasSelectedJob && (
-                            <Dialog open={ openMessage } onOpenChange={ setOpenMessage }>
-                                <DialogTrigger asChild>
-                                    <Button variant="secondary">Message Shortlisted</Button>
-                                </DialogTrigger>
-
-                                <DialogContent className="sm:max-w-2xl">
-                                    <DialogHeader>
-                                        <DialogTitle>Message Shortlisted Candidates</DialogTitle>
-                                        <DialogDescription>
-                                            Send a message to all shortlisted candidates for this job.
-                                        </DialogDescription>
-                                    </DialogHeader>
-
-                                    <form onSubmit={ handleMessageSubmit } className="space-y-4">
-                                        <Input
-                                            value={ subject }
-                                            type='text'
-                                            onChange={ ( e ) => setSubject( e.target.value ) }
-                                            placeholder="Write your subject here..."
-                                            required />
-                                        <TextEditor
-                                            disabled={ false }
-                                            value={ message }
-                                            onChange={ ( value ) => setMessage( value ) }
-                                            placeholder="Type your message..."
-                                        />
-                                        <DialogFooter>
-                                            <DialogClose asChild>
-                                                <Button variant="outline" type="button">Cancel</Button>
-                                            </DialogClose>
-                                            <Button type="submit">Send</Button>
-                                        </DialogFooter>
-                                    </form>
-                                </DialogContent>
-                            </Dialog>
-                        ) }
                     </div>
                 </div>
 
