@@ -7,20 +7,25 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Industry;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 final class IndustryController extends Controller
 {
+    public function __construct(private User $user) {}
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        Gate::authorize('view_any_industry', $this->user);
+
         $industries = Industry::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -36,6 +41,8 @@ final class IndustryController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create_industry', $this->user);
+
         $operation = OperationsEnum::Create;
 
         return Inertia::render('admin/industries/create-or-edit-industry', [
@@ -49,6 +56,8 @@ final class IndustryController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create_industry', $this->user);
+
         $data = $request->validate([
             'name' => 'required|string|unique:industries,name',
         ]);
@@ -71,6 +80,8 @@ final class IndustryController extends Controller
      */
     public function edit(Industry $industry)
     {
+        Gate::authorize('update_industry', $this->user);
+
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/industries/create-or-edit-industry', [
@@ -85,8 +96,10 @@ final class IndustryController extends Controller
      */
     public function update(Request $request, Industry $industry)
     {
+        Gate::authorize('update_industry', $this->user);
+
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,'.$industry->id,
+            'name' => 'required|string|unique:industries,name,' . $industry->id,
         ]);
 
         $industry->update($data);
@@ -99,6 +112,8 @@ final class IndustryController extends Controller
      */
     public function destroy(Industry $industry)
     {
+        Gate::authorize('delete_industry', $this->user);
+
         $industry->delete();
 
         return to_route('admin.industries.index')->with('success', 'Industry record deleted successfully.');

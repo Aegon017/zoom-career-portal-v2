@@ -1,27 +1,27 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Policies;
 
+use App\Models\Language;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
-final class ProfilePolicy
+class LanguagePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_profile');
+        return $user->can('view_any_language');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user): bool
+    public function view(User $user, Language $language): bool
     {
-        return $user->can('view_profile');
+        return $user->can('view_language');
     }
 
     /**
@@ -29,22 +29,22 @@ final class ProfilePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_profile');
+        return $user->can('create_language');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user): bool
+    public function update(User $user, Language $language): bool
     {
-        return $user->can('update_profile');
+        return $user->can('update_language');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Language $language): bool
     {
-        return $user->can('delete_profile');
+        return $user->can('delete_language');
     }
 }

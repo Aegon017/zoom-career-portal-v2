@@ -7,24 +7,29 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Language;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class LanguageController extends Controller
 {
+    public function __construct(private User $user) {}
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
+        Gate::authorize('view_any_language', $this->user);
+
         $languages = Language::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('code', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('code', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -40,6 +45,8 @@ final class LanguageController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create_language', $this->user);
+
         $operation = OperationsEnum::Create;
 
         return Inertia::render('admin/languages/create-or-edit-language', [
@@ -53,6 +60,8 @@ final class LanguageController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create_language', $this->user);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:languages,name'],
             'code' => ['nullable', 'string', 'max:255'],
@@ -76,6 +85,8 @@ final class LanguageController extends Controller
      */
     public function edit(Language $language): Response
     {
+        Gate::authorize('update_language', $this->user);
+
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/languages/create-or-edit-language', [
@@ -90,6 +101,8 @@ final class LanguageController extends Controller
      */
     public function update(Request $request, Language $language): RedirectResponse
     {
+        Gate::authorize('update_language', $this->user);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('languages', 'name')->ignore($language->id)],
             'code' => ['nullable', 'string', 'max:255'],
@@ -105,6 +118,8 @@ final class LanguageController extends Controller
      */
     public function destroy(Language $language): RedirectResponse
     {
+        Gate::authorize('delete_language', $this->user);
+
         $language->delete();
 
         return to_route('admin.languages.index')->with('success', 'Language record deleted successfully.');
@@ -119,7 +134,7 @@ final class LanguageController extends Controller
         $query = $request->input('search');
 
         $languages = Language::when($query, function ($q) use ($query): void {
-            $q->where('name', 'like', '%'.$query.'%');
+            $q->where('name', 'like', '%' . $query . '%');
         })
             ->orderBy('name')
             ->limit(20)
