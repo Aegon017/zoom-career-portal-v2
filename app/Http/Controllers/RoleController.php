@@ -30,9 +30,10 @@ final class RoleController extends Controller
         Gate::authorize('viewAny', $this->user);
 
         $roles = Role::query()
+            ->with('permissions')
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -109,7 +110,7 @@ final class RoleController extends Controller
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
         Gate::authorize('update', $this->user);
-        
+
         try {
             $this->roleService->updateRoleWithPermissions($id, $request->validated());
 
