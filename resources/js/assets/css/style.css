@@ -257,14 +257,14 @@ a.zc-btn-add:hover i {
     font-weight: 500;
 }
 
-.zc-sidebar ul.sidebar-nav li.sidebar-item > a {
+.zc-sidebar ul.sidebar-nav li.sidebar-item>a {
     background: transparent;
     border-left: 3px solid transparent;
     transition: background 0.1s ease-in-out;
 }
 
-.zc-sidebar ul.sidebar-nav li.sidebar-item.active > a,
-.zc-sidebar ul.sidebar-nav li.sidebar-item > a:hover {
+.zc-sidebar ul.sidebar-nav li.sidebar-item.active>a,
+.zc-sidebar ul.sidebar-nav li.sidebar-item>a:hover {
     color: #ff5520;
     background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), rgba(59, 125, 221, 0.088) 50%, transparent);
     border-left-color: #ff5520;
@@ -785,7 +785,7 @@ a.zc-btn-add:hover i {
     border-bottom: 1px solid;
 }
 
-.zc-job-filter-widget .zc-field-wrap > label {
+.zc-job-filter-widget .zc-field-wrap>label {
     background-color: transparent;
     transition:
         transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -793,21 +793,21 @@ a.zc-btn-add:hover i {
     bottom: -10px;
 }
 
-.zc-job-filter-widget .zc-field-wrap > label,
-.zc-job-filter-widget .zc-field-wrap > input,
-.zc-field-wrap > input {
+.zc-job-filter-widget .zc-field-wrap>label,
+.zc-job-filter-widget .zc-field-wrap>input,
+.zc-field-wrap>input {
     display: block;
     position: relative;
     width: 100%;
     background: transparent;
 }
 
-.zc-job-filter-widget .zc-field-wrap > input {
+.zc-job-filter-widget .zc-field-wrap>input {
     border: 0;
     outline: none;
 }
 
-.zc-job-filter-widget .zc-field-wrap:focus + label,
+.zc-job-filter-widget .zc-field-wrap:focus+label,
 .zc-job-filter-widget .zc-field-wrap:focus-within label {
     bottom: 0;
 }
@@ -2941,4 +2941,23 @@ ul.zc-certificate-list li {
     border-radius: 9999px;
     font-size: 0.75rem;
     color: #6b7280;
+}
+
+.salary-highlight {
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.job-footer-actions {
+    border-top: 1px solid #eee;
+    margin-top: 2rem;
+    padding-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .job-footer-actions .col-lg-6 {
+        width: 100% !important;
+    }
 }
