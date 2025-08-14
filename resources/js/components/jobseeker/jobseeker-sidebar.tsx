@@ -1,6 +1,5 @@
 import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 import EmployerIcon from '@/icons/employer-icon';
-import ExploreIcon from '@/icons/explore-icon';
 import JobsIcon from '@/icons/jobs-icon';
 import PeopleIcon from '@/icons/people-icon';
 import { SharedData } from '@/types';
@@ -26,13 +25,6 @@ export function AppSidebar( { sidebarToggle }: { sidebarToggle: ReturnType<typeo
             label: 'Dashboard',
             href: '/jobseeker/dashboard',
             isActive: window.location.pathname === '/jobseeker/dashboard',
-        },
-        {
-            key: 'explore',
-            icon: <ExploreIcon />,
-            label: 'Explore',
-            href: '/jobseeker/explore',
-            isActive: window.location.pathname === '/jobseeker/explore',
         },
         {
             key: 'inbox',
