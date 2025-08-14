@@ -2,17 +2,17 @@ import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { User, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { columns } from './employee-columns';
+import { columns } from './recruiter-columns';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Employees',
-        href: '/admin/employees',
+        title: 'Recruiters',
+        href: '/admin/recruiters',
     },
 ];
 
 interface Props {
-    employees: {
+    recruiters: {
         data: User[];
         current_page: number;
         last_page: number;
@@ -25,25 +25,25 @@ interface Props {
     };
 }
 
-export default function EmployeesListing({ employees, filters }: Props) {
+export default function RecruitersListing({ recruiters, filters }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Employees" />
+            <Head title="Recruiters" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
                     hasCreate={true}
                     columns={columns}
-                    data={employees.data}
+                    data={recruiters.data}
                     pagination={{
-                        current_page: employees.current_page,
-                        last_page: employees.last_page,
-                        per_page: employees.per_page,
-                        total: employees.total,
+                        current_page: recruiters.current_page,
+                        last_page: recruiters.last_page,
+                        per_page: recruiters.per_page,
+                        total: recruiters.total,
                     }}
                     filters={filters}
-                    routeName="/admin/employees"
-                    listingName="employee"
-                    createUrl="/admin/employees/create"
+                    routeName="/admin/recruiters"
+                    listingName="recruiter"
+                    createUrl="/admin/recruiters/create"
                 />
             </div>
         </AppLayout>

@@ -7,7 +7,7 @@ import { Briefcase, Building2, ExternalLink, Globe, Landmark, Mail, MapPin, Phon
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Employee',
+        title: 'Recruiter',
         href: '',
     },
 ];
@@ -17,16 +17,16 @@ interface Props {
     company: Company;
 }
 
-const ViewEmployee = ( { user, company }: Props ) => {
+const ViewRecruiter = ( { user, company }: Props ) => {
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
-            <Head title="Employee" />
+            <Head title="Recruiter" />
             <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
                 <Card className="shadow-xl">
                     <CardHeader>
                         <CardTitle className="text-foreground flex items-center gap-2 text-lg font-semibold">
                             <User2 className="text-primary h-5 w-5" />
-                            Employee Details
+                            Recruiter Details
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -150,4 +150,4 @@ const InfoItem = ( { icon, label, value }: { icon: React.ReactNode; label: strin
     </div>
 );
 
-export default ViewEmployee;
+export default ViewRecruiter;

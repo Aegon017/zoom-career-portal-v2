@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-    employee?: User;
+    recruiter?: User;
     operation: Option;
     companyOptions: Option[];
     verificationStatusOptions: Option[];
@@ -28,25 +28,25 @@ interface FormValues {
     verification_status: string;
 }
 
-const CreateOrEditEmployee = ( { employee, operation, companyOptions, verificationStatusOptions, errors: serverErrors }: Props ) => {
+const CreateOrEditRecruiter = ( { recruiter, operation, companyOptions, verificationStatusOptions, errors: serverErrors }: Props ) => {
     const [ alertOpen, setAlertOpen ] = useState( false );
     const isEditMode = operation.value === 'Edit';
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Employees', href: '/admin/employees' },
+        { title: 'Recruiters', href: '/admin/recruiters' },
         { title: operation.value, href: '' },
     ];
 
-    const latestCompanyUser = employee?.company_users
+    const latestCompanyUser = recruiter?.company_users
         ?.slice()
         ?.sort( ( a, b ) => new Date( b.created_at ).getTime() - new Date( a.created_at ).getTime() )[ 0 ];
 
     const form = useForm<FormValues>( {
         defaultValues: {
-            name: employee?.name || '',
-            email: employee?.email || '',
-            phone: employee?.phone || '',
-            job_title: employee?.profile?.job_title || '',
+            name: recruiter?.name || '',
+            email: recruiter?.email || '',
+            phone: recruiter?.phone || '',
+            job_title: recruiter?.profile?.job_title || '',
             company_id: latestCompanyUser?.company_id || null,
             password: '',
             verification_status: latestCompanyUser?.verification_status || 'pending',
@@ -71,28 +71,28 @@ const CreateOrEditEmployee = ( { employee, operation, companyOptions, verificati
         }
 
         const routes = {
-            Create: () => router.post( '/admin/employees', payload ),
-            Edit: () => router.put( `/admin/employees/${ employee?.id }`, payload )
+            Create: () => router.post( '/admin/recruiters', payload ),
+            Edit: () => router.put( `/admin/recruiters/${ recruiter?.id }`, payload )
         };
 
         routes[ operation.value as keyof typeof routes ]?.();
     };
 
     const handleDelete = () => {
-        if ( employee ) router.delete( `/admin/employees/${ employee.id }` );
+        if ( recruiter ) router.delete( `/admin/recruiters/${ recruiter.id }` );
     };
 
-    const handleCancel = () => router.get( '/admin/employees' );
+    const handleCancel = () => router.get( '/admin/recruiters' );
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
-            <Head title={ `${ operation.value } employee` } />
+            <Head title={ `${ operation.value } recruiter` } />
             <div className="flex flex-col gap-4 p-4">
                 <Form { ...form }>
                     <form onSubmit={ form.handleSubmit( onSubmit ) } className="space-y-8 p-4">
                         <div className="flex justify-between items-center">
                             <h1 className="text-2xl font-bold">{ operation.value } employee</h1>
-                            { isEditMode && employee && (
+                            { isEditMode && recruiter && (
                                 <Button
                                     variant="destructive"
                                     onClick={ () => setAlertOpen( true ) }
@@ -231,7 +231,7 @@ const CreateOrEditEmployee = ( { employee, operation, companyOptions, verificati
                     </form>
                 </Form>
 
-                { isEditMode && employee && (
+                { isEditMode && recruiter && (
                     <DeleteAlert
                         alertOpen={ alertOpen }
                         setAlertOpen={ setAlertOpen }
@@ -243,4 +243,4 @@ const CreateOrEditEmployee = ( { employee, operation, companyOptions, verificati
     );
 };
 
-export default CreateOrEditEmployee;
+export default CreateOrEditRecruiter;

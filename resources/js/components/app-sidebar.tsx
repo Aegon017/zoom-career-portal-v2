@@ -35,7 +35,7 @@ export function AppSidebar() {
             href: '',
             icon: Users2,
             items: [
-                { title: 'Employees', href: '/admin/employees' },
+                { title: 'recruiters', href: '/admin/recruiters' },
                 { title: 'Companies', href: '/admin/companies' },
             ],
         },
@@ -81,13 +81,7 @@ export function AppSidebar() {
         },
     ].filter( Boolean ) as NavItem[];
 
-    const footerNavItems: NavItem[] = [
-        // {
-        //     title: 'Site settings',
-        //     href: '/admin/site-settings',
-        //     icon: Settings2,
-        // },
-    ];
+    const footerNavItems: NavItem[] = [];
 
     return (
         <Sidebar collapsible="icon" variant="inset">

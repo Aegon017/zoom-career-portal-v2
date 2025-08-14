@@ -4,15 +4,15 @@ import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
 const handleShow = ( id: number ) => {
-    router.get( `/admin/employees/${ id }` );
+    router.get( `/admin/recruiters/${ id }` );
 };
 
 const handleEdit = ( id: number ) => {
-    router.get( `/admin/employees/${ id }/edit` );
+    router.get( `/admin/recruiters/${ id }/edit` );
 };
 
 const handleDelete = ( id: number ) => {
-    router.delete( `/admin/employees/${ id }` );
+    router.delete( `/admin/recruiters/${ id }` );
 };
 
 export const columns: ColumnDef<User>[] = [

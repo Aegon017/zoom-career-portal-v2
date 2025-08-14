@@ -1,0 +1,169 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Enums\OperationsEnum;
+use App\Enums\VerificationStatusEnum;
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use Inertia\Inertia;
+
+class RecruiterController extends Controller
+{
+    public function index(Request $request)
+    {
+        $recruiters = User::query()->Role('employer')
+            ->when(
+                $request->search,
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%')
+            )
+            ->paginate($request->perPage ?? 10)
+            ->withQueryString();
+
+        return Inertia::render('admin/recruiters/recruiters-listing', [
+            'recruiters' => $recruiters,
+            'filters' => $request->only('search', 'perPage'),
+        ]);
+    }
+
+    public function create()
+    {
+        $operation = OperationsEnum::Create->option();
+
+        $companyOptions = Company::pluck('name', 'id')->map(function ($name, $id) {
+            return ['value' => $id, 'label' => $name];
+        })->values();
+
+        return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
+            'operation' => $operation,
+            'companyOptions' => $companyOptions,
+            'verificationStatusOptions' => VerificationStatusEnum::options()
+        ]);
+    }
+
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20',
+            'job_title' => 'nullable|string|max:255',
+            'company_id' => 'required|exists:companies,id',
+            'password' => 'required|string|min:8',
+            'verification_status' => ['required', new Enum(VerificationStatusEnum::class)],
+        ]);
+
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+            $user->assignRole('employer');
+
+            $user->profile()->create([
+                'job_title' => $data['job_title'] ?? null,
+            ]);
+
+            $user->companies()->attach([
+                $data['company_id'] => [
+                    'role' => 'recruiter',
+                    'verification_status' => $data['verification_status']->value,
+                ],
+            ]);
+
+            return to_route('admin.recruiters.index')->with('success', 'Recruiter created successfully');
+        });
+    }
+
+    public function show(int $id)
+    {
+        $user = User::find($id);
+
+        return Inertia::render('admin/recruiters/view-recruiter', [
+            'user' => $user->load('profile'),
+            'company' => $user->companies()->latest()->first(),
+        ]);
+    }
+
+    public function edit(Request $request, User $recruiter)
+    {
+        $operation = OperationsEnum::Edit->option();
+
+        $companyOptions = Company::get()->map(function ($company) {
+            return [
+                'value' => $company->id,
+                'label' => $company->name
+            ];
+        });
+
+        return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
+            'recruiter' => $recruiter->load(['profile', 'companyUsers']),
+            'operation' => $operation,
+            'companyOptions' => $companyOptions,
+            'verificationStatusOptions' => VerificationStatusEnum::options()
+        ]);
+    }
+
+    public function update(Request $request, User $recruiter)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $recruiter->id,
+            'phone' => 'required|string|max:20',
+            'job_title' => 'nullable|string|max:255',
+            'company_id' => 'required|exists:companies,id',
+            'verification_status' => ['required', Rule::in(VerificationStatusEnum::values())],
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        return DB::transaction(function () use ($recruiter, $data) {
+            $recruiter->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'password' => !empty($data['password']) ? Hash::make($data['password']) : $recruiter->password,
+            ]);
+
+            $recruiter->profile()->updateOrCreate([], [
+                'job_title' => $data['job_title'] ?? null,
+            ]);
+
+            $recruiter->companies()->sync([
+                $data['company_id'] => [
+                    'role' => 'recruiter',
+                    'verification_status' => VerificationStatusEnum::from($data['verification_status'])->value,
+                ],
+            ]);
+
+            return redirect()->route('admin.recruiters.index')->with('success', 'Recruiter updated successfully');
+        });
+    }
+
+    public function destroy(User $recruiter)
+    {
+        try {
+            DB::transaction(function () use ($recruiter) {
+                $recruiter->profile()->delete();
+                $recruiter->removeRole('employer');
+                $recruiter->delete();
+            });
+
+            return to_route('admin.recruiters.index')->with('success', 'Recruiter deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete recruiter: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to delete recruiter. Please try again.']);
+        }
+    }
+}

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
+use App\Http\Controllers\Admin\RecruiterController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\StudentVerificationController;
@@ -22,7 +23,6 @@ use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\FeedbackController;
-use App\Http\Controllers\Employer\JobDescriptionStreamController;
 use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\OpeningController;
@@ -130,7 +130,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
 
-        Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
         Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
         Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
         Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
@@ -178,7 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/skills', SkillController::class);
         Route::resource('/users', UserController::class);
-        Route::resource('/employees', EmployeeController::class);
+        Route::resource('/recruiters', RecruiterController::class);
         Route::get('/companies/export', [CompanyController::class, 'export']);
         Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');
         Route::resource('/companies', CompanyController::class);
