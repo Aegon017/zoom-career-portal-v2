@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zooming Career</title>
+    <link rel="icon" href="{{ asset('favicon.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         :root {
@@ -92,7 +93,8 @@
         <nav class="position-fixed top-0 w-100 bg-light bg-opacity-75 backdrop-blur z-3 shadow-sm py-3 px-4">
             <div class="container d-flex justify-content-between align-items-center">
                 <a href="{{ route('home') }}" class="text-decoration-none">
-                    <img src="{{ asset('logo.png') }}" alt="Zooming Career Logo" class="img-fluid" style="height: 48px;">
+                    <img src="{{ asset('logo.png') }}" alt="Zooming Career Logo" class="img-fluid"
+                        style="height: 48px;">
                 </a>
             </div>
         </nav>
