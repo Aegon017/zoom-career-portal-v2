@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 final class Opening extends Model
 {
@@ -142,5 +143,45 @@ final class Opening extends Model
     public function feedback(): HasMany
     {
         return $this->hasMany(Feedback::class);
+    }
+
+    public function duplicate(): Opening
+    {
+        return DB::transaction(function () {
+            $attributes = $this->getAttributes();
+
+            $excluded = ['id', 'created_at', 'updated_at', 'published_at', 'verification_status'];
+            $attributes = array_diff_key($attributes, array_flip($excluded));
+
+            $attributes['title'] = 'Copy of ' . $this->title;
+            $attributes['published_at'] = null;
+            $attributes['verification_status'] = 'pending';
+            $attributes['user_id'] = Auth::id();
+
+            $newOpening = Opening::create($attributes);
+
+            $this->duplicateRelationships($newOpening);
+
+            return $newOpening->load('skills', 'address');
+        });
+    }
+
+    protected function duplicateRelationships(Opening $newOpening): void
+    {
+        $this->skills->each(function ($skill) use ($newOpening) {
+            $newOpening->skills()->attach($skill);
+        });
+
+        if ($this->address) {
+            $newAddress = $this->address->replicate();
+            $newAddress->addressable()->associate($newOpening);
+            $newAddress->save();
+        }
+
+        if (method_exists($this, 'customFields')) {
+            $this->customFields->each(function ($field) use ($newOpening) {
+                $newOpening->customFields()->create($field->toArray());
+            });
+        }
     }
 }

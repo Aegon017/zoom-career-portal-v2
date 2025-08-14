@@ -13,12 +13,14 @@ import DeleteAlert from './delete-alert';
 
 interface Props {
     hasShow?: boolean;
+    hasDuplicate?: boolean;
     onShow?: () => void;
     onEdit: () => void;
     onDelete: () => void;
+    onDuplicate?: () => void;
 }
 
-const DataTableActions = ( { onShow, onEdit, onDelete, hasShow = false }: Props ) => {
+const DataTableActions = ( { onShow, onEdit, onDelete, onDuplicate, hasShow = false, hasDuplicate = false }: Props ) => {
     const [ alertOpen, setAlertOpen ] = useState<boolean>( false );
 
     return (
@@ -33,6 +35,11 @@ const DataTableActions = ( { onShow, onEdit, onDelete, hasShow = false }: Props 
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    { hasDuplicate && (
+                        <DropdownMenuItem className="mb-1 cursor-pointer px-4 py-2" onClick={ () => onDuplicate?.() }>
+                            Duplicate
+                        </DropdownMenuItem>
+                    ) }
                     { hasShow && (
                         <DropdownMenuItem className="mb-1 cursor-pointer px-4 py-2" onClick={ () => onShow ? onShow() : null }>
                             Show

@@ -38,7 +38,7 @@ final class OpeningController extends Controller
         $jobs = Opening::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
             )
             ->where('user_id', Auth::id())
             ->paginate($request->perPage ?? 10)
@@ -62,7 +62,7 @@ final class OpeningController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn ($skill): array => [
+        $skillOptions = Skill::get()->map(fn($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -125,7 +125,7 @@ final class OpeningController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn ($skill): array => [
+        $skillOptions = Skill::get()->map(fn($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -200,5 +200,12 @@ final class OpeningController extends Controller
         }
 
         Notification::send($admins, new JobPostedNotification($user, $opening));
+    }
+
+    public function duplicate(Opening $opening)
+    {
+        $opening->duplicate();
+
+        return to_route('employer.jobs.index')->with('success', 'Job duplicated successfully.');
     }
 }

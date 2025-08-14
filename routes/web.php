@@ -91,6 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('employer')->name('employer.')->group(function (): void {
         Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware(['employer_is_verified'])->name('dashboard');
         Route::middleware('employer_is_verified')->resource('/jobs', OpeningController::class);
+        Route::middleware('employer_is_verified')->post('/jobs/{opening}/duplicate', [OpeningController::class, 'duplicate']);
 
         // on-boarding routes
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function (): void {

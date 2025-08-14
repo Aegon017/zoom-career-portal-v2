@@ -26,6 +26,11 @@ export const columns: ColumnDef<User>[] = [
         enableGlobalFilter: true,
     },
     {
+        accessorKey: 'name',
+        header: 'Profile',
+        enableGlobalFilter: true,
+    },
+    {
         id: 'actions',
         cell: ( { row } ) => {
             return <DataTableActions hasShow={ true } onEdit={ () => handleEdit( row.original.id ) } onDelete={ () => handleDelete( row.original.id ) } onShow={ () => handleShow( row.original.id ) } />;
