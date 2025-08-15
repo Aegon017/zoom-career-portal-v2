@@ -35,7 +35,6 @@ final class CheckProfileComplete
     private function isProfileComplete($user): bool
     {
         return $user->profile &&
-            $user->profile->summary &&
             $user->skills->count() > 0 &&
             $user->educations->count() > 0 &&
             $user->personal_detail && $user->userLanguages && $user->workPermits;
