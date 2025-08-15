@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\CompanySizeEnum;
 use App\Enums\CompanyTypeEnum;
 use App\Enums\VerificationStatusEnum;
+use App\Notifications\NewCompanyRegisteredNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -104,5 +105,20 @@ final class Company extends Model implements HasMedia
     public function followers()
     {
         return $this->morphToMany(User::class, 'followable', 'follows', 'followable_id', 'follower_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(function (Company $company) {
+            if (
+                $company->isDirty('verification_status') &&
+                $company->verification_status === VerificationStatusEnum::Verified
+            ) {
+                $students = User::role('jobseeker')->get();
+                foreach ($students as $student) {
+                    $student->notify(new NewCompanyRegisteredNotification($company));
+                }
+            }
+        });
     }
 }
