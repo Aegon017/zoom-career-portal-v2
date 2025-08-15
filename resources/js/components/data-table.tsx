@@ -2,11 +2,12 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -15,6 +16,8 @@ interface DataTableProps<TData, TValue> {
     createUrl?: string;
     hasCreate?: boolean;
     hasExport?: boolean;
+    hasImport?: boolean;
+    importUrl?: string;
     exportUrl?: string;
     pagination: {
         current_page: number;
@@ -40,8 +43,12 @@ export function DataTable<TData, TValue>( {
     routeName,
     hasExport,
     exportUrl,
+    hasImport,
+    importUrl
 }: DataTableProps<TData, TValue> ) {
     const [ globalFilter, setGlobalFilter ] = useState( filters.search ?? '' );
+    const [ isImporting, setIsImporting ] = useState( false );
+    const fileInputRef = useRef<HTMLInputElement>( null );
     const debouncedSearch = useDebounce( globalFilter, 500 );
     const requestId = useRef( 0 );
     const firstRender = useRef( true );
@@ -52,11 +59,13 @@ export function DataTable<TData, TValue>( {
             const urlParams = new URLSearchParams( window.location.search );
             const currentSearch = urlParams.get( 'search' ) ?? '';
             const currentPerPage = urlParams.get( 'perPage' ) ?? String( pagination.per_page );
-            if ( currentSearch === debouncedSearch && currentPerPage === String( pagination.per_page ) ) return;
+
+            if ( currentSearch === debouncedSearch && currentPerPage === String( pagination.per_page ) ) {
+                return;
+            }
         }
 
-        requestId.current += 1;
-        const currentRequest = requestId.current;
+        const currentRequestId = ++requestId.current;
 
         router.get(
             routeName,
@@ -69,11 +78,11 @@ export function DataTable<TData, TValue>( {
                 preserveState: true,
                 replace: true,
                 onSuccess: () => {
-                    if ( currentRequest !== requestId.current ) return;
+                    if ( currentRequestId !== requestId.current ) return;
                 },
             },
         );
-    }, [ debouncedSearch ] );
+    }, [ debouncedSearch, pagination.per_page, routeName ] );
 
     const handlePageChange = ( page: number ) => {
         router.get(
@@ -106,6 +115,32 @@ export function DataTable<TData, TValue>( {
         );
     };
 
+    const handleImport = ( e: ChangeEvent<HTMLInputElement> ) => {
+        if ( !importUrl || !e.target.files?.[ 0 ] ) return;
+
+        const file = e.target.files[ 0 ];
+        setIsImporting( true );
+
+        router.post(
+            importUrl,
+            { file },
+            {
+                forceFormData: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    router.reload( {
+                        only: [ 'data', 'pagination', 'filters' ],
+                    } );
+                },
+                onFinish: () => {
+                    setIsImporting( false );
+                    if ( fileInputRef.current ) fileInputRef.current.value = '';
+                }
+            }
+        );
+    };
+
     const table = useReactTable( {
         data,
         columns,
@@ -115,20 +150,58 @@ export function DataTable<TData, TValue>( {
         pageCount: pagination.last_page,
     } );
 
+    const start = ( pagination.current_page - 1 ) * pagination.per_page + 1;
+    const end = Math.min( pagination.current_page * pagination.per_page, pagination.total );
+    const total = pagination.total.toLocaleString();
+
     return (
-        <>
-            <div className="flex items-center justify-between">
-                <div className='flex gap-4'>
-                    <Input placeholder="Search..." value={ globalFilter } onChange={ ( e ) => setGlobalFilter( e.target.value ) } className="max-w-sm" />
-                    { hasExport && (
-                        <a href={ exportUrl ?? '' }><Button>Export</Button></a>
+        <div className="space-y-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-muted-foreground">
+                    Showing <span className="font-medium">{ start }</span> to <span className="font-medium">{ end }</span> of{ ' ' }
+                    <span className="font-medium">{ total }</span> results
+                </p>
+
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <div className="flex gap-2">
+                        <Input
+                            placeholder="Search..."
+                            value={ globalFilter }
+                            onChange={ ( e ) => setGlobalFilter( e.target.value ) }
+                            className="max-w-sm"
+                        />
+                        { hasExport && exportUrl && (
+                            <a href={ exportUrl } download>
+                                <Button variant="outline">Export</Button>
+                            </a>
+                        ) }
+                        { hasImport && importUrl && (
+                            <div className="relative">
+                                <Button
+                                    variant="outline"
+                                    disabled={ isImporting }
+                                    onClick={ () => fileInputRef.current?.click() }
+                                >
+                                    { isImporting ? "Uploading..." : "Import" }
+                                </Button>
+                                <input
+                                    ref={ fileInputRef }
+                                    type="file"
+                                    accept=".xlsx,.csv"
+                                    onChange={ handleImport }
+                                    className="hidden"
+                                    disabled={ isImporting }
+                                />
+                            </div>
+                        ) }
+                    </div>
+
+                    { hasCreate && createUrl && (
+                        <Link href={ createUrl }>
+                            <Button className="w-full sm:w-auto">New { listingName }</Button>
+                        </Link>
                     ) }
                 </div>
-                { hasCreate && (
-                    <Link href={ createUrl ?? '' }>
-                        <Button>New { listingName }</Button>
-                    </Link>
-                ) }
             </div>
 
             <div className="rounded-md border">
@@ -138,7 +211,7 @@ export function DataTable<TData, TValue>( {
                             <TableRow key={ headerGroup.id }>
                                 { headerGroup.headers.map( ( header ) => (
                                     <TableHead key={ header.id }>
-                                        { header.isPlaceholder ? null : flexRender( header.column.columnDef.header, header.getContext() ) }
+                                        { flexRender( header.column.columnDef.header, header.getContext() ) }
                                     </TableHead>
                                 ) ) }
                             </TableRow>
@@ -149,14 +222,16 @@ export function DataTable<TData, TValue>( {
                             table.getRowModel().rows.map( ( row ) => (
                                 <TableRow key={ row.id } data-state={ row.getIsSelected() && 'selected' }>
                                     { row.getVisibleCells().map( ( cell ) => (
-                                        <TableCell key={ cell.id }>{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }</TableCell>
+                                        <TableCell key={ cell.id }>
+                                            { flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+                                        </TableCell>
                                     ) ) }
                                 </TableRow>
                             ) )
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={ columns.length } className="h-24 text-center">
-                                    No results.
+                                    No results found
                                 </TableCell>
                             </TableRow>
                         ) }
@@ -164,12 +239,15 @@ export function DataTable<TData, TValue>( {
                 </Table>
             </div>
 
-            <div className="mt-4 flex items-center justify-between px-2">
+            <div className="flex flex-col items-center gap-4 px-2 sm:flex-row sm:justify-between">
                 <div className="flex items-center space-x-2">
                     <p className="text-sm font-medium">Rows per page</p>
-                    <Select value={ String( pagination.per_page ) } onValueChange={ ( value ) => handlePerPageChange( Number( value ) ) }>
+                    <Select
+                        value={ String( pagination.per_page ) }
+                        onValueChange={ ( value ) => handlePerPageChange( Number( value ) ) }
+                    >
                         <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={ pagination.per_page } />
+                            <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             { [ 10, 20, 30, 50 ].map( ( size ) => (
@@ -181,32 +259,44 @@ export function DataTable<TData, TValue>( {
                     </Select>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={ () => handlePageChange( 1 ) } disabled={ pagination.current_page === 1 }>
-                        <ChevronsLeft />
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={ () => handlePageChange( 1 ) }
+                        disabled={ pagination.current_page === 1 }
+                    >
+                        <ChevronsLeft className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" onClick={ () => handlePageChange( pagination.current_page - 1 ) } disabled={ pagination.current_page === 1 }>
-                        <ChevronLeft />
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={ () => handlePageChange( pagination.current_page - 1 ) }
+                        disabled={ pagination.current_page === 1 }
+                    >
+                        <ChevronLeft className="h-4 w-4" />
                     </Button>
-                    <span className="text-sm">
+                    <span className="px-4 text-sm">
                         Page { pagination.current_page } of { pagination.last_page }
                     </span>
                     <Button
                         variant="outline"
+                        size="icon"
                         onClick={ () => handlePageChange( pagination.current_page + 1 ) }
                         disabled={ pagination.current_page === pagination.last_page }
                     >
-                        <ChevronRight />
+                        <ChevronRight className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
+                        size="icon"
                         onClick={ () => handlePageChange( pagination.last_page ) }
                         disabled={ pagination.current_page === pagination.last_page }
                     >
-                        <ChevronsRight />
+                        <ChevronsRight className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

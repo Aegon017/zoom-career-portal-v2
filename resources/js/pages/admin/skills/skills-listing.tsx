@@ -43,6 +43,8 @@ export default function SkillsListing({ skills, filters }: Props) {
                     routeName="/admin/skills"
                     listingName="skill"
                     createUrl="/admin/skills/create"
+                    hasImport={ true }
+                    importUrl="/admin/skills/import"
                 />
             </div>
         </AppLayout>

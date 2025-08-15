@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\RecruiterController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Admin\SkillsImportController;
 use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Employer\ApplicationsController;
@@ -176,6 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::resource('/roles', RoleController::class);
         Route::resource('/job-titles', OpeningTitleController::class);
         Route::resource('/skills', SkillController::class);
+        Route::post('/skills/import', SkillsImportController::class);
         Route::resource('/users', UserController::class);
         Route::resource('/recruiters', RecruiterController::class);
         Route::get('/companies/export', [CompanyController::class, 'export']);
