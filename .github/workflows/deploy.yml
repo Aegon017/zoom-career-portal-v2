@@ -33,7 +33,6 @@ jobs:
 
     - name: Installing Node dependencies
       run: |
-        npm i
         npm run build
 
     - name: Deploying project # copy files to specified FTP directory
