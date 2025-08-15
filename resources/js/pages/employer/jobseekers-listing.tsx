@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/employer-layout';
-import { BreadcrumbItem, User } from '@/types';
+import { BreadcrumbItem, Opening, User } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { Search, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,35 +19,27 @@ const breadcrumbs: BreadcrumbItem[] = [ { title: 'Jobseekers', href: '/employer/
 
 interface Props {
     initialUsers: UsersResponse;
+    jobs: Opening[]; // Changed to array of job openings
 }
 
-export default function JobseekersListing( { initialUsers }: Props ) {
+export default function JobseekersListing( { initialUsers, jobs }: Props ) {
     const [ users, setUsers ] = useState<User[]>( initialUsers.data );
     const [ total, setTotal ] = useState( initialUsers.total );
     const [ nextPageUrl, setNextPageUrl ] = useState( initialUsers.next_page_url );
     const [ loading, setLoading ] = useState( false );
     const [ search, setSearch ] = useState( '' );
-    const [ selectedSkill, setSelectedSkill ] = useState<string>( '' );
+    const [ selectedJobId, setSelectedJobId ] = useState<string>( '' ); // Track selected job ID
 
     const debounceRef = useRef<NodeJS.Timeout | null>( null );
 
-    // Extract and sort unique skills from all users
-    const uniqueSkills = Array.from(
-        new Set(
-            initialUsers.data.flatMap( ( user ) =>
-                user.skills?.map( ( skill ) => skill.name ) ?? []
-            ).filter( ( name ): name is string => typeof name === 'string' )
-        )
-    ).sort( ( a, b ) => a.localeCompare( b ) );
-
     const clearFilters = () => {
         setSearch( '' );
-        setSelectedSkill( '' );
+        setSelectedJobId( '' );
     };
 
-    const hasFilters = search !== '' || selectedSkill !== '';
+    const hasFilters = search !== '' || selectedJobId !== '';
 
-    const fetchFilteredUsers = useCallback( ( query: { search?: string; skill?: string } ) => {
+    const fetchFilteredUsers = useCallback( ( query: { search?: string; job_id?: string } ) => {
         setLoading( true );
         router.get( '/employer/jobseekers', query, {
             preserveState: true,
@@ -74,7 +66,7 @@ export default function JobseekersListing( { initialUsers }: Props ) {
         debounceRef.current = setTimeout( () => {
             fetchFilteredUsers( {
                 search: search || undefined,
-                skill: selectedSkill || undefined
+                job_id: selectedJobId || undefined
             } );
         }, 500 );
 
@@ -83,7 +75,7 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                 clearTimeout( debounceRef.current );
             }
         };
-    }, [ search, selectedSkill, fetchFilteredUsers ] );
+    }, [ search, selectedJobId, fetchFilteredUsers ] );
 
     const loadMore = useCallback( () => {
         if ( !nextPageUrl || loading ) return;
@@ -91,7 +83,7 @@ export default function JobseekersListing( { initialUsers }: Props ) {
         setLoading( true );
         router.get(
             nextPageUrl,
-            { search, skill: selectedSkill },
+            { search, job_id: selectedJobId },
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -107,7 +99,10 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                 }
             },
         );
-    }, [ nextPageUrl, loading, search, selectedSkill ] );
+    }, [ nextPageUrl, loading, search, selectedJobId ] );
+
+    // Get selected job title for display
+    const selectedJob = jobs.find( job => job.id === parseInt( selectedJobId ) )?.title;
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
@@ -135,17 +130,18 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                                 ) }
                             </div>
                             <Select
-                                value={ selectedSkill }
-                                onValueChange={ setSelectedSkill }
+                                value={ selectedJobId }
+                                onValueChange={ setSelectedJobId }
                                 disabled={ loading }
                             >
                                 <SelectTrigger className="sm:w-60">
-                                    <SelectValue placeholder="Select a skill" />
+                                    <SelectValue placeholder="Filter by job" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    { uniqueSkills.map( ( skill ) => (
-                                        <SelectItem key={ skill } value={ skill }>
-                                            { skill.charAt( 0 ).toUpperCase() + skill.slice( 1 ) }
+                                    <SelectItem value="sdf">All Jobs</SelectItem>
+                                    { jobs.map( ( job ) => (
+                                        <SelectItem key={ job.id } value={ String( job.id ) }>
+                                            { job.title }
                                         </SelectItem>
                                     ) ) }
                                 </SelectContent>
@@ -171,16 +167,16 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                             <span className="text-muted-foreground text-sm">
                                 Showing { users.length } of { total } candidates
                             </span>
-                            { ( search || selectedSkill ) && (
+                            { ( search || selectedJob ) && (
                                 <div className="flex items-center gap-2">
                                     { search && (
                                         <span className="text-muted-foreground text-sm">
                                             Search: "{ search }"
                                         </span>
                                     ) }
-                                    { selectedSkill && (
+                                    { selectedJob && (
                                         <span className="text-muted-foreground text-sm">
-                                            Skill: { selectedSkill }
+                                            Job: { selectedJob }
                                         </span>
                                     ) }
                                 </div>
@@ -195,13 +191,10 @@ export default function JobseekersListing( { initialUsers }: Props ) {
                     ) : (
                         <div className="space-y-4">
                             { users.map( ( user ) => (
-                                <Link href={ `/employer/jobseekers/${ user.id }` }>
-                                    <JobseekerCard
-                                        key={ user.id }
-                                        user={ user }
-                                        selectedSkill={ selectedSkill }
-                                    />
-                                </Link>
+                                <JobseekerCard
+                                    key={ user.id }
+                                    user={ user }
+                                />
                             ) ) }
                         </div>
                     ) }

@@ -2,153 +2,94 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zooming Career</title>
-    <link rel="icon" href="{{ asset('favicon.png') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        :root {
-            --main-orange: #ff5522;
-            --secondary-blue: #0055a5;
-        }
-
-        .bg-main {
-            background-color: var(--main-orange) !important;
-        }
-
-        .text-main {
-            color: var(--main-orange) !important;
-        }
-
-        .border-main {
-            border-color: var(--main-orange) !important;
-        }
-
-        .bg-main-light {
-            background-color: rgba(255, 85, 34, 0.1) !important;
-        }
-
-        .btn-main,
-        .btn-outline-main {
-            border-radius: 5rem;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-
-        .btn-main {
-            background-color: var(--main-orange);
-            color: #fff;
-            border: none;
-        }
-
-        .btn-main:hover {
-            background-color: var(--main-orange);
-            color: #fff;
-            border: 1px solid var(--main-orange);
-        }
-
-        .btn-outline-main {
-            border: 1px solid var(--secondary-blue);
-            color: var(--secondary-blue);
-        }
-
-        .btn-outline-main:hover {
-            background-color: var(--secondary-blue);
-            color: #fff;
-        }
-
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fade-in-up 1s ease-out forwards;
-        }
-
-        .delay-200 {
-            animation-delay: 0.2s;
-        }
-
-        .delay-300 {
-            animation-delay: 0.3s;
-        }
-
-        .delay-500 {
-            animation-delay: 0.5s;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zooming Careers</title>
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/style.css') }}">
 </head>
 
 <body>
-    <div class="min-vh-100 position-relative overflow-hidden text-dark">
-        <nav class="position-fixed top-0 w-100 bg-light bg-opacity-75 backdrop-blur z-3 shadow-sm py-3 px-4">
-            <div class="container d-flex justify-content-between align-items-center">
-                <a href="{{ route('home') }}" class="text-decoration-none">
-                    <img src="{{ asset('logo.png') }}" alt="Zooming Career Logo" class="img-fluid"
-                        style="height: 48px;">
-                </a>
-            </div>
-        </nav>
-
-        <section class="position-relative min-vh-100 d-flex align-items-center justify-content-center pt-5">
-            <div class="container text-center">
-                <div
-                    class="d-inline-flex align-items-center mb-4 px-3 py-2 border border-main rounded-pill bg-main-light text-main shadow">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" height="20" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 4v2M5 10v2M5 16v2M12 4v2M12 10v2M12 16v2M19 4v2M19 10v2M19 16v2" />
-                    </svg>
-                    Next-Gen Career Platform
+    <header class="main-header">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="logo">
+                    <a href="#">
+                        <img src="{{ asset('logo.png') }}" alt="Zooming Careers">
+                    </a>
                 </div>
-
-                <h1 class="display-4 fw-bold mb-4 animate-fade-in-up delay-200">
-                    <span class="text-main">Unlock Opportunities</span><br>
-                    <span class="text-muted">for Tomorrow</span>
-                </h1>
-
-                <p class="lead text-muted mb-5 animate-fade-in-up delay-300">
-                    Discover your next opportunity with a modern career platform designed for students and employers.
-                </p>
-
-                <div
-                    class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center animate-fade-in-up delay-500">
-                    <a href="{{ route('employer.login') }}"
-                        class="btn btn-main btn-lg d-flex align-items-center gap-2 shadow">
+                <div class="button-group">
+                    <a href="/employer/login" class="btn-1">
                         Employer Portal
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
+                        <span><i class="fa-solid fa-user-tie"></i></span>
                     </a>
-
-                    <a href="{{ route('student.login') }}"
-                        class="btn btn-outline-main btn-lg d-flex align-items-center gap-2 shadow">
+                    <a href="/student/login" class="btn-1 style2">
                         Student Portal
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
+                        <span><i class="fa-solid fa-user-check"></i></span>
                     </a>
                 </div>
             </div>
-        </section>
-
-        <footer class="bg-white border-top py-3 text-center">
-            <div class="text-muted">&copy; 2025 Zooming Career.</div>
-        </footer>
+        </div>
+    </header>
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h4 class="sub-title"><span class="txt-primary">Empowering Students.</span> <span
+                        class="txt-secondary">Enabling Employers.</span></h4>
+                <h1 class="main-title">Defend the Digital World – Build Your Career</h1>
+                <p class="description">Zooming Career - Our specialized job portal brings together ambitious students,
+                    skilled professionals, and leading employers in the digital infrastructure space. Explore tailored
+                    job postings, and career paths in cybersecurity, cloud, and networking.</p>
+                <div class="button-group">
+                    <a href="/employer/login" class="btn-1">
+                        Employer Portal
+                        <span><i class="fa-solid fa-user-tie"></i></span>
+                    </a>
+                    <a href="/student/login" class="btn-1 style2">
+                        Student Portal
+                        <span><i class="fa-solid fa-user-check"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="vision-mission-section">
+        <div class="vision-section">
+            <div class="wrapper">
+                <h1>Vision</h1>
+                <p>A comprehensive platform connecting employers with skilled professionals in cybersecurity, cloud, and
+                    networking. For employers, it’s the go-to destination to find top qualified talent in these fields.
+                    For Zoom alumni, it’s an exclusive portal designed specifically for those trained at Zoom, offering
+                    tailored career opportunities in cybersecurity, cloud, and networking roles.</p>
+            </div>
+        </div>
+        <div class="mission-section">
+            <div class="wrapper">
+                <h1>Mission</h1>
+                <p>Our mission is to provide a dedicated platform that connects employers with highly skilled
+                    professionals in cybersecurity, cloud, and networking. We aim to support Zoom alumni by offering
+                    exclusive career opportunities tailored to their training, while helping employers find top
+                    qualified talent in these fields. Through this platform, we strive to foster career growth and
+                    professional development within the cybersecurity, cloud, and networking sectors.</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer-top">
+        <h4>Contact Us At <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a></h4>
+    </div>
+    <div class="footer-copyright">
+        <p>Copyright © 1996-2025 <span>Zoom Technologies (India) Private Limited</span>. All Rights Reserved.</p>
     </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ asset('assets/script.js') }}"></script>
 
 </html>

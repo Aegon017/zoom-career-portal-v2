@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Employer;
 
+use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Opening;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Prism\Prism\Enums\Provider;
@@ -22,17 +26,116 @@ final class JobseekerController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->filled('skill') && $request->skill !== 'all') {
-            $query->whereHas('skills', function ($q) use ($request): void {
-                $q->where('name', $request->skill);
-            });
+        $job = null;
+        $jobSkills = [];
+
+        if ($request->filled('job_id')) {
+            $job = Opening::with('skills')->find($request->job_id);
+            if ($job) {
+                $jobSkills = $job->skills->pluck('name')->toArray();
+                
+                $query->with(['skills' => function ($query) use ($jobSkills) {
+                    $query->whereIn('name', $jobSkills);
+                }]);
+            }
         }
 
-        $initialUsers = $query->with('skills')->paginate(10)->withQueryString();
+        $jobs = Auth::user()->openings()->where('status', JobStatusEnum::Published)->get();
+
+        $initialUsers = $query->with('skills','resumes')->paginate(10);
+        
+        if ($job && count($jobSkills)) {
+            $this->addMatchScores($initialUsers, $job, $jobSkills);
+        }
 
         return Inertia::render('employer/jobseekers-listing', [
             'initialUsers' => $initialUsers,
+            'jobs' => $jobs
         ]);
+    }
+
+    private function addMatchScores(LengthAwarePaginator $users, Opening $job, array $jobSkills): void
+    {
+        $jobTitle = $job->title;
+        $jobSkillsText = implode(', ', $jobSkills);
+        
+        $users->getCollection()->transform(function ($user) use ($jobTitle, $jobSkillsText) {
+            $candidateSkills = $user->skills->pluck('name')->join(', ');
+            
+            if (!empty($candidateSkills)) {
+                $prompt = $this->buildPrompt(
+                    $jobTitle,
+                    $jobSkillsText,
+                    $user->name,
+                    $candidateSkills
+                );
+                
+                try {
+                    $response = Prism::text()
+                        ->using(Provider::OpenAI, 'gpt-4.1')
+                        ->withPrompt($prompt)
+                        ->asText();
+                    
+                    if ($json = json_decode($response->text, true)) {
+                        $user->match_score = $json['score'] ?? 0;
+                        $user->match_reason = $json['reason'] ?? '';
+                        $user->shortlist_reason = $json['shortlist_reason'] ?? '';
+                        $user->is_shortlisted = $json['shortlist'] ?? false;
+                    }
+                } catch (\Exception $e) {
+                    $user->match_score = $this->calculateSimpleMatch(
+                        $jobSkillsText, 
+                        $candidateSkills
+                    );
+                }
+            } else {
+                $user->match_score = 0;
+            }
+            
+            return $user;
+        });
+    }
+
+    private function buildPrompt(
+        string $jobTitle, 
+        string $jobSkills,
+        string $candidateName,
+        string $candidateSkills
+    ): string {
+        return <<<EOT
+You are an AI assistant helping with recruitment.
+
+Return only JSON like:
+{"score": number (0 to 100), "reason": string, "shortlist": boolean, "shortlist_reason": string}
+
+Do not include any explanations or commentary — only return the JSON object.
+
+Job:
+{$jobTitle}
+
+Required Skills:
+{$jobSkills}
+
+Candidate:
+{$candidateName}
+
+Candidate Skills:
+{$candidateSkills}
+EOT;
+    }
+
+    private function calculateSimpleMatch(string $jobSkills, string $candidateSkills): int
+    {
+        $jobSkillsArray = explode(', ', $jobSkills);
+        $candidateSkillsArray = explode(', ', $candidateSkills);
+        
+        $matched = array_intersect($jobSkillsArray, $candidateSkillsArray);
+        
+        if (count($jobSkillsArray)) {
+            return (int) round((count($matched) / count($jobSkillsArray)) * 100);
+        }
+        
+        return 0;
     }
 
     public function show(User $user): Response
