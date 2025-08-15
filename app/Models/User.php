@@ -58,6 +58,7 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     protected $appends = [
         'avatar_url',
         'banner_url',
+        'profile_completed',
     ];
 
     public function registerMediaCollections(): void
@@ -249,5 +250,25 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function feedback(): HasMany
     {
         return $this->hasMany(Feedback::class);
+    }
+
+    public function getProfileCompletedAttribute(): int
+    {
+        $totalFields = 10;
+        $filled = 0;
+
+        if (filled($this->name)) $filled++;
+        if (filled($this->email)) $filled++;
+        if (filled($this->phone)) $filled++;
+
+        if ($this->address()->exists()) $filled++;
+        if ($this->resumes()->exists()) $filled++;
+        if ($this->educations()->exists()) $filled++;
+        if ($this->workExperiences()->exists()) $filled++;
+        if ($this->skills()->exists()) $filled++;
+        if ($this->certificates()->exists()) $filled++;
+        if ($this->profile && filled($this->profile->summary)) $filled++;
+
+        return intval(($filled / $totalFields) * 100);
     }
 }

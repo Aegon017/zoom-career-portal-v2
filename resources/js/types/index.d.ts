@@ -80,6 +80,7 @@ export interface User {
     resumes: Resume[];
     companies: Company[];
     company_users: CompanyUser[];
+    profile_completed: number;
     created_at: string;
     updated_at: string;
     [ key: string ]: unknown;
