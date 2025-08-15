@@ -103,6 +103,19 @@ const Verify = ( { job }: Props ) => {
                                                             { formatDate( new Date( job.expires_at ), 'dd MMM yyyy' ) }
                                                         </p>
                                                     </div>
+                                                    <div className="bg-muted border-muted/30 rounded-lg border p-3">
+                                                        <p className="text-muted-foreground text-xs font-medium">External Apply Link</p>
+                                                        <p className="text-foreground text-sm">
+                                                            <a
+                                                                href={ job.apply_link }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:underline"
+                                                            >
+                                                                { job.apply_link }
+                                                            </a>
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
 

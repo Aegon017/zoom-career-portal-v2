@@ -22,7 +22,7 @@ final class JobVerifyController extends Controller
         $job = Opening::find($jobId);
 
         return Inertia::render('admin/jobs/verify', [
-            'job' => $job,
+            'job' => $job->load('address.location'),
         ]);
     }
 
