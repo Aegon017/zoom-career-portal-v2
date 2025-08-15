@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Location extends Model
 {
@@ -22,5 +23,10 @@ final class Location extends Model
         $parts = array_filter([$this->city, $this->state, $this->country]);
 
         return implode(', ', $parts);
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class);
     }
 }
