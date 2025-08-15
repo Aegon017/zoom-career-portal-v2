@@ -20,7 +20,7 @@ export default function StudentVerificationNotice() {
                     </div>
 
                     <Button asChild className="w-full sm:w-auto">
-                        <Link href="/jobseeker/explore">Go to Dashboard</Link>
+                        <Link href="/jobseeker/dashboard">Go to Dashboard</Link>
                     </Button>
                 </div>
             </div>
