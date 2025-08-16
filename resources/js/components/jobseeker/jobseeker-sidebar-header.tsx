@@ -116,18 +116,14 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                                 <i className="fa-solid fa-id-badge me-2"></i>
                                 Profile
                             </Link>
-                            <Link href="/jobseeker/jobs/your/applied" className="zc-dropdown-item">
-                                <i className="fa-solid fa-briefcase me-2"></i>
-                                My Jobs
-                            </Link>
                             <Link href="/jobseeker/resumes" className="zc-dropdown-item">
                                 <i className="fa-solid fa-file me-2"></i>
                                 My Resumes
                             </Link>
-                            <Link href="/jobseeker/career-interests" className="zc-dropdown-item">
+                            {/* <Link href="/jobseeker/career-interests" className="zc-dropdown-item">
                                 <i className="fa-solid fa-spa me-2"></i>
                                 My Career Interests
-                            </Link>
+                            </Link> */}
                             <Link className="zc-dropdown-item" method="post" href="/logout" as="button" onClick={handleLogout}>
                                 <i className="fa-solid fa-right-from-bracket me-2"></i>
                                 Logout
