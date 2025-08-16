@@ -141,7 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware(['verified.student', 'profile.complete'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/dashboard', [JobseekerDashboardController::class, 'index'])->name('dashboard');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
@@ -173,7 +173,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     Route::get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
-
+    Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
+    Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
     // admin routes
     Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
