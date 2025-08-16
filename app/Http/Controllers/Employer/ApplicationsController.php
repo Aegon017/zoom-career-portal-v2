@@ -63,6 +63,8 @@ final class ApplicationsController extends Controller
             'statuses' => $statuses,
             'skills' => $skills,
             'selectedSkill' => $request->skill ?? 'all',
+            'exportUrl' => route('employer.applications.export', $request->job_id),
+            'hasExport' => true,
         ]);
     }
 

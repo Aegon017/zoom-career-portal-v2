@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { Download, User } from 'lucide-react';
+import { Download, User, Loader2 } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
 import { JobApplicationsFilter } from '@/components/job-applications-filter';
 import AppLayout from '@/layouts/employer-layout';
 import { Application, BreadcrumbItem, Opening, Option } from '@/types';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,11 +21,36 @@ interface Props {
     applications: Application[];
     statuses: Option[];
     skills: string[];
+    exportUrl?: string; // New prop for export URL
 }
 
-export default function ApplicationsIndex( { jobs, job_id, applications, statuses, skills }: Props ) {
+export default function ApplicationsIndex( {
+    jobs,
+    job_id,
+    applications,
+    statuses,
+    skills,
+    exportUrl
+}: Props ) {
     const hasApplications = applications?.length > 0;
     const hasSelectedJob = Boolean( job_id );
+    const [ isExporting, setIsExporting ] = useState( false );
+
+    const handleExport = () => {
+        if ( !exportUrl ) return;
+
+        setIsExporting( true );
+
+        // Create a temporary link to trigger the download
+        const link = document.createElement( 'a' );
+        link.href = exportUrl;
+        link.download = 'applications.xlsx';
+        document.body.appendChild( link );
+        link.click();
+        document.body.removeChild( link );
+
+        setIsExporting( false );
+    };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
@@ -36,6 +61,28 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                     <h1 className="text-2xl font-semibold">Candidate Applications</h1>
 
                     <div className="flex items-center gap-2">
+                        {/* Export Button */ }
+                        { exportUrl && (
+                            <Button
+                                variant="outline"
+                                onClick={ handleExport }
+                                disabled={ isExporting }
+                                className="flex items-center gap-2"
+                            >
+                                { isExporting ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Exporting...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </>
+                                ) }
+                            </Button>
+                        ) }
+
                         <JobApplicationsFilter
                             statuses={ statuses }
                             skills={ skills }
@@ -45,19 +92,6 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                                 label: job.title,
                             } ) ) }
                         />
-                        { hasApplications && (
-                            <a
-                                href='/employer/applications/download-resumes'
-                                download="resumes.zip"
-                                className={ cn(
-                                    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
-                                    "bg-indigo-600 text-white shadow hover:bg-indigo-600/90 px-4 py-2"
-                                ) }
-                            >
-                                <Download className="mr-2 h-4 w-4" />
-                                Download All Resumes
-                            </a>
-                        ) }
                     </div>
                 </div>
 

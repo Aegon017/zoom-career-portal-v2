@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\ApplicationsExportController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -139,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
         Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
         Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
+        Route::get('/applications/export/{job}', ApplicationsExportController::class)->name('applications.export');
     });
 
     // jobseeker routes
