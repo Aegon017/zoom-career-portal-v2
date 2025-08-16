@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
+use App\Http\Controllers\Admin\IndustriesImportController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\JobTitlesImportController;
@@ -196,6 +197,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
 
         Route::resource('/industries', IndustryController::class);
+        Route::post('/industries/import', IndustriesImportController::class);
         Route::resource('/locations', AdminLocationController::class);
         Route::resource('/languages', LanguageController::class);
 
