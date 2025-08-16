@@ -213,6 +213,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::delete('/students/reject/{student}', [StudentVerificationController::class, 'reject'])->name('students.verify.reject');
         Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
         Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
+        Route::get('/jobs/{job}/applications/export', ApplicationsExportController::class)->name('jobs.applications.export');
     });
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');

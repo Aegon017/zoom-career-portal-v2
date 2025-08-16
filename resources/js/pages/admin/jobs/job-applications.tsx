@@ -1,10 +1,8 @@
-
-
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { User, X } from 'lucide-react';
+import { Download, User, X, Loader2 } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
 import MultipleSelector from '@/components/multiple-selector';
@@ -44,11 +42,13 @@ interface Props {
     statuses: Option[];
     users: Option[];
     job: Opening;
+    exportUrl?: string; // New prop for export URL
 }
 
-export default function JobApplications( { applications, statuses, users, job }: Props ) {
+export default function JobApplications( { applications, statuses, users, job, exportUrl }: Props ) {
     const [ open, setOpen ] = useState( false );
     const [ loading, setLoading ] = useState( false );
+    const [ isExporting, setIsExporting ] = useState( false ); // Export loading state
 
     const form = useForm<z.infer<typeof formSchema>>( {
         defaultValues: { users: [] },
@@ -74,6 +74,23 @@ export default function JobApplications( { applications, statuses, users, job }:
         }
     };
 
+    // Handle export functionality
+    const handleExport = () => {
+        if ( !exportUrl ) return;
+
+        setIsExporting( true );
+
+        // Create a temporary link to trigger the download
+        const link = document.createElement( 'a' );
+        link.href = exportUrl;
+        link.download = `${ job.title.replace( /\s+/g, '_' ) }_applications.xlsx`;
+        document.body.appendChild( link );
+        link.click();
+        document.body.removeChild( link );
+
+        setIsExporting( false );
+    };
+
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
@@ -81,65 +98,90 @@ export default function JobApplications( { applications, statuses, users, job }:
             <div className="flex h-full flex-col gap-4 rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-semibold">Applications for { job.title }</h1>
-                    <Dialog open={ open } onOpenChange={ setOpen }>
-                        <DialogTrigger asChild>
-                            <Button variant="default" className="ml-auto">
-                                Apply for Candidates
+
+                    <div className="flex items-center gap-2">
+                        {/* Export Button */ }
+                        { exportUrl && (
+                            <Button
+                                variant="outline"
+                                onClick={ handleExport }
+                                disabled={ isExporting }
+                                className="flex items-center gap-2"
+                            >
+                                { isExporting ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Exporting...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </>
+                                ) }
                             </Button>
-                        </DialogTrigger>
+                        ) }
 
-                        <DialogContent className="sm:max-w-[425px]">
-                            <Form { ...form }>
-                                <form onSubmit={ form.handleSubmit( onSubmit ) }>
-                                    <DialogHeader>
-                                        <DialogTitle>Apply for Job</DialogTitle>
-                                        <DialogDescription>
-                                            Select candidates to apply for this position.
-                                        </DialogDescription>
-                                    </DialogHeader>
+                        <Dialog open={ open } onOpenChange={ setOpen }>
+                            <DialogTrigger asChild>
+                                <Button variant="default" className="ml-auto">
+                                    Apply for Candidates
+                                </Button>
+                            </DialogTrigger>
 
-                                    <div className="grid gap-4 py-4">
-                                        <FormField
-                                            control={ form.control }
-                                            name="users"
-                                            render={ ( { field } ) => (
-                                                <FormItem>
-                                                    <FormLabel>Select Candidates</FormLabel>
-                                                    <FormControl>
-                                                        <MultipleSelector
-                                                            options={ users }
-                                                            value={ field.value }
-                                                            onChange={ field.onChange }
-                                                            placeholder="Search candidates..."
-                                                            emptyIndicator={
-                                                                <p className="w-full text-center text-sm text-muted-foreground">
-                                                                    No candidates found
-                                                                </p>
-                                                            }
-                                                            hidePlaceholderWhenSelected
-                                                            creatable={ false }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            ) }
-                                        />
-                                    </div>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <Form { ...form }>
+                                    <form onSubmit={ form.handleSubmit( onSubmit ) }>
+                                        <DialogHeader>
+                                            <DialogTitle>Apply for Job</DialogTitle>
+                                            <DialogDescription>
+                                                Select candidates to apply for this position.
+                                            </DialogDescription>
+                                        </DialogHeader>
 
-                                    <DialogFooter>
-                                        <DialogClose asChild>
-                                            <Button variant="outline" type="button" disabled={ loading }>
-                                                Cancel
+                                        <div className="grid gap-4 py-4">
+                                            <FormField
+                                                control={ form.control }
+                                                name="users"
+                                                render={ ( { field } ) => (
+                                                    <FormItem>
+                                                        <FormLabel>Select Candidates</FormLabel>
+                                                        <FormControl>
+                                                            <MultipleSelector
+                                                                options={ users }
+                                                                value={ field.value }
+                                                                onChange={ field.onChange }
+                                                                placeholder="Search candidates..."
+                                                                emptyIndicator={
+                                                                    <p className="w-full text-center text-sm text-muted-foreground">
+                                                                        No candidates found
+                                                                    </p>
+                                                                }
+                                                                hidePlaceholderWhenSelected
+                                                                creatable={ false }
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                ) }
+                                            />
+                                        </div>
+
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant="outline" type="button" disabled={ loading }>
+                                                    Cancel
+                                                </Button>
+                                            </DialogClose>
+                                            <Button type="submit" disabled={ loading }>
+                                                { loading ? 'Applying...' : 'Apply' }
                                             </Button>
-                                        </DialogClose>
-                                        <Button type="submit" disabled={ loading }>
-                                            { loading ? 'Applying...' : 'Apply' }
-                                        </Button>
-                                    </DialogFooter>
-                                </form>
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
+                                        </DialogFooter>
+                                    </form>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
 
                 { applications?.length > 0 ? (
