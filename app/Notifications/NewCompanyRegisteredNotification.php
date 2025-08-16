@@ -33,13 +33,11 @@ class NewCompanyRegisteredNotification extends Notification implements ShouldQue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Company Registered: ' . $this->company->name)
-            ->greeting('Hello ' . $notifiable->name . ',')
-            ->line('A new company has just been registered on the portal:')
-            ->line('**' . $this->company->name . '**')
-            ->action('View Company', route('jobseeker.employers.show', $this->company->id))
-            ->line('Log in to explore job openings.')
-            ->line('Thank you for staying connected!');
+            ->subject('New Company Registered on Zooming Career portal')
+            ->greeting('Hello Everyone,')
+            ->line('A company, "' . $this->company->name . '", has recently registered on our portal.')
+            ->line('We encourage you to visit the portal to learn more about the company and follow their profile to receive alerts about any upcoming job postings.')
+            ->action('View Company', route('jobseeker.employers.show', $this->company->id));
     }
 
     /**

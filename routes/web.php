@@ -131,6 +131,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::prefix('/applications')->name('applications.')->group(function (): void {
             Route::get('/', [ApplicationsController::class, 'index'])->name('index');
             Route::post('/', [ApplicationsController::class, 'store'])->name('store');
+            Route::get('/download-resumes', [ApplicationsController::class, 'downloadResumes'])->name('download-resumes');
         });
 
         Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
@@ -141,7 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware(['verified.student', 'profile.complete'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/dashboard', [JobseekerDashboardController::class, 'index'])->name('dashboard');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');

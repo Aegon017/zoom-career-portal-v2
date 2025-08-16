@@ -13,13 +13,18 @@ use App\Models\Opening;
 use App\Models\OpeningApplication;
 use App\Models\User;
 use App\Notifications\ShortlistedMessageNotification;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use ZipArchive;
+use Illuminate\Support\Str;
 
 final class ApplicationsController extends Controller
 {
@@ -129,5 +134,110 @@ final class ApplicationsController extends Controller
         }
 
         return back()->with('success', 'Message sent to all shortlisted candidates.');
+    }
+
+    public function downloadResumes(Request $request)
+    {
+        Log::info('Download resumes initiated', ['request' => $request->all()]);
+
+        $applications = OpeningApplication::query()
+            ->when($request->job_id, fn($q) => $q->where('opening_id', $request->job_id))
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->when($request->skill, fn($q) => $q->whereJsonContains('skills', $request->skill))
+            ->with(['resume.media', 'user'])
+            ->get();
+
+        Log::debug('Applications count: ' . $applications->count());
+
+        if ($applications->isEmpty()) {
+            Log::warning('No applications found for download');
+            return back()->with('error', 'No applications found');
+        }
+
+        $zip = new ZipArchive();
+        $fileName = "resumes-" . now()->format('Ymd-His') . '.zip';
+        $path = storage_path('app/' . $fileName);
+        $filesAdded = false;
+
+        Log::info('Creating zip file: ' . $path);
+
+        try {
+            if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                $error = "Failed to create zip file at: $path";
+                Log::error($error);
+                throw new \Exception($error);
+            }
+
+            $addedCount = 0;
+            $skippedCount = 0;
+
+            foreach ($applications as $application) {
+                try {
+                    // Skip if relationships are missing
+                    if (!$application->resume || !$application->user) {
+                        $skippedCount++;
+                        Log::debug("Skipping application {$application->id}: missing resume or user");
+                        continue;
+                    }
+
+                    /** @var Media|null $media */
+                    $media = $application->resume->getFirstMedia('resumes');
+                    if (!$media) {
+                        $skippedCount++;
+                        Log::debug("Skipping resume {$application->resume_id}: no media found");
+                        continue;
+                    }
+
+                    // Get the actual file path from media model
+                    $filePath = $media->getPath();
+
+                    // Verify file exists at path
+                    if (!file_exists($filePath)) {
+                        $skippedCount++;
+                        Log::warning("File not found: {$filePath}");
+                        continue;
+                    }
+
+                    // Sanitize filename
+                    $safeName = Str::slug($application->user->name);
+                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                    $fileNameInZip = "{$safeName}-Resume-{$application->resume_id}.{$extension}";
+
+                    // Add file directly from disk (more memory efficient)
+                    if ($zip->addFile($filePath, $fileNameInZip)) {
+                        $addedCount++;
+                        $filesAdded = true;
+                        Log::debug("Added to zip: {$fileNameInZip}");
+                    } else {
+                        $skippedCount++;
+                        Log::warning("Failed to add to zip: {$fileNameInZip}");
+                    }
+                } catch (\Exception $e) {
+                    $skippedCount++;
+                    Log::error("Error processing application {$application->id}: " . $e->getMessage());
+                }
+            }
+
+            $zip->close();
+            Log::info("Zip closed. Added: {$addedCount}, Skipped: {$skippedCount}");
+
+            if (!$filesAdded) {
+                if (file_exists($path)) {
+                    unlink($path);
+                    Log::info('Deleted empty zip file');
+                }
+                Log::warning('No valid resumes found for download');
+                return back()->with('error', 'No valid resumes found for download');
+            }
+
+            Log::info('Returning download response');
+            return response()->download($path, $fileName)->deleteFileAfterSend();
+        } catch (\Exception $e) {
+            if (isset($zip) && $zip instanceof ZipArchive) {
+                $zip->close();
+            }
+            Log::error("Zip creation failed: " . $e->getMessage());
+            return back()->with('error', 'Error creating zip file: ' . $e->getMessage());
+        }
     }
 }

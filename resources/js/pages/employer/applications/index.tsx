@@ -1,26 +1,12 @@
 import { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { User } from 'lucide-react';
+import { Download, User } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
 import { JobApplicationsFilter } from '@/components/job-applications-filter';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/employer-layout';
 import { Application, BreadcrumbItem, Opening, Option } from '@/types';
-import { Input } from '@/components/ui/input';
-import TextEditor from '@/components/text-editor';
-import { useForm } from 'react-hook-form';
+import { cn } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -40,7 +26,7 @@ interface Props {
 export default function ApplicationsIndex( { jobs, job_id, applications, statuses, skills }: Props ) {
     const hasApplications = applications?.length > 0;
     const hasSelectedJob = Boolean( job_id );
-    
+
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
@@ -59,6 +45,19 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                                 label: job.title,
                             } ) ) }
                         />
+                        { hasApplications && (
+                            <a
+                                href='/employer/applications/download-resumes'
+                                download="resumes.zip"
+                                className={ cn(
+                                    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
+                                    "bg-indigo-600 text-white shadow hover:bg-indigo-600/90 px-4 py-2"
+                                ) }
+                            >
+                                <Download className="mr-2 h-4 w-4" />
+                                Download All Resumes
+                            </a>
+                        ) }
                     </div>
                 </div>
 
