@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobTitlesImportController;
 use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
@@ -176,6 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('/roles', RoleController::class);
         Route::resource('/job-titles', OpeningTitleController::class);
+        Route::post('/job-titles/import', JobTitlesImportController::class);
         Route::resource('/skills', SkillController::class);
         Route::post('/skills/import', SkillsImportController::class);
         Route::resource('/users', UserController::class);
