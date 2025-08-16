@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\SkillsImportController;
 use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
@@ -195,7 +196,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
         Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
         Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
-
+        Route::get('/pending-verifications', [VerificationController::class, 'index']);
         Route::resource('/industries', IndustryController::class);
         Route::post('/industries/import', IndustriesImportController::class);
         Route::resource('/locations', AdminLocationController::class);

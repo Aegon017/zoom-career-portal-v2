@@ -1,7 +1,7 @@
 import useRoles from '@/hooks/use-roles';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Languages, LayoutGrid, MapPin, Notebook, Settings2, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Hourglass, Languages, LayoutGrid, MapPin, Notebook, Settings2, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
@@ -81,7 +81,13 @@ export function AppSidebar() {
         },
     ].filter( Boolean ) as NavItem[];
 
-    const footerNavItems: NavItem[] = [];
+    const footerNavItems: NavItem[] = [
+        {
+            title: 'Pending verifications',
+            href: '/admin/pending-verifications',
+            icon: Hourglass
+        }
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
