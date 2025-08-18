@@ -400,6 +400,7 @@ const CreateOrEditJob = ( {
                                                             onSelect={ field.onChange }
                                                             disabled={ ( date ) => date < new Date() }
                                                             autoFocus
+                                                            captionLayout='dropdown'
                                                         />
                                                     </PopoverContent>
                                                 </Popover>

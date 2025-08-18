@@ -564,7 +564,7 @@ const CreateOrEditStudent = ( {
                                                                     selected={ field.value ?? undefined }
                                                                     onSelect={ field.onChange }
                                                                     disabled={ ( date ) => date > new Date() }
-                                                                    initialFocus
+                                                                    captionLayout='dropdown'
                                                                 />
                                                             </PopoverContent>
                                                         </Popover>
@@ -816,7 +816,7 @@ const CreateOrEditStudent = ( {
                                                                                 selected={ field.value ?? undefined }
                                                                                 onSelect={ field.onChange }
                                                                                 disabled={ ( date ) => date > new Date() }
-                                                                                initialFocus
+                                                                                captionLayout='dropdown'
                                                                             />
                                                                         </PopoverContent>
                                                                     </Popover>
@@ -852,7 +852,7 @@ const CreateOrEditStudent = ( {
                                                                                 selected={ field.value ?? undefined }
                                                                                 onSelect={ field.onChange }
                                                                                 disabled={ ( date ) => date > new Date() }
-                                                                                initialFocus
+                                                                                captionLayout='dropdown'
                                                                             />
                                                                         </PopoverContent>
                                                                     </Popover>
@@ -1002,7 +1002,7 @@ const CreateOrEditStudent = ( {
                                                                                 selected={ field.value ?? undefined }
                                                                                 onSelect={ field.onChange }
                                                                                 disabled={ ( date ) => date > new Date() }
-                                                                                initialFocus
+                                                                                captionLayout='dropdown'
                                                                             />
                                                                         </PopoverContent>
                                                                     </Popover>
@@ -1038,7 +1038,7 @@ const CreateOrEditStudent = ( {
                                                                                 selected={ field.value ?? undefined }
                                                                                 onSelect={ field.onChange }
                                                                                 disabled={ ( date ) => date > new Date() }
-                                                                                initialFocus
+                                                                                captionLayout='dropdown'
                                                                             />
                                                                         </PopoverContent>
                                                                     </Popover>

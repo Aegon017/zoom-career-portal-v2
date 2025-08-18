@@ -424,7 +424,7 @@ const JobseekerProfileWizard = ( {
                                                                 selected={ field.value }
                                                                 onSelect={ field.onChange }
                                                                 disabled={ ( date ) => date > new Date() }
-                                                                initialFocus
+                                                                captionLayout='dropdown'
                                                             />
                                                         </PopoverContent>
                                                     </Popover>
@@ -675,7 +675,7 @@ const JobseekerProfileWizard = ( {
                                                                             selected={ field.value }
                                                                             onSelect={ field.onChange }
                                                                             disabled={ ( date ) => date > new Date() }
-                                                                            initialFocus
+                                                                            captionLayout='dropdown'
                                                                         />
                                                                     </PopoverContent>
                                                                 </Popover>
@@ -716,7 +716,7 @@ const JobseekerProfileWizard = ( {
                                                                             selected={ field.value }
                                                                             onSelect={ field.onChange }
                                                                             disabled={ ( date ) => date > new Date() }
-                                                                            initialFocus
+                                                                            captionLayout='dropdown'
                                                                         />
                                                                     </PopoverContent>
                                                                 </Popover>
@@ -843,7 +843,7 @@ const JobseekerProfileWizard = ( {
                                                                             selected={ field.value }
                                                                             onSelect={ field.onChange }
                                                                             disabled={ ( date ) => date > new Date() }
-                                                                            initialFocus
+                                                                            captionLayout='dropdown'
                                                                         />
                                                                     </PopoverContent>
                                                                 </Popover>
@@ -884,7 +884,7 @@ const JobseekerProfileWizard = ( {
                                                                             selected={ field.value }
                                                                             onSelect={ field.onChange }
                                                                             disabled={ ( date ) => date > new Date() }
-                                                                            initialFocus
+                                                                            captionLayout='dropdown'
                                                                         />
                                                                     </PopoverContent>
                                                                 </Popover>
