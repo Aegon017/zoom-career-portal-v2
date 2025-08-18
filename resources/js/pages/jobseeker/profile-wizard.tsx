@@ -49,7 +49,6 @@ interface FormValues {
         job_title?: string;
         experience?: string;
         notice_period?: string;
-        summary?: string;
     };
     skills: string[];
     work_permits: string[];
@@ -107,7 +106,6 @@ const JobseekerProfileWizard = ( {
         'profile.job_title': 1,
         'profile.experience': 1,
         'profile.notice_period': 1,
-        'profile.summary': 1,
 
         // Skills step (index 2)
         'skills': 2,
@@ -143,7 +141,6 @@ const JobseekerProfileWizard = ( {
                 job_title: user?.profile?.job_title || '',
                 experience: user?.profile?.experience || '',
                 notice_period: user?.profile?.notice_period || '',
-                summary: user?.profile?.summary || '',
             },
             skills: user?.skills?.map( ( skill: any ) => skill.id.toString() ) || [],
             work_permits: user?.work_permits?.map( ( wp: any ) => wp.country ) || [],
@@ -528,24 +525,6 @@ const JobseekerProfileWizard = ( {
                                                         type="number"
                                                         { ...field }
                                                         data-error={ hasFieldError( 'profile.notice_period' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="profile.summary"
-                                        render={ ( { field } ) => (
-                                            <FormItem className="md:col-span-2">
-                                                <FormLabel>Professional Summary</FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        { ...field }
-                                                        rows={ 4 }
-                                                        placeholder="Describe your professional background and career goals..."
-                                                        data-error={ hasFieldError( 'profile.summary' ) ? 'true' : 'false' }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -1099,7 +1078,6 @@ const JobseekerProfileWizard = ( {
                                         <p><strong>Job Title:</strong> { watch( 'profile.job_title' ) }</p>
                                         <p><strong>Experience:</strong> { watch( 'profile.experience' ) } years</p>
                                         <p><strong>Notice Period:</strong> { watch( 'profile.notice_period' ) } days</p>
-                                        <p><strong>Summary:</strong> { watch( 'profile.summary' ) }</p>
                                     </div>
 
                                     <div>

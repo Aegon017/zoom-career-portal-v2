@@ -126,7 +126,6 @@ final class ProfileController extends Controller
             'profile.job_title' => 'required|string|max:255',
             'profile.experience' => 'required|string|max:255',
             'profile.notice_period' => 'required|string|max:255',
-            'profile.summary' => 'required|string|max:2000',
 
             'skills' => 'required|array|min:1',
             'skills.*' => 'required|string|exists:skills,id',
