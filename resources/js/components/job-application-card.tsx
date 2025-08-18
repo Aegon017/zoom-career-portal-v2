@@ -1,5 +1,3 @@
-
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -70,11 +68,13 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
         <Card className="group border-border/60 hover:border-primary/30 bg-background/95 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md">
             <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-            <CardHeader className="relative pb-4">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex min-w-0 flex-1 items-start gap-4">
+            <CardHeader className="relative pb-3 sm:pb-4">
+                {/* Main Content - Responsive Flex */ }
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    {/* User Info Section */ }
+                    <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
                         <div className="relative">
-                            <Avatar className="border-muted ring-primary/10 group-hover:ring-primary/20 h-12 w-12 border ring-1 transition-transform duration-300 group-hover:scale-105">
+                            <Avatar className="border-muted ring-primary/10 group-hover:ring-primary/20 h-10 w-10 sm:h-12 sm:w-12 border ring-1 transition-transform duration-300 group-hover:scale-105">
                                 <AvatarImage
                                     src={ application.user.avatar_url }
                                     alt={ application.user.name }
@@ -86,22 +86,35 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                             </Avatar>
                         </div>
 
-                        <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="min-w-0 flex-1 space-y-1 sm:space-y-1.5">
                             <Link href={ `/employer/jobseekers/${ application.user.id }` }>
                                 <h3 className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
                                     { application.user.name }
                                 </h3>
                             </Link>
-                            <span className='text-muted-foreground flex items-center gap-1 text-xs'><Phone className="h-4 w-4" /> { application.user.phone }</span>
-                            <span className='text-muted-foreground flex items-center gap-1 text-xs'><Mail className="h-4 w-4" /> { application.user.email }</span>
-                            <div className="text-muted-foreground flex items-center gap-1 text-xs">
-                                <CalendarDays className="h-4 w-4" />
-                                <span>Applied { formatDate( application.created_at ) }</span>
+
+                            {/* Contact Info - Stack on mobile, inline on sm+ */ }
+                            <div className="grid grid-cols-1 gap-1 sm:flex sm:flex-col">
+                                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                                    <span className='text-muted-foreground flex items-center gap-1 text-xs'>
+                                        <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
+                                        { application.user.phone }
+                                    </span>
+                                    <span className='text-muted-foreground flex items-center gap-1 text-xs'>
+                                        <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
+                                        { application.user.email }
+                                    </span>
+                                </div>
+                                <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                                    <CalendarDays className="h-3 w-3 sm:h-4 sm:w-4" />
+                                    <span>Applied { formatDate( application.created_at ) }</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-shrink-0 items-center gap-2">
+                    {/* Action Buttons */ }
+                    <div className="flex flex-shrink-0 items-center justify-end gap-2 pt-1 sm:pt-0">
                         { message && (
                             <MessageButton userId={ application.user.id }>
                                 <Button
@@ -109,8 +122,8 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                                     variant="outline"
                                     className="hover:bg-primary hover:text-primary-foreground hover:border-primary px-2 py-1 text-xs transition-colors ease-in-out"
                                 >
-                                    <Mail className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Message</span>
+                                    <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    <span className="sr-only sm:not-sr-only sm:ml-1">Message</span>
                                 </Button>
                             </MessageButton>
                         ) }
@@ -118,24 +131,30 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                             variant="ghost"
                             size="icon"
                             onClick={ toggleExpand }
-                            className="text-muted-foreground hover:text-foreground hover:bg-muted h-8 w-8 rounded-md p-0"
+                            className="text-muted-foreground hover:text-foreground hover:bg-muted h-7 w-7 sm:h-8 sm:w-8 rounded-md p-0"
                             aria-label={ expanded ? 'Collapse details' : 'Expand details' }
                         >
-                            { expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" /> }
+                            { expanded ?
+                                <ChevronUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> :
+                                <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            }
                         </Button>
                     </div>
                 </div>
-                <Separator className='mt-6' />
 
-                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <Separator className="mt-3 sm:mt-4" />
+
+                {/* Status & Match Score Section - Responsive Grid */ }
+                <div className="mt-3 sm:mt-4 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
+                    {/* Status Column */ }
                     <div className="space-y-2">
                         <div className="text-foreground flex items-center gap-2 text-sm font-medium">
                             <div className="bg-primary/10 rounded-md p-1.5">
-                                <User className="text-primary h-4 w-4" />
+                                <User className="text-primary h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             </div>
                             <span>Status</span>
                         </div>
-                        <div className="pl-7">
+                        <div className="pl-6 sm:pl-7">
                             <JobStatus statuses={ statuses } application={ application } />
                         </div>
                         { application.resume?.resume_url && (
@@ -144,35 +163,44 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                                     variant="ghost"
                                     size="sm"
                                     asChild
-                                    className="rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400"
+                                    className="rounded-md border border-transparent px-2.5 py-1.5 text-xs sm:text-sm font-medium text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400"
                                 >
                                     <a href={ application.resume?.resume_url } target="_blank" rel="noopener noreferrer">
-                                        <FileText className="h-4 w-4" />
+                                        <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5" />
                                         <span>View Resume</span>
-                                        <ExternalLink className="h-3 w-3" />
+                                        <ExternalLink className="h-3 w-3 ml-1.5" />
                                     </a>
                                 </Button>
                             </div>
                         ) }
                     </div>
 
+                    {/* Match Score Column - Hidden if null */ }
                     { application.match_score !== null && (
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <div className="text-foreground flex items-center gap-2 text-sm font-medium">
                                     <div className="bg-primary/10 rounded-md p-1.5">
-                                        <TrendingUp className="text-primary h-4 w-4" />
+                                        <TrendingUp className="text-primary h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                     </div>
                                     <span>Match Score</span>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-foreground text-xl font-semibold">{ application.match_score }</div>
+                                    <div className="text-foreground text-lg sm:text-xl font-semibold">{ application.match_score }</div>
                                     <div className="text-muted-foreground text-xs">out of 100</div>
                                 </div>
                             </div>
-                            <div className="space-y-2 pl-7">
-                                <Progress value={ application.match_score } className="bg-muted h-2 rounded-full" />
-                                <Badge variant="outline" className={ `rounded-full px-2 py-1 text-xs ${ getMatchColor( application.match_score ) }` }>
+                            <div className="space-y-2 pl-6 sm:pl-7">
+                                <div className={ `${ getProgressColor( application.match_score ) } rounded-full h-2` }>
+                                    <Progress
+                                        value={ application.match_score }
+                                        className="h-full bg-current"
+                                    />
+                                </div>
+                                <Badge
+                                    variant="outline"
+                                    className={ `rounded-full px-2 py-1 text-xs ${ getMatchColor( application.match_score ) }` }
+                                >
                                     <Sparkles className="mr-1.5 h-3 w-3" />
                                     { getMatchLabel( application.match_score ) } match
                                 </Badge>
@@ -182,20 +210,21 @@ const JobApplicationCard = ( { application, statuses, message = true }: Props ) 
                 </div>
             </CardHeader>
 
+            {/* Expandable Content */ }
             { expanded && (
                 <>
                     <Separator />
-                    <CardContent className="bg-muted/10 space-y-5 rounded-b-xl p-4 sm:p-5">
+                    <CardContent className="bg-muted/10 space-y-4 rounded-b-xl p-3 sm:p-4 sm:space-y-5">
                         { application.match_summary && (
                             <div className="space-y-3">
                                 <div className="flex items-center gap-2">
-                                    <div className="bg-primary rounded-md p-2 shadow">
-                                        <Sparkles className="h-4 w-4 text-white" />
+                                    <div className="bg-primary rounded-md p-1.5 sm:p-2 shadow">
+                                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
                                     </div>
                                     <h4 className="text-foreground text-sm font-semibold">Match Analysis</h4>
                                 </div>
                                 <Card className="bg-card/50 border-0 shadow-sm backdrop-blur-sm">
-                                    <CardContent className="text-muted-foreground p-4 text-sm leading-relaxed">
+                                    <CardContent className="text-muted-foreground p-3 sm:p-4 text-sm leading-relaxed">
                                         { application.match_summary }
                                     </CardContent>
                                 </Card>

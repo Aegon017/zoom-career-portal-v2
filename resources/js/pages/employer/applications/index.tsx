@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { useState, useMemo } from 'react';
+import { Head } from '@inertiajs/react'; // Removed unused router import
 import { Download, User, Loader2 } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
@@ -21,52 +21,65 @@ interface Props {
     applications: Application[];
     statuses: Option[];
     skills: string[];
-    exportUrl?: string; // New prop for export URL
+    exportUrl?: string;
 }
 
 export default function ApplicationsIndex( {
     jobs,
     job_id,
-    applications,
+    applications = [], // Default value for safety
     statuses,
     skills,
     exportUrl
 }: Props ) {
-    const hasApplications = applications?.length > 0;
-    const hasSelectedJob = Boolean( job_id );
+    // Memoized derived values for performance
+    const hasApplications = useMemo( () => applications.length > 0, [ applications ] );
+    const hasSelectedJob = useMemo( () => Boolean( job_id ), [ job_id ] );
     const [ isExporting, setIsExporting ] = useState( false );
+
+    // Memoized job options to prevent unnecessary recalculations
+    const jobOptions = useMemo( () => (
+        jobs.map( job => ( {
+            value: String( job.id ),
+            label: job.title,
+        } ) )
+    ), [ jobs ] );
 
     const handleExport = () => {
         if ( !exportUrl ) return;
 
         setIsExporting( true );
-
-        // Create a temporary link to trigger the download
-        const link = document.createElement( 'a' );
-        link.href = exportUrl;
-        link.download = 'applications.xlsx';
-        document.body.appendChild( link );
-        link.click();
-        document.body.removeChild( link );
-
-        setIsExporting( false );
+        try {
+            // Improved download method using hidden anchor
+            const anchor = document.createElement( 'a' );
+            anchor.href = exportUrl;
+            anchor.download = 'applications.xlsx';
+            anchor.style.display = 'none';
+            document.body.appendChild( anchor );
+            anchor.click();
+            document.body.removeChild( anchor );
+        } catch ( error ) {
+            console.error( 'Export failed:', error );
+        } finally {
+            setIsExporting( false );
+        }
     };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex flex-1 flex-col gap-4 p-4 rounded-xl">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <h1 className="text-2xl font-semibold">Candidate Applications</h1>
 
                     <div className="flex items-center gap-2">
-                        {/* Export Button */ }
                         { exportUrl && (
                             <Button
                                 variant="outline"
                                 onClick={ handleExport }
                                 disabled={ isExporting }
+                                aria-busy={ isExporting }
                                 className="flex items-center gap-2"
                             >
                                 { isExporting ? (
@@ -86,11 +99,8 @@ export default function ApplicationsIndex( {
                         <JobApplicationsFilter
                             statuses={ statuses }
                             skills={ skills }
-                            defaultValue={ job_id }
-                            jobOptions={ jobs.map( ( job ) => ( {
-                                value: String( job.id ),
-                                label: job.title,
-                            } ) ) }
+                            defaultValue={ job_id ? job_id : undefined }
+                            jobOptions={ jobOptions }
                         />
                     </div>
                 </div>
@@ -106,7 +116,7 @@ export default function ApplicationsIndex( {
                         ) ) }
                     </div>
                 ) : (
-                    <div className="flex flex-1 flex-col items-center justify-center space-y-4">
+                    <div className="flex flex-1 flex-col items-center justify-center gap-4 py-8">
                         <div className="rounded-full bg-muted p-4">
                             <User className="h-12 w-12 text-muted-foreground" />
                         </div>
