@@ -27,6 +27,16 @@ export const columns: ColumnDef<User>[] = [
         enableGlobalFilter: true,
     },
     {
+        accessorKey: 'email',
+        header: 'Email',
+        enableGlobalFilter: true,
+    },
+    {
+        accessorKey: 'phone',
+        header: 'Phone',
+        enableGlobalFilter: true,
+    },
+    {
         accessorKey: 'profile_completed',
         header: 'Profile status',
         enableGlobalFilter: true,
