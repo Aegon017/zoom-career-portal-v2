@@ -39,7 +39,7 @@ Candidate:
 EOT;
 
         $response = Prism::text()
-            ->using(Provider::OpenAI, 'gpt-4.1')
+            ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
             ->withPrompt($prompt)
             ->asText();
 
