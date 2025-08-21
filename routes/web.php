@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\ApplicationsExportController;
+use App\Http\Controllers\Admin\ChatLogController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -214,6 +215,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
         Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
         Route::get('/jobs/{job}/applications/export', ApplicationsExportController::class)->name('jobs.applications.export');
+        Route::get('/chat-logs', ChatLogController::class)->name('chat-logs');
     });
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');

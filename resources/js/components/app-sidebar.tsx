@@ -1,7 +1,7 @@
 import useRoles from '@/hooks/use-roles';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, Hourglass, Languages, LayoutGrid, MapPin, Notebook, Settings2, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, History, Hourglass, Languages, LayoutGrid, MapPin, MessageSquare, Notebook, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
@@ -10,7 +10,6 @@ import { Separator } from './ui/separator';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from './ui/sidebar';
 
 export function AppSidebar() {
-    const roles = useRoles();
     const { auth } = usePage<SharedData>().props;
     const permissions = auth?.permissions || [];
     const can = ( permission: string ) => permissions.includes( permission );
@@ -86,6 +85,11 @@ export function AppSidebar() {
             title: 'Pending verifications',
             href: '/admin/pending-verifications',
             icon: Hourglass
+        },
+        {
+            title: 'Chat Logs',
+            href: '/admin/chat-logs',
+            icon: MessageSquare
         }
     ];
 
