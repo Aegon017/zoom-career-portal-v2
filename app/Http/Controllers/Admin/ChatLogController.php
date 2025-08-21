@@ -18,6 +18,7 @@ class ChatLogController extends Controller
             'participants.user:id,name,email',
             'messages.user:id,name'
         ])
+            ->has('messages')
             ->orderByDesc('updated_at')
             ->paginate(10);
 
