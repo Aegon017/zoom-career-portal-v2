@@ -27,35 +27,41 @@ class VerificationController extends Controller
             ->get();
         $pendingJobs = Opening::where('verification_status', VerificationStatusEnum::Pending->value)->get();
 
-        $companyVerifications = $pendingCompanies->map(fn($company) => [
-            'message' => 'Company updated and needs verification: ' . $company->name,
-            'url' => route('admin.companies.show', $company->id),
-        ]);
-
-        $studentVerifications = $pendingStudents->map(fn($user) => [
-            'message' => 'Student profile needs verification: ' . $user->name,
-            'url' => route('admin.students.show', $user->id),
-        ]);
-
-        $employerVerifications = $pendingEmployers->map(fn($user) => [
-            'message' => 'Employer account needs verification: ' . $user->name,
-            'url' => route('admin.recruiters.show', $user->id),
-        ]);
-
-        $jobVerifications = $pendingJobs->map(fn($job) => [
-            'message' => 'Job opening pending verification: ' . $job->title,
-            'url' => route('admin.jobs.show', $job->id),
-        ]);
-
-        $pendingVerifications = collect()
-            ->merge($companyVerifications)
-            ->merge($studentVerifications)
-            ->merge($employerVerifications)
-            ->merge($jobVerifications)
-            ->values();
-
         return Inertia::render('admin/pending-verifications-listing', [
-            'pendingVerifications' => $pendingVerifications
+            'pendingVerifications' => [
+                'company' => [
+                    'count' => $pendingCompanies->count(),
+                    'items' => $pendingCompanies->map(fn($company) => [
+                        'id' => $company->id,
+                        'message' => 'Company updated and needs verification: ' . $company->name,
+                        'url' => route('admin.companies.show', $company->id),
+                    ]),
+                ],
+                'student' => [
+                    'count' => $pendingStudents->count(),
+                    'items' => $pendingStudents->map(fn($user) => [
+                        'id' => $user->id,
+                        'message' => 'Student profile needs verification: ' . $user->name,
+                        'url' => route('admin.students.show', $user->id),
+                    ]),
+                ],
+                'employer' => [
+                    'count' => $pendingEmployers->count(),
+                    'items' => $pendingEmployers->map(fn($user) => [
+                        'id' => $user->id,
+                        'message' => 'Employer account needs verification: ' . $user->name,
+                        'url' => route('admin.recruiters.show', $user->id),
+                    ]),
+                ],
+                'job' => [
+                    'count' => $pendingJobs->count(),
+                    'items' => $pendingJobs->map(fn($job) => [
+                        'id' => $job->id,
+                        'message' => 'Job opening pending verification: ' . $job->title,
+                        'url' => route('admin.jobs.show', $job->id),
+                    ]),
+                ],
+            ]
         ]);
     }
 }
