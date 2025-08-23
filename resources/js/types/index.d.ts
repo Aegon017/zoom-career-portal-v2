@@ -289,6 +289,11 @@ export interface Education {
     updated_at?: string;
 }
 
+export interface Course {
+    id: number;
+    name: string;
+}
+
 interface OpeningTItle {
     id: number;
     name: string;

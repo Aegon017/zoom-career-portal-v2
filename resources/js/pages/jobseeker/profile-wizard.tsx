@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { router, Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -17,8 +16,8 @@ import { Option } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import { Stepper } from '@/components/ui/stepper';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
 import MultipleSelector from '@/components/multiple-selector';
+import { Combobox } from '@/components/combobox';
 
 // Step definitions
 const steps = [
@@ -88,7 +87,6 @@ const JobseekerProfileWizard = ( {
     languages: Option[];
 } ) => {
     const [ currentStep, setCurrentStep ] = useState( 0 );
-    const [ locationOptions, setLocationOptions ] = useState<Option[]>( locations );
 
     // Field to step mapping for error navigation
     const fieldToStepMapping: Record<string, number> = {
@@ -488,9 +486,14 @@ const JobseekerProfileWizard = ( {
                                             <FormItem>
                                                 <FormLabel>Desired Job Title</FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        { ...field }
-                                                        data-error={ hasFieldError( 'profile.job_title' ) ? 'true' : 'false' }
+                                                    <Combobox
+                                                        apiUrl="/api/job-titles/search"
+                                                        value={ field.value }
+                                                        onValueChange={ ( value ) => field.onChange( value ) }
+                                                        placeholder="Select a job title"
+                                                        searchPlaceholder="Search job titles..."
+                                                        emptyMessage="No job titles found."
+                                                        queryParams={ { status: "active" } }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />

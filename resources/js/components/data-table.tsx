@@ -7,7 +7,6 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

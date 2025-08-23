@@ -179,44 +179,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
     Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
     Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
-    // admin routes
-    Route::prefix('admin')->name('admin.')->group(function (): void {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::resource('/roles', RoleController::class);
-        Route::resource('/job-titles', OpeningTitleController::class);
-        Route::post('/job-titles/import', JobTitlesImportController::class);
-        Route::resource('/skills', SkillController::class);
-        Route::post('/skills/import', SkillsImportController::class);
-        Route::resource('/users', UserController::class);
-        Route::resource('/recruiters', RecruiterController::class);
-        Route::get('/companies/export', [CompanyController::class, 'export']);
-        Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');
-        Route::resource('/companies', CompanyController::class);
-        Route::get('/students/export', [StudentController::class, 'export']);
-        Route::resource('/students', StudentController::class);
-        Route::resource('/jobs', JobController::class);
-        Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
-        Route::post('/jobs/{job}/applications', [JobController::class, 'storeApplications'])->name('jobs.applications.store');
-        Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
-        Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
-        Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
-        Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
-        Route::get('/pending-verifications', [VerificationController::class, 'index']);
-        Route::resource('/industries', IndustryController::class);
-        Route::post('/industries/import', IndustriesImportController::class);
-        Route::resource('/locations', AdminLocationController::class);
-        Route::resource('/languages', LanguageController::class);
-
-        Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
-        Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
-        Route::get('/students/verify/{student}', [StudentVerificationController::class, 'show'])->name('students.verify');
-        Route::post('/students/verify/{student}', [StudentVerificationController::class, 'verify'])->name('students.verify.approve');
-        Route::delete('/students/reject/{student}', [StudentVerificationController::class, 'reject'])->name('students.verify.reject');
-        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
-        Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
-        Route::get('/jobs/{job}/applications/export', ApplicationsExportController::class)->name('jobs.applications.export');
-        Route::get('/chat-logs', ChatLogController::class)->name('chat-logs');
-    });
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
@@ -225,4 +187,5 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
 require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';

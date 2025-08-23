@@ -1,7 +1,7 @@
 import useRoles from '@/hooks/use-roles';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, History, Hourglass, Languages, LayoutGrid, MapPin, MessageSquare, Notebook, Users2 } from 'lucide-react';
+import { BriefcaseBusiness, ChartBar, CodeXml, Factory, GraduationCap, History, Hourglass, Languages, LayoutGrid, MapPin, MessageSquare, Notebook, School, School2, UserCog, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
@@ -41,7 +41,7 @@ export function AppSidebar() {
         {
             title: 'Student Management',
             href: '/admin/students',
-            icon: GraduationCap,
+            icon: UserCog,
         },
         {
             title: 'Job Management',
@@ -78,6 +78,11 @@ export function AppSidebar() {
             href: '/admin/feedback',
             icon: Notebook,
         },
+        {
+            title: 'Courses',
+            href: '/admin/courses',
+            icon: GraduationCap,
+        }
     ].filter( Boolean ) as NavItem[];
 
     const footerNavItems: NavItem[] = [
