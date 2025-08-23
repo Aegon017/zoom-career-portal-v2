@@ -45,6 +45,7 @@ export default function SkillsListing( { jobTitles, filters }: Props ) {
                     createUrl="/admin/job-titles/create"
                     hasImport={ true }
                     importUrl="/admin/job-titles/import"
+                    importColumns={['name']}
                 />
             </div>
         </AppLayout>

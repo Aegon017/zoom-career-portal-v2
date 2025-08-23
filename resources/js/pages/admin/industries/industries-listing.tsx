@@ -45,6 +45,7 @@ export default function IndustriesListing( { industries, filters }: Props ) {
                     createUrl="/admin/industries/create"
                     hasImport={ true }
                     importUrl="/admin/industries/import"
+                    importColumns={['name']}
                 />
             </div>
         </AppLayout>
