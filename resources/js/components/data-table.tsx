@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>( {
 }: DataTableProps<TData, TValue> ) {
     const [ globalFilter, setGlobalFilter ] = useState( filters.search ?? '' );
     const [ importDialogOpen, setImportDialogOpen ] = useState( false );
-    const debouncedSearch = useDebounce( globalFilter, 500 );
+    const debouncedSearch = useDebounce( globalFilter, 1000 );
     const requestId = useRef( 0 );
     const fileInputRef = useRef<HTMLInputElement>( null );
 
