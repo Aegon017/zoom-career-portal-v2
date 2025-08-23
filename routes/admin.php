@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ApplicationsExportController;
 use App\Http\Controllers\Admin\ChatLogController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\CourseImportController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController;
@@ -62,4 +63,5 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/jobs/{job}/applications/export', ApplicationsExportController::class)->name('jobs.applications.export');
     Route::get('/chat-logs', ChatLogController::class)->name('chat-logs');
     Route::resource('/courses', CourseController::class);
+    Route::post('/courses/import', CourseImportController::class);
 });

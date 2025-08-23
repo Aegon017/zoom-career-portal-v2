@@ -44,6 +44,9 @@ export default function CompaniesListing( { courses, filters }: Props ) {
                     routeName="/admin/courses"
                     listingName="course"
                     createUrl="/admin/courses/create"
+                    hasImport={ true }
+                    importUrl="/admin/courses/import"
+                    importColumns={ [ 'name' ] }
                 />
             </div>
         </AppLayout>

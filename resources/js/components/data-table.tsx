@@ -1,12 +1,17 @@
 import { useDebounce } from '@/hooks/use-debounce';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Upload, FileText, FileDown } from 'lucide-react';
+import { ChangeEvent, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from './ui/dialog';
+import useSWR from 'swr';
+import { toast } from 'sonner';
+import useSWRMutation from 'swr/mutation';
+import axios from 'axios';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -18,6 +23,7 @@ interface DataTableProps<TData, TValue> {
     hasImport?: boolean;
     importUrl?: string;
     exportUrl?: string;
+    templateUrl?: string;
     pagination: {
         current_page: number;
         last_page: number;
@@ -29,7 +35,22 @@ interface DataTableProps<TData, TValue> {
         perPage?: number;
     };
     routeName: string;
+    importColumns?: string[];
 }
+
+interface TemplateResponse {
+    headers: string[];
+    required: string[];
+    sample: Record<string, unknown>[];
+}
+
+const fetcher = ( url: string ) => axios.get( url ).then( res => res.data );
+const uploadFile = async ( url: string, { arg }: { arg: FormData } ) => {
+    const response = await axios.post( url, arg, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    } );
+    return response.data;
+};
 
 export function DataTable<TData, TValue>( {
     columns,
@@ -43,29 +64,37 @@ export function DataTable<TData, TValue>( {
     hasExport,
     exportUrl,
     hasImport,
-    importUrl
+    importUrl,
+    templateUrl,
+    importColumns,
 }: DataTableProps<TData, TValue> ) {
     const [ globalFilter, setGlobalFilter ] = useState( filters.search ?? '' );
-    const [ isImporting, setIsImporting ] = useState( false );
-    const fileInputRef = useRef<HTMLInputElement>( null );
+    const [ importDialogOpen, setImportDialogOpen ] = useState( false );
     const debouncedSearch = useDebounce( globalFilter, 500 );
     const requestId = useRef( 0 );
-    const firstRender = useRef( true );
+    const fileInputRef = useRef<HTMLInputElement>( null );
+
+    const { data: templateData, isLoading: templateLoading } = useSWR<TemplateResponse>(
+        importDialogOpen && templateUrl ? templateUrl : null,
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+
+    const { trigger: importTrigger, isMutating: isImporting } = useSWRMutation(
+        importUrl || '',
+        uploadFile,
+        {
+            onSuccess: () => {
+                setImportDialogOpen( false );
+                router.reload( { only: [ 'courses', 'pagination', 'filters' ] } );
+                toast.success( 'File imported successfully' );
+            },
+            onError: () => toast.error( 'Failed to import file' )
+        }
+    );
 
     useEffect( () => {
-        if ( firstRender.current ) {
-            firstRender.current = false;
-            const urlParams = new URLSearchParams( window.location.search );
-            const currentSearch = urlParams.get( 'search' ) ?? '';
-            const currentPerPage = urlParams.get( 'perPage' ) ?? String( pagination.per_page );
-
-            if ( currentSearch === debouncedSearch && currentPerPage === String( pagination.per_page ) ) {
-                return;
-            }
-        }
-
         const currentRequestId = ++requestId.current;
-
         router.get(
             routeName,
             {
@@ -83,7 +112,7 @@ export function DataTable<TData, TValue>( {
         );
     }, [ debouncedSearch, pagination.per_page, routeName ] );
 
-    const handlePageChange = ( page: number ) => {
+    const handlePageChange = useCallback( ( page: number ) => {
         router.get(
             routeName,
             {
@@ -97,9 +126,9 @@ export function DataTable<TData, TValue>( {
                 replace: true,
             },
         );
-    };
+    }, [ globalFilter, pagination.per_page, routeName ] );
 
-    const handlePerPageChange = ( perPage: number ) => {
+    const handlePerPageChange = useCallback( ( perPage: number ) => {
         router.get(
             routeName,
             {
@@ -112,33 +141,16 @@ export function DataTable<TData, TValue>( {
                 replace: true,
             },
         );
-    };
+    }, [ globalFilter, routeName ] );
 
-    const handleImport = ( e: ChangeEvent<HTMLInputElement> ) => {
-        if ( !importUrl || !e.target.files?.[ 0 ] ) return;
+    const handleImport = useCallback( async ( e: ChangeEvent<HTMLInputElement> ) => {
+        if ( !e.target.files?.[ 0 ] ) return;
 
-        const file = e.target.files[ 0 ];
-        setIsImporting( true );
-
-        router.post(
-            importUrl,
-            { file },
-            {
-                forceFormData: true,
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => {
-                    router.reload( {
-                        only: [ 'data', 'pagination', 'filters' ],
-                    } );
-                },
-                onFinish: () => {
-                    setIsImporting( false );
-                    if ( fileInputRef.current ) fileInputRef.current.value = '';
-                }
-            }
-        );
-    };
+        const formData = new FormData();
+        formData.append( 'file', e.target.files[ 0 ] );
+        await importTrigger( formData );
+        if ( fileInputRef.current ) fileInputRef.current.value = '';
+    }, [ importTrigger ] );
 
     const table = useReactTable( {
         data,
@@ -149,9 +161,11 @@ export function DataTable<TData, TValue>( {
         pageCount: pagination.last_page,
     } );
 
-    const start = ( pagination.current_page - 1 ) * pagination.per_page + 1;
-    const end = Math.min( pagination.current_page * pagination.per_page, pagination.total );
-    const total = pagination.total.toLocaleString();
+    const { start, end, total } = useMemo( () => ( {
+        start: ( pagination.current_page - 1 ) * pagination.per_page + 1,
+        end: Math.min( pagination.current_page * pagination.per_page, pagination.total ),
+        total: pagination.total.toLocaleString()
+    } ), [ pagination ] );
 
     return (
         <div className="space-y-4">
@@ -171,27 +185,81 @@ export function DataTable<TData, TValue>( {
                         />
                         { hasExport && exportUrl && (
                             <a href={ exportUrl } download>
-                                <Button variant="outline">Export</Button>
+                                <Button variant="outline" size="sm">
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Export
+                                </Button>
                             </a>
                         ) }
                         { hasImport && importUrl && (
-                            <div className="relative">
-                                <Button
-                                    variant="outline"
-                                    disabled={ isImporting }
-                                    onClick={ () => fileInputRef.current?.click() }
-                                >
-                                    { isImporting ? "Uploading..." : "Import" }
-                                </Button>
-                                <input
-                                    ref={ fileInputRef }
-                                    type="file"
-                                    accept=".xlsx,.csv"
-                                    onChange={ handleImport }
-                                    className="hidden"
-                                    disabled={ isImporting }
-                                />
-                            </div>
+                            <Dialog open={ importDialogOpen } onOpenChange={ setImportDialogOpen }>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                        <FileDown className="w-4 h-4" />
+                                        Import
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-md">
+                                    <DialogHeader>
+                                        <DialogTitle>Import { listingName }</DialogTitle>
+                                        <DialogDescription>
+                                            Upload an Excel file with the correct format
+                                        </DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="grid gap-4 py-4">
+                                        <div className="space-y-2">
+                                            <h4 className="font-medium text-sm">Template Requirements</h4>
+                                            { templateLoading ? (
+                                                <div className="text-sm text-muted-foreground">Loading template info...</div>
+                                            ) : (
+                                                <div className="rounded-md border divide-y text-sm">
+                                                    <div className="p-2 flex items-center justify-between">
+                                                        <span className="font-medium">Required Columns</span>
+                                                        <span className="text-muted-foreground">
+                                                            { importColumns?.length } fields
+                                                        </span>
+                                                    </div>
+                                                    <div className="p-2 max-h-40 overflow-y-auto">
+                                                        <ul className="space-y-1">
+                                                            { importColumns?.map( ( header, index ) => (
+                                                                <li key={ index } className="flex items-center">
+                                                                    <FileText className="w-3 h-3 mr-2 text-muted-foreground" />
+                                                                    <span className={
+                                                                        templateData?.required?.includes( header ) ? 'font-medium' : ''
+                                                                    }>
+                                                                        { header }
+                                                                        { templateData?.required?.includes( header ) && (
+                                                                            <span className="text-destructive ml-1">*</span>
+                                                                        ) }
+                                                                    </span>
+                                                                </li>
+                                                            ) ) }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            ) }
+                                        </div>
+
+                                        <Button
+                                            onClick={ () => fileInputRef.current?.click() }
+                                            disabled={ isImporting }
+                                            className="w-full"
+                                        >
+                                            <Upload className="w-4 h-4 mr-2" />
+                                            { isImporting ? 'Importing...' : 'Select Excel File' }
+                                        </Button>
+                                        <input
+                                            ref={ fileInputRef }
+                                            type="file"
+                                            accept=".xlsx,.xls"
+                                            onChange={ handleImport }
+                                            className="hidden"
+                                            disabled={ isImporting }
+                                        />
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                         ) }
                     </div>
 
