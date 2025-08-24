@@ -45,4 +45,7 @@ return [
         'entity_id' => env('SMS_ENTITY_ID'),
     ],
 
+    'ai' => [
+        'open_router_api_key' => env('OPENROUTER_API_KEY')
+    ]
 ];
