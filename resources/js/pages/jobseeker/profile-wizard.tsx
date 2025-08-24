@@ -1,36 +1,38 @@
-import { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { router, Head } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardTitle } from '@/components/ui/card';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { AppHeader } from "@/components/app-header"
+import { Head, router } from "@inertiajs/react"
+import MultipleSelector from '@/components/multiple-selector';
 import { PhoneInput } from '@/components/phone-input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { SelectPopoverField } from '@/components/select-popover-field';
+import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
+import { Card, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { Option, User } from '@/types';
+import axios from 'axios';
 import { format } from 'date-fns';
-import { Option } from '@/types';
+import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Stepper } from '@/components/ui/stepper';
-import { Checkbox } from '@/components/ui/checkbox';
-import MultipleSelector from '@/components/multiple-selector';
-import { Combobox } from '@/components/combobox';
 
-// Step definitions
-const steps = [
-    { label: 'Personal', key: 'personal' },
-    { label: 'Profile', key: 'profile' },
-    { label: 'Skills', key: 'skills' },
-    { label: 'Employment', key: 'employment' },
-    { label: 'Education', key: 'education' },
-    { label: 'Languages', key: 'languages' },
-    { label: 'Review', key: 'review' },
-];
+interface Props {
+    student: User;
+    operation: string;
+    operationLabel: string;
+    locations: Option[];
+    skillOptions: Option[];
+    languages: Option[];
+}
 
-// Form types
 interface FormValues {
     name: string;
     email: string;
@@ -52,8 +54,9 @@ interface FormValues {
     skills: string[];
     work_permits: string[];
     work_experiences: Array<{
+        company_id?: string;
+        company_name?: string;
         title: string;
-        company_name: string;
         start_date: Date;
         end_date?: Date;
         is_current?: boolean;
@@ -66,6 +69,9 @@ interface FormValues {
         is_current?: boolean;
         course_type?: string;
     }>;
+    certificates: Array<{
+        name: string;
+    }>;
     user_languages: Array<{
         language_id: string;
         proficiency: string;
@@ -75,101 +81,73 @@ interface FormValues {
     }>;
 }
 
-const JobseekerProfileWizard = ( {
-    user,
+const ProfileWizard = ( {
+    student,
     locations,
     skillOptions,
-    languages
-}: {
-    user: any;
-    locations: Option[];
-    skillOptions: Option[];
-    languages: Option[];
-} ) => {
-    const [ currentStep, setCurrentStep ] = useState( 0 );
-
-    // Field to step mapping for error navigation
-    const fieldToStepMapping: Record<string, number> = {
-        // Personal step (index 0)
-        'name': 0,
-        'email': 0,
-        'phone': 0,
-        'address.location_id': 0,
-        'personal_detail.gender': 0,
-        'personal_detail.date_of_birth': 0,
-        'personal_detail.marital_status': 0,
-        'personal_detail.differently_abled': 0,
-
-        // Profile step (index 1)
-        'profile.job_title': 1,
-        'profile.experience': 1,
-        'profile.notice_period': 1,
-
-        // Skills step (index 2)
-        'skills': 2,
-
-        // Employment step (index 3)
-        'work_permits': 3,
-        'work_experiences': 3,
-
-        // Education step (index 4)
-        'educations': 4,
-
-        // Languages step (index 5)
-        'user_languages': 5,
-    };
+    languages,
+}: Props ) => {
+    const [ countryOptions, setCountryOptions ] = useState<Option[]>( [] );
+    const [ locationOptions, setLocationOptions ] = useState<Option[]>( locations );
+    const [ locationSearch, setLocationSearch ] = useState( '' );
 
     const form = useForm<FormValues>( {
         defaultValues: {
-            name: user?.name || '',
-            email: user?.email || '',
-            phone: user?.phone || '',
+            name: student?.name || '',
+            email: student?.email || '',
+            phone: student?.phone || '',
             address: {
-                location_id: user?.address?.location_id?.toString() || '',
+                location_id: student?.address?.location_id?.toString() || '',
             },
             personal_detail: {
-                gender: user?.personal_detail?.gender || 'Male',
-                date_of_birth: user?.personal_detail?.date_of_birth
-                    ? new Date( user.personal_detail.date_of_birth )
+                gender: student?.personal_detail?.gender || 'Male',
+                date_of_birth: student?.personal_detail?.date_of_birth
+                    ? new Date( student.personal_detail.date_of_birth )
                     : undefined,
-                marital_status: user?.personal_detail?.marital_status || '',
-                differently_abled: user?.personal_detail?.differently_abled || false,
+                marital_status: student?.personal_detail?.marital_status || '',
+                differently_abled: student?.personal_detail?.differently_abled || false,
             },
             profile: {
-                job_title: user?.profile?.job_title || '',
-                experience: user?.profile?.experience || '',
-                notice_period: user?.profile?.notice_period || '',
+                job_title: student?.profile?.job_title || '',
+                experience: student?.profile?.experience || '',
+                notice_period: student?.profile?.notice_period || '',
             },
-            skills: user?.skills?.map( ( skill: any ) => skill.id.toString() ) || [],
-            work_permits: user?.work_permits?.map( ( wp: any ) => wp.country ) || [],
-            work_experiences: user?.work_experiences?.map( ( we: any ) => ( {
-                company_name: we.company?.name || we.company_name || '',
-                title: we.title || '',
-                start_date: we.start_date ? new Date( we.start_date ) : new Date(),
-                end_date: we.end_date ? new Date( we.end_date ) : undefined,
-                is_current: we.is_current || false,
+            skills: student?.skills?.map( ( skill ) => skill.id.toString() ) || [],
+            work_permits: student?.work_permits?.map( ( wp ) => wp.country ) || [],
+            work_experiences:
+                student?.work_experiences?.map( ( we ) => ( {
+                    company_id: we.company_id?.toString() || '',
+                    company_name: we.company?.name || we.company_name || '',
+                    title: we.title || '',
+                    start_date: we.start_date ? new Date( we.start_date ) : new Date(),
+                    end_date: we.end_date ? new Date( we.end_date ) : undefined,
+                    is_current: we.is_current || false,
+                } ) ) || [],
+            educations:
+                student?.educations?.map( ( edu ) => ( {
+                    course_title: edu.course_title || '',
+                    institution: edu.institution || '',
+                    start_date: edu.start_date ? new Date( edu.start_date ) : new Date(),
+                    end_date: edu.end_date ? new Date( edu.end_date ) : undefined,
+                    is_current: edu.is_current || false,
+                    course_type: edu.course_type || '',
+                } ) ) || [],
+            certificates: student?.certificates?.map( ( cert ) => ( {
+                name: cert.name || '',
             } ) ) || [],
-            educations: user?.educations?.map( ( edu: any ) => ( {
-                course_title: edu.course_title || '',
-                institution: edu.institution || '',
-                start_date: edu.start_date ? new Date( edu.start_date ) : new Date(),
-                end_date: edu.end_date ? new Date( edu.end_date ) : undefined,
-                is_current: edu.is_current || false,
-                course_type: edu.course_type || '',
-            } ) ) || [],
-            user_languages: user?.user_languages?.map( ( ul: any ) => ( {
-                language_id: ul.language?.id?.toString() || '',
-                proficiency: ul.proficiency || '',
-                can_read: ul.can_read || false,
-                can_write: ul.can_write || false,
-                can_speak: ul.can_speak || false,
-            } ) ) || [],
-        }
+            user_languages:
+                student?.user_languages?.map( ( ul ) => ( {
+                    language_id: ul.language?.id?.toString() || '',
+                    proficiency: ul.proficiency || '',
+                    can_read: ul.can_read || false,
+                    can_write: ul.can_write || false,
+                    can_speak: ul.can_speak || false,
+                } ) ) || [],
+        },
     } );
 
-    const { control, handleSubmit, formState, watch, setError } = form;
+    const { control, handleSubmit, setError, reset, formState } = form;
 
-    // Field arrays
     const workExperienceFields = useFieldArray( {
         control,
         name: "work_experiences"
@@ -180,12 +158,141 @@ const JobseekerProfileWizard = ( {
         name: "educations"
     } );
 
+    const certificateFields = useFieldArray( {
+        control,
+        name: "certificates"
+    } );
+
     const languageFields = useFieldArray( {
         control,
         name: "user_languages"
     } );
 
-    // Helper function to check if a field has an error
+    const fetchOptions = useCallback( async ( endpoint: string, search: string ) => {
+        try {
+            const { data } = await axios.get( endpoint, { params: { search } } );
+            return data;
+        } catch ( error ) {
+            console.error( `Error fetching ${ endpoint }:`, error );
+            return [];
+        }
+    }, [] );
+
+    useEffect( () => {
+        axios.get( '/location/countries' ).then( ( res ) => {
+            if ( res.data.success && Array.isArray( res.data.data ) ) {
+                setCountryOptions(
+                    res.data.data.map( ( c: any ) => ( {
+                        label: c.label || c.country || '',
+                        value: c.value?.toString() || c.country || '',
+                    } ) ),
+                );
+            }
+        } );
+    }, [] );
+
+    useEffect( () => {
+        const timeout = setTimeout( async () => {
+            if ( locationSearch.trim() ) {
+                const data = await fetchOptions( '/locations/search', locationSearch );
+                setLocationOptions( data );
+            } else {
+                setLocationOptions( locations );
+            }
+        }, 300 );
+
+        return () => clearTimeout( timeout );
+    }, [ locationSearch, locations, fetchOptions ] );
+
+    const onSubmit = ( data: FormValues ) => {
+        const fieldToTabMapping: Record<string, number> = {
+            'name': 0,
+            'email': 0,
+            'phone': 0,
+            'address.location_id': 1,
+            'personal_detail.gender': 1,
+            'personal_detail.date_of_birth': 1,
+            'personal_detail.marital_status': 1,
+            'personal_detail.differently_abled': 1,
+            'profile.job_title': 2,
+            'profile.experience': 2,
+            'profile.notice_period': 2,
+            'skills': 3,
+            'work_permits': 4,
+            'work_experiences': 4,
+            'educations': 5,
+            'certificates': 6,
+            'user_languages': 7,
+        };
+
+        const handleErrors = ( errors: any ) => {
+            if ( errors && typeof errors === 'object' ) {
+                let firstErrorTab = -1;
+
+                Object.entries( errors ).forEach( ( [ field, message ] ) => {
+                    setError( field as any, {
+                        type: 'server',
+                        message: message as string,
+                    } );
+
+                    let tabIndex = fieldToTabMapping[ field ];
+
+                    if ( tabIndex === undefined ) {
+                        const fieldParts = field.split( '.' );
+                        if ( fieldParts.length >= 2 ) {
+                            const baseField = fieldParts[ 0 ];
+                            tabIndex = fieldToTabMapping[ baseField ];
+                        }
+                    }
+
+                    if ( tabIndex !== undefined && firstErrorTab === -1 ) {
+                        firstErrorTab = tabIndex;
+                    }
+                } );
+
+                if ( firstErrorTab !== -1 ) {
+                    setCurrentStep( firstErrorTab );
+                }
+            }
+        };
+
+        const formattedData = {
+            ...data,
+            work_experiences: data.work_experiences?.map( we => ( {
+                ...we,
+                start_date: we.start_date ? we.start_date.toISOString().split( 'T' )[ 0 ] : undefined,
+                end_date: we.end_date ? we.end_date.toISOString().split( 'T' )[ 0 ] : undefined,
+            } ) ),
+            educations: data.educations?.map( edu => ( {
+                ...edu,
+                start_date: edu.start_date ? edu.start_date.toISOString().split( 'T' )[ 0 ] : undefined,
+                end_date: edu.end_date ? edu.end_date.toISOString().split( 'T' )[ 0 ] : undefined,
+            } ) ),
+            personal_detail: {
+                ...data.personal_detail,
+                date_of_birth: data.personal_detail.date_of_birth
+                    ? data.personal_detail.date_of_birth.toISOString().split( 'T' )[ 0 ]
+                    : undefined,
+            }
+        };
+
+        router.put( '/jobseeker/profile-complete', formattedData, { onError: handleErrors } );
+    };
+
+    const steps = [
+        { label: 'Account', key: 'account' },
+        { label: 'Personal', key: 'personal' },
+        { label: 'Profile', key: 'profile' },
+        { label: 'Skills', key: 'skills' },
+        { label: 'Employment', key: 'employment' },
+        { label: 'Education', key: 'education' },
+        { label: 'Certifications', key: 'certifications' },
+        { label: 'Languages', key: 'languages' },
+        { label: 'Review', key: 'review' },
+    ];
+
+    const [ currentStep, setCurrentStep ] = useState( 0 );
+
     const hasFieldError = ( fieldName: string ) => {
         const fieldParts = fieldName.split( '.' );
         let errors = formState.errors as any;
@@ -201,7 +308,6 @@ const JobseekerProfileWizard = ( {
         return !!errors;
     };
 
-    // Scroll to first error field when step changes due to validation errors
     useEffect( () => {
         const timer = setTimeout( () => {
             const firstErrorField = document.querySelector( '[data-error="true"]' );
@@ -216,353 +322,317 @@ const JobseekerProfileWizard = ( {
         return () => clearTimeout( timer );
     }, [ currentStep ] );
 
-    // Submit handler
-    const onSubmit = ( data: FormValues ) => {
-        const formattedData = {
-            ...data,
-            work_experiences: data.work_experiences?.map( we => ( {
-                ...we,
-                start_date: we.start_date.toISOString().split( 'T' )[ 0 ],
-                end_date: we.end_date?.toISOString().split( 'T' )[ 0 ],
-            } ) ),
-            educations: data.educations?.map( edu => ( {
-                ...edu,
-                start_date: edu.start_date.toISOString().split( 'T' )[ 0 ],
-                end_date: edu.end_date?.toISOString().split( 'T' )[ 0 ],
-            } ) ),
-            personal_detail: {
-                ...data.personal_detail,
-                date_of_birth: data.personal_detail.date_of_birth
-                    ? data.personal_detail.date_of_birth.toISOString().split( 'T' )[ 0 ]
-                    : undefined,
-            }
-        };
-
-        const handleErrors = ( errors: any ) => {
-            if ( errors && typeof errors === 'object' ) {
-                let firstErrorStep = -1;
-
-                Object.entries( errors ).forEach( ( [ field, message ] ) => {
-                    setError( field as any, {
-                        type: 'server',
-                        message: message as string,
-                    } );
-
-                    // Find the step for this field
-                    let stepIndex = fieldToStepMapping[ field ];
-
-                    // Handle nested array errors (e.g., work_experiences.0.title)
-                    if ( stepIndex === undefined ) {
-                        const fieldParts = field.split( '.' );
-                        if ( fieldParts.length >= 2 ) {
-                            const baseField = fieldParts[ 0 ];
-                            stepIndex = fieldToStepMapping[ baseField ];
-                        }
-                    }
-
-                    if ( stepIndex !== undefined && firstErrorStep === -1 ) {
-                        firstErrorStep = stepIndex;
-                    }
-                } );
-
-                // Navigate to the first step with an error
-                if ( firstErrorStep !== -1 ) {
-                    setCurrentStep( firstErrorStep );
-                }
-            }
-        };
-
-        router.put( '/jobseeker/profile-complete', formattedData, {
-            onError: handleErrors,
-            onSuccess: () => {
-                router.visit( '/dashboard' );
-            }
-        } );
+    const formatDateSafely = ( date: Date | string | undefined ) => {
+        if ( !date ) return 'N/A';
+        try {
+            const dateObj = date instanceof Date ? date : new Date( date );
+            return isNaN( dateObj.getTime() ) ? 'N/A' : format( dateObj, 'PPP' );
+        } catch {
+            return 'N/A';
+        }
     };
-
-    // Navigation handlers
-    const nextStep = () => setCurrentStep( prev => Math.min( prev + 1, steps.length - 1 ) );
-    const prevStep = () => setCurrentStep( prev => Math.max( prev - 1, 0 ) );
-
-    // Format date for display
-    const formatDate = ( date: Date | undefined ) =>
-        date ? format( date, 'PPP' ) : 'N/A';
-
     return (
         <>
-            <Head title="Complete Your Profile" />
-            <div className="container mx-auto py-8 max-w-4xl">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold">Complete Your Profile</h1>
-                    <p className="text-muted-foreground">
-                        Please complete all sections to access full platform features
-                    </p>
-                </div>
-
-                <Stepper steps={ steps } currentStep={ currentStep } />
-                <Progress
-                    value={ ( currentStep + 1 ) / steps.length * 100 }
-                    className="h-2 my-4"
-                />
-
+            <AppHeader />
+            <Head title="Complete Profile" />
+            <div className="flex flex-1 flex-col gap-6 rounded-xl p-2 sm:p-6 w-full max-w-3xl mx-auto">
+                <h1 className="text-center text-2xl font-bold">Complete Your Profile</h1>
+                <p className="mt-2 text-center text-sm text-gray-500">Please complete all sections to access full platform features</p>
                 <Form { ...form }>
-                    <form onSubmit={ handleSubmit( onSubmit ) } className="space-y-6">
-                        {/* Personal Details Step */ }
-                        { currentStep === 0 && (
-                            <Card className="p-6">
-                                <CardTitle>Personal Information</CardTitle>
-                                <div className="grid md:grid-cols-2 gap-4 mt-4">
-                                    <FormField
-                                        control={ control }
-                                        name="name"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Full Name</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        { ...field }
-                                                        data-error={ hasFieldError( 'name' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="email"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        { ...field }
-                                                        disabled
-                                                        data-error={ hasFieldError( 'email' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="phone"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Phone</FormLabel>
-                                                <FormControl>
-                                                    <PhoneInput
-                                                        { ...field }
-                                                        data-error={ hasFieldError( 'phone' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="personal_detail.gender"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Gender</FormLabel>
-                                                <FormControl>
-                                                    <Select
-                                                        onValueChange={ field.onChange }
-                                                        value={ field.value }
-                                                    >
-                                                        <SelectTrigger
-                                                            data-error={ hasFieldError( 'personal_detail.gender' ) ? 'true' : 'false' }
-                                                        >
-                                                            <SelectValue placeholder="Select gender" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="Male">Male</SelectItem>
-                                                            <SelectItem value="Female">Female</SelectItem>
-                                                            <SelectItem value="Other">Other</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="personal_detail.date_of_birth"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Date of Birth</FormLabel>
-                                                <FormControl>
-                                                    <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <Button
-                                                                variant="outline"
-                                                                className={ cn(
-                                                                    "w-full text-left font-normal",
-                                                                    !field.value && "text-muted-foreground"
-                                                                ) }
-                                                                data-error={ hasFieldError( 'personal_detail.date_of_birth' ) ? 'true' : 'false' }
-                                                            >
-                                                                { field.value ? (
-                                                                    format( field.value, "PPP" )
-                                                                ) : (
-                                                                    <span>Pick a date</span>
-                                                                ) }
-                                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0" align="start">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={ field.value }
-                                                                onSelect={ field.onChange }
-                                                                disabled={ ( date ) => date > new Date() }
-                                                                captionLayout='dropdown'
+                    <form onSubmit={ handleSubmit( onSubmit ) } className="w-full">
+                        <Stepper steps={ steps } currentStep={ currentStep } />
+                        <div className="w-full px-1 sm:px-0 mb-4">
+                            <Progress value={ ( ( currentStep + 1 ) / steps.length ) * 100 } className="h-2 sm:h-2.5 rounded-full" />
+                        </div>
+                        <Tabs value={ steps[ currentStep ].key } className="w-full">
+                            <TabsContent value="account" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Account Details</CardTitle>
+                                    <Separator />
+                                    <div className="space-y-6">
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <FormField
+                                                control={ control }
+                                                name="name"
+                                                render={ ( { field } ) => (
+                                                    <FormItem>
+                                                        <FormLabel>Full name</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="text"
+                                                                { ...field }
+                                                                autoComplete="name"
+                                                                data-error={ hasFieldError( 'name' ) ? 'true' : 'false' }
                                                             />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="personal_detail.marital_status"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Marital Status</FormLabel>
-                                                <FormControl>
-                                                    <Select
-                                                        onValueChange={ field.onChange }
-                                                        value={ field.value }
-                                                    >
-                                                        <SelectTrigger
-                                                            data-error={ hasFieldError( 'personal_detail.marital_status' ) ? 'true' : 'false' }
-                                                        >
-                                                            <SelectValue placeholder="Select status" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="Single">Single</SelectItem>
-                                                            <SelectItem value="Married">Married</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="personal_detail.differently_abled"
-                                        render={ ( { field } ) => (
-                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={ field.value }
-                                                        onCheckedChange={ field.onChange }
-                                                        data-error={ hasFieldError( 'personal_detail.differently_abled' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormLabel>Differently Abled</FormLabel>
-                                            </FormItem>
-                                        ) }
-                                    />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                ) }
+                                            />
+                                            <FormField
+                                                control={ control }
+                                                name="email"
+                                                render={ ( { field } ) => (
+                                                    <FormItem>
+                                                        <FormLabel>Email</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="email"
+                                                                { ...field }
+                                                                autoComplete="email"
+                                                                data-error={ hasFieldError( 'email' ) ? 'true' : 'false' }
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                ) }
+                                            />
+                                            <FormField
+                                                control={ control }
+                                                name="phone"
+                                                render={ ( { field } ) => (
+                                                    <FormItem>
+                                                        <FormLabel>Phone</FormLabel>
+                                                        <FormControl>
+                                                            <PhoneInput
+                                                                type='tel'
+                                                                { ...field }
+                                                                data-error={ hasFieldError( 'phone' ) ? 'true' : 'false' }
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                ) }
+                                            />
+                                        </div>
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <span />
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
                                 </div>
-                            </Card>
-                        ) }
+                            </TabsContent>
 
-                        {/* Profile Information Step */ }
-                        { currentStep === 1 && (
-                            <Card className="p-6">
-                                <CardTitle>Career Profile</CardTitle>
-                                <div className="grid md:grid-cols-2 gap-4 mt-4">
-                                    <FormField
-                                        control={ control }
-                                        name="profile.job_title"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Desired Job Title</FormLabel>
-                                                <FormControl>
-                                                    <Combobox
-                                                        apiUrl="/api/job-titles/search"
-                                                        value={ field.value }
-                                                        onValueChange={ ( value ) => field.onChange( value ) }
-                                                        placeholder="Select a job title"
-                                                        searchPlaceholder="Search job titles..."
-                                                        emptyMessage="No job titles found."
-                                                        queryParams={ { status: "active" } }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="profile.experience"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Years of Experience</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        { ...field }
-                                                        data-error={ hasFieldError( 'profile.experience' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
-                                    <FormField
-                                        control={ control }
-                                        name="profile.notice_period"
-                                        render={ ( { field } ) => (
-                                            <FormItem>
-                                                <FormLabel>Notice Period (Days)</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        { ...field }
-                                                        data-error={ hasFieldError( 'profile.notice_period' ) ? 'true' : 'false' }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        ) }
-                                    />
+                            <TabsContent value="personal" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Personal Details</CardTitle>
+                                    <Separator />
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={ control }
+                                            name="personal_detail.gender"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Gender</FormLabel>
+                                                    <FormControl>
+                                                        <Select onValueChange={ field.onChange } value={ field.value }>
+                                                            <SelectTrigger data-error={ hasFieldError( 'personal_detail.gender' ) ? 'true' : 'false' }>
+                                                                <SelectValue placeholder="Select gender" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="Male">Male</SelectItem>
+                                                                <SelectItem value="Female">Female</SelectItem>
+                                                                <SelectItem value="Other">Other</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="personal_detail.marital_status"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Marital Status</FormLabel>
+                                                    <FormControl>
+                                                        <Select onValueChange={ field.onChange } value={ field.value }>
+                                                            <SelectTrigger data-error={ hasFieldError( 'personal_detail.marital_status' ) ? 'true' : 'false' }>
+                                                                <SelectValue placeholder="Select marital status" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="Single/unmarried">Single/unmarried</SelectItem>
+                                                                <SelectItem value="Married">Married</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="personal_detail.date_of_birth"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Date of Birth</FormLabel>
+                                                    <FormControl>
+                                                        <Popover>
+                                                            <PopoverTrigger asChild>
+                                                                <FormControl>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                        data-error={ hasFieldError( 'personal_detail.date_of_birth' ) ? 'true' : 'false' }
+                                                                    >
+                                                                        { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
+                                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                    </Button>
+                                                                </FormControl>
+                                                            </PopoverTrigger>
+                                                            <PopoverContent align="start" className="w-auto p-0">
+                                                                <Calendar
+                                                                    mode="single"
+                                                                    selected={ field.value ?? undefined }
+                                                                    onSelect={ field.onChange }
+                                                                    disabled={ ( date ) => date > new Date() }
+                                                                    captionLayout='dropdown'
+                                                                />
+                                                            </PopoverContent>
+                                                        </Popover>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="personal_detail.differently_abled"
+                                            render={ ( { field } ) => (
+                                                <FormItem className="flex flex-row items-center gap-2">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={ field.value }
+                                                            onCheckedChange={ field.onChange }
+                                                            data-error={ hasFieldError( 'personal_detail.differently_abled' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="text-sm font-normal">
+                                                        Are You Differently Abled
+                                                    </FormLabel>
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <SelectPopoverField
+                                            options={ locationOptions }
+                                            name="address.location_id"
+                                            control={ control }
+                                            label="Address"
+                                            placeholder="Select Address"
+                                            onValueChange={ setLocationSearch }
+                                            data-error={ hasFieldError( 'address.location_id' ) ? 'true' : 'false' }
+                                        />
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
                                 </div>
-                            </Card>
-                        ) }
+                            </TabsContent>
 
-                        {/* Skills Step */ }
-                        { currentStep === 2 && (
-                            <Card className="p-6">
-                                <CardTitle>Skills & Expertise</CardTitle>
-                                <div className="mt-4">
+                            <TabsContent value="profile" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Profile</CardTitle>
+                                    <Separator />
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={ control }
+                                            name="profile.experience"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Experience</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.experience' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="profile.notice_period"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Notice Period</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.notice_period' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+
+                                        <FormField
+                                            control={ control }
+                                            name="profile.job_title"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Job Title</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="text"
+                                                            { ...field }
+                                                            data-error={ hasFieldError( 'profile.job_title' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="skills" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Skills</CardTitle>
+                                    <Separator />
                                     <FormField
                                         control={ control }
                                         name="skills"
                                         render={ ( { field } ) => (
                                             <FormItem>
-                                                <FormLabel>Your Skills</FormLabel>
+                                                <FormLabel>Skills</FormLabel>
                                                 <FormControl>
                                                     <MultipleSelector
                                                         options={ skillOptions }
-                                                        value={ skillOptions.filter( opt =>
-                                                            field.value.includes( opt.value )
-                                                        ) }
-                                                        onChange={ opts =>
-                                                            field.onChange( opts.map( opt => opt.value ) )
+                                                        value={ skillOptions.filter( opt => field.value.includes( opt.value ) ) }
+                                                        onChange={ opts => field.onChange( opts.map( opt => opt.value ) ) }
+                                                        triggerSearchOnFocus
+                                                        placeholder="Search skill..."
+                                                        loadingIndicator={
+                                                            <p className="text-muted-foreground py-2 text-center">Searching skills...</p>
                                                         }
-                                                        placeholder="Select your skills..."
                                                         emptyIndicator={
-                                                            <p className="text-center text-muted-foreground">
-                                                                No skills found
-                                                            </p>
+                                                            <p className="text-muted-foreground w-full text-center">No skills found</p>
                                                         }
                                                         data-error={ hasFieldError( 'skills' ) ? 'true' : 'false' }
                                                     />
@@ -571,596 +641,682 @@ const JobseekerProfileWizard = ( {
                                             </FormItem>
                                         ) }
                                     />
-                                </div>
-                            </Card>
-                        ) }
-
-                        {/* Employment Step */ }
-                        { currentStep === 3 && (
-                            <Card className="p-6">
-                                <CardTitle>Work Experience</CardTitle>
-                                <div className="space-y-4 mt-4">
-                                    { workExperienceFields.fields.map( ( field, index ) => (
-                                        <div key={ field.id } className="border rounded-lg p-4">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="font-medium">Experience #{ index + 1 }</h3>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={ () => workExperienceFields.remove( index ) }
-                                                >
-                                                    <Trash2 size={ 16 } />
-                                                </Button>
-                                            </div>
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `work_experiences.${ index }.title` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Job Title</FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    { ...field }
-                                                                    data-error={ hasFieldError( `work_experiences.${ index }.title` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `work_experiences.${ index }.company_name` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Company</FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    { ...field }
-                                                                    data-error={ hasFieldError( `work_experiences.${ index }.company_name` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `work_experiences.${ index }.start_date` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Start Date</FormLabel>
-                                                            <FormControl>
-                                                                <Popover>
-                                                                    <PopoverTrigger asChild>
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            className={ cn(
-                                                                                "w-full text-left font-normal",
-                                                                                !field.value && "text-muted-foreground"
-                                                                            ) }
-                                                                            data-error={ hasFieldError( `work_experiences.${ index }.start_date` ) ? 'true' : 'false' }
-                                                                        >
-                                                                            { field.value ? (
-                                                                                format( field.value, "PPP" )
-                                                                            ) : (
-                                                                                <span>Pick a date</span>
-                                                                            ) }
-                                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                                        </Button>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                                        <Calendar
-                                                                            mode="single"
-                                                                            selected={ field.value }
-                                                                            onSelect={ field.onChange }
-                                                                            disabled={ ( date ) => date > new Date() }
-                                                                            captionLayout='dropdown'
-                                                                        />
-                                                                    </PopoverContent>
-                                                                </Popover>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `work_experiences.${ index }.end_date` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>End Date</FormLabel>
-                                                            <FormControl>
-                                                                <Popover>
-                                                                    <PopoverTrigger asChild>
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            className={ cn(
-                                                                                "w-full text-left font-normal",
-                                                                                !field.value && "text-muted-foreground"
-                                                                            ) }
-                                                                            disabled={ watch( `work_experiences.${ index }.is_current` ) }
-                                                                            data-error={ hasFieldError( `work_experiences.${ index }.end_date` ) ? 'true' : 'false' }
-                                                                        >
-                                                                            { field.value ? (
-                                                                                format( field.value, "PPP" )
-                                                                            ) : (
-                                                                                <span>Pick a date</span>
-                                                                            ) }
-                                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                                        </Button>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                                        <Calendar
-                                                                            mode="single"
-                                                                            selected={ field.value }
-                                                                            onSelect={ field.onChange }
-                                                                            disabled={ ( date ) => date > new Date() }
-                                                                            captionLayout='dropdown'
-                                                                        />
-                                                                    </PopoverContent>
-                                                                </Popover>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `work_experiences.${ index }.is_current` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem className="flex items-center space-x-2">
-                                                            <FormControl>
-                                                                <Checkbox
-                                                                    checked={ field.value }
-                                                                    onCheckedChange={ field.onChange }
-                                                                    data-error={ hasFieldError( `work_experiences.${ index }.is_current` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormLabel>I currently work here</FormLabel>
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                            </div>
-                                        </div>
-                                    ) ) }
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={ () => workExperienceFields.append( {
-                                            title: '',
-                                            company_name: '',
-                                            start_date: new Date(),
-                                            is_current: false
-                                        } ) }
-                                    >
-                                        <Plus size={ 16 } className="mr-2" />
-                                        Add Experience
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
                                     </Button>
                                 </div>
-                            </Card>
-                        ) }
+                            </TabsContent>
 
-                        {/* Education Step */ }
-                        { currentStep === 4 && (
-                            <Card className="p-6">
-                                <CardTitle>Education</CardTitle>
-                                <div className="space-y-4 mt-4">
-                                    { educationFields.fields.map( ( field, index ) => (
-                                        <div key={ field.id } className="border rounded-lg p-4">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="font-medium">Education #{ index + 1 }</h3>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={ () => educationFields.remove( index ) }
-                                                >
-                                                    <Trash2 size={ 16 } />
-                                                </Button>
-                                            </div>
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `educations.${ index }.course_title` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Course/Degree</FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    { ...field }
-                                                                    data-error={ hasFieldError( `educations.${ index }.course_title` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `educations.${ index }.institution` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Institution</FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    { ...field }
-                                                                    data-error={ hasFieldError( `educations.${ index }.institution` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `educations.${ index }.start_date` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Start Date</FormLabel>
-                                                            <FormControl>
-                                                                <Popover>
-                                                                    <PopoverTrigger asChild>
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            className={ cn(
-                                                                                "w-full text-left font-normal",
-                                                                                !field.value && "text-muted-foreground"
-                                                                            ) }
-                                                                            data-error={ hasFieldError( `educations.${ index }.start_date` ) ? 'true' : 'false' }
-                                                                        >
-                                                                            { field.value ? (
-                                                                                format( field.value, "PPP" )
-                                                                            ) : (
-                                                                                <span>Pick a date</span>
-                                                                            ) }
-                                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                                        </Button>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                                        <Calendar
-                                                                            mode="single"
-                                                                            selected={ field.value }
-                                                                            onSelect={ field.onChange }
-                                                                            disabled={ ( date ) => date > new Date() }
-                                                                            captionLayout='dropdown'
-                                                                        />
-                                                                    </PopoverContent>
-                                                                </Popover>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `educations.${ index }.end_date` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>End Date</FormLabel>
-                                                            <FormControl>
-                                                                <Popover>
-                                                                    <PopoverTrigger asChild>
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            className={ cn(
-                                                                                "w-full text-left font-normal",
-                                                                                !field.value && "text-muted-foreground"
-                                                                            ) }
-                                                                            disabled={ watch( `educations.${ index }.is_current` ) }
-                                                                            data-error={ hasFieldError( `educations.${ index }.end_date` ) ? 'true' : 'false' }
-                                                                        >
-                                                                            { field.value ? (
-                                                                                format( field.value, "PPP" )
-                                                                            ) : (
-                                                                                <span>Pick a date</span>
-                                                                            ) }
-                                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                                        </Button>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                                        <Calendar
-                                                                            mode="single"
-                                                                            selected={ field.value }
-                                                                            onSelect={ field.onChange }
-                                                                            disabled={ ( date ) => date > new Date() }
-                                                                            captionLayout='dropdown'
-                                                                        />
-                                                                    </PopoverContent>
-                                                                </Popover>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `educations.${ index }.is_current` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem className="flex items-center space-x-2">
-                                                            <FormControl>
-                                                                <Checkbox
-                                                                    checked={ field.value }
-                                                                    onCheckedChange={ field.onChange }
-                                                                    data-error={ hasFieldError( `educations.${ index }.is_current` ) ? 'true' : 'false' }
-                                                                />
-                                                            </FormControl>
-                                                            <FormLabel>Currently studying</FormLabel>
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                            </div>
-                                        </div>
-                                    ) ) }
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={ () => educationFields.append( {
-                                            course_title: '',
-                                            institution: '',
-                                            start_date: new Date(),
-                                            is_current: false
-                                        } ) }
-                                    >
-                                        <Plus size={ 16 } className="mr-2" />
-                                        Add Education
-                                    </Button>
-                                </div>
-                            </Card>
-                        ) }
-
-                        {/* Languages Step */ }
-                        { currentStep === 5 && (
-                            <Card className="p-6">
-                                <CardTitle>Languages</CardTitle>
-                                <div className="space-y-4 mt-4">
-                                    { languageFields.fields.map( ( field, index ) => (
-                                        <div key={ field.id } className="border rounded-lg p-4">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="font-medium">Language #{ index + 1 }</h3>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={ () => languageFields.remove( index ) }
-                                                >
-                                                    <Trash2 size={ 16 } />
-                                                </Button>
-                                            </div>
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `user_languages.${ index }.language_id` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Language</FormLabel>
-                                                            <FormControl>
-                                                                <Select
-                                                                    onValueChange={ field.onChange }
-                                                                    value={ field.value }
-                                                                >
-                                                                    <SelectTrigger
-                                                                        data-error={ hasFieldError( `user_languages.${ index }.language_id` ) ? 'true' : 'false' }
-                                                                    >
-                                                                        <SelectValue placeholder="Select language" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        { languages.map( lang => (
-                                                                            <SelectItem
-                                                                                key={ lang.value }
-                                                                                value={ lang.value }
-                                                                            >
-                                                                                { lang.label }
-                                                                            </SelectItem>
-                                                                        ) ) }
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `user_languages.${ index }.proficiency` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Proficiency</FormLabel>
-                                                            <FormControl>
-                                                                <Select
-                                                                    onValueChange={ field.onChange }
-                                                                    value={ field.value }
-                                                                >
-                                                                    <SelectTrigger
-                                                                        data-error={ hasFieldError( `user_languages.${ index }.proficiency` ) ? 'true' : 'false' }
-                                                                    >
-                                                                        <SelectValue placeholder="Select proficiency" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="beginner">Beginner</SelectItem>
-                                                                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                                                                        <SelectItem value="advanced">Advanced</SelectItem>
-                                                                        <SelectItem value="fluent">Fluent</SelectItem>
-                                                                        <SelectItem value="native">Native</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
-                                                <div className="md:col-span-2 grid grid-cols-3 gap-4">
+                            <TabsContent value="employment" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Employment</CardTitle>
+                                    <Separator />
+                                    <div className="space-y-4 mt-4">
+                                        <FormField
+                                            control={ control }
+                                            name="work_permits"
+                                            render={ ( { field } ) => (
+                                                <FormItem>
+                                                    <FormLabel>Work Permits</FormLabel>
+                                                    <FormControl>
+                                                        <MultipleSelector
+                                                            options={ countryOptions }
+                                                            value={ countryOptions.filter( opt => field.value.includes( opt.value ) ) }
+                                                            onChange={ opts => field.onChange( opts.map( opt => opt.value ) ) }
+                                                            triggerSearchOnFocus
+                                                            placeholder="Select countries..."
+                                                            loadingIndicator={
+                                                                <p className="text-muted-foreground py-2 text-center">Loading...</p>
+                                                            }
+                                                            emptyIndicator={
+                                                                <p className="text-muted-foreground w-full text-center">No countries found</p>
+                                                            }
+                                                            data-error={ hasFieldError( 'work_permits' ) ? 'true' : 'false' }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            ) }
+                                        />
+                                        { workExperienceFields.fields.map( ( field, index ) => (
+                                            <div key={ field.id } className="border rounded-lg p-4">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="font-medium">Experience #{ index + 1 }</h3>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={ () => workExperienceFields.remove( index ) }
+                                                    >
+                                                        <Trash2 size={ 16 } />
+                                                    </Button>
+                                                </div>
+                                                <div className="grid md:grid-cols-2 gap-4">
                                                     <FormField
                                                         control={ control }
-                                                        name={ `user_languages.${ index }.can_read` }
+                                                        name={ `work_experiences.${ index }.title` }
                                                         render={ ( { field } ) => (
-                                                            <FormItem className="flex items-center space-x-2">
+                                                            <FormItem>
+                                                                <FormLabel>Job Title</FormLabel>
                                                                 <FormControl>
-                                                                    <Checkbox
-                                                                        checked={ field.value }
-                                                                        onCheckedChange={ field.onChange }
-                                                                        data-error={ hasFieldError( `user_languages.${ index }.can_read` ) ? 'true' : 'false' }
-                                                                    />
+                                                                    <Input { ...field } data-error={ hasFieldError( `work_experiences.${ index }.title` ) ? 'true' : 'false' } />
                                                                 </FormControl>
-                                                                <FormLabel>Can Read</FormLabel>
+                                                                <FormMessage />
                                                             </FormItem>
                                                         ) }
                                                     />
                                                     <FormField
                                                         control={ control }
-                                                        name={ `user_languages.${ index }.can_write` }
+                                                        name={ `work_experiences.${ index }.company_name` }
                                                         render={ ( { field } ) => (
-                                                            <FormItem className="flex items-center space-x-2">
+                                                            <FormItem>
+                                                                <FormLabel>Company</FormLabel>
                                                                 <FormControl>
-                                                                    <Checkbox
-                                                                        checked={ field.value }
-                                                                        onCheckedChange={ field.onChange }
-                                                                        data-error={ hasFieldError( `user_languages.${ index }.can_write` ) ? 'true' : 'false' }
-                                                                    />
+                                                                    <Input { ...field } data-error={ hasFieldError( `work_experiences.${ index }.company_name` ) ? 'true' : 'false' } />
                                                                 </FormControl>
-                                                                <FormLabel>Can Write</FormLabel>
+                                                                <FormMessage />
                                                             </FormItem>
                                                         ) }
                                                     />
                                                     <FormField
                                                         control={ control }
-                                                        name={ `user_languages.${ index }.can_speak` }
+                                                        name={ `work_experiences.${ index }.start_date` }
                                                         render={ ( { field } ) => (
-                                                            <FormItem className="flex items-center space-x-2">
+                                                            <FormItem>
+                                                                <FormLabel>Start Date</FormLabel>
+                                                                <FormControl>
+                                                                    <Popover>
+                                                                        <PopoverTrigger asChild>
+                                                                            <FormControl>
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    data-error={ hasFieldError( `work_experiences.${ index }.start_date` ) ? 'true' : 'false' }
+                                                                                >
+                                                                                    { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
+                                                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                                </Button>
+                                                                            </FormControl>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent align="start" className="w-auto p-0">
+                                                                            <Calendar
+                                                                                mode="single"
+                                                                                selected={ field.value ?? undefined }
+                                                                                onSelect={ field.onChange }
+                                                                                disabled={ ( date ) => date > new Date() }
+                                                                                captionLayout='dropdown'
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </Popover>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `work_experiences.${ index }.end_date` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>End Date</FormLabel>
+                                                                <FormControl>
+                                                                    <Popover>
+                                                                        <PopoverTrigger asChild>
+                                                                            <FormControl>
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    disabled={ form.watch( `work_experiences.${ index }.is_current` ) }
+                                                                                    data-error={ hasFieldError( `work_experiences.${ index }.end_date` ) ? 'true' : 'false' }
+                                                                                >
+                                                                                    { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
+                                                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                                </Button>
+                                                                            </FormControl>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent align="start" className="w-auto p-0">
+                                                                            <Calendar
+                                                                                mode="single"
+                                                                                selected={ field.value ?? undefined }
+                                                                                onSelect={ field.onChange }
+                                                                                disabled={ ( date ) => date > new Date() }
+                                                                                captionLayout='dropdown'
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </Popover>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `work_experiences.${ index }.is_current` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                                                 <FormControl>
                                                                     <Checkbox
                                                                         checked={ field.value }
                                                                         onCheckedChange={ field.onChange }
-                                                                        data-error={ hasFieldError( `user_languages.${ index }.can_speak` ) ? 'true' : 'false' }
+                                                                        data-error={ hasFieldError( `work_experiences.${ index }.is_current` ) ? 'true' : 'false' }
                                                                     />
                                                                 </FormControl>
-                                                                <FormLabel>Can Speak</FormLabel>
+                                                                <div className="space-y-1 leading-none">
+                                                                    <FormLabel>
+                                                                        I currently work here
+                                                                    </FormLabel>
+                                                                </div>
                                                             </FormItem>
                                                         ) }
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                    ) ) }
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={ () => languageFields.append( {
-                                            language_id: '',
-                                            proficiency: 'beginner',
-                                            can_read: false,
-                                            can_write: false,
-                                            can_speak: false
-                                        } ) }
-                                    >
-                                        <Plus size={ 16 } className="mr-2" />
-                                        Add Language
-                                    </Button>
-                                </div>
-                            </Card>
-                        ) }
-
-                        {/* Review Step */ }
-                        { currentStep === 6 && (
-                            <Card className="p-6">
-                                <CardTitle>Review Your Profile</CardTitle>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                                    <div>
-                                        <h3 className="font-bold mb-2">Personal Information</h3>
-                                        <p><strong>Name:</strong> { watch( 'name' ) }</p>
-                                        <p><strong>Email:</strong> { watch( 'email' ) }</p>
-                                        <p><strong>Phone:</strong> { watch( 'phone' ) }</p>
-                                        <p><strong>Gender:</strong> { watch( 'personal_detail.gender' ) }</p>
-                                        <p><strong>Date of Birth:</strong> { formatDate( watch( 'personal_detail.date_of_birth' ) ) }</p>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-bold mb-2">Career Profile</h3>
-                                        <p><strong>Job Title:</strong> { watch( 'profile.job_title' ) }</p>
-                                        <p><strong>Experience:</strong> { watch( 'profile.experience' ) } years</p>
-                                        <p><strong>Notice Period:</strong> { watch( 'profile.notice_period' ) } days</p>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-bold mb-2">Skills</h3>
-                                        <ul className="list-disc pl-5">
-                                            { watch( 'skills' )?.map( skillId => {
-                                                const skill = skillOptions.find( s => s.value === skillId );
-                                                return skill ? <li key={ skillId }>{ skill.label }</li> : null;
+                                        ) ) }
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={ () => workExperienceFields.append( {
+                                                title: '',
+                                                company_name: '',
+                                                start_date: new Date(),
+                                                is_current: false
                                             } ) }
-                                        </ul>
+                                        >
+                                            <Plus size={ 16 } className="mr-2" /> Add Experience
+                                        </Button>
                                     </div>
-
-                                    <div>
-                                        <h3 className="font-bold mb-2">Work Experience</h3>
-                                        { watch( 'work_experiences' )?.map( ( exp, idx ) => (
-                                            <div key={ idx } className="mb-3">
-                                                <p><strong>{ exp.title }</strong> at { exp.company_name }</p>
-                                                <p>Start: { formatDate( exp.start_date ) }</p>
-                                                <p>End: { exp.is_current ? 'Present' : formatDate( exp.end_date ) }</p>
-                                            </div>
-                                        ) ) }
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-bold mb-2">Education</h3>
-                                        { watch( 'educations' )?.map( ( edu, idx ) => (
-                                            <div key={ idx } className="mb-3">
-                                                <p><strong>{ edu.course_title }</strong> at { edu.institution }</p>
-                                                <p>Start: { formatDate( edu.start_date ) }</p>
-                                                <p>End: { edu.is_current ? 'Present' : formatDate( edu.end_date ) }</p>
-                                            </div>
-                                        ) ) }
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-bold mb-2">Languages</h3>
-                                        { watch( 'user_languages' )?.map( ( lang, idx ) => {
-                                            const language = languages.find( l => l.value === lang.language_id );
-                                            return (
-                                                <div key={ idx } className="mb-2">
-                                                    <p><strong>{ language?.label }</strong> - { lang.proficiency }</p>
-                                                    <p className="text-sm">
-                                                        { lang.can_read ? 'Read' : '' }
-                                                        { lang.can_write ? ', Write' : '' }
-                                                        { lang.can_speak ? ', Speak' : '' }
-                                                    </p>
-                                                </div>
-                                            );
-                                        } ) }
-                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
                                 </div>
-                            </Card>
-                        ) }
+                            </TabsContent>
 
-                        {/* Navigation Buttons */ }
-                        <div className="flex justify-between">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={ prevStep }
-                                disabled={ currentStep === 0 }
-                            >
-                                Back
-                            </Button>
+                            <TabsContent value="education" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Education</CardTitle>
+                                    <Separator />
+                                    <div className="space-y-4 mt-4">
+                                        { educationFields.fields.map( ( field, index ) => (
+                                            <div key={ field.id } className="border rounded-lg p-4">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="font-medium">Education #{ index + 1 }</h3>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={ () => educationFields.remove( index ) }
+                                                    >
+                                                        <Trash2 size={ 16 } />
+                                                    </Button>
+                                                </div>
+                                                <div className="grid md:grid-cols-2 gap-4">
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.course_title` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Course Title</FormLabel>
+                                                                <FormControl>
+                                                                    <Input { ...field } data-error={ hasFieldError( `educations.${ index }.course_title` ) ? 'true' : 'false' } />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.institution` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Institution</FormLabel>
+                                                                <FormControl>
+                                                                    <Input { ...field } data-error={ hasFieldError( `educations.${ index }.institution` ) ? 'true' : 'false' } />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.course_type` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Course Type</FormLabel>
+                                                                <FormControl>
+                                                                    <Select onValueChange={ field.onChange } value={ field.value }>
+                                                                        <SelectTrigger data-error={ hasFieldError( `educations.${ index }.course_type` ) ? 'true' : 'false' }>
+                                                                            <SelectValue placeholder="Select course type" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="Full-time">Full-time</SelectItem>
+                                                                            <SelectItem value="Part-time">Part-time</SelectItem>
+                                                                            <SelectItem value="Online">Online</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.start_date` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Start Date</FormLabel>
+                                                                <FormControl>
+                                                                    <Popover>
+                                                                        <PopoverTrigger asChild>
+                                                                            <FormControl>
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    data-error={ hasFieldError( `educations.${ index }.start_date` ) ? 'true' : 'false' }
+                                                                                >
+                                                                                    { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
+                                                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                                </Button>
+                                                                            </FormControl>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent align="start" className="w-auto p-0">
+                                                                            <Calendar
+                                                                                mode="single"
+                                                                                selected={ field.value ?? undefined }
+                                                                                onSelect={ field.onChange }
+                                                                                disabled={ ( date ) => date > new Date() }
+                                                                                captionLayout='dropdown'
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </Popover>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.end_date` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>End Date</FormLabel>
+                                                                <FormControl>
+                                                                    <Popover>
+                                                                        <PopoverTrigger asChild>
+                                                                            <FormControl>
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    className={ cn( 'w-full text-left', !field.value && 'text-muted-foreground' ) }
+                                                                                    disabled={ form.watch( `educations.${ index }.is_current` ) }
+                                                                                    data-error={ hasFieldError( `educations.${ index }.end_date` ) ? 'true' : 'false' }
+                                                                                >
+                                                                                    { field.value ? format( field.value, 'PPP' ) : 'Pick a date' }
+                                                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                                </Button>
+                                                                            </FormControl>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent align="start" className="w-auto p-0">
+                                                                            <Calendar
+                                                                                mode="single"
+                                                                                selected={ field.value ?? undefined }
+                                                                                onSelect={ field.onChange }
+                                                                                disabled={ ( date ) => date > new Date() }
+                                                                                captionLayout='dropdown'
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </Popover>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `educations.${ index }.is_current` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                <FormControl>
+                                                                    <Checkbox
+                                                                        checked={ field.value }
+                                                                        onCheckedChange={ field.onChange }
+                                                                        data-error={ hasFieldError( `educations.${ index }.is_current` ) ? 'true' : 'false' }
+                                                                    />
+                                                                </FormControl>
+                                                                <div className="space-y-1 leading-none">
+                                                                    <FormLabel>
+                                                                        Currently studying here
+                                                                    </FormLabel>
+                                                                </div>
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) ) }
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={ () => educationFields.append( {
+                                                course_title: '',
+                                                institution: '',
+                                                course_type: '',
+                                                start_date: new Date(),
+                                                is_current: false
+                                            } ) }
+                                        >
+                                            <Plus size={ 16 } className="mr-2" /> Add Education
+                                        </Button>
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
+                                </div>
+                            </TabsContent>
 
-                            { currentStep < steps.length - 1 ? (
-                                <Button type="button" onClick={ nextStep }>
-                                    Next
-                                </Button>
-                            ) : (
-                                <Button type="submit" disabled={ formState.isSubmitting }>
-                                    { formState.isSubmitting ? 'Saving...' : 'Complete Profile' }
-                                </Button>
-                            ) }
-                        </div>
+                            <TabsContent value="certifications" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Certifications</CardTitle>
+                                    <Separator />
+                                    <div className="space-y-4 mt-4">
+                                        { certificateFields.fields.map( ( field, index ) => (
+                                            <div key={ field.id } className="border rounded-lg p-4">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="font-medium">Certification #{ index + 1 }</h3>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={ () => certificateFields.remove( index ) }
+                                                    >
+                                                        <Trash2 size={ 16 } />
+                                                    </Button>
+                                                </div>
+                                                <FormField
+                                                    control={ control }
+                                                    name={ `certificates.${ index }.name` }
+                                                    render={ ( { field } ) => (
+                                                        <FormItem>
+                                                            <FormLabel>Certification Name</FormLabel>
+                                                            <FormControl>
+                                                                <Input { ...field } data-error={ hasFieldError( `certificates.${ index }.name` ) ? 'true' : 'false' } />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    ) }
+                                                />
+                                            </div>
+                                        ) ) }
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={ () => certificateFields.append( { name: '' } ) }
+                                        >
+                                            <Plus size={ 16 } className="mr-2" /> Add Certification
+                                        </Button>
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="languages" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Languages</CardTitle>
+                                    <Separator />
+                                    <div className="space-y-4 mt-4">
+                                        { languageFields.fields.map( ( field, index ) => (
+                                            <div key={ field.id } className="border rounded-lg p-4">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="font-medium">Language #{ index + 1 }</h3>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={ () => languageFields.remove( index ) }
+                                                    >
+                                                        <Trash2 size={ 16 } />
+                                                    </Button>
+                                                </div>
+                                                <div className="grid md:grid-cols-2 gap-4">
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `user_languages.${ index }.language_id` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Language</FormLabel>
+                                                                <FormControl>
+                                                                    <Select onValueChange={ field.onChange } value={ field.value }>
+                                                                        <SelectTrigger data-error={ hasFieldError( `user_languages.${ index }.language_id` ) ? 'true' : 'false' }>
+                                                                            <SelectValue placeholder="Select language" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            { languages.map( ( language ) => (
+                                                                                <SelectItem key={ language.value } value={ language.value }>
+                                                                                    { language.label }
+                                                                                </SelectItem>
+                                                                            ) ) }
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `user_languages.${ index }.proficiency` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Proficiency</FormLabel>
+                                                                <FormControl>
+                                                                    <Select onValueChange={ field.onChange } value={ field.value }>
+                                                                        <SelectTrigger data-error={ hasFieldError( `user_languages.${ index }.proficiency` ) ? 'true' : 'false' }>
+                                                                            <SelectValue placeholder="Select proficiency" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="beginner">Beginner</SelectItem>
+                                                                            <SelectItem value="intermediate">Intermediate</SelectItem>
+                                                                            <SelectItem value="proficient">Proficient</SelectItem>
+                                                                            <SelectItem value="fluent">Fluent</SelectItem>
+                                                                            <SelectItem value="native">Native</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <div className="md:col-span-2">
+                                                        <FormLabel>Language Skills</FormLabel>
+                                                        <div className="grid grid-cols-3 gap-4 mt-2">
+                                                            <FormField
+                                                                control={ control }
+                                                                name={ `user_languages.${ index }.can_read` }
+                                                                render={ ( { field } ) => (
+                                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                        <FormControl>
+                                                                            <Checkbox
+                                                                                checked={ field.value }
+                                                                                onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_read` ) ? 'true' : 'false' }
+                                                                            />
+                                                                        </FormControl>
+                                                                        <FormLabel>Can Read</FormLabel>
+                                                                    </FormItem>
+                                                                ) }
+                                                            />
+                                                            <FormField
+                                                                control={ control }
+                                                                name={ `user_languages.${ index }.can_write` }
+                                                                render={ ( { field } ) => (
+                                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                        <FormControl>
+                                                                            <Checkbox
+                                                                                checked={ field.value }
+                                                                                onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_write` ) ? 'true' : 'false' }
+                                                                            />
+                                                                        </FormControl>
+                                                                        <FormLabel>Can Write</FormLabel>
+                                                                    </FormItem>
+                                                                ) }
+                                                            />
+                                                            <FormField
+                                                                control={ control }
+                                                                name={ `user_languages.${ index }.can_speak` }
+                                                                render={ ( { field } ) => (
+                                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                        <FormControl>
+                                                                            <Checkbox
+                                                                                checked={ field.value }
+                                                                                onCheckedChange={ field.onChange }
+                                                                                data-error={ hasFieldError( `user_languages.${ index }.can_speak` ) ? 'true' : 'false' }
+                                                                            />
+                                                                        </FormControl>
+                                                                        <FormLabel>Can Speak</FormLabel>
+                                                                    </FormItem>
+                                                                ) }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) ) }
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={ () => languageFields.append( {
+                                                language_id: '',
+                                                proficiency: 'basic',
+                                                can_read: false,
+                                                can_write: false,
+                                                can_speak: false
+                                            } ) }
+                                        >
+                                            <Plus size={ 16 } className="mr-2" /> Add Language
+                                        </Button>
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+                                        Next
+                                    </Button>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="review" className="w-full">
+                                <Card className="p-4 sm:p-6">
+                                    <CardTitle>Review & Submit</CardTitle>
+                                    <Separator />
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <h3 className="font-medium">Account Details</h3>
+                                            <p><strong>Name:</strong> { form.watch( 'name' ) }</p>
+                                            <p><strong>Email:</strong> { form.watch( 'email' ) }</p>
+                                            <p><strong>Phone:</strong> { form.watch( 'phone' ) }</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Personal Details</h3>
+                                            <p><strong>Gender:</strong> { form.watch( 'personal_detail.gender' ) }</p>
+                                            <p><strong>Marital Status:</strong> { form.watch( 'personal_detail.marital_status' ) }</p>
+                                            <p><strong>Date of Birth:</strong> { formatDateSafely( form.watch( 'personal_detail.date_of_birth' ) ) }</p>
+                                            <p><strong>Differently Abled:</strong> { form.watch( 'personal_detail.differently_abled' ) ? 'Yes' : 'No' }</p>
+                                            <p><strong>Address:</strong> { form.watch( 'address.location_id' ) ? locationOptions.find( loc => loc.value === form.watch( 'address.location_id' ) )?.label : 'N/A' }</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Profile</h3>
+                                            <p><strong>Job Title:</strong> { form.watch( 'profile.job_title' ) }</p>
+                                            <p><strong>Experience:</strong> { form.watch( 'profile.experience' ) }</p>
+                                            <p><strong>Notice Period:</strong> { form.watch( 'profile.notice_period' ) }</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Skills</h3>
+                                            <p>{ form.watch( 'skills' ).map( skill => skillOptions.find( opt => opt.value === skill )?.label ).join( ', ' ) }</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Work Permits</h3>
+                                            <p>{ form.watch( 'work_permits' ).map( country => countryOptions.find( opt => opt.value === country )?.label ).join( ', ' ) }</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Employment</h3>
+                                            { workExperienceFields.fields.map( ( we, index ) => (
+                                                <div key={ we.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Experience { index + 1 }:</strong> { form.watch( `work_experiences.${ index }.title` ) } at { form.watch( `work_experiences.${ index }.company_name` ) }</p>
+                                                    <p>Start: { formatDateSafely( form.watch( `work_experiences.${ index }.start_date` ) ) }</p>
+                                                    <p>End: { formatDateSafely( form.watch( `work_experiences.${ index }.end_date` ) ) }</p>
+                                                    <p>Current: { form.watch( `work_experiences.${ index }.is_current` ) ? 'Yes' : 'No' }</p>
+                                                </div>
+                                            ) ) }
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Education</h3>
+                                            { educationFields.fields.map( ( edu, index ) => (
+                                                <div key={ edu.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Education { index + 1 }:</strong> { form.watch( `educations.${ index }.course_title` ) } at { form.watch( `educations.${ index }.institution` ) }</p>
+                                                    <p>Course Type: { form.watch( `educations.${ index }.course_type` ) }</p>
+                                                    <p>Start: { formatDateSafely( form.watch( `educations.${ index }.start_date` ) ) }</p>
+                                                    <p>End: { formatDateSafely( form.watch( `educations.${ index }.end_date` ) ) }</p>
+                                                    <p>Current: { form.watch( `educations.${ index }.is_current` ) ? 'Yes' : 'No' }</p>
+                                                </div>
+                                            ) ) }
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Certifications</h3>
+                                            { certificateFields.fields.map( ( cert, index ) => (
+                                                <div key={ cert.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Certification { index + 1 }:</strong> { form.watch( `certificates.${ index }.name` ) }</p>
+                                                </div>
+                                            ) ) }
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium">Languages</h3>
+                                            { languageFields.fields.map( ( lang, index ) => (
+                                                <div key={ lang.id } className="border-b last:border-b-0 py-2">
+                                                    <p><strong>Language { index + 1 }:</strong> { languages.find( l => l.value === form.watch( `user_languages.${ index }.language_id` ) )?.label } - Proficiency: { form.watch( `user_languages.${ index }.proficiency` ) }</p>
+                                                    <p>Can Read: { form.watch( `user_languages.${ index }.can_read` ) ? 'Yes' : 'No' }</p>
+                                                    <p>Can Write: { form.watch( `user_languages.${ index }.can_write` ) ? 'Yes' : 'No' }</p>
+                                                    <p>Can Speak: { form.watch( `user_languages.${ index }.can_speak` ) ? 'Yes' : 'No' }</p>
+                                                </div>
+                                            ) ) }
+                                        </div>
+                                    </div>
+                                </Card>
+                                <div className="flex justify-between mt-4">
+                                    <Button type="button" onClick={ () => setCurrentStep( currentStep - 1 ) }>
+                                        Back
+                                    </Button>
+                                    <Button type="submit">Submit</Button>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </form>
                 </Form>
             </div>
         </>
-    );
-};
+    )
+}
 
-export default JobseekerProfileWizard;
+export default ProfileWizard

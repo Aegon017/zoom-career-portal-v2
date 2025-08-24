@@ -1,4 +1,4 @@
-@props(['url', 'color' => 'default', 'align' => 'center'])
+@props(['url', 'color' => 'default', 'align' => 'left'])
 <table class="action" align="{{ $align }}" width="100%" cellpadding="0" cellspacing="0" role="presentation">
     <tr>
         <td align="{{ $align }}">

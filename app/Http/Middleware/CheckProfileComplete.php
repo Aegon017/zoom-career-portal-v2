@@ -37,6 +37,6 @@ final class CheckProfileComplete
         return $user->profile &&
             $user->skills->count() > 0 &&
             $user->educations->count() > 0 &&
-            $user->personal_detail && $user->userLanguages && $user->workPermits;
+            $user->personalDetail && $user->userLanguages && $user->workPermits;
     }
 }

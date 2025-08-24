@@ -23,6 +23,10 @@ final class WorkExperience extends Model implements HasMedia
         'is_current',
     ];
 
+    protected $casts = [
+        'is_current' => 'boolean'
+    ];
+
     protected $appends = [
         'logo_url',
     ];

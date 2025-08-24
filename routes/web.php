@@ -174,9 +174,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
         Route::get('/career-interests', [CareerInterestController::class, 'index'])->name('career-interests.index');
         Route::post('/career-interests/update', [CareerInterestController::class, 'update'])->name('career-interests.update');
+        Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
     });
 
-    Route::get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
     Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
     Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
 

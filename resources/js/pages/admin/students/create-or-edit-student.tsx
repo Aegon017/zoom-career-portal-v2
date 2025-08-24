@@ -1,5 +1,4 @@
 import DeleteAlert from '@/components/delete-alert';
-import FileUpload from '@/components/file-upload';
 import MultipleSelector from '@/components/multiple-selector';
 import { PhoneInput } from '@/components/phone-input';
 import { SelectPopoverField } from '@/components/select-popover-field';
@@ -7,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

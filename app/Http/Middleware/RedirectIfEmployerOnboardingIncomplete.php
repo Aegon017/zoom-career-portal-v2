@@ -22,6 +22,15 @@ final class RedirectIfEmployerOnboardingIncomplete
             return redirect()->route('login');
         }
 
+        if ($user->hasRole('jobseeker')) {
+            return to_route('jobseeker.dashboard');
+        }
+
+        if ($user->hasRole('admin')) {
+            return to_route('admin.dashboard');
+        }
+
+
         $onboarding = EmployerOnBoarding::firstOrCreate(
             ['user_id' => $user->id],
             [
