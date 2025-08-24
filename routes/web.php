@@ -50,9 +50,13 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TempUploadController;
+use App\Jobs\ProcessResume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
 Route::get('/', fn() => view('home'))->name('home');
 
@@ -145,7 +149,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware(['verified.student', 'profile.complete'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware(['verified.student', 'profile.complete', 'resume.uploaded'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/dashboard', [JobseekerDashboardController::class, 'index'])->name('dashboard');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
@@ -179,7 +183,34 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
     Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
+    Route::get('/jobseeker/resume/upload', function () {
+        return Inertia::render('jobseeker/resume-upload');
+    })->name('jobseeker.resume.upload');
+    Route::post('/jobseeker/resume/upload', function (Request $request) {
+        $request->validate([
+            'resume' => 'required|string'
+        ]);
 
+        $path = $request->resume;
+
+        $user = Auth::user();
+
+        if (! Storage::exists($path)) {
+            return back()->withErrors(['resume' => 'File not found. Please upload again.']);
+        }
+
+        try {
+            $resume = $user->resumes()->create();
+            $resume->addMediaFromDisk($path)->toMediaCollection('resumes');
+            Storage::delete($path);
+            ProcessResume::dispatch($resume);
+
+            return to_route('jobseeker.dashboard');
+        } catch (FileCannotBeAdded $fileCannotBeAdded) {
+            return back()->withErrors(['resume' => 'Upload failed: ' . $fileCannotBeAdded->getMessage()]);
+        }
+    })->name('jobseeker.resume.upload');
+    
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
