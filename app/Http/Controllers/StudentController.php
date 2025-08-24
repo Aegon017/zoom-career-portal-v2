@@ -619,8 +619,14 @@ class StudentController extends Controller
         }
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new StudentsExport, 'students.xlsx');
+        $fieldsParam = $request->get('fields', '');
+
+        $selectedFields = $fieldsParam ? explode(',', $fieldsParam) : [];
+
+        $selectedFields = array_filter($selectedFields);
+
+        return Excel::download(new StudentsExport($selectedFields), 'students.xlsx');
     }
 }

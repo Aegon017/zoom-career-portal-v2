@@ -1,7 +1,7 @@
 import { useDebounce } from '@/hooks/use-debounce';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Upload, FileText, FileDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Upload, FileText, FileDown, CheckSquare, Square, FileUp } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -12,6 +12,8 @@ import useSWR from 'swr';
 import { toast } from 'sonner';
 import useSWRMutation from 'swr/mutation';
 import axios from 'axios';
+import { Checkbox } from './ui/checkbox';
+import { Label } from './ui/label';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -36,6 +38,11 @@ interface DataTableProps<TData, TValue> {
     };
     routeName: string;
     importColumns?: string[];
+    exportFields?: {
+        key: string;
+        label: string;
+        selected: boolean;
+    }[];
 }
 
 interface TemplateResponse {
@@ -67,12 +74,23 @@ export function DataTable<TData, TValue>( {
     importUrl,
     templateUrl,
     importColumns,
+    exportFields = [],
 }: DataTableProps<TData, TValue> ) {
     const [ globalFilter, setGlobalFilter ] = useState( filters.search ?? '' );
     const [ importDialogOpen, setImportDialogOpen ] = useState( false );
+    const [ exportDialogOpen, setExportDialogOpen ] = useState( false );
+    const [ selectedExportFields, setSelectedExportFields ] = useState<{ key: string; label: string; selected: boolean }[]>( [] );
     const debouncedSearch = useDebounce( globalFilter, 1000 );
     const requestId = useRef( 0 );
     const fileInputRef = useRef<HTMLInputElement>( null );
+    const checkboxRef = useRef<HTMLButtonElement>( null );
+
+    // Initialize export fields
+    useEffect( () => {
+        if ( exportFields.length > 0 ) {
+            setSelectedExportFields( exportFields );
+        }
+    }, [ exportFields ] );
 
     const { data: templateData, isLoading: templateLoading } = useSWR<TemplateResponse>(
         importDialogOpen && templateUrl ? templateUrl : null,
@@ -152,6 +170,36 @@ export function DataTable<TData, TValue>( {
         if ( fileInputRef.current ) fileInputRef.current.value = '';
     }, [ importTrigger ] );
 
+    const handleExportFieldToggle = ( key: string ) => {
+        setSelectedExportFields( prev =>
+            prev.map( field =>
+                field.key === key ? { ...field, selected: !field.selected } : field
+            )
+        );
+    };
+
+    const selectAllExportFields = ( select: boolean ) => {
+        setSelectedExportFields( prev =>
+            prev.map( field => ( { ...field, selected: select } ) )
+        );
+    };
+
+    const handleExport = () => {
+        const selectedFields = selectedExportFields
+            .filter( field => field.selected )
+            .map( field => field.key );
+
+        if ( selectedFields.length === 0 ) {
+            toast.error( 'Please select at least one field to export' );
+            return;
+        }
+
+        const exportWithFieldsUrl = `${ exportUrl }?fields=${ selectedFields.join( ',' ) }`;
+        window.open( exportWithFieldsUrl, '_blank' );
+        setExportDialogOpen( false );
+        toast.success( 'Export started successfully' );
+    };
+
     const table = useReactTable( {
         data,
         columns,
@@ -166,6 +214,9 @@ export function DataTable<TData, TValue>( {
         end: Math.min( pagination.current_page * pagination.per_page, pagination.total ),
         total: pagination.total.toLocaleString()
     } ), [ pagination ] );
+
+    const allFieldsSelected = selectedExportFields.length > 0 && selectedExportFields.every( field => field.selected );
+    const someFieldsSelected = selectedExportFields.some( field => field.selected ) && !allFieldsSelected;
 
     return (
         <div className="space-y-4">
@@ -184,12 +235,61 @@ export function DataTable<TData, TValue>( {
                             className="max-w-sm"
                         />
                         { hasExport && exportUrl && (
-                            <a href={ exportUrl } download>
-                                <Button variant="outline" size="sm">
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Export
-                                </Button>
-                            </a>
+                            <Dialog open={ exportDialogOpen } onOpenChange={ setExportDialogOpen }>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                        <FileUp className="w-4 h-4" />
+                                        Export
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-md">
+                                    <DialogHeader>
+                                        <DialogTitle>Export { listingName }</DialogTitle>
+                                        <DialogDescription>
+                                            Select the fields you want to include in the export file
+                                        </DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="grid gap-4 py-4">
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="selectAll"
+                                                checked={ allFieldsSelected }
+                                                onCheckedChange={ () => selectAllExportFields( !allFieldsSelected ) }
+                                                ref={ checkboxRef }
+                                            />
+                                            <Label htmlFor="selectAll" className="text-sm font-medium cursor-pointer">
+                                                { allFieldsSelected ? 'Deselect All' : 'Select All' } Fields
+                                            </Label>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
+                                            { selectedExportFields.map( ( field ) => (
+                                                <div key={ field.key } className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={ field.key }
+                                                        checked={ field.selected }
+                                                        onCheckedChange={ () => handleExportFieldToggle( field.key ) }
+                                                    />
+                                                    <Label htmlFor={ field.key } className="text-sm cursor-pointer">
+                                                        { field.label }
+                                                    </Label>
+                                                </div>
+                                            ) ) }
+                                        </div>
+                                    </div>
+
+                                    <DialogFooter>
+                                        <Button variant="outline" onClick={ () => setExportDialogOpen( false ) }>
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={ handleExport }>
+                                            <Download className="w-4 h-4 mr-2" />
+                                            Export Selected Fields
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         ) }
                         { hasImport && importUrl && (
                             <Dialog open={ importDialogOpen } onOpenChange={ setImportDialogOpen }>
