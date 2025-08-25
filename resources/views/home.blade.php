@@ -43,8 +43,7 @@
     <header>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-default">
-                <a class="navbar-brand" href="/"><img src="{{ asset('logo.png') }}"
-                        alt="Zooming Careers" /></a>
+                <a class="navbar-brand" href="/"><img src="{{ asset('logo.png') }}" alt="Zooming Careers" /></a>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
@@ -78,7 +77,15 @@
         <div class="jobseeker-outer" id="jobseeker_login">
             <div class="jobseeker-login">
                 <div class="col-md-12 col-sm-12">
-                    <span class="js-heading">Job Seeker</span>
+                    <p class="js-heading">Student Portal</p>
+
+                    <span class="js-subHeading">
+                        <strong>Students registered from Jan 2025 onwards:</strong>
+                        Log in using your Zoom Group credentials.<br>
+                        <strong>Students enrolled before Jan 2025:</strong>
+                        Use the email address you originally registered with at Zoom Technologies.
+                    </span>
+                    <br>
                 </div>
                 <div id="errJobseeker"></div>
                 <form action="/remote/login" method="POST" class="navbar-form job-seeker" role="form"
@@ -113,6 +120,14 @@
                             </p>
                         </div>
                     </div>
+                    <p class="js-subHeading">
+                        <strong>
+                            Forgot your registered email?
+                            Simply click Register Here and create a new account. Access will be granted after review by
+                            our
+                            team within 3 business days.
+                        </strong>
+                    </p>
                 </form>
             </div>
         </div>
