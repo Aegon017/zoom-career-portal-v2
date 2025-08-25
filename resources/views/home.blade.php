@@ -314,7 +314,7 @@
     </section>
     <!-- Footer -->
     <div id="contact" class="footer-top">
-        <h4>Contact Us At <a href="mailto:support@zoomingcareer.com">support@zoomingcareer.com</a></h4>
+        <h4>Contact Us At <a href="mailto:support@zoomingcareers.com">support@zoomingcareers.com</a></h4>
     </div>
     <div class="footer-copyright">
         <p>Copyright © 1996-2025 <span>Zoom Technologies (India) Private Limited</span>. All Rights Reserved.</p>
