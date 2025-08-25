@@ -1,0 +1,790 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : April 5, 2014, 3:32:55 PM
+    Author     : Sanjay
+    Version    : 0.1
+    Purpose    : The Purpose of the Stylesheet is to apply style to the zoomgroup application
+*/
+
+/*
+================================================================================================================================
+**********************************************      EXTERNAL FONTS FOR THE SITE      *******************************************
+================================================================================================================================
+*/
+
+
+
+/*
+================================================================================================================================
+**********************************************      COMMON STYLE FOR THE SITE      *********************************************
+================================================================================================================================
+*/
+
+body{
+  border-top: 4px solid #D6D6D6; 
+}
+.container{
+  width: 1008px;
+}
+.padRL0{
+  padding-right: 0;
+  padding-left: 0;
+}
+.padR0{
+  padding-right: 0px;
+}
+.top-20{
+  margin-top: 20px;
+}
+.display-in-block{
+  display: inline-block;
+}
+.text-left{
+  text-align: left !important;
+}
+.online-payment-detail-wrapper{
+  background: #f2f2f2;
+  padding: 25px;
+}
+.selected-course-preview{
+  margin-top: 30px;
+}
+.selected-course-preview span{
+  padding: 20px;
+}
+.select-course-quantity-wrapper{
+  margin-top: 15px;
+}
+.select-course-quantity-table tr:last-of-type{
+  border-bottom: 2px solid #f2f2f2;
+}
+.select-course-quantity-table-head{
+  background: #f2f2f2;
+}
+.paypal-selected-course-quantity{
+  width: 60% !important;
+  float: right;
+  margin-right: 10px !important;
+  height: 30px !important;
+}
+.paypal-payment-procced-button{
+  border-radius: 18px !important;
+  width: 145px !important;
+  font-size: 18   px;
+}
+.paypal-payment-procced-button span{
+  font-size: 10px;
+  margin-left: 22px;
+}
+.acceptable-card-icon{
+  height: 35px !important;
+  margin-left: 142px !important;
+}
+.ccavenue-quantity-select-table{
+
+}
+.ccavenue-quantity-select-table tr th{
+  background: #708FDA;
+  color: #fff;
+}
+.ccavenue-quantity-select-table tr td{
+  background: #EFEFEF;
+  color: #000;
+  border: 1px solid #fff !important;
+}
+.ccavenue-quantity-box{
+  width: 100px !important;
+  margin: 0 auto !important;
+}
+.ccavenue-preview-notes-wrapper ol{
+  padding-left: 20px;
+  padding-top: 15px;
+}
+.ccavenue-preview-notes-wrapper ol li{
+  margin-bottom: 10px;
+}
+.ccavenue-preview-notes-wrapper select{
+  width: 250px;
+}
+.ccavenue-preview-notes-wrapper h4{
+  font-weight: 400;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  font-weight: 20px;
+}
+.ccavenue-preview-notes-wrapper .btn-default{
+  font-size: 13px;
+  margin-bottom: 5px;
+  padding: 1px 12px;
+  border-radius: 0;
+
+}
+.ccavenue-preview-notes-wrapper ul li:first-child{
+  margin-top: 60px;
+}
+label sup{
+  color: red;
+}
+.tax-text{
+  color: #FF0000;
+  font-size: 11px;
+}
+.text-red{
+  color: #ff0000;
+}
+
+.terms-checkbox{
+  cursor: pointer;
+  -moz-appearance: checkbox !important;
+}
+#termsModal{
+  height: 300px;
+}
+/*
+================================================================================================================================
+**********************************************      HEADER STYLE FOR THE SITE      *********************************************
+================================================================================================================================
+*/
+/*.navbar-default .navbar-nav > li > a {
+    line-height: 2px !important;
+}
+.navbar-nav > li{
+    margin-left: 1px;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:active, 
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li.active > a{
+    text-decoration: none;
+    color: #ff6600;
+    background: rgb(214,214,214);  Old browsers 
+    background: -moz-linear-gradient(top, rgba(214,214,214,1) 0%, rgba(255,255,255,1) 100%);  FF3.6+ 
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(214,214,214,1)), color-stop(100%,rgba(255,255,255,1)));  Chrome,Safari4+ 
+    background: -webkit-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(255,255,255,1) 100%);  Chrome10+,Safari5.1+ 
+    background: -o-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(255,255,255,1) 100%);  Opera 11.10+ 
+    background: -ms-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(255,255,255,1) 100%);  IE10+ 
+    background: linear-gradient(to bottom, rgba(214,214,214,1) 0%,rgba(255,255,255,1) 100%);  W3C 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d6d6d6', endColorstr='#ffffff',GradientType=0 );  IE6-9 
+}
+.navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand{
+    margin-left: auto;
+}
+.navbar-default{
+    background-color: transparent;
+    border: none;
+}
+
+#navBarMain {
+    margin-top: 15px !important;
+}
+#navBarMain ul {
+    margin: 0px;
+    padding: 0px;
+}
+#navBarMain ul li {
+    float: left;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    display: inline;
+    border-right: 1px solid #000000;
+}
+#navBarMain ul li a {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-decoration: none;
+    font-size: 15px;
+    text-align: left;
+    font-weight: 400;
+    color: #ffffff;
+}
+#navBarMain ul li a:hover {
+    text-decoration: none;
+    color: #ff6600;
+    background: #005191;
+}
+#navBarMain ul li .corner {
+    border-top-left-radius: 8px;
+}
+
+.slogan {
+    color: #C0C0C0;
+    float: left;
+    font-size: 22px;
+    line-height: 30px;
+    margin: -22px 0 0 30px;
+    padding: 0;
+}
+.slogan span {
+    font-size: 16px;
+}
+.sm-buttons-top {
+    float: right;
+    margin: 0 0 0 0 !important;
+    padding: 0;
+}
+.sm-buttons-top .liveHelp {
+    background: url("../images/liveHelp-icon1.png") no-repeat scroll left center rgba(0, 0, 0, 0);
+}
+.sm-buttons-top li a {
+    border: 1px solid #E3E7E9;
+    border-radius: 3px;
+    color: #005191;
+    float: left;
+    text-decoration: none;
+}
+.right-form {
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+
+.right-form li {
+    display: inline;
+    float: left;
+    font-family: "Roboto","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif,'Source Sans Pro';
+    font-size: 13px;
+    list-style: none outside none;
+    margin: 0 0 0 10px;
+    padding: 0;
+}
+.right-form .form-control{
+    border-radius: 0;
+    height: 30px;
+}  
+.search-btn {
+    background: url("../images/search-btn-magnifier.jpg") no-repeat scroll right center #FFFFFF;
+}
+
+#leftContainer {
+    width: 250px !important;
+}
+#leftNav {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #EFF0F1 #EFF0F1 -moz-use-text-color;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 1px 0;
+    float: left;
+    height: 100%;
+    margin: 0;
+    padding: 5px 0 0;
+    width: 238px;
+}
+#leftNav ul {
+    margin: 0;
+    padding: 0;
+}
+#leftNav ul li a {
+    color: #005191;
+    line-height: 16px;
+    text-decoration: none;
+}
+
+#leftNav ul li ul li {
+    border-bottom: 0 none;
+    color: #FF6600;
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}*/
+/*
+================================================================================================================================
+*****************************************  ONLINE TRAINING TRAINING STYLE FOR THE SITE  ****************************************
+================================================================================================================================
+*/
+
+/*@font-face {
+  font-family: 'roboto';
+  src: url('../fonts/roboto/roboto.eot');  IE9 Compat Modes 
+  src: url('../fonts/roboto/roboto.eot?#iefix') format('embedded-opentype'),  IE6-IE8 
+    url('../fonts/roboto/roboto.woff') format('woff'),  Modern Browsers 
+    url('../fonts/roboto/roboto.ttf')  format('truetype'),  Safari, Android, iOS 
+    url('../fonts/roboto/roboto.svg#svgFontName') format('svg');  Legacy iOS 
+}
+@font-face {
+  font-family: 'helvetica';
+  src: url('../fonts/Bitstream-Vera-Sans/vera.ttf');  IE9 Compat Modes 
+  src: url('../fonts/Bitstream-Vera-Sans/Vera-Bold.ttf') format('embedded-opentype'),  IE6-IE8 
+       url('../fonts/Bitstream-Vera-Sans/vera-Italic.ttf')  format('truetype');  Safari, Android, iOS 
+}*/
+.online-training-wrapper-top-section
+{
+  width: 710px;
+  margin: 0 auto;
+  padding: 23px;
+  font-family: "Roboto","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif,'Source Sans Pro';
+}
+#section1
+{
+  background: url("../images/middleHeaderBg.jpg") repeat scroll 0 0 rgba(0, 0, 0, 0);
+  border-left: 1px solid #FF6600;
+  color: #005191;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 34px;
+  margin: 0;
+  padding: 2px 0 7px 5px;
+  text-align: left;
+  text-transform: capitalize;
+}
+
+.section2{
+  background: url("../images/pdf-icon.gif") no-repeat scroll 0 3px #F1F1F2;
+  color: #FF0000;
+  font-family: 'roboto';
+  font-family: 'helvetica';   
+  font-size: 15px;
+  font-weight: 400;
+  margin: 0 0 10px;
+  padding: 3px 0 3px 24px;
+  text-align: justify;
+}
+.section2 a
+{
+  text-decoration:none;
+  margin-left:5px;
+  color: #005191; 
+}
+.section2 a:hover
+{
+  color:#FF6600;
+  margin-left:5px;
+}
+
+.section3 a
+{
+  font-size:11px;  
+  text-decoration: none;
+  color: #66AC1C;
+  border-bottom: 1px solid #E6E6E6;
+  display: block;
+  margin: 0 0 5px;
+  padding: 0 0 5px; 
+}
+.section3  a:hover
+{
+  font-size:11px; 
+  color: #FF6600;
+  text-decoration: none;
+  border-bottom: 1px solid #E6E6E6;
+  display: block;
+  margin: 0 0 5px;
+  padding: 0 0 5px;
+}
+.section3 a h2{
+  font-family: "Roboto","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif,'Source Sans Pro';
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+  margin-top:12px;
+  padding: 0;
+}
+.bulletNumbers 
+{
+  margin: 0 auto;
+  width: 710px;
+  list-style-type: decimal;
+  margin: 0 0 0 15px;
+  padding: 0;
+}
+
+.bulletNumbers li
+{ 
+  color: #000000;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 0;
+  text-align: justify;
+}
+.text
+{
+  color: #000000;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 0 10px;
+  padding: 0;
+  text-align: justify;
+}
+
+.orange
+{    border: 0 none;
+     color: #FF6600;
+     font-size: 13px;
+     font-weight: 600;
+     line-height: 16px;
+     margin: 0;
+     padding: 0;
+     text-align: center;
+}
+
+
+.select-zone{
+  border: 1px solid #ED7D31;
+  padding: 5px;
+  margin-top: 5px; 
+}
+h3.payment-head{
+  color: #FA0404;
+  font-size: 30px;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+.select-zone select{
+  border-radius: 0;
+  height: 25px;
+  padding: 1px 0 1px 4px;
+}
+.select-zone li:first-child{
+  border-right: 1px solid #ED7D31;
+}
+.schedule-payment tr td, .schedule-payment tr th{
+  text-align: center;
+}
+.table.schedule-payment > thead > tr > th{
+  vertical-align: top;
+}
+.table.schedule-payment tr td img{
+  height: 30px;
+  width: 30px;
+}
+.training-form{
+  /* background-color: #f2f2f2;*/
+  padding: 20px;
+}
+.training-form h2{
+  text-align: center;
+  margin-bottom: 10px;
+}
+.training-form label {
+  padding-top: 0 !important;
+}
+.training-form label:after {
+  border-bottom: none !important;
+  color: #AAAAAA;
+  content: none !important;
+  font: 11px "Consolas",monospace;
+  padding: 0 0 2px;
+  pointer-events: none;
+  position: relative !important;
+  right: 8px;
+  top: 2px;
+  transform: rotate(90deg);
+}
+.training-form label:before {
+  background: none repeat scroll 0 0 #F8F8F8;
+  content: none !important;
+  display: block;
+  height: 20px;
+  pointer-events: none;
+  position: relative !important;
+  right: 6px;
+  top: 0;
+  width: 20px;
+}
+.training-form .form-control{
+  border-radius: 0;
+  height: 25px;
+  padding: 1px 0 1px 4px;
+}
+/*
+================================================================================================================================
+**********************************************      Footer STYLE FOR THE SITE      *********************************************
+================================================================================================================================
+*/
+#footer {
+  background: none repeat scroll 0 0 #E3E7E9;
+  border-top: 3px solid #D6D6D6;
+  height: auto;
+  margin: 0;
+  padding: 5px 0;
+  width: auto;
+}
+
+#container {
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
+  width: 1008px;
+}
+#footerContainer {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 1008px;
+}
+#quickLinks {
+  float: left;
+  height: auto;
+  margin: 0;
+  padding: 10px 10px 10px 0;
+  width: 242px;
+}
+#quickLinks ul {
+  margin: 0;
+  padding: 0;
+}
+
+#quickLinks ul li {
+  color: #005191;
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  list-style: none outside none;
+  margin: 0;
+  padding: 3px 0;
+}
+
+#quickLinks ul li h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+}
+.online-training #newsEvents{
+  float: right;
+}
+#testimonialsBlock {
+  float: left;
+  height: 250px;
+  margin: 0;
+  padding: 10px 30px 0;
+  width: 318px;
+}
+
+#testimonialsBlock h3 {
+  color: #005191;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  margin: 0;
+  padding: 0 0 9px;
+  text-transform: uppercase;
+}
+#testimonialsBlock ul {
+  margin: 0;
+  padding: 0;
+}
+
+#testimonialsBlock ul li {
+  color: #005191;
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+}
+
+#testimonialsBlock ul li a {
+  border-top: 1px solid #FFFFFF;
+  color: #000000;
+  float: left;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  text-decoration: none;
+  width: 318px;
+}
+
+#testimonialsBlock .readMore {
+  background: url("../images/left-orange-arrow.gif") no-repeat scroll left center #FFFFFF;
+  border-left: 1px solid #FF6600;
+  color: #FF6600;
+  float: left;
+  font-family: "Roboto Condensed","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif,'Source Sans Pro';
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  margin: 5px 0 0;
+  padding: 2px 10px 2px 12px;
+  text-align: left;
+  text-decoration: none;
+}
+
+#newsEvents {
+  float: left;
+  height: 170px;
+  margin: 0 0 10px;
+  padding: 10px 0 0;
+  width: 378px;
+}
+
+#newsEvents h3 {
+  color: #005191;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  margin: 0;
+  padding: 0 0 9px;
+  text-transform: uppercase;
+}
+
+#newsEvents ul {
+  margin: 0;
+  padding: 0;
+}
+#newsEvents ul li {
+  color: #005191;
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+}
+
+#newsEvents ul li a {
+  border-top: 1px solid #FFFFFF;
+  color: #000000;
+  float: left;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  text-decoration: none;
+  width: 378px;
+}
+
+#socialMedia {
+  float: right;
+  height: 100%;
+  margin: 0;
+  padding: 10px 0 0;
+  width: 378px;
+}
+#socialMedia ul {
+  margin: 0;
+  padding: 0;
+}
+
+#socialMedia ul li {
+  display: inline;
+  float: left;
+  list-style: none outside none;
+  margin: 0 6px 0 0;
+  padding: 0;
+}
+
+#socialMedia p {
+  margin: 0 0 15px;
+  padding: 0;
+}
+#socialMedia ul li a:link {
+  opacity: 1;
+}
+
+#bottom {
+  background: none repeat scroll 0 0 #D6D6D6;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 400;
+  height: auto;
+  line-height: 30px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: auto;
+}
+#bottom p {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+#bottom ul {
+  float: right;
+  margin: 0;
+  padding: 0;
+}
+
+#bottom ul li {
+  display: inline;
+  float: left;
+  list-style: none outside none;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+
+#bottom ul li a {
+  border-left: 1px solid #CCCCCC;
+  color: #000000;
+  font-weight: 600;
+  padding-left: 10px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/*
+================================================================================================================================
+*****************************************  MODAL CCNA TRAINING STYLE FOR THE SITE  *********************************************
+================================================================================================================================
+*/
+
+.modal-dialog{
+  height: 500px;
+  width: 750px;
+}
+.modal-header {
+  background-color: #E1E1E1;
+  padding: 10px;
+}
+.modal-body{
+  overflow-y: hidden;
+  padding: 0;
+  height: 480px;
+  width: 750px;
+  position: relative;
+}
+.modal-content{
+  border-radius: 0px;
+}
+.modal #rightContainer{
+  float: none !important;
+  padding: 0 !important;
+}
+.modal #offerBlockHome ul li{
+  width: auto;
+}
+.modal #innerContainer{
+  float: none;
+}
+.modal #middleHeader{
+  float: none;
+  margin: 0;
+}
+.modal .modal-body{
+  padding: 10px 20px;
+}
+button.close {
+  background: none repeat scroll 0 0 #000000;
+  border: 0 none;
+  border-radius: 15px;
+  color: #FFFFFF;
+  cursor: pointer;
+  height: 24px;
+  line-height: 10px;
+  opacity: 1;
+  padding: 2px 3px 5px;
+  position: absolute;
+  right: -12px;
+  top: -9px;
+  width: 25px;
+}

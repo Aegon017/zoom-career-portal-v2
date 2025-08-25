@@ -1,0 +1,116 @@
+/* 
+ * 	Core Owl Carousel CSS File
+ *	v1.3.3
+ */
+
+/* clearfix */
+.owl-carousel .owl-wrapper:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+/* display none until init */
+.owl-carousel{
+	display: none;
+	position: relative;
+	width: 100%;
+	-ms-touch-action: pan-y;
+}
+.owl-carousel .slide-content {
+	z-index: 50;
+	position: absolute;
+	width: 640px;
+	height: 175px;
+	bottom: 27%;
+	left: 0;
+	padding: 20px;
+	min-height: 112px;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+	border-left: 1px solid #ff6600;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	background: #005191;
+	background: rgba(0,81,145,0.7);	
+}
+.owl-carousel .slide-content h1 {
+	margin: 0px;
+	margin-bottom: 10px;
+	padding: 0px;
+	font-family: 'Arvo', 'Raleway', sans-serif;
+	font-size: 26px;
+	text-align: left;
+	line-height: 36px;
+	font-weight: 300;
+	text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+	color: #ffffff;
+}
+.owl-carousel .slide-content p {
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Lato', 'Open Sans', sans-serif;
+	font-size: 16px !important;
+	text-align: left;
+	line-height: 22px;
+	font-weight: 100;
+	text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+	color: #ffffff;
+}
+.owl-carousel .slide-content a {
+	color: #ff6600;
+}
+
+
+.owl-carousel .owl-wrapper{
+	display: none;
+	position: relative;
+	-webkit-transform: translate3d(0px, 0px, 0px);
+}
+.owl-carousel .owl-wrapper-outer{
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+.owl-carousel .owl-wrapper-outer.autoHeight{
+	-webkit-transition: height 500ms ease-in-out;
+	-moz-transition: height 500ms ease-in-out;
+	-ms-transition: height 500ms ease-in-out;
+	-o-transition: height 500ms ease-in-out;
+	transition: height 500ms ease-in-out;
+}
+	
+.owl-carousel .owl-item{
+	float: left;
+}
+.owl-controls .owl-page,
+.owl-controls .owl-buttons div{
+	cursor: pointer;
+}
+.owl-controls {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* mouse grab icon */
+.grabbing { 
+    cursor:url(grabbing.png) 8 8, move;
+}
+
+/* fix */
+.owl-carousel  .owl-wrapper,
+.owl-carousel  .owl-item{
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility:    hidden;
+	-ms-backface-visibility:     hidden;
+  -webkit-transform: translate3d(0,0,0);
+  -moz-transform: translate3d(0,0,0);
+  -ms-transform: translate3d(0,0,0);
+}
+
+

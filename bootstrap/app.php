@@ -54,6 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'employer/ai/job-description',
                 'employer/ai/match-score/*',
                 'ai/summary',
+                '/remote/login',
             ]
         );
     })

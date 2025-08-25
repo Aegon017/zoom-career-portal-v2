@@ -1,0 +1,87 @@
+#accordianWrap {
+		width: 710px;
+		margin: 0px;
+		padding: 0px;
+	}
+#accordianWrap .menu a {
+		border: none;
+		font-weight: normal;
+	}
+
+/* Actual menu CSS starts here */
+#accordianWrap .menu,
+#accordianWrap .menu ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-family: "Roboto Condensed", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+	}
+#accordianWrap .menu {width:710px;}
+#accordianWrap .menu li {
+		display: block;
+		margin: 0px;
+		padding: 0px;
+		padding-bottom: 5px;
+		margin-bottom: 15px;
+		border-bottom: 1px solid #e6e6e6;
+	}
+#accordianWrap .menu li a {
+		display: block;
+		padding: 0px;
+		color: #005191;
+		text-decoration:none;
+		background: #ffffff;
+	}
+#accordianWrap .menu li a:hover {
+		color: #ff6600;
+		text-decoration:none;
+	}
+#accordianWrap .menu li h2 {
+    margin: 0px;
+    padding: 0px;
+    font-family: "Roboto", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 400;
+}
+#accordianWrap .menu li h3 {
+    margin: 0px;
+    padding: 0px;
+    font-family: "Roboto Condensed", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 600;
+}
+#accordianWrap .menu li h4 {
+    margin: 0px;
+    margin-bottom: 5px;
+    padding: 0px;
+    font-family: "Roboto Condensed", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+    font-size: 28px;
+    line-height: 34px;
+    font-weight: 300;
+}
+#accordianWrap .menu li h4 a {
+    text-decoration: none;
+    color: #005191;
+}
+#accordianWrap .menu li h4 a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+#accordianWrap .menu li p {
+    margin: 0px;
+    margin-bottom: 10px;
+    padding: 0px;
+    font-family: "Roboto", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 400;
+    color: #000000;
+}
+#accordianWrap .menu a:hover,
+#accordianWrap .menu a:focus,
+#accordianWrap .menu a:active {color: #005191; background:#ffffff;}
+#accordianWrap .menu ul li {padding-left:0px;}
+#accordianWrap .menu ul a {background:#ffffff;}
+#accordianWrap .hidden {display:none;}
