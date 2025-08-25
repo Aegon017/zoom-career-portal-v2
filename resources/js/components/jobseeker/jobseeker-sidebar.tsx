@@ -5,7 +5,6 @@ import PeopleIcon from '@/icons/people-icon';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
-import logo from '../../assets/images/logo.png';
 
 type SidebarItem = {
     key: string;
@@ -73,7 +72,7 @@ export function AppSidebar( { sidebarToggle }: { sidebarToggle: ReturnType<typeo
             <div className="sidebar-content">
                 <div className="sidebar-brand">
                     <Link href="jobseeker/explore">
-                        <img src={ logo } alt="Zoom Career" />
+                        <img src='/logo.png' alt="Zoom Career" />
                     </Link>
                 </div>
                 <ul className="sidebar-nav">

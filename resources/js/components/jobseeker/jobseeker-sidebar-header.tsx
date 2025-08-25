@@ -7,7 +7,6 @@ import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
-import logo from '../../assets/images/logo.png';
 
 export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const cleanup = useMobileNavigation();
@@ -41,7 +40,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                 <i className="fa-solid fa-bars"></i>
             </button>
             <Link href="/jobseeker/explore" className="brand-logo">
-                <img src={logo} alt="Zoom Career" />
+                <img src='/logo.png' alt="Zoom Career" />
             </Link>
             <ul className="zc-top-nav-bar">
                 <li className="zc-nav-item zc-dropdown user-notification" ref={notificationNav.dropdownRef}>

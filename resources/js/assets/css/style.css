@@ -9,8 +9,8 @@
     --zc-body-color-rgb: 73, 80, 87;
     --zc-body-bg: #f5f7fb;
     --zc-heading-color: #000;
-    --zc-primary-color: #ff5520;
-    --zc-secondary-color: #0464c8;
+    --zc-primary-color: #9aca44;
+    --zc-secondary-color: #04548c;
     --zc-bg-1: #f5f7fb;
     --N700: #474d6a;
 }
@@ -265,9 +265,9 @@ a.zc-btn-add:hover i {
 
 .zc-sidebar ul.sidebar-nav li.sidebar-item.active>a,
 .zc-sidebar ul.sidebar-nav li.sidebar-item>a:hover {
-    color: #ff5520;
+    color: var(--zc-primary-color);
     background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), rgba(59, 125, 221, 0.088) 50%, transparent);
-    border-left-color: #ff5520;
+    border-left-color: var(--zc-primary-color);
 }
 
 .zc-sidebar ul.sidebar-nav li.sidebar-item a svg {
@@ -391,7 +391,7 @@ a.zc-btn-add:hover i {
 }
 
 .zc-dropdown.user-notification .zc-dropdown-btn .nicon-box .indicator {
-    background: #ff5520;
+    background: var(--zc-secondary-color);
     border-radius: 50%;
     box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
     color: #fff;
@@ -1298,10 +1298,8 @@ a.zc-btn-add:hover i {
     position: relative;
     width: 100%;
     min-height: 50px;
-    /*background: #2A7B9B;
-    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);*/
-    background: #ff5520;
-    background: linear-gradient(90deg, rgba(255, 85, 32, 1) 0%, rgba(34, 46, 60, 1) 50%, rgba(4, 100, 200, 1) 100%);
+    background: var(--zc-primary-color);
+    background: linear-gradient(90deg, var(--zc-primary-color) 0%, rgba(34, 46, 60, 1) 50%, var(--zc-secondary-color) 100%);
 }
 
 .zc-candidate-profile-header .candidate-basic-details .candidate-image img {

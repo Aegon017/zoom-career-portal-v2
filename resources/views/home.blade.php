@@ -43,7 +43,7 @@
     <header>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-default">
-                <a class="navbar-brand" href="/"><img src="{{ asset('home/assets/images/logo.png') }}"
+                <a class="navbar-brand" href="/"><img src="{{ asset('logo.png') }}"
                         alt="Zooming Careers" /></a>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1">
