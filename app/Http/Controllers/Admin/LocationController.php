@@ -17,7 +17,8 @@ use Inertia\Response;
 
 final class LocationController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -28,9 +29,9 @@ final class LocationController extends Controller
         $locations = Location::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('city', 'like', '%' . $request->search . '%')
-                    ->orWhere('state', 'like', '%' . $request->search . '%')
-                    ->orWhere('country', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('city', 'like', '%'.$request->search.'%')
+                    ->orWhere('state', 'like', '%'.$request->search.'%')
+                    ->orWhere('country', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -69,7 +70,7 @@ final class LocationController extends Controller
             'country' => ['required', 'string', 'max:255'],
 
             Rule::unique('locations')->where(
-                fn($query) => $query->where('city', $request->city)
+                fn ($query) => $query->where('city', $request->city)
                     ->where('state', $request->state)
             ),
         ], [
@@ -120,7 +121,7 @@ final class LocationController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('locations')
-                    ->where(fn($query) => $query->where('state', $request->state))
+                    ->where(fn ($query) => $query->where('state', $request->state))
                     ->ignore($location->id),
             ],
         ], [

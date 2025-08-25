@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
-class GetGroupedPermissionsAction
+final readonly class GetGroupedPermissionsAction
 {
     /**
      * Create a new class instance.

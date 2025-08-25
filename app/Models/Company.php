@@ -109,7 +109,7 @@ final class Company extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        static::updated(function (Company $company) {
+        self::updated(function (Company $company): void {
             if (
                 $company->isDirty('verification_status') &&
                 $company->verification_status === VerificationStatusEnum::Verified

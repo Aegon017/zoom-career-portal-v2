@@ -257,18 +257,46 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         $totalFields = 10;
         $filled = 0;
 
-        if (filled($this->name)) $filled++;
-        if (filled($this->email)) $filled++;
-        if (filled($this->phone)) $filled++;
+        if (filled($this->name)) {
+            ++$filled;
+        }
 
-        if ($this->address()->exists()) $filled++;
-        if ($this->resumes()->exists()) $filled++;
-        if ($this->educations()->exists()) $filled++;
-        if ($this->workExperiences()->exists()) $filled++;
-        if ($this->skills()->exists()) $filled++;
-        if ($this->certificates()->exists()) $filled++;
-        if ($this->profile && filled($this->profile->summary)) $filled++;
+        if (filled($this->email)) {
+            ++$filled;
+        }
 
-        return intval(($filled / $totalFields) * 100);
+        if (filled($this->phone)) {
+            ++$filled;
+        }
+
+        if ($this->address()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->resumes()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->educations()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->workExperiences()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->skills()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->certificates()->exists()) {
+            ++$filled;
+        }
+
+        if ($this->profile && filled($this->profile->summary)) {
+            ++$filled;
+        }
+
+        return (int) (($filled / $totalFields) * 100);
     }
 }

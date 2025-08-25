@@ -17,7 +17,8 @@ use Inertia\Response;
 
 final class LanguageController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -28,8 +29,8 @@ final class LanguageController extends Controller
         $languages = Language::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('code', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('code', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -134,7 +135,7 @@ final class LanguageController extends Controller
         $query = $request->input('search');
 
         $languages = Language::when($query, function ($q) use ($query): void {
-            $q->where('name', 'like', '%' . $query . '%');
+            $q->where('name', 'like', '%'.$query.'%');
         })
             ->orderBy('name')
             ->limit(20)

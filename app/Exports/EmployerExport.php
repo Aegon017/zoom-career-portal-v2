@@ -17,7 +17,7 @@ final class EmployerExport implements FromCollection, WithHeadings
     {
         return Company::select('name', 'email', 'phone', 'verification_status')
             ->get()
-            ->map(fn($company, $index): array => [
+            ->map(fn ($company, $index): array => [
                 'serial' => $index + 1,
                 'name' => $company->name,
                 'email' => $company->email,

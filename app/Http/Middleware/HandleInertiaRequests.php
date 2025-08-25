@@ -55,13 +55,13 @@ final class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
             'features' => [
                 'people_feature' => (bool) SiteSetting::where('name', 'people_feature')->value('status'),
             ],
-            'url' => fn() => request()->getRequestUri(),
+            'url' => fn () => request()->getRequestUri(),
         ];
     }
 }

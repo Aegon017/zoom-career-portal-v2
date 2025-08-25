@@ -18,13 +18,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use ZipArchive;
-use Illuminate\Support\Str;
 
 final class ApplicationsController extends Controller
 {
@@ -111,11 +110,11 @@ final class ApplicationsController extends Controller
         $combinedMessage = sprintf('<strong>Subject:</strong> %s<br><br>%s', $request->subject, $safeMessage);
 
         foreach ($shortlistedUsers as $user) {
-            $chat = Chat::whereHas('participants', fn($q) => $q->where('user_id', Auth::id()))
-                ->whereHas('participants', fn($q) => $q->where('user_id', $user->id))
+            $chat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
                 ->withCount('participants')
                 ->get()
-                ->first(fn($chat): bool => $chat->participants_count === 2);
+                ->first(fn ($chat): bool => $chat->participants_count === 2);
 
             if (! $chat) {
                 $chat = Chat::create();
@@ -143,31 +142,32 @@ final class ApplicationsController extends Controller
         Log::info('Download resumes initiated', ['request' => $request->all()]);
 
         $applications = OpeningApplication::query()
-            ->when($request->job_id, fn($q) => $q->where('opening_id', $request->job_id))
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->when($request->skill, fn($q) => $q->whereJsonContains('skills', $request->skill))
+            ->when($request->job_id, fn ($q) => $q->where('opening_id', $request->job_id))
+            ->when($request->status, fn ($q) => $q->where('status', $request->status))
+            ->when($request->skill, fn ($q) => $q->whereJsonContains('skills', $request->skill))
             ->with(['resume.media', 'user'])
             ->get();
 
-        Log::debug('Applications count: ' . $applications->count());
+        Log::debug('Applications count: '.$applications->count());
 
         if ($applications->isEmpty()) {
             Log::warning('No applications found for download');
+
             return back()->with('error', 'No applications found');
         }
 
         $zip = new ZipArchive();
-        $fileName = "resumes-" . now()->format('Ymd-His') . '.zip';
-        $path = storage_path('app/' . $fileName);
+        $fileName = 'resumes-'.now()->format('Ymd-His').'.zip';
+        $path = storage_path('app/'.$fileName);
         $filesAdded = false;
 
-        Log::info('Creating zip file: ' . $path);
+        Log::info('Creating zip file: '.$path);
 
         try {
             if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-                $error = "Failed to create zip file at: $path";
+                $error = 'Failed to create zip file at: ' . $path;
                 Log::error($error);
-                throw new \Exception($error);
+                throw new Exception($error);
             }
 
             $addedCount = 0;
@@ -176,17 +176,19 @@ final class ApplicationsController extends Controller
             foreach ($applications as $application) {
                 try {
                     // Skip if relationships are missing
-                    if (!$application->resume || !$application->user) {
-                        $skippedCount++;
-                        Log::debug("Skipping application {$application->id}: missing resume or user");
+                    if (! $application->resume || ! $application->user) {
+                        ++$skippedCount;
+                        Log::debug(sprintf('Skipping application %s: missing resume or user', $application->id));
+
                         continue;
                     }
 
                     /** @var Media|null $media */
                     $media = $application->resume->getFirstMedia('resumes');
-                    if (!$media) {
-                        $skippedCount++;
-                        Log::debug("Skipping resume {$application->resume_id}: no media found");
+                    if (! $media) {
+                        ++$skippedCount;
+                        Log::debug(sprintf('Skipping resume %s: no media found', $application->resume_id));
+
                         continue;
                     }
 
@@ -194,52 +196,56 @@ final class ApplicationsController extends Controller
                     $filePath = $media->getPath();
 
                     // Verify file exists at path
-                    if (!file_exists($filePath)) {
-                        $skippedCount++;
-                        Log::warning("File not found: {$filePath}");
+                    if (! file_exists($filePath)) {
+                        ++$skippedCount;
+                        Log::warning('File not found: ' . $filePath);
+
                         continue;
                     }
 
                     // Sanitize filename
                     $safeName = Str::slug($application->user->name);
-                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-                    $fileNameInZip = "{$safeName}-Resume-{$application->resume_id}.{$extension}";
+                    $extension = pathinfo((string) $filePath, PATHINFO_EXTENSION);
+                    $fileNameInZip = sprintf('%s-Resume-%s.%s', $safeName, $application->resume_id, $extension);
 
                     // Add file directly from disk (more memory efficient)
                     if ($zip->addFile($filePath, $fileNameInZip)) {
-                        $addedCount++;
+                        ++$addedCount;
                         $filesAdded = true;
-                        Log::debug("Added to zip: {$fileNameInZip}");
+                        Log::debug('Added to zip: ' . $fileNameInZip);
                     } else {
-                        $skippedCount++;
-                        Log::warning("Failed to add to zip: {$fileNameInZip}");
+                        ++$skippedCount;
+                        Log::warning('Failed to add to zip: ' . $fileNameInZip);
                     }
-                } catch (\Exception $e) {
-                    $skippedCount++;
-                    Log::error("Error processing application {$application->id}: " . $e->getMessage());
+                } catch (Exception $e) {
+                    ++$skippedCount;
+                    Log::error(sprintf('Error processing application %s: ', $application->id).$e->getMessage());
                 }
             }
 
             $zip->close();
-            Log::info("Zip closed. Added: {$addedCount}, Skipped: {$skippedCount}");
+            Log::info(sprintf('Zip closed. Added: %d, Skipped: %d', $addedCount, $skippedCount));
 
-            if (!$filesAdded) {
+            if (! $filesAdded) {
                 if (file_exists($path)) {
                     unlink($path);
                     Log::info('Deleted empty zip file');
                 }
+
                 Log::warning('No valid resumes found for download');
+
                 return back()->with('error', 'No valid resumes found for download');
             }
 
             Log::info('Returning download response');
+
             return response()->download($path, $fileName)->deleteFileAfterSend();
-        } catch (\Exception $e) {
-            if (isset($zip) && $zip instanceof ZipArchive) {
-                $zip->close();
-            }
-            Log::error("Zip creation failed: " . $e->getMessage());
-            return back()->with('error', 'Error creating zip file: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $zip->close();
+
+            Log::error('Zip creation failed: '.$exception->getMessage());
+
+            return back()->with('error', 'Error creating zip file: '.$exception->getMessage());
         }
     }
 }

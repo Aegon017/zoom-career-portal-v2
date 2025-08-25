@@ -27,18 +27,18 @@ final class JobseekerJobController extends Controller
 
         // Job title filter
         if ($request->filled('job_title')) {
-            $query->where('title', 'like', '%' . $request->job_title . '%');
+            $query->where('title', 'like', '%'.$request->job_title.'%');
         }
 
         // Employment types filter
         $employmentTypes = $request->input('employment_types', []);
-        if (!empty($employmentTypes)) {
+        if (! empty($employmentTypes)) {
             $query->whereIn('employment_type', $employmentTypes);
         }
 
         // Industries filter
         $industryIds = $request->input('industries', []);
-        if (!empty($industryIds)) {
+        if (! empty($industryIds)) {
             $query->whereHas('company', function ($q) use ($industryIds): void {
                 $q->whereHas('industry', function ($q) use ($industryIds): void {
                     $q->whereIn('id', $industryIds);
@@ -48,7 +48,7 @@ final class JobseekerJobController extends Controller
 
         // Selected companies filter
         $selectedCompanies = $request->input('selected_companies', []);
-        if (!empty($selectedCompanies)) {
+        if (! empty($selectedCompanies)) {
             $query->whereIntegerInRaw('company_id', $selectedCompanies);
         }
 
@@ -66,17 +66,17 @@ final class JobseekerJobController extends Controller
         $initialJobs = $query->latest()->paginate(10);
 
         $locationIds = $request->input('locations', []);
-        if (!empty($locationIds)) {
-            $query->whereHas('address', function ($q) use ($locationIds) {
+        if (! empty($locationIds)) {
+            $query->whereHas('address', function ($q) use ($locationIds): void {
                 $q->whereIntegerInRaw('location_id', $locationIds);
             });
         }
 
-        $locations = Location::whereHas('addresses', function ($q) {
+        $locations = Location::whereHas('addresses', function ($q): void {
             $q->whereHasMorph(
                 'addressable',
                 [Opening::class],
-                function ($q) {
+                function ($q): void {
                     $q->where('verification_status', VerificationStatusEnum::Verified->value)
                         ->where('expires_at', '>', now());
                 }
@@ -84,14 +84,10 @@ final class JobseekerJobController extends Controller
         })
             ->select('id', 'country', 'state', 'city')
             ->get()
-            ->map(function ($location) {
-                return [
-                    'id' => $location->id,
-                    'full_name' => $location->full_name
-                ];
-            });
-
-
+            ->map(fn($location): array => [
+                'id' => $location->id,
+                'full_name' => $location->full_name,
+            ]);
 
         return inertia('jobseeker/jobs/all-jobs', [
             'initialJobs' => $initialJobs,
@@ -115,7 +111,7 @@ final class JobseekerJobController extends Controller
 
         Auth::user();
 
-        $similar_jobs = Opening::where('title', 'LIKE', '%' . $job->title . '%')
+        $similar_jobs = Opening::where('title', 'LIKE', '%'.$job->title.'%')
             ->where('id', '!=', $job->id)
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
@@ -146,15 +142,15 @@ final class JobseekerJobController extends Controller
         $applications = $user->openingApplications()
             ->with(['opening.company', 'opening.address'])
             ->when(request('search'), function ($query, $search): void {
-                $query->whereHas('opening', fn($q) => $q->where('title', 'like', sprintf('%%%s%%', $search)));
+                $query->whereHas('opening', fn ($q) => $q->where('title', 'like', sprintf('%%%s%%', $search)));
             })
-            ->when(request('status'), fn($query, $status) => $query->where('status', $status))
-            ->when(request('after_date'), fn($query, $date) => $query->whereDate('created_at', '>=', $date))
-            ->when(request('before_date'), fn($query, $date) => $query->whereDate('created_at', '<=', $date))
+            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
+            ->when(request('after_date'), fn ($query, $date) => $query->whereDate('created_at', '>=', $date))
+            ->when(request('before_date'), fn ($query, $date) => $query->whereDate('created_at', '<=', $date))
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $jobs = $applications->getCollection()->map(fn($application): array => [
+        $jobs = $applications->getCollection()->map(fn ($application): array => [
             'id' => $application->opening_id,
             'title' => $application->opening->title,
             'description' => $application->opening->description,

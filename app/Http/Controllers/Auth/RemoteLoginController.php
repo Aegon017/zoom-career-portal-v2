@@ -71,6 +71,7 @@ final class RemoteLoginController extends Controller
                 'email' => __('auth.failed'),
             ]);
         }
+
         return response()->json(['status' => false]);
     }
 

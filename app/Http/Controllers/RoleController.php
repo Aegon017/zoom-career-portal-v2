@@ -33,7 +33,7 @@ final class RoleController extends Controller
             ->with('permissions')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();

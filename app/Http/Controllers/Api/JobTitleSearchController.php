@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\OpeningTitle;
 use Illuminate\Http\Request;
 
-class JobTitleSearchController extends Controller
+final class JobTitleSearchController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -19,20 +21,18 @@ class JobTitleSearchController extends Controller
 
         $query = OpeningTitle::query();
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && ! empty($request->search)) {
             $search = $request->search;
-            $query->where('name', 'like', "%{$search}%");
+            $query->where('name', 'like', sprintf('%%%s%%', $search));
         }
 
         $jobTitles = $query->orderBy('name')
             ->limit(10)
             ->get()
-            ->map(function ($jobTitle) {
-                return [
-                    'value' => (string) $jobTitle->id,
-                    'label' => $jobTitle->name,
-                ];
-            });
+            ->map(fn($jobTitle): array => [
+                'value' => (string) $jobTitle->id,
+                'label' => $jobTitle->name,
+            ]);
 
         return response()->json($jobTitles);
     }

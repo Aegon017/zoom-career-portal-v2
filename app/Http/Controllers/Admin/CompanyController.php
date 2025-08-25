@@ -25,7 +25,7 @@ final class CompanyController extends Controller
         $companies = Company::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -39,12 +39,12 @@ final class CompanyController extends Controller
     public function create()
     {
         $operation = OperationsEnum::Create;
-        $industries = Industry::take(10)->get()->map(fn($industry) => [
+        $industries = Industry::take(10)->get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
 
-        $locations = Location::take(10)->get()->map(fn($location) => [
+        $locations = Location::take(10)->get()->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
@@ -70,11 +70,11 @@ final class CompanyController extends Controller
             'description' => 'required|string',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'size' => 'required|in:' . implode(',', CompanySizeEnum::values()),
-            'type' => 'required|in:' . implode(',', CompanyTypeEnum::values()),
+            'size' => 'required|in:'.implode(',', CompanySizeEnum::values()),
+            'type' => 'required|in:'.implode(',', CompanyTypeEnum::values()),
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
-            'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'verification_status' => 'required|in:'.implode(',', VerificationStatusEnum::values()),
         ]);
 
         $company = Company::create($data);
@@ -84,13 +84,13 @@ final class CompanyController extends Controller
         ]);
 
         if (! empty($data['logo_url']) && Storage::exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }
@@ -112,22 +112,22 @@ final class CompanyController extends Controller
     {
         $company->load(['industry', 'address.location']);
         $operation = OperationsEnum::Edit;
-        $industries = Industry::when($company->industry_id, function ($query) use ($company) {
+        $industries = Industry::when($company->industry_id, function ($query) use ($company): void {
             $query->where('id', '!=', $company->industry_id);
         })
             ->take(10)
             ->get()
-            ->map(fn($industry) => [
+            ->map(fn ($industry): array => [
                 'value' => $industry->id,
                 'label' => $industry->name,
             ]);
 
-        $locations = Location::when($company->address && $company->address->location_id, function ($query) use ($company) {
+        $locations = Location::when($company->address && $company->address->location_id, function ($query) use ($company): void {
             $query->where('id', '!=', $company->address->location_id);
         })
             ->take(10)
             ->get()
-            ->map(fn($location) => [
+            ->map(fn ($location): array => [
                 'value' => $location->id,
                 'label' => $location->full_name,
             ]);
@@ -137,7 +137,7 @@ final class CompanyController extends Controller
             if ($companyIndustry) {
                 $industries->prepend([
                     'value' => $companyIndustry->id,
-                    'label' => $companyIndustry->name
+                    'label' => $companyIndustry->name,
                 ]);
             }
         }
@@ -147,7 +147,7 @@ final class CompanyController extends Controller
             if ($companyLocation) {
                 $locations->prepend([
                     'value' => $companyLocation->id,
-                    'label' => $companyLocation->full_name
+                    'label' => $companyLocation->full_name,
                 ]);
             }
         }
@@ -174,11 +174,11 @@ final class CompanyController extends Controller
             'description' => 'required|string',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'size' => 'required|in:' . implode(',', CompanySizeEnum::values()),
-            'type' => 'required|in:' . implode(',', CompanyTypeEnum::values()),
+            'size' => 'required|in:'.implode(',', CompanySizeEnum::values()),
+            'type' => 'required|in:'.implode(',', CompanyTypeEnum::values()),
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
-            'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'verification_status' => 'required|in:'.implode(',', VerificationStatusEnum::values()),
         ]);
 
         $company->update($data);
@@ -186,13 +186,13 @@ final class CompanyController extends Controller
         $company->address()->update(['location_id' => $data['location_id']]);
 
         if (! empty($data['logo_url']) && Storage::exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }
@@ -226,7 +226,7 @@ final class CompanyController extends Controller
         }
 
         $companies = Company::query()
-            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->where('name', 'LIKE', '%'.$searchTerm.'%')
             ->limit(10)
             ->get(['id', 'name']);
 

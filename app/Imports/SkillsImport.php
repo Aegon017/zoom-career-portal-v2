@@ -1,22 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Imports;
 
 use App\Models\Skill;
+use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class SkillsImport implements
-    ToModel,
-    WithChunkReading,
-    WithHeadingRow,
-    WithValidation,
-    SkipsOnFailure
+final class SkillsImport implements SkipsOnFailure, ToModel, WithChunkReading, WithHeadingRow, WithValidation
 {
     use SkipsFailures;
 

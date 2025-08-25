@@ -30,7 +30,6 @@ final class RedirectIfEmployerOnboardingIncomplete
             return to_route('admin.dashboard');
         }
 
-
         $onboarding = EmployerOnBoarding::firstOrCreate(
             ['user_id' => $user->id],
             [

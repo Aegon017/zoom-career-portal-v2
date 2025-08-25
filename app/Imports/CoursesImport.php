@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Imports;
 
 use App\Models\Course;
@@ -11,18 +13,11 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class CoursesImport implements
-    ToModel,
-    WithChunkReading,
-    WithHeadingRow,
-    WithValidation,
-    SkipsOnFailure
+final class CoursesImport implements SkipsOnFailure, ToModel, WithChunkReading, WithHeadingRow, WithValidation
 {
     use SkipsFailures;
 
     /**
-     * @param array $row
-     *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)

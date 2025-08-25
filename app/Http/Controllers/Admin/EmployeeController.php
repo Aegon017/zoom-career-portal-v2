@@ -8,9 +8,8 @@ use App\Enums\OperationsEnum;
 use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\CompanyUser;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -26,8 +25,8 @@ final class EmployeeController extends Controller
         $employees = User::query()->Role('employer')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -42,17 +41,14 @@ final class EmployeeController extends Controller
     {
         $operation = OperationsEnum::Create->option();
 
-        $companyOptions = Company::pluck('name', 'id')->map(function ($name, $id) {
-            return ['value' => $id, 'label' => $name];
-        })->values();
+        $companyOptions = Company::pluck('name', 'id')->map(fn($name, $id): array => ['value' => $id, 'label' => $name])->values();
 
         return Inertia::render('admin/employee/create-or-edit-employee', [
             'operation' => $operation,
             'companyOptions' => $companyOptions,
-            'verificationStatusOptions' => VerificationStatusEnum::options()
+            'verificationStatusOptions' => VerificationStatusEnum::options(),
         ]);
     }
-
 
     public function store(Request $request)
     {
@@ -105,18 +101,16 @@ final class EmployeeController extends Controller
     {
         $operation = OperationsEnum::Edit->option();
 
-        $companyOptions = Company::get()->map(function ($company) {
-            return [
-                'value' => $company->id,
-                'label' => $company->name
-            ];
-        });
+        $companyOptions = Company::get()->map(fn($company): array => [
+            'value' => $company->id,
+            'label' => $company->name,
+        ]);
 
         return Inertia::render('admin/employee/create-or-edit-employee', [
             'employee' => $employee->load(['profile', 'companyUsers']),
             'operation' => $operation,
             'companyOptions' => $companyOptions,
-            'verificationStatusOptions' => VerificationStatusEnum::options()
+            'verificationStatusOptions' => VerificationStatusEnum::options(),
         ]);
     }
 
@@ -124,7 +118,7 @@ final class EmployeeController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $employee->id,
+            'email' => 'required|email|unique:users,email,'.$employee->id,
             'phone' => 'required|string|max:20',
             'job_title' => 'nullable|string|max:255',
             'company_id' => 'required|exists:companies,id',
@@ -137,7 +131,7 @@ final class EmployeeController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'password' => !empty($data['password']) ? Hash::make($data['password']) : $employee->password,
+                'password' => empty($data['password']) ? $employee->password : Hash::make($data['password']),
             ]);
 
             $employee->profile()->updateOrCreate([], [
@@ -158,15 +152,16 @@ final class EmployeeController extends Controller
     public function destroy(User $employee)
     {
         try {
-            DB::transaction(function () use ($employee) {
+            DB::transaction(function () use ($employee): void {
                 $employee->profile()->delete();
                 $employee->removeRole('employer');
                 $employee->delete();
             });
 
             return to_route('admin.employees.index')->with('success', 'Employee deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete employee: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            Log::error('Failed to delete employee: '.$exception->getMessage());
+
             return back()->withErrors(['error' => 'Failed to delete employee. Please try again.']);
         }
     }

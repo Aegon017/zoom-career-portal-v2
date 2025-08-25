@@ -34,20 +34,20 @@ final class ProfileController extends Controller
             'workExperiences.company',
             'educations',
             'certificates',
-            'userLanguages.language'
+            'userLanguages.language',
         ]);
 
         return Inertia::render('jobseeker/profile-wizard', [
             'student' => $user,
-            'skillOptions' => Skill::all()->map(fn($skill) => [
+            'skillOptions' => Skill::all()->map(fn ($skill): array => [
                 'value' => (string) $skill->id,
                 'label' => $skill->name,
             ]),
-            'locations' => Location::take(100)->get()->map(fn($location) => [
+            'locations' => Location::take(100)->get()->map(fn ($location): array => [
                 'value' => (string) $location->id,
                 'label' => $location->full_name,
             ]),
-            'languages' => Language::all()->map(fn($language) => [
+            'languages' => Language::all()->map(fn ($language): array => [
                 'value' => (string) $language->id,
                 'label' => $language->name,
             ]),
@@ -60,7 +60,7 @@ final class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
             'phone' => 'nullable|string|max:20',
             'address.location_id' => 'nullable|exists:locations,id',
             'personal_detail.gender' => 'required|string|in:Male,Female,Other',
@@ -97,7 +97,7 @@ final class ProfileController extends Controller
             'user_languages.*.can_speak' => 'boolean',
         ]);
 
-        DB::transaction(function () use ($validated, $user, $request) {
+        DB::transaction(function () use ($validated, $user, $request): void {
             $user->update($request->only(['name', 'email', 'phone']));
 
             $this->updateAddress($user, $validated);
@@ -112,154 +112,6 @@ final class ProfileController extends Controller
         });
 
         return redirect()->route('jobseeker.dashboard')->with('success', 'Profile updated successfully.');
-    }
-
-    private function updateAddress(User $user, array $validated): void
-    {
-        if (!empty($validated['address']['location_id'])) {
-            $user->address()->updateOrCreate(
-                [
-                    'addressable_id' => $user->id,
-                    'addressable_type' => User::class,
-                ],
-                [
-                    'location_id' => (int) $validated['address']['location_id']
-                ]
-            );
-        }
-    }
-
-    private function updatePersonalDetail(User $user, array $validated): void
-    {
-        if (isset($validated['personal_detail'])) {
-            $personalDetailData = $validated['personal_detail'];
-
-            if (!empty($personalDetailData['date_of_birth'])) {
-                $personalDetailData['date_of_birth'] = Carbon::parse($personalDetailData['date_of_birth'])->format('Y-m-d');
-            } else {
-                $personalDetailData['date_of_birth'] = null;
-            }
-
-            $user->personalDetail()->updateOrCreate(
-                ['user_id' => $user->id],
-                $personalDetailData
-            );
-        }
-    }
-
-    private function updateProfile(User $user, array $validated): void
-    {
-        if (isset($validated['profile'])) {
-            $profileData = array_filter($validated['profile'], fn($value) => !empty($value));
-
-            if (!empty($profileData)) {
-                $user->profile()->updateOrCreate(
-                    ['user_id' => $user->id],
-                    $profileData
-                );
-            }
-        }
-    }
-
-    private function updateSkills(User $user, array $validated): void
-    {
-        if (!empty($validated['skills'])) {
-            $user->skills()->sync(array_map('intval', $validated['skills']));
-        }
-    }
-
-    private function updateWorkPermits(User $user, array $validated): void
-    {
-        if (!empty($validated['work_permits'])) {
-            $user->workPermits()->delete();
-
-            $workPermits = array_map(
-                fn($country) => ['country' => $country],
-                array_filter($validated['work_permits'], fn($country) => !empty($country))
-            );
-
-            $user->workPermits()->createMany($workPermits);
-        }
-    }
-
-    private function updateWorkExperiences(User $user, array $validated): void
-    {
-        if (!empty($validated['work_experiences'])) {
-            $user->workExperiences()->delete();
-
-            $workExperiences = array_map(function ($experience) {
-                $endDate = (!empty($experience['end_date']) && !($experience['is_current'] ?? false))
-                    ? Carbon::parse($experience['end_date'])->format('Y-m-d')
-                    : null;
-
-                return [
-                    'title' => $experience['title'],
-                    'company_name' => $experience['company_name'] ?? null,
-                    'start_date' => Carbon::parse($experience['start_date'])->format('Y-m-d'),
-                    'end_date' => $endDate,
-                    'is_current' => $experience['is_current'] ?? false,
-                ];
-            }, $validated['work_experiences']);
-
-            $user->workExperiences()->createMany($workExperiences);
-        }
-    }
-
-    private function updateEducations(User $user, array $validated): void
-    {
-        if (!empty($validated['educations'])) {
-            $user->educations()->delete();
-
-            $educations = array_map(function ($education) {
-                $endDate = (!empty($education['end_date']) && !($education['is_current'] ?? false))
-                    ? Carbon::parse($education['end_date'])->format('Y-m-d')
-                    : null;
-
-                return [
-                    'course_title' => $education['course_title'],
-                    'institution' => $education['institution'],
-                    'start_date' => Carbon::parse($education['start_date'])->format('Y-m-d'),
-                    'end_date' => $endDate,
-                    'is_current' => $education['is_current'] ?? false,
-                    'course_type' => $education['course_type'] ?? null,
-                ];
-            }, $validated['educations']);
-
-            $user->educations()->createMany($educations);
-        }
-    }
-
-    private function updateCertificates(User $user, array $validated): void
-    {
-        if (!empty($validated['certificates'])) {
-            $user->certificates()->delete();
-
-            $certificates = array_map(
-                fn($certificate) => ['name' => $certificate['name']],
-                array_filter($validated['certificates'], fn($certificate) => !empty($certificate['name']))
-            );
-
-            $user->certificates()->createMany($certificates);
-        }
-    }
-
-    private function updateUserLanguages(User $user, array $validated): void
-    {
-        if (!empty($validated['user_languages'])) {
-            $user->userLanguages()->delete();
-
-            $userLanguages = array_map(function ($language) {
-                return [
-                    'language_id' => (int) $language['language_id'],
-                    'proficiency' => $language['proficiency'],
-                    'can_read' => $language['can_read'] ?? false,
-                    'can_write' => $language['can_write'] ?? false,
-                    'can_speak' => $language['can_speak'] ?? false,
-                ];
-            }, $validated['user_languages']);
-
-            $user->userLanguages()->createMany($userLanguages);
-        }
     }
 
     public function show(User $user)
@@ -279,10 +131,10 @@ final class ProfileController extends Controller
             'userLanguages',
             'userLanguages.language',
             'certificates',
-            'educations'
+            'educations',
         ]);
 
-        return Inertia::render('jobseeker/profile', compact('user'));
+        return Inertia::render('jobseeker/profile', ['user' => $user]);
     }
 
     public function storeBasicDetails(Request $request)
@@ -527,5 +379,151 @@ final class ProfileController extends Controller
             ->delete();
 
         return back()->with('success', 'Certificates updated successfully.');
+    }
+
+    private function updateAddress(User $user, array $validated): void
+    {
+        if (! empty($validated['address']['location_id'])) {
+            $user->address()->updateOrCreate(
+                [
+                    'addressable_id' => $user->id,
+                    'addressable_type' => User::class,
+                ],
+                [
+                    'location_id' => (int) $validated['address']['location_id'],
+                ]
+            );
+        }
+    }
+
+    private function updatePersonalDetail(User $user, array $validated): void
+    {
+        if (isset($validated['personal_detail'])) {
+            $personalDetailData = $validated['personal_detail'];
+
+            if (! empty($personalDetailData['date_of_birth'])) {
+                $personalDetailData['date_of_birth'] = Carbon::parse($personalDetailData['date_of_birth'])->format('Y-m-d');
+            } else {
+                $personalDetailData['date_of_birth'] = null;
+            }
+
+            $user->personalDetail()->updateOrCreate(
+                ['user_id' => $user->id],
+                $personalDetailData
+            );
+        }
+    }
+
+    private function updateProfile(User $user, array $validated): void
+    {
+        if (isset($validated['profile'])) {
+            $profileData = array_filter($validated['profile'], fn ($value): bool => ! empty($value));
+
+            if ($profileData !== []) {
+                $user->profile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    $profileData
+                );
+            }
+        }
+    }
+
+    private function updateSkills(User $user, array $validated): void
+    {
+        if (! empty($validated['skills'])) {
+            $user->skills()->sync(array_map('intval', $validated['skills']));
+        }
+    }
+
+    private function updateWorkPermits(User $user, array $validated): void
+    {
+        if (! empty($validated['work_permits'])) {
+            $user->workPermits()->delete();
+
+            $workPermits = array_map(
+                fn ($country): array => ['country' => $country],
+                array_filter($validated['work_permits'], fn ($country): bool => ! empty($country))
+            );
+
+            $user->workPermits()->createMany($workPermits);
+        }
+    }
+
+    private function updateWorkExperiences(User $user, array $validated): void
+    {
+        if (! empty($validated['work_experiences'])) {
+            $user->workExperiences()->delete();
+
+            $workExperiences = array_map(function ($experience): array {
+                $endDate = (! empty($experience['end_date']) && ! ($experience['is_current'] ?? false))
+                    ? Carbon::parse($experience['end_date'])->format('Y-m-d')
+                    : null;
+
+                return [
+                    'title' => $experience['title'],
+                    'company_name' => $experience['company_name'] ?? null,
+                    'start_date' => Carbon::parse($experience['start_date'])->format('Y-m-d'),
+                    'end_date' => $endDate,
+                    'is_current' => $experience['is_current'] ?? false,
+                ];
+            }, $validated['work_experiences']);
+
+            $user->workExperiences()->createMany($workExperiences);
+        }
+    }
+
+    private function updateEducations(User $user, array $validated): void
+    {
+        if (! empty($validated['educations'])) {
+            $user->educations()->delete();
+
+            $educations = array_map(function ($education): array {
+                $endDate = (! empty($education['end_date']) && ! ($education['is_current'] ?? false))
+                    ? Carbon::parse($education['end_date'])->format('Y-m-d')
+                    : null;
+
+                return [
+                    'course_title' => $education['course_title'],
+                    'institution' => $education['institution'],
+                    'start_date' => Carbon::parse($education['start_date'])->format('Y-m-d'),
+                    'end_date' => $endDate,
+                    'is_current' => $education['is_current'] ?? false,
+                    'course_type' => $education['course_type'] ?? null,
+                ];
+            }, $validated['educations']);
+
+            $user->educations()->createMany($educations);
+        }
+    }
+
+    private function updateCertificates(User $user, array $validated): void
+    {
+        if (! empty($validated['certificates'])) {
+            $user->certificates()->delete();
+
+            $certificates = array_map(
+                fn ($certificate): array => ['name' => $certificate['name']],
+                array_filter($validated['certificates'], fn ($certificate): bool => ! empty($certificate['name']))
+            );
+
+            $user->certificates()->createMany($certificates);
+        }
+    }
+
+    private function updateUserLanguages(User $user, array $validated): void
+    {
+        if (! empty($validated['user_languages'])) {
+            $user->userLanguages()->delete();
+
+            $userLanguages = array_map(fn($language): array => [
+                'language_id' => (int) $language['language_id'],
+                'proficiency' => $language['proficiency'],
+                'can_read' => $language['can_read'] ?? false,
+                'can_write' => $language['can_write'] ?? false,
+                'can_speak' => $language['can_speak'] ?? false,
+            ], $validated['user_languages']);
+
+            $user->userLanguages()->createMany($userLanguages);
+        }
     }
 }

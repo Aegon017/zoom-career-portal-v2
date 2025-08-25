@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Language;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
-class LanguagePolicy
+final class LanguagePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +20,7 @@ class LanguagePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Language $language): bool
+    public function view(User $user): bool
     {
         return $user->can('view_language');
     }
@@ -35,7 +36,7 @@ class LanguagePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Language $language): bool
+    public function update(User $user): bool
     {
         return $user->can('update_language');
     }
@@ -43,7 +44,7 @@ class LanguagePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Language $language): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_language');
     }

@@ -145,7 +145,7 @@ final class Opening extends Model
         return $this->hasMany(Feedback::class);
     }
 
-    public function duplicate(): Opening
+    public function duplicate(): self
     {
         return DB::transaction(function () {
             $attributes = $this->getAttributes();
@@ -153,7 +153,7 @@ final class Opening extends Model
             $excluded = ['id', 'created_at', 'updated_at', 'published_at', 'verification_status'];
             $attributes = array_diff_key($attributes, array_flip($excluded));
 
-            $attributes['title'] = 'Copy of ' . $this->title;
+            $attributes['title'] = 'Copy of '.$this->title;
             $attributes['published_at'] = null;
             $attributes['verification_status'] = 'pending';
             $attributes['user_id'] = Auth::id();
@@ -166,9 +166,9 @@ final class Opening extends Model
         });
     }
 
-    protected function duplicateRelationships(Opening $newOpening): void
+    private function duplicateRelationships(self $newOpening): void
     {
-        $this->skills->each(function ($skill) use ($newOpening) {
+        $this->skills->each(function ($skill) use ($newOpening): void {
             $newOpening->skills()->attach($skill);
         });
 
@@ -179,7 +179,7 @@ final class Opening extends Model
         }
 
         if (method_exists($this, 'customFields')) {
-            $this->customFields->each(function ($field) use ($newOpening) {
+            $this->customFields->each(function ($field) use ($newOpening): void {
                 $newOpening->customFields()->create($field->toArray());
             });
         }

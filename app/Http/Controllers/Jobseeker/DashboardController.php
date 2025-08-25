@@ -6,11 +6,8 @@ namespace App\Http\Controllers\Jobseeker;
 
 use App\Enums\JobApplicationStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Industry;
 use App\Models\Opening;
-use App\Models\OpeningTitle;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;

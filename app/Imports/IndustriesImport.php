@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Imports;
 
 use App\Models\Industry;
@@ -11,17 +13,11 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class IndustriesImport implements
-    ToModel,
-    WithChunkReading,
-    WithHeadingRow,
-    WithValidation,
-    SkipsOnFailure
+final class IndustriesImport implements SkipsOnFailure, ToModel, WithChunkReading, WithHeadingRow, WithValidation
 {
     use SkipsFailures;
+
     /**
-     * @param array $row
-     *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)

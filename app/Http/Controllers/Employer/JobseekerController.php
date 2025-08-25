@@ -8,6 +8,7 @@ use App\Enums\JobStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Opening;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,7 @@ final class JobseekerController extends Controller
         $query = User::query()->role('jobseeker');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $job = null;
@@ -33,8 +34,8 @@ final class JobseekerController extends Controller
             $job = Opening::with('skills')->find($request->job_id);
             if ($job) {
                 $jobSkills = $job->skills->pluck('name')->toArray();
-                
-                $query->with(['skills' => function ($query) use ($jobSkills) {
+
+                $query->with(['skills' => function ($query) use ($jobSkills): void {
                     $query->whereIn('name', $jobSkills);
                 }]);
             }
@@ -42,100 +43,16 @@ final class JobseekerController extends Controller
 
         $jobs = Auth::user()->openings()->where('status', JobStatusEnum::Published)->get();
 
-        $initialUsers = $query->with('skills','resumes')->paginate(10);
-        
+        $initialUsers = $query->with('skills', 'resumes')->paginate(10);
+
         if ($job && count($jobSkills)) {
             $this->addMatchScores($initialUsers, $job, $jobSkills);
         }
 
         return Inertia::render('employer/jobseekers-listing', [
             'initialUsers' => $initialUsers,
-            'jobs' => $jobs
+            'jobs' => $jobs,
         ]);
-    }
-
-    private function addMatchScores(LengthAwarePaginator $users, Opening $job, array $jobSkills): void
-    {
-        $jobTitle = $job->title;
-        $jobSkillsText = implode(', ', $jobSkills);
-        
-        $users->getCollection()->transform(function ($user) use ($jobTitle, $jobSkillsText) {
-            $candidateSkills = $user->skills->pluck('name')->join(', ');
-            
-            if (!empty($candidateSkills)) {
-                $prompt = $this->buildPrompt(
-                    $jobTitle,
-                    $jobSkillsText,
-                    $user->name,
-                    $candidateSkills
-                );
-                
-                try {
-                    $response = Prism::text()
-                        ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
-                        ->withPrompt($prompt)
-                        ->asText();
-                    
-                    if ($json = json_decode($response->text, true)) {
-                        $user->match_score = $json['score'] ?? 0;
-                        $user->match_reason = $json['reason'] ?? '';
-                        $user->shortlist_reason = $json['shortlist_reason'] ?? '';
-                        $user->is_shortlisted = $json['shortlist'] ?? false;
-                    }
-                } catch (\Exception $e) {
-                    $user->match_score = $this->calculateSimpleMatch(
-                        $jobSkillsText, 
-                        $candidateSkills
-                    );
-                }
-            } else {
-                $user->match_score = 0;
-            }
-            
-            return $user;
-        });
-    }
-
-    private function buildPrompt(
-        string $jobTitle, 
-        string $jobSkills,
-        string $candidateName,
-        string $candidateSkills
-    ): string {
-        return <<<EOT
-You are an AI assistant helping with recruitment.
-
-Return only JSON like:
-{"score": number (0 to 100), "reason": string, "shortlist": boolean, "shortlist_reason": string}
-
-Do not include any explanations or commentary — only return the JSON object.
-
-Job:
-{$jobTitle}
-
-Required Skills:
-{$jobSkills}
-
-Candidate:
-{$candidateName}
-
-Candidate Skills:
-{$candidateSkills}
-EOT;
-    }
-
-    private function calculateSimpleMatch(string $jobSkills, string $candidateSkills): int
-    {
-        $jobSkillsArray = explode(', ', $jobSkills);
-        $candidateSkillsArray = explode(', ', $candidateSkills);
-        
-        $matched = array_intersect($jobSkillsArray, $candidateSkillsArray);
-        
-        if (count($jobSkillsArray)) {
-            return (int) round((count($matched) / count($jobSkillsArray)) * 100);
-        }
-        
-        return 0;
     }
 
     public function show(User $user): Response
@@ -145,7 +62,7 @@ EOT;
 
         return Inertia::render('employer/jobseeker-profile', [
             'user' => $user,
-            'resume' => $resume
+            'resume' => $resume,
         ]);
     }
 
@@ -178,6 +95,90 @@ EOT;
             'summary' => mb_trim($response->text),
             'skill' => $request->skill,
         ]);
+    }
+
+    private function addMatchScores(LengthAwarePaginator $users, Opening $job, array $jobSkills): void
+    {
+        $jobTitle = $job->title;
+        $jobSkillsText = implode(', ', $jobSkills);
+
+        $users->getCollection()->transform(function ($user) use ($jobTitle, $jobSkillsText) {
+            $candidateSkills = $user->skills->pluck('name')->join(', ');
+
+            if (! empty($candidateSkills)) {
+                $prompt = $this->buildPrompt(
+                    $jobTitle,
+                    $jobSkillsText,
+                    $user->name,
+                    $candidateSkills
+                );
+
+                try {
+                    $response = Prism::text()
+                        ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
+                        ->withPrompt($prompt)
+                        ->asText();
+
+                    if ($json = json_decode($response->text, true)) {
+                        $user->match_score = $json['score'] ?? 0;
+                        $user->match_reason = $json['reason'] ?? '';
+                        $user->shortlist_reason = $json['shortlist_reason'] ?? '';
+                        $user->is_shortlisted = $json['shortlist'] ?? false;
+                    }
+                } catch (Exception) {
+                    $user->match_score = $this->calculateSimpleMatch(
+                        $jobSkillsText,
+                        $candidateSkills
+                    );
+                }
+            } else {
+                $user->match_score = 0;
+            }
+
+            return $user;
+        });
+    }
+
+    private function buildPrompt(
+        string $jobTitle,
+        string $jobSkills,
+        string $candidateName,
+        string $candidateSkills
+    ): string {
+        return <<<EOT
+You are an AI assistant helping with recruitment.
+
+Return only JSON like:
+{"score": number (0 to 100), "reason": string, "shortlist": boolean, "shortlist_reason": string}
+
+Do not include any explanations or commentary — only return the JSON object.
+
+Job:
+{$jobTitle}
+
+Required Skills:
+{$jobSkills}
+
+Candidate:
+{$candidateName}
+
+Candidate Skills:
+{$candidateSkills}
+EOT;
+    }
+
+    private function calculateSimpleMatch(string $jobSkills, string $candidateSkills): int
+    {
+        $jobSkillsArray = explode(', ', $jobSkills);
+        $candidateSkillsArray = explode(', ', $candidateSkills);
+
+        $matched = array_intersect($jobSkillsArray, $candidateSkillsArray);
+
+        if ($jobSkillsArray !== []) {
+            return (int) round((count($matched) / count($jobSkillsArray)) * 100);
+        }
+
+        return 0;
     }
 
     /**

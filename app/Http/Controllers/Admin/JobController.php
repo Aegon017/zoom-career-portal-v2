@@ -23,7 +23,7 @@ final class JobController extends Controller
             ->with('company', 'user')
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -65,7 +65,7 @@ final class JobController extends Controller
         $statuses = JobApplicationStatusEnum::options();
 
         $validated = $request->validate([
-            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
             'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
         ]);
 
@@ -90,7 +90,7 @@ final class JobController extends Controller
         $users = User::role('jobseeker')
             ->whereNotIn('id', $appliedUserIds)
             ->get()
-            ->map(fn($user): array => [
+            ->map(fn ($user): array => [
                 'value' => $user->id,
                 'label' => $user->email,
             ]);

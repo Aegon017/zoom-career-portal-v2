@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -8,7 +10,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class CourseController extends Controller
+final class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,14 +20,14 @@ class CourseController extends Controller
         $courses = Course::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/courses/courses-listing', [
             'courses' => $courses,
-            'filters' => $request->only('search', 'perPage')
+            'filters' => $request->only('search', 'perPage'),
         ]);
     }
 
@@ -37,7 +39,7 @@ class CourseController extends Controller
         $operation = OperationsEnum::Create->option();
 
         return Inertia::render('admin/courses/create-or-edit-course', [
-            'operation' => $operation
+            'operation' => $operation,
         ]);
     }
 
@@ -58,7 +60,7 @@ class CourseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show(Course $course): void
     {
         //
     }
@@ -72,7 +74,7 @@ class CourseController extends Controller
 
         return Inertia::render('admin/courses/create-or-edit-course', [
             'course' => $course,
-            'operation' => $operation
+            'operation' => $operation,
         ]);
     }
 
@@ -82,7 +84,7 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:courses,name,' . $course->id,
+            'name' => 'required|string|max:255|unique:courses,name,'.$course->id,
         ]);
 
         $course->update($data);

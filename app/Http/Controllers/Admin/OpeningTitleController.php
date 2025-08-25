@@ -16,7 +16,8 @@ use Inertia\Response;
 
 final class OpeningTitleController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -27,7 +28,7 @@ final class OpeningTitleController extends Controller
         $job_titles = OpeningTitle::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -101,7 +102,7 @@ final class OpeningTitleController extends Controller
         Gate::authorize('update_opening_title', $this->user);
 
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:opening_titles,name,' . $jobTitle->id,
+            'name' => 'required|string|max:255|unique:opening_titles,name,'.$jobTitle->id,
         ]);
 
         $jobTitle->update($data);

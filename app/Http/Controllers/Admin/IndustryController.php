@@ -14,7 +14,8 @@ use Inertia\Inertia;
 
 final class IndustryController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -25,7 +26,7 @@ final class IndustryController extends Controller
         $industries = Industry::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -99,7 +100,7 @@ final class IndustryController extends Controller
         Gate::authorize('update_industry', $this->user);
 
         $data = $request->validate([
-            'name' => 'required|string|unique:industries,name,' . $industry->id,
+            'name' => 'required|string|unique:industries,name,'.$industry->id,
         ]);
 
         $industry->update($data);

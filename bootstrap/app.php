@@ -18,10 +18,10 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        api: __DIR__ . '/../routes/api.php',
-        commands: __DIR__ . '/../routes/console.php',
-        channels: __DIR__ . '/../routes/channels.php',
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -40,7 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified.phone' => EnsurePhoneIsVerified::class,
             'verified.student' => EnsureStudentIsVerified::class,
             'profile.complete' => CheckProfileComplete::class,
-            'resume.uploaded' => EnsureResumeUploaded::class
+            'resume.uploaded' => EnsureResumeUploaded::class,
         ]);
 
         $middleware->validateCsrfTokens(
@@ -51,8 +51,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 'employer/profile/image-remove',
                 'company/profile/logo-upload',
                 'company/profile/logo-remove',
-                'employer/ai/job-description',
-                'employer/ai/match-score/*',
                 'ai/summary',
                 '/remote/login',
             ]

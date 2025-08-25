@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -9,9 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
-class FeedbackController extends Controller
+final class FeedbackController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
 
     public function index(Request $request)
     {
@@ -21,15 +23,15 @@ class FeedbackController extends Controller
             ->with(['user', 'opening'])
             ->when(
                 $request->search,
-                function ($query, $search) {
-                    $query->whereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', '%' . $search . '%')
-                            ->orWhere('email', 'like', '%' . $search . '%');
+                function ($query, string $search): void {
+                    $query->whereHas('user', function ($q) use ($search): void {
+                        $q->where('name', 'like', '%'.$search.'%')
+                            ->orWhere('email', 'like', '%'.$search.'%');
                     })
-                        ->orWhereHas('opening', function ($q) use ($search) {
-                            $q->where('title', 'like', '%' . $search . '%');
+                        ->orWhereHas('opening', function ($q) use ($search): void {
+                            $q->where('title', 'like', '%'.$search.'%');
                         })
-                        ->orWhere('feedback', 'like', '%' . $search . '%');
+                        ->orWhere('feedback', 'like', '%'.$search.'%');
                 }
             )
             ->paginate($request->perPage ?? 10)
@@ -46,7 +48,7 @@ class FeedbackController extends Controller
         Gate::authorize('view_feedback', $this->user);
 
         return Inertia::render('admin/feedback/feedback-details', [
-            'feedback' => $feedback->load(['user', 'opening'])
+            'feedback' => $feedback->load(['user', 'opening']),
         ]);
     }
 }

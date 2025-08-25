@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use App\Models\Opening;
@@ -8,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class JobClosureFeedbackReminderNotification extends Notification implements ShouldQueue
+final class JobClosureFeedbackReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -34,10 +36,10 @@ class JobClosureFeedbackReminderNotification extends Notification implements Sho
     {
         return (new MailMessage)
             ->subject('Reminder: Please provide feedback on your job posting')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line("Your job posting \"{$this->job->title}\" expired a week ago.")
+            ->greeting('Hello '.$notifiable->name)
+            ->line(sprintf('Your job posting "%s" expired a week ago.', $this->job->title))
             ->line('Please confirm if the position has been filled or needs further action.')
-            ->action('Give Feedback', url("/employer/jobs/{$this->job->id}/feedback"))
+            ->action('Give Feedback', url(sprintf('/employer/jobs/%s/feedback', $this->job->id)))
             ->line('Thank you for using Zoom Career Portal.');
     }
 
@@ -49,8 +51,8 @@ class JobClosureFeedbackReminderNotification extends Notification implements Sho
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "Your job \"{$this->job->title}\" expired a week ago. Please give feedback.",
-            'url' => "/employer/jobs/{$this->job->id}/feedback",
+            'message' => sprintf('Your job "%s" expired a week ago. Please give feedback.', $this->job->title),
+            'url' => sprintf('/employer/jobs/%s/feedback', $this->job->id),
         ];
     }
 }

@@ -28,7 +28,7 @@ final class CreateUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,id'
+            'roles.*' => 'exists:roles,id',
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OperationsEnum;
@@ -7,6 +9,7 @@ use App\Enums\VerificationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,15 +18,15 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
-class RecruiterController extends Controller
+final class RecruiterController extends Controller
 {
     public function index(Request $request)
     {
         $recruiters = User::query()->Role('employer')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -38,17 +41,14 @@ class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Create->option();
 
-        $companyOptions = Company::pluck('name', 'id')->map(function ($name, $id) {
-            return ['value' => $id, 'label' => $name];
-        })->values();
+        $companyOptions = Company::pluck('name', 'id')->map(fn($name, $id): array => ['value' => $id, 'label' => $name])->values();
 
         return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
             'operation' => $operation,
             'companyOptions' => $companyOptions,
-            'verificationStatusOptions' => VerificationStatusEnum::options()
+            'verificationStatusOptions' => VerificationStatusEnum::options(),
         ]);
     }
-
 
     public function store(Request $request)
     {
@@ -101,18 +101,16 @@ class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Edit->option();
 
-        $companyOptions = Company::get()->map(function ($company) {
-            return [
-                'value' => $company->id,
-                'label' => $company->name
-            ];
-        });
+        $companyOptions = Company::get()->map(fn($company): array => [
+            'value' => $company->id,
+            'label' => $company->name,
+        ]);
 
         return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
             'recruiter' => $recruiter->load(['profile', 'companyUsers']),
             'operation' => $operation,
             'companyOptions' => $companyOptions,
-            'verificationStatusOptions' => VerificationStatusEnum::options()
+            'verificationStatusOptions' => VerificationStatusEnum::options(),
         ]);
     }
 
@@ -120,7 +118,7 @@ class RecruiterController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $recruiter->id,
+            'email' => 'required|email|unique:users,email,'.$recruiter->id,
             'phone' => 'required|string|max:20',
             'job_title' => 'nullable|string|max:255',
             'company_id' => 'required|exists:companies,id',
@@ -133,7 +131,7 @@ class RecruiterController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'password' => !empty($data['password']) ? Hash::make($data['password']) : $recruiter->password,
+                'password' => empty($data['password']) ? $recruiter->password : Hash::make($data['password']),
             ]);
 
             $recruiter->profile()->updateOrCreate([], [
@@ -154,15 +152,16 @@ class RecruiterController extends Controller
     public function destroy(User $recruiter)
     {
         try {
-            DB::transaction(function () use ($recruiter) {
+            DB::transaction(function () use ($recruiter): void {
                 $recruiter->profile()->delete();
                 $recruiter->removeRole('employer');
                 $recruiter->delete();
             });
 
             return to_route('admin.recruiters.index')->with('success', 'Recruiter deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete recruiter: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            Log::error('Failed to delete recruiter: '.$exception->getMessage());
+
             return back()->withErrors(['error' => 'Failed to delete recruiter. Please try again.']);
         }
     }

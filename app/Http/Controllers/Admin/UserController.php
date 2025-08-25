@@ -8,7 +8,6 @@ use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\EditUserRequest;
-use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +19,7 @@ use Spatie\Permission\Models\Role;
 
 final class UserController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
 
     /**
      * Display a listing of the resource.
@@ -32,8 +31,8 @@ final class UserController extends Controller
         $users = User::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -52,16 +51,14 @@ final class UserController extends Controller
         Gate::authorize('create_user', $this->user);
 
         $operation = OperationsEnum::Create;
-        $roleOptions = Role::get()->map(function ($role) {
-            return [
-                'value' => $role->id,
-                'label' => $role->name
-            ];
-        });
+        $roleOptions = Role::get()->map(fn($role): array => [
+            'value' => $role->id,
+            'label' => $role->name,
+        ]);
 
         return Inertia::render('admin/users/create-or-edit-user', [
             'roleOptions' => $roleOptions,
-            'operation' => $operation->option()
+            'operation' => $operation->option(),
         ]);
     }
 
@@ -95,17 +92,15 @@ final class UserController extends Controller
         Gate::authorize('update_user', $this->user);
 
         $operation = OperationsEnum::Edit;
-        $roleOptions = Role::get()->map(function ($role) {
-            return [
-                'value' => $role->id,
-                'label' => $role->name
-            ];
-        });
+        $roleOptions = Role::get()->map(fn($role): array => [
+            'value' => $role->id,
+            'label' => $role->name,
+        ]);
 
         return Inertia::render('admin/users/create-or-edit-user', [
             'user' => UserResource::make($user)->load('roles'),
             'roleOptions' => $roleOptions,
-            'operation' => $operation->option()
+            'operation' => $operation->option(),
         ]);
     }
 

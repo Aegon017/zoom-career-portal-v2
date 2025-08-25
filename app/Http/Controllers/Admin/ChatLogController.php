@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -7,7 +9,7 @@ use App\Models\Chat;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ChatLogController extends Controller
+final class ChatLogController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -16,7 +18,7 @@ class ChatLogController extends Controller
     {
         $chats = Chat::with([
             'participants.user:id,name,email',
-            'messages.user:id,name'
+            'messages.user:id,name',
         ])
             ->has('messages')
             ->orderByDesc('updated_at')

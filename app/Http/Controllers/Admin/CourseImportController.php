@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,7 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-class CourseImportController extends Controller
+final class CourseImportController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -17,8 +19,8 @@ class CourseImportController extends Controller
     {
         try {
             Excel::import(new CoursesImport, $request->file('file'));
-        } catch (Exception $e) {
-            return back()->with('error', 'Failed to import - ' . $e->getMessage());
+        } catch (Exception $exception) {
+            return back()->with('error', 'Failed to import - '.$exception->getMessage());
         }
 
         return back()->with('success', 'Industries imported successfully');

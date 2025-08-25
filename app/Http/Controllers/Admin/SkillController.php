@@ -19,7 +19,8 @@ use Inertia\Response;
 
 final class SkillController extends Controller
 {
-    public function __construct(private User $user) {}
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +31,7 @@ final class SkillController extends Controller
         $skills = Skill::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -123,11 +124,11 @@ final class SkillController extends Controller
     {
         $query = $request->input('search', '');
 
-        $skills = Skill::where('name', 'like', '%' . $query . '%')
+        $skills = Skill::where('name', 'like', '%'.$query.'%')
             ->orderBy('name')
             ->limit(20)
             ->get()
-            ->map(fn($skill): array => [
+            ->map(fn ($skill): array => [
                 'label' => $skill->name,
                 'value' => $skill->name,
             ]);

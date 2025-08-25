@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ShortlistedMessageNotification extends Notification
+final class ShortlistedMessageNotification extends Notification
 {
     use Queueable;
 
@@ -34,7 +35,7 @@ class ShortlistedMessageNotification extends Notification
         return (new MailMessage)
             ->subject($this->subject)
             ->markdown('mails.shortlisted-message', [
-                'message' => $this->message
+                'message' => $this->message,
             ]);
     }
 

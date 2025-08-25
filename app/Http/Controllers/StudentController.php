@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Location;
-use App\Models\Skill;
-use App\Models\Language;
 use App\Enums\OperationsEnum;
 use App\Exports\StudentsExport;
-use Illuminate\Http\Request;
+use App\Models\Language;
+use App\Models\Location;
+use App\Models\Skill;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +21,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
-class StudentController extends Controller
+final class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -30,7 +32,7 @@ class StudentController extends Controller
             ->role('jobseeker')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -46,26 +48,20 @@ class StudentController extends Controller
      */
     public function create(): Response
     {
-        $locations = Location::take(100)->get()->map(function ($location) {
-            return [
-                'value' => (string) $location->id,
-                'label' => $location->full_name,
-            ];
-        });
+        $locations = Location::take(100)->get()->map(fn($location): array => [
+            'value' => (string) $location->id,
+            'label' => $location->full_name,
+        ]);
 
-        $skillOptions = Skill::get()->map(function ($skill) {
-            return [
-                'value' => (string) $skill->id,
-                'label' => $skill->name,
-            ];
-        });
+        $skillOptions = Skill::get()->map(fn($skill): array => [
+            'value' => (string) $skill->id,
+            'label' => $skill->name,
+        ]);
 
-        $languages = Language::get()->map(function ($language) {
-            return [
-                'value' => (string) $language->id,
-                'label' => $language->name,
-            ];
-        });
+        $languages = Language::get()->map(fn($language): array => [
+            'value' => (string) $language->id,
+            'label' => $language->name,
+        ]);
 
         $operation = OperationsEnum::Create;
 
@@ -149,7 +145,7 @@ class StudentController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated): void {
                 // Create user
                 $user = User::create([
                     'name' => $validated['name'],
@@ -163,9 +159,9 @@ class StudentController extends Controller
                 $user->assignRole('jobseeker');
 
                 // Create address
-                if (isset($validated['address']['location_id']) && !empty($validated['address']['location_id'])) {
+                if (isset($validated['address']['location_id']) && ! empty($validated['address']['location_id'])) {
                     $user->address()->create([
-                        'location_id' => (int) $validated['address']['location_id']
+                        'location_id' => (int) $validated['address']['location_id'],
                     ]);
                 }
 
@@ -174,8 +170,8 @@ class StudentController extends Controller
                     $personalDetailData = $validated['personal_detail'];
 
                     // Format date of birth
-                    if (isset($personalDetailData['date_of_birth']) && !empty($personalDetailData['date_of_birth'])) {
-                        $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime($personalDetailData['date_of_birth']));
+                    if (isset($personalDetailData['date_of_birth']) && ! empty($personalDetailData['date_of_birth'])) {
+                        $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime((string) $personalDetailData['date_of_birth']));
                     } else {
                         $personalDetailData['date_of_birth'] = null;
                     }
@@ -191,45 +187,43 @@ class StudentController extends Controller
 
                 // Create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], function ($value) {
-                        return !is_null($value) && $value !== '';
-                    });
+                    $profileData = array_filter($validated['profile'], fn($value): bool => ! is_null($value) && $value !== '');
 
-                    if (!empty($profileData)) {
+                    if ($profileData !== []) {
                         $user->profile()->create([
                             'user_id' => $user->id,
-                            ...$profileData
+                            ...$profileData,
                         ]);
                     }
                 }
 
                 // Attach skills
-                if (isset($validated['skills']) && !empty($validated['skills'])) {
+                if (isset($validated['skills']) && ! empty($validated['skills'])) {
                     $skillIds = array_map('intval', $validated['skills']);
                     $user->skills()->attach($skillIds);
                 }
 
                 // Create work permits
-                if (isset($validated['work_permits']) && !empty($validated['work_permits'])) {
+                if (isset($validated['work_permits']) && ! empty($validated['work_permits'])) {
                     foreach ($validated['work_permits'] as $country) {
-                        if (!empty($country)) {
+                        if (! empty($country)) {
                             $user->workPermits()->create(['country' => $country]);
                         }
                     }
                 }
 
                 // Create work experiences
-                if (isset($validated['work_experiences']) && !empty($validated['work_experiences'])) {
+                if (isset($validated['work_experiences']) && ! empty($validated['work_experiences'])) {
                     foreach ($validated['work_experiences'] as $experience) {
                         $endDate = null;
-                        if (isset($experience['end_date']) && !empty($experience['end_date']) && !($experience['is_current'] ?? false)) {
-                            $endDate = date('Y-m-d', strtotime($experience['end_date']));
+                        if (isset($experience['end_date']) && ! empty($experience['end_date']) && ! ($experience['is_current'] ?? false)) {
+                            $endDate = date('Y-m-d', strtotime((string) $experience['end_date']));
                         }
 
                         $user->workExperiences()->create([
                             'title' => $experience['title'],
                             'company_name' => $experience['company_name'] ?? null,
-                            'start_date' => date('Y-m-d', strtotime($experience['start_date'])),
+                            'start_date' => date('Y-m-d', strtotime((string) $experience['start_date'])),
                             'end_date' => $endDate,
                             'is_current' => $experience['is_current'] ?? false,
                         ]);
@@ -237,17 +231,17 @@ class StudentController extends Controller
                 }
 
                 // Create education
-                if (isset($validated['educations']) && !empty($validated['educations'])) {
+                if (isset($validated['educations']) && ! empty($validated['educations'])) {
                     foreach ($validated['educations'] as $education) {
                         $endDate = null;
-                        if (isset($education['end_date']) && !empty($education['end_date']) && !($education['is_current'] ?? false)) {
-                            $endDate = date('Y-m-d', strtotime($education['end_date']));
+                        if (isset($education['end_date']) && ! empty($education['end_date']) && ! ($education['is_current'] ?? false)) {
+                            $endDate = date('Y-m-d', strtotime((string) $education['end_date']));
                         }
 
                         $user->educations()->create([
                             'course_title' => $education['course_title'],
                             'institution' => $education['institution'],
-                            'start_date' => date('Y-m-d', strtotime($education['start_date'])),
+                            'start_date' => date('Y-m-d', strtotime((string) $education['start_date'])),
                             'end_date' => $endDate,
                             'is_current' => $education['is_current'] ?? false,
                             'course_type' => $education['course_type'] ?? null,
@@ -256,9 +250,9 @@ class StudentController extends Controller
                 }
 
                 // Create certificates
-                if (isset($validated['certificates']) && !empty($validated['certificates'])) {
+                if (isset($validated['certificates']) && ! empty($validated['certificates'])) {
                     foreach ($validated['certificates'] as $certificate) {
-                        if (!empty($certificate['name'])) {
+                        if (! empty($certificate['name'])) {
                             $user->certificates()->create([
                                 'name' => $certificate['name'],
                             ]);
@@ -267,7 +261,7 @@ class StudentController extends Controller
                 }
 
                 // Create languages
-                if (isset($validated['user_languages']) && !empty($validated['user_languages'])) {
+                if (isset($validated['user_languages']) && ! empty($validated['user_languages'])) {
                     foreach ($validated['user_languages'] as $language) {
                         $user->userLanguages()->create([
                             'language_id' => (int) $language['language_id'],
@@ -281,8 +275,9 @@ class StudentController extends Controller
             });
 
             return to_route('admin.students.index')->with('success', 'Student created successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to create student: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            Log::error('Failed to create student: '.$exception->getMessage());
+
             return back()->withErrors(['error' => 'Failed to create student. Please try again.'])->withInput();
         }
     }
@@ -302,7 +297,7 @@ class StudentController extends Controller
             'address.location',
             'workPermits',
             'userLanguages.language',
-            'certificates'
+            'certificates',
         ]);
 
         return Inertia::render('admin/students/student-profile', [
@@ -324,29 +319,23 @@ class StudentController extends Controller
             'workExperiences.company',
             'educations',
             'certificates',
-            'userLanguages.language'
+            'userLanguages.language',
         ]);
 
-        $locations = Location::take(100)->get()->map(function ($location) {
-            return [
-                'value' => (string) $location->id,
-                'label' => $location->full_name,
-            ];
-        });
+        $locations = Location::take(100)->get()->map(fn($location): array => [
+            'value' => (string) $location->id,
+            'label' => $location->full_name,
+        ]);
 
-        $skillOptions = Skill::get()->map(function ($skill) {
-            return [
-                'value' => (string) $skill->id,
-                'label' => $skill->name,
-            ];
-        });
+        $skillOptions = Skill::get()->map(fn($skill): array => [
+            'value' => (string) $skill->id,
+            'label' => $skill->name,
+        ]);
 
-        $languages = Language::get()->map(function ($language) {
-            return [
-                'value' => (string) $language->id,
-                'label' => $language->name,
-            ];
-        });
+        $languages = Language::get()->map(fn($language): array => [
+            'value' => (string) $language->id,
+            'label' => $language->name,
+        ]);
 
         $operation = OperationsEnum::Edit;
 
@@ -430,7 +419,7 @@ class StudentController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated, $student) {
+            DB::transaction(function () use ($validated, $student): void {
                 // Update user basic info
                 $userData = [
                     'name' => $validated['name'],
@@ -440,14 +429,13 @@ class StudentController extends Controller
                 ];
 
                 // Only update password if provided
-                if (!empty($validated['password'])) {
+                if (! empty($validated['password'])) {
                     $userData['password'] = Hash::make($validated['password']);
                 }
 
                 $student->update($userData);
 
-
-                if (isset($validated['address']['location_id']) && !empty($validated['address']['location_id'])) {
+                if (isset($validated['address']['location_id']) && ! empty($validated['address']['location_id'])) {
                     $student->address()->updateOrCreate(
                         [],
                         ['location_id' => (int) $validated['address']['location_id']]
@@ -461,8 +449,8 @@ class StudentController extends Controller
                     $personalDetailData = $validated['personal_detail'];
 
                     // Format date of birth
-                    if (isset($personalDetailData['date_of_birth']) && !empty($personalDetailData['date_of_birth'])) {
-                        $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime($personalDetailData['date_of_birth']));
+                    if (isset($personalDetailData['date_of_birth']) && ! empty($personalDetailData['date_of_birth'])) {
+                        $personalDetailData['date_of_birth'] = date('Y-m-d', strtotime((string) $personalDetailData['date_of_birth']));
                     } else {
                         $personalDetailData['date_of_birth'] = null;
                     }
@@ -480,11 +468,9 @@ class StudentController extends Controller
 
                 // Update or create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], function ($value) {
-                        return !is_null($value) && $value !== '';
-                    });
+                    $profileData = array_filter($validated['profile'], fn($value): bool => ! is_null($value) && $value !== '');
 
-                    if (!empty($profileData)) {
+                    if ($profileData !== []) {
                         $student->profile()->updateOrCreate(
                             ['user_id' => $student->id],
                             $profileData
@@ -504,9 +490,9 @@ class StudentController extends Controller
 
                 // Update work permits
                 $student->workPermits()->delete();
-                if (isset($validated['work_permits']) && !empty($validated['work_permits'])) {
+                if (isset($validated['work_permits']) && ! empty($validated['work_permits'])) {
                     foreach ($validated['work_permits'] as $country) {
-                        if (!empty($country)) {
+                        if (! empty($country)) {
                             $student->workPermits()->create(['country' => $country]);
                         }
                     }
@@ -514,17 +500,17 @@ class StudentController extends Controller
 
                 // Update work experiences
                 $student->workExperiences()->delete();
-                if (isset($validated['work_experiences']) && !empty($validated['work_experiences'])) {
+                if (isset($validated['work_experiences']) && ! empty($validated['work_experiences'])) {
                     foreach ($validated['work_experiences'] as $experience) {
                         $endDate = null;
-                        if (isset($experience['end_date']) && !empty($experience['end_date']) && !($experience['is_current'] ?? false)) {
-                            $endDate = date('Y-m-d', strtotime($experience['end_date']));
+                        if (isset($experience['end_date']) && ! empty($experience['end_date']) && ! ($experience['is_current'] ?? false)) {
+                            $endDate = date('Y-m-d', strtotime((string) $experience['end_date']));
                         }
 
                         $student->workExperiences()->create([
                             'title' => $experience['title'],
                             'company_name' => $experience['company_name'] ?? null,
-                            'start_date' => date('Y-m-d', strtotime($experience['start_date'])),
+                            'start_date' => date('Y-m-d', strtotime((string) $experience['start_date'])),
                             'end_date' => $endDate,
                             'is_current' => $experience['is_current'] ?? false,
                         ]);
@@ -533,17 +519,17 @@ class StudentController extends Controller
 
                 // Update education
                 $student->educations()->delete();
-                if (isset($validated['educations']) && !empty($validated['educations'])) {
+                if (isset($validated['educations']) && ! empty($validated['educations'])) {
                     foreach ($validated['educations'] as $education) {
                         $endDate = null;
-                        if (isset($education['end_date']) && !empty($education['end_date']) && !($education['is_current'] ?? false)) {
-                            $endDate = date('Y-m-d', strtotime($education['end_date']));
+                        if (isset($education['end_date']) && ! empty($education['end_date']) && ! ($education['is_current'] ?? false)) {
+                            $endDate = date('Y-m-d', strtotime((string) $education['end_date']));
                         }
 
                         $student->educations()->create([
                             'course_title' => $education['course_title'],
                             'institution' => $education['institution'],
-                            'start_date' => date('Y-m-d', strtotime($education['start_date'])),
+                            'start_date' => date('Y-m-d', strtotime((string) $education['start_date'])),
                             'end_date' => $endDate,
                             'is_current' => $education['is_current'] ?? false,
                             'course_type' => $education['course_type'] ?? null,
@@ -553,9 +539,9 @@ class StudentController extends Controller
 
                 // Update certificates
                 $student->certificates()->delete();
-                if (isset($validated['certificates']) && !empty($validated['certificates'])) {
+                if (isset($validated['certificates']) && ! empty($validated['certificates'])) {
                     foreach ($validated['certificates'] as $certificate) {
-                        if (!empty($certificate['name'])) {
+                        if (! empty($certificate['name'])) {
                             $student->certificates()->create([
                                 'name' => $certificate['name'],
                             ]);
@@ -565,7 +551,7 @@ class StudentController extends Controller
 
                 // Update languages
                 $student->userLanguages()->delete();
-                if (isset($validated['user_languages']) && !empty($validated['user_languages'])) {
+                if (isset($validated['user_languages']) && ! empty($validated['user_languages'])) {
                     foreach ($validated['user_languages'] as $language) {
                         $student->userLanguages()->create([
                             'language_id' => (int) $language['language_id'],
@@ -579,8 +565,9 @@ class StudentController extends Controller
             });
 
             return to_route('admin.students.index')->with('success', 'Student updated successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to update student: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            Log::error('Failed to update student: '.$exception->getMessage());
+
             return back()->withErrors(['error' => 'Failed to update student. Please try again.'])->withInput();
         }
     }
@@ -591,7 +578,7 @@ class StudentController extends Controller
     public function destroy(User $student): RedirectResponse
     {
         try {
-            DB::transaction(function () use ($student) {
+            DB::transaction(function () use ($student): void {
                 // Delete related records first (if not using cascade delete)
                 $student->address()->delete();
                 $student->personalDetail()->delete();
@@ -613,8 +600,9 @@ class StudentController extends Controller
             });
 
             return to_route('admin.students.index')->with('success', 'Student deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete student: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            Log::error('Failed to delete student: '.$exception->getMessage());
+
             return back()->withErrors(['error' => 'Failed to delete student. Please try again.']);
         }
     }
@@ -623,7 +611,7 @@ class StudentController extends Controller
     {
         $fieldsParam = $request->get('fields', '');
 
-        $selectedFields = $fieldsParam ? explode(',', $fieldsParam) : [];
+        $selectedFields = $fieldsParam ? explode(',', (string) $fieldsParam) : [];
 
         $selectedFields = array_filter($selectedFields);
 

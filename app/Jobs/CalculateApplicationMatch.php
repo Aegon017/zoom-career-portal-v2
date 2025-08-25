@@ -28,22 +28,33 @@ final class CalculateApplicationMatch implements ShouldQueue
     {
         try {
             $response = $prism->text()
-                ->using(Provider::OpenAI, 'gpt-4')
+                ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
                 ->withPrompt($this->buildPrompt())
                 ->asText();
 
             $responseText = $response->text;
 
-            $result = json_decode($responseText, true);
+            $jsonStart = mb_strpos($responseText, '{');
+            $jsonEnd = mb_strrpos($responseText, '}');
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception('Invalid JSON response from AI service');
+            if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
+                $jsonString = mb_substr($responseText, $jsonStart, $jsonEnd - $jsonStart + 1);
+                $result = json_decode($jsonString, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new Exception('Invalid JSON response from AI service');
+                }
+
+                $score = isset($result['score']) ? (int) $result['score'] : 0;
+                $scoreOnScale = $score;
+
+                $this->openingApplication->update([
+                    'match_score' => $scoreOnScale,
+                    'match_summary' => $result['summary'] ?? 'No summary provided',
+                ]);
+            } else {
+                throw new Exception('No JSON found in AI response');
             }
-
-            $this->openingApplication->update([
-                'match_score' => $result['score'] ?? null,
-                'match_summary' => $result['summary'] ?? null,
-            ]);
         } catch (Exception $exception) {
             Log::error(sprintf('AI Matching failed for application %s: ', $this->openingApplication->id).$exception->getMessage());
 
@@ -52,17 +63,20 @@ final class CalculateApplicationMatch implements ShouldQueue
                 'match_summary' => 'AI matching failed - to be reviewed manually',
             ]);
 
-            // Re-throw to allow for retries if needed
             throw $exception;
         }
     }
 
     private function buildPrompt(): string
     {
-        return "Analyze this job application and respond with JSON containing 'score' (0-100) and 'summary':\n\n".
-            sprintf('Job: %s%s', $this->openingApplication->opening->title, PHP_EOL).
-            "Description: {$this->openingApplication->opening->description}\n\n".
-            "Resume: {$this->openingApplication->resume->text}\n\n".
-            'Respond only with: {"score": number, "summary": string}';
+        return "Analyze how well this candidate's resume matches the job requirements. ".
+            "Respond with a JSON object containing:\n".
+            "- 'score': a number between 0-100 representing the match percentage\n".
+            "- 'summary': a brief explanation of the match\n\n".
+            sprintf('JOB TITLE: %s%s', $this->openingApplication->opening->title, PHP_EOL).
+            "JOB DESCRIPTION: {$this->openingApplication->opening->description}\n\n".
+            "CANDIDATE RESUME: {$this->openingApplication->resume->text}\n\n".
+            "RESPONSE FORMAT (JSON only):\n".
+            '{"score": number, "summary": "string"}';
     }
 }

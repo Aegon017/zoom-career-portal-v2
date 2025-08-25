@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
 use App\Models\Opening;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ApplicationsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
-    protected $job;
-    protected $jobTitle;
+    private $jobTitle;
 
-    public function __construct(Opening $job)
+    public function __construct(private readonly \App\Models\Opening $job)
     {
-        $this->job = $job;
-        $this->jobTitle = $job->title;
+        $this->jobTitle = $this->job->title;
     }
 
     public function collection()
@@ -30,7 +30,7 @@ class ApplicationsExport implements FromCollection, WithHeadings, WithMapping, S
                 'user_id',
                 'status',
                 'match_score',
-                'created_at'
+                'created_at',
             ]);
     }
 
@@ -54,7 +54,7 @@ class ApplicationsExport implements FromCollection, WithHeadings, WithMapping, S
             $this->jobTitle,
             $application->user->name,
             $application->user->email,
-            ucfirst($application->status),
+            ucfirst((string) $application->status),
             $application->match_score ? round($application->match_score, 2) : 'N/A',
             $application->created_at->format('M d, Y H:i'),
         ];
@@ -64,7 +64,7 @@ class ApplicationsExport implements FromCollection, WithHeadings, WithMapping, S
     {
         return [
             1 => ['font' => ['bold' => true]],
-            'A1:G' . ($sheet->getHighestRow()) => [
+            'A1:G'.($sheet->getHighestRow()) => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

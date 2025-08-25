@@ -8,13 +8,10 @@ use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-final class StudentsExport implements FromCollection, WithHeadings
+final readonly class StudentsExport implements FromCollection, WithHeadings
 {
-    protected $fields;
-
-    public function __construct(array $fields = [])
+    public function __construct(private array $fields = [])
     {
-        $this->fields = $fields;
     }
 
     /**
@@ -32,7 +29,7 @@ final class StudentsExport implements FromCollection, WithHeadings
                 'workExperiences',
                 'educations',
                 'certificates',
-                'userLanguages.language'
+                'userLanguages.language',
             ])
             ->get();
 
@@ -64,7 +61,7 @@ final class StudentsExport implements FromCollection, WithHeadings
         return $headings;
     }
 
-    protected function getFieldHeading($fieldKey)
+    private function getFieldHeading($fieldKey): string|array
     {
         // Map field keys to human-readable headings
         $headingMap = [
@@ -109,69 +106,52 @@ final class StudentsExport implements FromCollection, WithHeadings
             'is_verified' => 'Is Verified',
         ];
 
-        return $headingMap[$fieldKey] ?? str_replace('_', ' ', ucwords($fieldKey, '.'));
+        return $headingMap[$fieldKey] ?? str_replace('_', ' ', ucwords((string) $fieldKey, '.'));
     }
 
-    protected function getFieldValue($user, $fieldKey)
+    private function getFieldValue($user, $fieldKey)
     {
-        if (strpos($fieldKey, '.') !== false) {
-            $parts = explode('.', $fieldKey);
+        if (mb_strpos((string) $fieldKey, '.') !== false) {
+            $parts = explode('.', (string) $fieldKey);
             $mainField = $parts[0];
             $subField = $parts[1];
 
             if ($mainField === 'personal_detail') {
                 return $user->personalDetail->{$subField} ?? null;
-            } elseif ($mainField === 'address') {
+            }
+
+            if ($mainField === 'address') {
                 return $user->address->{$subField} ?? null;
-            } elseif ($mainField === 'profile') {
+            }
+
+            if ($mainField === 'profile') {
                 return $user->profile->{$subField} ?? null;
-            } elseif ($mainField === 'work_experiences') {
-                return $user->workExperiences->map(function ($exp) use ($subField) {
-                    return $exp->{$subField};
-                })->implode(', ');
-            } elseif ($mainField === 'educations') {
-                return $user->educations->map(function ($edu) use ($subField) {
-                    return $edu->{$subField};
-                })->implode(', ');
-            } elseif ($mainField === 'certificates') {
-                return $user->certificates->map(function ($cert) use ($subField) {
-                    return $cert->{$subField};
-                })->implode(', ');
-            } elseif ($mainField === 'user_languages') {
+            }
+
+            if ($mainField === 'work_experiences') {
+                return $user->workExperiences->map(fn($exp) => $exp->{$subField})->implode(', ');
+            }
+            if ($mainField === 'educations') {
+                return $user->educations->map(fn($edu) => $edu->{$subField})->implode(', ');
+            }
+            if ($mainField === 'certificates') {
+                return $user->certificates->map(fn($cert) => $cert->{$subField})->implode(', ');
+            }
+            if ($mainField === 'user_languages') {
                 // Handle language relationship
                 if ($subField === 'language_id' && isset($user->userLanguages)) {
-                    return $user->userLanguages->map(function ($userLang) {
-                        return $userLang->language->name ?? null;
-                    })->filter()->implode(', ');
+                    return $user->userLanguages->map(fn($userLang) => $userLang->language->name ?? null)->filter()->implode(', ');
                 }
-
-                return $user->userLanguages->map(function ($lang) use ($subField) {
-                    return $lang->{$subField};
-                })->implode(', ');
+                return $user->userLanguages->map(fn($lang) => $lang->{$subField})->implode(', ');
             }
         }
 
-        switch ($fieldKey) {
-            case 'name':
-            case 'email':
-            case 'phone':
-                return $user->{$fieldKey};
-
-            case 'skills':
-                return $user->skills->pluck('name')->implode(', ');
-
-            case 'work_permits':
-                return $user->workPermits->pluck('country')->implode(', ');
-
-            case 'summary':
-            case 'course_completed':
-            case 'student_id':
-            case 'completed_month':
-            case 'is_verified':
-                return $user->profile->{$fieldKey} ?? null;
-
-            default:
-                return null;
-        }
+        return match ($fieldKey) {
+            'name', 'email', 'phone' => $user->{$fieldKey},
+            'skills' => $user->skills->pluck('name')->implode(', '),
+            'work_permits' => $user->workPermits->pluck('country')->implode(', '),
+            'summary', 'course_completed', 'student_id', 'completed_month', 'is_verified' => $user->profile->{$fieldKey} ?? null,
+            default => null,
+        };
     }
 }
