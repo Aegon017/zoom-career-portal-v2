@@ -14,7 +14,7 @@ final class ChatLogController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $query = Chat::with(['participants.user.roles', 'messages.user']);
+        $query = Chat::with(['participants.user.roles', 'messages.user'])->has('messages');
 
         $query->when($request->student, function ($q) use ($request) {
             $q->whereHas('participants.user.roles', function ($q) use ($request) {
