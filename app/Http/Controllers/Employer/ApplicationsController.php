@@ -29,7 +29,7 @@ final class ApplicationsController extends Controller
 {
     public function index(Request $request)
     {
-        $jobs = Opening::where('user_id', Auth::id())->get();
+        $jobs = Opening::where('user_id', Auth::id())->where('expires_at', '>=', now())->get();
         $job = Opening::find($request->job_id);
 
         $matchScoreCutoff = $job?->company?->match_score_cutoff;
