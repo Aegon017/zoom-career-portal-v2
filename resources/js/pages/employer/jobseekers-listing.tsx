@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [ { title: 'Jobseekers', href: '/employer/
 
 interface Props {
     initialUsers: UsersResponse;
-    jobs: Opening[]; // Changed to array of job openings
+    jobs: Opening[];
 }
 
 export default function JobseekersListing( { initialUsers, jobs }: Props ) {
@@ -28,7 +28,7 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
     const [ nextPageUrl, setNextPageUrl ] = useState( initialUsers.next_page_url );
     const [ loading, setLoading ] = useState( false );
     const [ search, setSearch ] = useState( '' );
-    const [ selectedJobId, setSelectedJobId ] = useState<string>( '' ); // Track selected job ID
+    const [ selectedJobId, setSelectedJobId ] = useState<string>( '' );
 
     const debounceRef = useRef<NodeJS.Timeout | null>( null );
 
