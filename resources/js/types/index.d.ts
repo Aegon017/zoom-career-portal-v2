@@ -140,6 +140,7 @@ export interface Company {
     size: string;
     type: string;
     verification_status: string;
+    match_score_cutoff: number;
     users: User[];
     industry: Industry;
     address: Address;

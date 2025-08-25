@@ -33,6 +33,7 @@ final class Company extends Model implements HasMedia
         'size',
         'type',
         'verification_status',
+        'match_score_cutoff'
     ];
 
     protected $casts = [
