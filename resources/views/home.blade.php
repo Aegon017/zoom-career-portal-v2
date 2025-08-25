@@ -122,10 +122,7 @@
                     </div>
                     <p class="js-subHeading">
                         <strong>
-                            Forgot your registered email?
-                            Simply click Register Here and create a new account. Access will be granted after review by
-                            our
-                            team within 3 business days.
+                            Forgot your registered email? Simply click Register Here and create a new account. Access will be granted after review by our team within 3 business days.
                         </strong>
                     </p>
                 </form>

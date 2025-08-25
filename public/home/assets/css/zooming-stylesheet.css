@@ -285,7 +285,6 @@ body {
 	padding-top: 8px;
 	font-family: 'Raleway', 'Open Sans', sans-serif;
 	font-size: 26px;
-	color: #2c3e50;
 	line-height: 1.3;
 	font-weight: 600;
 	display: inline-block;
@@ -295,14 +294,14 @@ body {
 	padding-top: 6px;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 16px;
-	color: #444;
+	color: #141414;
 	line-height: 1.6;
 	font-weight: 400;
 	display: block;
 }
 
 .js-subHeading strong {
-	color: #98c741;
+	color: #04548c;
 	font-weight: 600;
 	display: block;
 	margin-top: 10px;

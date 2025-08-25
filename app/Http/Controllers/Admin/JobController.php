@@ -63,7 +63,28 @@ final class JobController extends Controller
     public function applications(Opening $job, Request $request)
     {
         $statuses = JobApplicationStatusEnum::options();
-        $applications = $job->applications()->with('user', 'resume')->get();
+
+        $validated = $request->validate([
+            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
+            'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
+        ]);
+
+        $query = $job->applications()->with('user', 'resume');
+
+        if (isset($validated['status'])) {
+            $query->where('status', $validated['status']);
+        }
+
+        if (isset($validated['matching_score_range'])) {
+            $range = explode('-', $validated['matching_score_range']);
+            $minScore = $range[0];
+            $maxScore = $range[1];
+
+            $query->whereBetween('match_score', [$minScore, $maxScore]);
+        }
+
+        $applications = $query->get();
+
         $appliedUserIds = $applications->pluck('user_id')->toArray();
 
         $users = User::role('jobseeker')
@@ -80,6 +101,7 @@ final class JobController extends Controller
             'statuses' => $statuses,
             'users' => $users,
             'exportUrl' => route('admin.jobs.applications.export', $job),
+            'filters' => $validated,
         ]);
     }
 
