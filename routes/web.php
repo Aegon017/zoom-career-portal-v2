@@ -123,7 +123,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
 
-        Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
         Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
         Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
         Route::get('/applications/export/{job}', ApplicationsExportController::class)->name('applications.export');
