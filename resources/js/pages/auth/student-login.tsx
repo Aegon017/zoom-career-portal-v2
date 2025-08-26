@@ -32,19 +32,21 @@ export default function StudentLogin( { canResetPassword }: Props ) {
             <Head title="Student Login" />
 
             {/* Instruction Box */ }
-            <div className="mb-6 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-                <Info className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                <div>
-                    <p className="mb-2">
-                        <strong>Students registered from Jan 2025 onwards:</strong>
-                        <br />
-                        Log in using your Zoom Group credentials.
-                    </p>
-                    <p>
-                        <strong>Students enrolled before Jan 2025:</strong>
-                        <br />
-                        Use the email address you originally registered with at Zoom Technologies.
-                    </p>
+            <div className="mb-6 space-y-4 text-sm text-emerald-800">
+                <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+                    <Info className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <div>
+                        <p className="font-bold uppercase mb-1">STUDENTS REGISTERED FROM JAN 2025 ONWARDS</p>
+                        <p>Log in using your Zoom Group credentials.</p>
+                    </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+                    <Info className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <div>
+                        <p className="font-bold uppercase mb-1">STUDENTS ENROLLED BEFORE JAN 2025</p>
+                        <p>Use the email address you originally registered with at Zoom Technologies.</p>
+                    </div>
                 </div>
             </div>
 
