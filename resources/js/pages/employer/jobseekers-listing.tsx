@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AppLayout from '@/layouts/employer-layout';
 import { BreadcrumbItem, Opening, User } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Search, X, User as UserIcon } from 'lucide-react';
+import { Search, X, User as UserIcon, Filter } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UsersResponse {
@@ -22,6 +22,13 @@ interface Props {
     jobs: Opening[];
 }
 
+const matchingScoreOptions = [
+    { value: '70-100', label: '70-100%' },
+    { value: '50-69', label: '50-69%' },
+    { value: '30-49', label: '30-49%' },
+    { value: '1-29', label: '1-29%' },
+];
+
 export default function JobseekersListing( { initialUsers, jobs }: Props ) {
     const [ users, setUsers ] = useState<User[]>( initialUsers.data );
     const [ total, setTotal ] = useState( initialUsers.total );
@@ -29,18 +36,19 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
     const [ loading, setLoading ] = useState( false );
     const [ search, setSearch ] = useState( '' );
     const [ selectedJobId, setSelectedJobId ] = useState<string>( '' );
+    const [ matchingScoreFilter, setMatchingScoreFilter ] = useState<string>( '' );
 
     const debounceRef = useRef<NodeJS.Timeout | null>( null );
 
     const clearFilters = () => {
         setSearch( '' );
-        setSelectedJobId( '' );
+        setMatchingScoreFilter( '' );
     };
 
-    const hasFilters = search !== '' || selectedJobId !== '';
+    const hasFilters = search !== '' || matchingScoreFilter !== '';
     const hasSelectedJob = selectedJobId !== '';
 
-    const fetchFilteredUsers = useCallback( ( query: { search?: string; job_id?: string } ) => {
+    const fetchFilteredUsers = useCallback( ( query: { search?: string; job_id?: string; matching_score?: string } ) => {
         if ( !query.job_id ) {
             // Don't fetch if no job is selected
             setUsers( [] );
@@ -75,7 +83,8 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
         debounceRef.current = setTimeout( () => {
             fetchFilteredUsers( {
                 search: search || undefined,
-                job_id: selectedJobId || undefined
+                job_id: selectedJobId || undefined,
+                matching_score: matchingScoreFilter || undefined
             } );
         }, 500 );
 
@@ -84,7 +93,7 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
                 clearTimeout( debounceRef.current );
             }
         };
-    }, [ search, selectedJobId, fetchFilteredUsers ] );
+    }, [ search, selectedJobId, matchingScoreFilter, fetchFilteredUsers ] );
 
     const loadMore = useCallback( () => {
         if ( !nextPageUrl || loading || !hasSelectedJob ) return;
@@ -92,7 +101,7 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
         setLoading( true );
         router.get(
             nextPageUrl,
-            { search, job_id: selectedJobId },
+            { search, job_id: selectedJobId, matching_score: matchingScoreFilter },
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -108,7 +117,7 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
                 }
             },
         );
-    }, [ nextPageUrl, loading, search, selectedJobId, hasSelectedJob ] );
+    }, [ nextPageUrl, loading, search, selectedJobId, matchingScoreFilter, hasSelectedJob ] );
 
     // Get selected job title for display
     const selectedJob = jobs.find( job => job.id === parseInt( selectedJobId ) )?.title;
@@ -120,50 +129,80 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
                 <Card className="mb-6 rounded-none border-0 border-b-2 p-0 shadow-none">
                     <CardContent className="space-y-4 p-0 pb-4">
                         <div className="grid grid-cols-12 gap-2">
-                            <div className="relative col-span-12 md:col-span-6">
-                                <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-                                <Input
-                                    placeholder="Search candidates..."
-                                    className="pl-10"
-                                    value={ search }
-                                    onChange={ ( e ) => setSearch( e.target.value ) }
-                                    disabled={ loading || !hasSelectedJob }
-                                />
-                                { search && (
-                                    <button
-                                        onClick={ () => setSearch( '' ) }
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            <div className="col-span-12 md:col-span-4">
+                                <Select
+                                    value={ selectedJobId }
+                                    onValueChange={ setSelectedJobId }
+                                    disabled={ loading }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a job" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        { jobs.map( ( job ) => (
+                                            <SelectItem key={ job.id } value={ String( job.id ) }>
+                                                { job.title }
+                                            </SelectItem>
+                                        ) ) }
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            { hasSelectedJob && (
+                                <>
+                                    <div className="relative col-span-12 md:col-span-4">
+                                        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+                                        <Input
+                                            placeholder="Search candidates..."
+                                            className="pl-10"
+                                            value={ search }
+                                            onChange={ ( e ) => setSearch( e.target.value ) }
+                                            disabled={ loading }
+                                        />
+                                        { search && (
+                                            <button
+                                                onClick={ () => setSearch( '' ) }
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </button>
+                                        ) }
+                                    </div>
+
+                                    <div className="col-span-12 md:col-span-4">
+                                        <Select
+                                            value={ matchingScoreFilter }
+                                            onValueChange={ setMatchingScoreFilter }
+                                            disabled={ loading }
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Filter by match score" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Match Scores</SelectItem>
+                                                { matchingScoreOptions.map( ( option ) => (
+                                                    <SelectItem key={ option.value } value={ option.value }>
+                                                        { option.label }
+                                                    </SelectItem>
+                                                ) ) }
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </>
+                            ) }
+
+                            { hasSelectedJob && hasFilters && (
+                                <div className="col-span-12 flex justify-end">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={ clearFilters }
+                                        disabled={ loading }
+                                        className="flex items-center gap-2"
                                     >
                                         <X className="h-4 w-4" />
-                                    </button>
-                                ) }
-                            </div>
-                            <Select
-                                value={ selectedJobId }
-                                onValueChange={ setSelectedJobId }
-                                disabled={ loading }
-                            >
-                                <SelectTrigger className='col-span-12 md:col-span-4'>
-                                    <SelectValue placeholder="Select a job" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    { jobs.map( ( job ) => (
-                                        <SelectItem key={ job.id } value={ String( job.id ) }>
-                                            { job.title }
-                                        </SelectItem>
-                                    ) ) }
-                                </SelectContent>
-                            </Select>
-                            { hasFilters && (
-                                <Button
-                                    variant="ghost"
-                                    onClick={ clearFilters }
-                                    disabled={ loading }
-                                    className="flex items-center gap-2 col-span-2"
-                                >
-                                    <X className="h-4 w-4" />
-                                    Clear filters
-                                </Button>
+                                        Clear filters
+                                    </Button>
+                                </div>
                             ) }
                         </div>
                     </CardContent>
@@ -172,20 +211,20 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
                 { hasSelectedJob ? (
                     <div className="mx-auto flex w-full flex-col md:w-2xl">
                         { users.length > 0 && (
-                            <div className="mb-4 flex justify-between">
+                            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:justify-between">
                                 <span className="text-muted-foreground text-sm">
                                     Showing { users.length } of { total } candidates
                                 </span>
-                                { ( search || selectedJob ) && (
-                                    <div className="flex items-center gap-2">
+                                { ( search || matchingScoreFilter ) && (
+                                    <div className="flex flex-wrap items-center gap-2">
                                         { search && (
-                                            <span className="text-muted-foreground text-sm">
+                                            <span className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs">
                                                 Search: "{ search }"
                                             </span>
                                         ) }
-                                        { selectedJob && (
-                                            <span className="text-muted-foreground text-sm">
-                                                Job: { selectedJob }
+                                        { matchingScoreFilter && (
+                                            <span className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs">
+                                                Match Score: { matchingScoreOptions.find( opt => opt.value === matchingScoreFilter )?.label }
                                             </span>
                                         ) }
                                     </div>
@@ -230,7 +269,7 @@ export default function JobseekersListing( { initialUsers, jobs }: Props ) {
                                 Select a job
                             </h3>
                             <p className="text-sm text-muted-foreground">
-                                Please select a job to view students.
+                                Please select a job to view students and filter by match score.
                             </p>
                         </div>
                     </div>
