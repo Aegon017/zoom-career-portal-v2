@@ -96,7 +96,19 @@ export default function StudentLogin( { canResetPassword }: Props ) {
                         <InputError message={ errors.password } />
                     </div>
 
-                    {/* Extra Note */ }
+                    {/* Submit Button */ }
+                    <Button
+                        type="submit"
+                        className="mt-4 w-full"
+                        tabIndex={ 3 }
+                        disabled={ processing }
+                    >
+                        { processing && (
+                            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                        ) }
+                        Login
+                    </Button>
+
                     <div className="mt-2 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
                         <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
                         <p>
@@ -112,19 +124,6 @@ export default function StudentLogin( { canResetPassword }: Props ) {
                             our team within 3 business days.
                         </p>
                     </div>
-
-                    {/* Submit Button */ }
-                    <Button
-                        type="submit"
-                        className="mt-4 w-full"
-                        tabIndex={ 3 }
-                        disabled={ processing }
-                    >
-                        { processing && (
-                            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                        ) }
-                        Login
-                    </Button>
                 </div>
             </form>
         </AuthLayout>
