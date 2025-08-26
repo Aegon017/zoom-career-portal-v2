@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Option, User } from '@/types';
 import axios from 'axios';
@@ -71,6 +70,7 @@ interface FormValues {
     }>;
     certificates: Array<{
         name: string;
+        number: string;
     }>;
     user_languages: Array<{
         language_id: string;
@@ -134,6 +134,7 @@ const ProfileWizard = ( {
                 } ) ) || [],
             certificates: student?.certificates?.map( ( cert ) => ( {
                 name: cert.name || '',
+                number: cert.number || '',
             } ) ) || [],
             user_languages:
                 student?.user_languages?.map( ( ul ) => ( {
@@ -1045,25 +1046,40 @@ const ProfileWizard = ( {
                                                         <Trash2 size={ 16 } />
                                                     </Button>
                                                 </div>
-                                                <FormField
-                                                    control={ control }
-                                                    name={ `certificates.${ index }.name` }
-                                                    render={ ( { field } ) => (
-                                                        <FormItem>
-                                                            <FormLabel>Certification Name</FormLabel>
-                                                            <FormControl>
-                                                                <Input { ...field } data-error={ hasFieldError( `certificates.${ index }.name` ) ? 'true' : 'false' } />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    ) }
-                                                />
+                                                <div className="grid grid-flow-col gap-2">
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `certificates.${ index }.name` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Certificate Name</FormLabel>
+                                                                <FormControl>
+                                                                    <Input { ...field } data-error={ hasFieldError( `certificates.${ index }.name` ) ? 'true' : 'false' } />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                    <FormField
+                                                        control={ control }
+                                                        name={ `certificates.${ index }.number` }
+                                                        render={ ( { field } ) => (
+                                                            <FormItem>
+                                                                <FormLabel>Certificate Number</FormLabel>
+                                                                <FormControl>
+                                                                    <Input { ...field } data-error={ hasFieldError( `certificates.${ index }.number` ) ? 'true' : 'false' } />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        ) }
+                                                    />
+                                                </div>
                                             </div>
                                         ) ) }
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            onClick={ () => certificateFields.append( { name: '' } ) }
+                                            onClick={ () => certificateFields.append( { name: '', number: '' } ) }
                                         >
                                             <Plus size={ 16 } className="mr-2" /> Add Certification
                                         </Button>

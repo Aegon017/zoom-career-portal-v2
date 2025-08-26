@@ -32,12 +32,12 @@ final class Profile extends Model
         return $this->belongsTo(User::class);
     }
 
-    protected static function booted(): void
-    {
-        self::saving(function (Profile $profile): void {
-            $profile->summary = $profile->generateAISummary();
-        });
-    }
+    // protected static function booted(): void
+    // {
+    //     self::saving(function (Profile $profile): void {
+    //         $profile->summary = $profile->generateAISummary();
+    //     });
+    // }
 
     private function generateAISummary(): string
     {

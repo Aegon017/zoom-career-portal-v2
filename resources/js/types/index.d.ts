@@ -434,6 +434,7 @@ export interface Certificate {
     id?: number;
     user_id?: number;
     name: string;
+    number: string;
     created_at?: string;
     updated_at?: string;
 }

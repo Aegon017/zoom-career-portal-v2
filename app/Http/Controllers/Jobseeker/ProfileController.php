@@ -39,15 +39,15 @@ final class ProfileController extends Controller
 
         return Inertia::render('jobseeker/profile-wizard', [
             'student' => $user,
-            'skillOptions' => Skill::all()->map(fn ($skill): array => [
+            'skillOptions' => Skill::all()->map(fn($skill): array => [
                 'value' => (string) $skill->id,
                 'label' => $skill->name,
             ]),
-            'locations' => Location::take(100)->get()->map(fn ($location): array => [
+            'locations' => Location::take(100)->get()->map(fn($location): array => [
                 'value' => (string) $location->id,
                 'label' => $location->full_name,
             ]),
-            'languages' => Language::all()->map(fn ($language): array => [
+            'languages' => Language::all()->map(fn($language): array => [
                 'value' => (string) $language->id,
                 'label' => $language->name,
             ]),
@@ -60,7 +60,7 @@ final class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'address.location_id' => 'nullable|exists:locations,id',
             'personal_detail.gender' => 'required|string|in:Male,Female,Other',
@@ -89,6 +89,7 @@ final class ProfileController extends Controller
             'educations.*.course_type' => 'nullable|string|in:Full-time,Part-time,Online',
             'certificates' => 'nullable|array',
             'certificates.*.name' => 'required|string|max:255',
+            'certificates.*.number' => 'required|string|max:255',
             'user_languages' => 'nullable|array',
             'user_languages.*.language_id' => 'required|exists:languages,id',
             'user_languages.*.proficiency' => 'required|string|in:basic,intermediate,advanced,native',
@@ -417,7 +418,7 @@ final class ProfileController extends Controller
     private function updateProfile(User $user, array $validated): void
     {
         if (isset($validated['profile'])) {
-            $profileData = array_filter($validated['profile'], fn ($value): bool => ! empty($value));
+            $profileData = array_filter($validated['profile'], fn($value): bool => ! empty($value));
 
             if ($profileData !== []) {
                 $user->profile()->updateOrCreate(
@@ -441,8 +442,8 @@ final class ProfileController extends Controller
             $user->workPermits()->delete();
 
             $workPermits = array_map(
-                fn ($country): array => ['country' => $country],
-                array_filter($validated['work_permits'], fn ($country): bool => ! empty($country))
+                fn($country): array => ['country' => $country],
+                array_filter($validated['work_permits'], fn($country): bool => ! empty($country))
             );
 
             $user->workPermits()->createMany($workPermits);
@@ -502,8 +503,11 @@ final class ProfileController extends Controller
             $user->certificates()->delete();
 
             $certificates = array_map(
-                fn ($certificate): array => ['name' => $certificate['name']],
-                array_filter($validated['certificates'], fn ($certificate): bool => ! empty($certificate['name']))
+                fn($certificate): array => [
+                    'name' => $certificate['name'],
+                    'number' => $certificate['number']
+                ],
+                array_filter($validated['certificates'], fn($certificate): bool => ! empty($certificate['name']))
             );
 
             $user->certificates()->createMany($certificates);
