@@ -29,7 +29,7 @@ final class StudentRegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'phone' => 'nullable|string|max:15',
+            'phone' => 'nullable|string|max:15|unique:users,phone',
             'course_completed' => 'nullable|string|max:255',
             'student_id' => 'nullable|string|max:50',
             'completed_month' => 'nullable|string|max:20',
