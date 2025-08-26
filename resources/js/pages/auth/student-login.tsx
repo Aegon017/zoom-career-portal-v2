@@ -104,7 +104,7 @@ export default function StudentLogin( { canResetPassword }: Props ) {
                                 href="/student/register"
                                 className="font-medium text-blue-700 underline hover:text-blue-900"
                             >
-                                Register Here
+                                Register Now
                             </Link>{ ' ' }
                             and create a new account. Access will be granted after review by
                             our team within 3 business days.

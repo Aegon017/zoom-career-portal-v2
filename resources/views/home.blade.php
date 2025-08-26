@@ -112,7 +112,7 @@
                     </div>
                     <div class="form-group col-md-12 col-sm-12 col-md-offset-1">
                         <div class="col-md-4 col-sm-6">
-                            <p class="bottom text-left"><a href="student/register">Register Here</a></p>
+                            <p class="bottom text-left"><a href="student/register">Register Now</a></p>
                         </div>
                         <div class="col-md-4 col-sm-6">
                             <p class="bottom text-left"><a href="/forgot-password">Forget the
