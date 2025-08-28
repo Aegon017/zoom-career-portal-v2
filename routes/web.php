@@ -39,14 +39,14 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login', fn () => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth', 'verified.student')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -129,7 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // jobseeker routes
-    Route::middleware(['verified.student', 'profile.complete', 'resume.uploaded'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+    Route::middleware(['verified.phone', 'verified.student', 'profile.complete', 'resume.uploaded'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
         Route::get('/dashboard', (new JobseekerDashboardController())->index(...))->name('dashboard');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
@@ -185,7 +185,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
             return to_route('jobseeker.dashboard');
         } catch (FileCannotBeAdded $fileCannotBeAdded) {
-            return back()->withErrors(['resume' => 'Upload failed: '.$fileCannotBeAdded->getMessage()]);
+            return back()->withErrors(['resume' => 'Upload failed: ' . $fileCannotBeAdded->getMessage()]);
         }
     })->name('jobseeker.resume.upload');
 
@@ -193,8 +193,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/admin.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';
+require __DIR__ . '/auth.php';
