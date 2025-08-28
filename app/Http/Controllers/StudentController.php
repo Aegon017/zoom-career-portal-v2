@@ -32,7 +32,7 @@ final class StudentController extends Controller
             ->role('jobseeker')
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -276,7 +276,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student created successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to create student: '.$exception->getMessage());
+            Log::error('Failed to create student: ' . $exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to create student. Please try again.'])->withInput();
         }
@@ -566,7 +566,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student updated successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to update student: '.$exception->getMessage());
+            Log::error('Failed to update student: ' . $exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to update student. Please try again.'])->withInput();
         }
@@ -601,7 +601,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student deleted successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to delete student: '.$exception->getMessage());
+            Log::error('Failed to delete student: ' . $exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to delete student. Please try again.']);
         }
@@ -616,5 +616,14 @@ final class StudentController extends Controller
         $selectedFields = array_filter($selectedFields);
 
         return Excel::download(new StudentsExport($selectedFields), 'students.xlsx');
+    }
+
+    public function updateStatus(Request $request, User $user)
+    {
+        $user->profile->update([
+            "is_verified" => $request->is_verified
+        ]);
+
+        return back()->with('success', 'Verification status updated successfully');
     }
 }

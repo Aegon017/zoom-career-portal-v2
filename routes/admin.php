@@ -43,6 +43,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::resource('/companies', CompanyController::class);
     Route::get('/students/export', [StudentController::class, 'export']);
     Route::resource('/students', StudentController::class);
+    Route::patch('/students/{user}/status', [StudentController::class, 'updateStatus'])->name('students.updateStatus');
     Route::resource('/jobs', JobController::class);
     Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
     Route::post('/jobs/{job}/applications', [JobController::class, 'storeApplications'])->name('jobs.applications.store');

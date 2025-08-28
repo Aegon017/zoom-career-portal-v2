@@ -170,6 +170,7 @@ export interface Profile {
     experience: string;
     notice_period: string;
     summary: string;
+    is_verified: boolean;
     created_at: string;
     updated_at: string;
 }
