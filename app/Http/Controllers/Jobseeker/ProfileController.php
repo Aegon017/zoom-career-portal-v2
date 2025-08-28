@@ -92,7 +92,7 @@ final class ProfileController extends Controller
             'certificates.*.number' => 'required|string|max:255',
             'user_languages' => 'nullable|array',
             'user_languages.*.language_id' => 'required|exists:languages,id',
-            'user_languages.*.proficiency' => 'required|string|in:basic,intermediate,advanced,native',
+            'user_languages.*.proficiency' => 'required|string',
             'user_languages.*.can_read' => 'boolean',
             'user_languages.*.can_write' => 'boolean',
             'user_languages.*.can_speak' => 'boolean',
@@ -321,7 +321,7 @@ final class ProfileController extends Controller
         $data = $request->validate([
             'languages' => 'required|array',
             'languages.*.language_id' => 'required|integer|exists:languages,id',
-            'languages.*.proficiency' => ['required', new Enum(ProficiencyEnum::class)],
+            'languages.*.proficiency' => 'required|string',
             'languages.*.can_read' => 'nullable|boolean',
             'languages.*.can_write' => 'nullable|boolean',
             'languages.*.can_speak' => 'nullable|boolean',
