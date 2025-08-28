@@ -12,8 +12,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    courses: {
-        data: Course[];
+    data: {
+        data?: Course[];
         current_page: number;
         last_page: number;
         per_page: number;
@@ -25,7 +25,7 @@ interface Props {
     };
 }
 
-export default function CompaniesListing( { courses, filters }: Props ) {
+export default function CompaniesListing( { data, filters }: Props ) {
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Courses" />
@@ -33,12 +33,12 @@ export default function CompaniesListing( { courses, filters }: Props ) {
                 <DataTable
                     hasCreate={ true }
                     columns={ columns }
-                    data={ courses.data }
+                    data={ data?.data ?? [] }
                     pagination={ {
-                        current_page: courses.current_page,
-                        last_page: courses.last_page,
-                        per_page: courses.per_page,
-                        total: courses.total,
+                        current_page: data?.current_page,
+                        last_page: data?.last_page,
+                        per_page: data?.per_page,
+                        total: data?.total,
                     } }
                     filters={ filters }
                     routeName="/admin/courses"

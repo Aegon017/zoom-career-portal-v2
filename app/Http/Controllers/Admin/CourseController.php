@@ -17,16 +17,16 @@ final class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $courses = Course::query()
+        $data = Course::query()
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('admin/courses/courses-listing', [
-            'courses' => $courses,
+            'data' => $data,
             'filters' => $request->only('search', 'perPage'),
         ]);
     }
@@ -84,7 +84,7 @@ final class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:courses,name,'.$course->id,
+            'name' => 'required|string|max:255|unique:courses,name,' . $course->id,
         ]);
 
         $course->update($data);

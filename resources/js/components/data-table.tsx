@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>( {
         {
             onSuccess: () => {
                 setImportDialogOpen( false );
-                router.reload( { only: [ 'courses', 'pagination', 'filters' ] } );
+                router.reload( { only: [ 'data', 'pagination', 'filters' ] } );
                 toast.success( 'File imported successfully' );
             },
             onError: () => toast.error( 'Failed to import file' )
