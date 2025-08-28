@@ -46,7 +46,7 @@ Route::redirect('/admin', '/admin/login');
 Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
 Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth', 'verified.student')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('auth','verified.phone')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
