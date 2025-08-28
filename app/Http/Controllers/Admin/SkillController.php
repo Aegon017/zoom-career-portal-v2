@@ -28,7 +28,7 @@ final class SkillController extends Controller
     {
         Gate::authorize('view_any_skill', $this->user);
 
-        $skills = Skill::query()
+        $data = Skill::query()
             ->when(
                 $request->search,
                 fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
@@ -37,7 +37,7 @@ final class SkillController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/skills/skills-listing', [
-            'skills' => $skills,
+            'data' => $data,
             'filters' => $request->only('search', 'perPage'),
         ]);
     }
