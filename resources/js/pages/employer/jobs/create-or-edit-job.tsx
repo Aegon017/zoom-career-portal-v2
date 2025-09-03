@@ -227,7 +227,7 @@ const CreateOrEditJob = ( {
                                         name="work_model"
                                         render={ ( { field } ) => (
                                             <FormItem>
-                                                <FormLabel>Work Model</FormLabel>
+                                                <FormLabel>Work Mode</FormLabel>
                                                 <FormControl>
                                                     <MultipleSelector
                                                         options={ workModelOptions }
@@ -400,6 +400,7 @@ const CreateOrEditJob = ( {
                                                             onSelect={ field.onChange }
                                                             disabled={ ( date ) => date < new Date() }
                                                             autoFocus
+                                                            captionLayout='dropdown'
                                                         />
                                                     </PopoverContent>
                                                 </Popover>

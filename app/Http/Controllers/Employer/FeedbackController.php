@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
@@ -13,16 +15,16 @@ use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FeedbackController extends Controller
+final class FeedbackController extends Controller
 {
     public function create(Opening $job): Response
     {
         $candidateOptions = $job->applications()
             ->with('user:id,name,email')
             ->get()
-            ->map(fn($app) => [
+            ->map(fn ($app): array => [
                 'value' => $app->user->email,
-                'label' => $app->user->name . " (" . $app->user->email . ")",
+                'label' => $app->user->name.' ('.$app->user->email.')',
             ])
             ->prepend([
                 'value' => 'not_hired',
@@ -53,7 +55,7 @@ class FeedbackController extends Controller
             return back()->withErrors(['error' => 'You have already submitted feedback for this job.']);
         }
 
-        $feedback =  Feedback::create([
+        $feedback = Feedback::create([
             'user_id' => Auth::id(),
             'opening_id' => $job->id,
             'feedback' => $request->feedback,

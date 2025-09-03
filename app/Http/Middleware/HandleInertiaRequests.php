@@ -51,6 +51,7 @@ final class HandleInertiaRequests extends Middleware
                 'user' => Auth::user(),
                 'isEmployerVerified' => Auth::user()?->companyUsers()?->latest()->first()?->verification_status === VerificationStatusEnum::Verified->value,
                 'roles' => Auth::user()?->getRoleNames() ?? [],
+                'permissions' => Auth::user()?->getAllPermissions()->pluck('name') ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [

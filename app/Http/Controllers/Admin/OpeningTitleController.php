@@ -7,18 +7,24 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Models\OpeningTitle;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class OpeningTitleController extends Controller
 {
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        Gate::authorize('view_any_opening_title', $this->user);
+
         $job_titles = OpeningTitle::query()
             ->when(
                 $request->search,
@@ -38,6 +44,8 @@ final class OpeningTitleController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create_opening_title', $this->user);
+
         $operation = OperationsEnum::Create;
 
         return Inertia::render('admin/job-titles/create-or-edit-job-title', [
@@ -51,6 +59,8 @@ final class OpeningTitleController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create_opening_title', $this->user);
+
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:opening_titles,name',
         ]);
@@ -73,6 +83,8 @@ final class OpeningTitleController extends Controller
      */
     public function edit(OpeningTitle $jobTitle)
     {
+        Gate::authorize('update_opening_title', $this->user);
+
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/job-titles/create-or-edit-job-title', [
@@ -87,6 +99,8 @@ final class OpeningTitleController extends Controller
      */
     public function update(Request $request, OpeningTitle $jobTitle)
     {
+        Gate::authorize('update_opening_title', $this->user);
+
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:opening_titles,name,'.$jobTitle->id,
         ]);
@@ -101,6 +115,8 @@ final class OpeningTitleController extends Controller
      */
     public function destroy(OpeningTitle $jobTitle)
     {
+        Gate::authorize('delete_opening_title', $this->user);
+
         $jobTitle->delete();
 
         return to_route('admin.job-titles.index')->with('success', 'Job title record deleted successfully');

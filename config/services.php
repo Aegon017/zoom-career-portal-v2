@@ -44,5 +44,4 @@ return [
         'template_id' => env('SMS_TEMPLATE_ID'),
         'entity_id' => env('SMS_ENTITY_ID'),
     ],
-
 ];

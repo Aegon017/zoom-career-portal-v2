@@ -1,25 +1,12 @@
-import { useState } from 'react';
-import { Head, router } from '@inertiajs/react';
-import { User } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Head } from '@inertiajs/react'; // Removed unused router import
+import { Download, User, Loader2 } from 'lucide-react';
 
 import JobApplicationCard from '@/components/job-application-card';
 import { JobApplicationsFilter } from '@/components/job-applications-filter';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/employer-layout';
 import { Application, BreadcrumbItem, Opening, Option } from '@/types';
-import { Input } from '@/components/ui/input';
-import TextEditor from '@/components/text-editor';
+import { Button } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,89 +21,87 @@ interface Props {
     applications: Application[];
     statuses: Option[];
     skills: string[];
+    exportUrl?: string;
 }
 
-export default function ApplicationsIndex( { jobs, job_id, applications, statuses, skills }: Props ) {
-    const [ openMessage, setOpenMessage ] = useState( false );
-    const [ message, setMessage ] = useState( '' );
-    const [ subject, setSubject ] = useState( '' );
+export default function ApplicationsIndex( {
+    jobs,
+    job_id,
+    applications = [], // Default value for safety
+    statuses,
+    skills,
+    exportUrl
+}: Props ) {
+    // Memoized derived values for performance
+    const hasApplications = useMemo( () => applications.length > 0, [ applications ] );
+    const hasSelectedJob = useMemo( () => Boolean( job_id ), [ job_id ] );
+    const [ isExporting, setIsExporting ] = useState( false );
 
-    const hasApplications = applications?.length > 0;
-    const hasSelectedJob = Boolean( job_id );
+    // Memoized job options to prevent unnecessary recalculations
+    const jobOptions = useMemo( () => (
+        jobs.map( job => ( {
+            value: String( job.id ),
+            label: job.title,
+        } ) )
+    ), [ jobs ] );
 
-    const handleMessageSubmit = ( e: React.FormEvent ) => {
-        e.preventDefault();
-        if ( !job_id ) return;
+    const handleExport = () => {
+        if ( !exportUrl ) return;
 
-        router.post(
-            `/employer/jobs/${ job_id }/shortlisted/message`,
-            { message, subject },
-            {
-                onSuccess: () => {
-                    setMessage( '' );
-                    setSubject( '' );
-                    setOpenMessage( false );
-                },
-            }
-        );
+        setIsExporting( true );
+        try {
+            // Improved download method using hidden anchor
+            const anchor = document.createElement( 'a' );
+            anchor.href = exportUrl;
+            anchor.download = 'applications.xlsx';
+            anchor.style.display = 'none';
+            document.body.appendChild( anchor );
+            anchor.click();
+            document.body.removeChild( anchor );
+        } catch ( error ) {
+            console.error( 'Export failed:', error );
+        } finally {
+            setIsExporting( false );
+        }
     };
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title="Applications" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex flex-1 flex-col gap-4 p-4 rounded-xl">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <h1 className="text-2xl font-semibold">Candidate Applications</h1>
 
                     <div className="flex items-center gap-2">
+                        { exportUrl && (
+                            <Button
+                                variant="outline"
+                                onClick={ handleExport }
+                                disabled={ isExporting }
+                                aria-busy={ isExporting }
+                                className="flex items-center gap-2"
+                            >
+                                { isExporting ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Exporting...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </>
+                                ) }
+                            </Button>
+                        ) }
+
                         <JobApplicationsFilter
                             statuses={ statuses }
                             skills={ skills }
-                            defaultValue={ job_id }
-                            jobOptions={ jobs.map( ( job ) => ( {
-                                value: String( job.id ),
-                                label: job.title,
-                            } ) ) }
+                            defaultValue={ job_id ? job_id : undefined }
+                            jobOptions={ jobOptions }
                         />
-
-                        { hasSelectedJob && (
-                            <Dialog open={ openMessage } onOpenChange={ setOpenMessage }>
-                                <DialogTrigger asChild>
-                                    <Button variant="secondary">Message Shortlisted</Button>
-                                </DialogTrigger>
-
-                                <DialogContent className="sm:max-w-2xl">
-                                    <DialogHeader>
-                                        <DialogTitle>Message Shortlisted Candidates</DialogTitle>
-                                        <DialogDescription>
-                                            Send a message to all shortlisted candidates for this job.
-                                        </DialogDescription>
-                                    </DialogHeader>
-
-                                    <form onSubmit={ handleMessageSubmit } className="space-y-4">
-                                        <Input
-                                            value={ subject }
-                                            type='text'
-                                            onChange={ ( e ) => setSubject( e.target.value ) }
-                                            placeholder="Write your subject here..."
-                                            required />
-                                        <TextEditor
-                                            disabled={ false }
-                                            value={ message }
-                                            onChange={ ( value ) => setMessage( value ) }
-                                            placeholder="Type your message..."
-                                        />
-                                        <DialogFooter>
-                                            <DialogClose asChild>
-                                                <Button variant="outline" type="button">Cancel</Button>
-                                            </DialogClose>
-                                            <Button type="submit">Send</Button>
-                                        </DialogFooter>
-                                    </form>
-                                </DialogContent>
-                            </Dialog>
-                        ) }
                     </div>
                 </div>
 
@@ -131,7 +116,7 @@ export default function ApplicationsIndex( { jobs, job_id, applications, statuse
                         ) ) }
                     </div>
                 ) : (
-                    <div className="flex flex-1 flex-col items-center justify-center space-y-4">
+                    <div className="flex flex-1 flex-col items-center justify-center gap-4 py-8">
                         <div className="rounded-full bg-muted p-4">
                             <User className="h-12 w-12 text-muted-foreground" />
                         </div>

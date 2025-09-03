@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Jobs\SendJobClosureReminder;
@@ -7,7 +9,7 @@ use App\Models\Opening;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class ScheduleJobClosureReminders extends Command
+final class ScheduleJobClosureReminders extends Command
 {
     /**
      * The name and signature of the console command.

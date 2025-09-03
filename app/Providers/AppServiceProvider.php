@@ -39,10 +39,9 @@ final class AppServiceProvider extends ServiceProvider
                 $role = $user->getRoleNames()->first();
 
                 return match ($role) {
-                    'super_admin' => route('admin.dashboard'),
                     'jobseeker' => route('jobseeker.dashboard'),
                     'employer' => route('employer.dashboard'),
-                    default => '/',
+                    default => route('admin.dashboard'),
                 };
             }
 

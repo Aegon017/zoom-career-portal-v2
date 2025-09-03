@@ -1,10 +1,10 @@
 import { LucideIcon } from 'lucide-react';
-import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
     isEmployerVerified: boolean;
     roles: string[];
+    permissions: string[];
 }
 
 export interface PaginatedData<T> {
@@ -80,6 +80,7 @@ export interface User {
     resumes: Resume[];
     companies: Company[];
     company_users: CompanyUser[];
+    profile_completed: number;
     created_at: string;
     updated_at: string;
     [ key: string ]: unknown;
@@ -139,6 +140,7 @@ export interface Company {
     size: string;
     type: string;
     verification_status: string;
+    match_score_cutoff: number;
     users: User[];
     industry: Industry;
     address: Address;
@@ -168,6 +170,7 @@ export interface Profile {
     experience: string;
     notice_period: string;
     summary: string;
+    is_verified: boolean;
     created_at: string;
     updated_at: string;
 }
@@ -286,6 +289,11 @@ export interface Education {
     course_type: string;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface Course {
+    id: number;
+    name: string;
 }
 
 interface OpeningTItle {
@@ -427,6 +435,7 @@ export interface Certificate {
     id?: number;
     user_id?: number;
     name: string;
+    number: string;
     created_at?: string;
     updated_at?: string;
 }

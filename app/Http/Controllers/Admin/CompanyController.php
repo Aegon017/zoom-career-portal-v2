@@ -39,12 +39,12 @@ final class CompanyController extends Controller
     public function create()
     {
         $operation = OperationsEnum::Create;
-        $industries = Industry::take(10)->get()->map(fn($industry) => [
+        $industries = Industry::take(10)->get()->map(fn($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
 
-        $locations = Location::take(10)->get()->map(fn($location) => [
+        $locations = Location::take(10)->get()->map(fn($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
@@ -75,6 +75,7 @@ final class CompanyController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
             'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'match_score_cutoff' => 'required|integer|min:10|max:100',
         ]);
 
         $company = Company::create($data);
@@ -112,22 +113,22 @@ final class CompanyController extends Controller
     {
         $company->load(['industry', 'address.location']);
         $operation = OperationsEnum::Edit;
-        $industries = Industry::when($company->industry_id, function ($query) use ($company) {
+        $industries = Industry::when($company->industry_id, function ($query) use ($company): void {
             $query->where('id', '!=', $company->industry_id);
         })
             ->take(10)
             ->get()
-            ->map(fn($industry) => [
+            ->map(fn($industry): array => [
                 'value' => $industry->id,
                 'label' => $industry->name,
             ]);
 
-        $locations = Location::when($company->address && $company->address->location_id, function ($query) use ($company) {
+        $locations = Location::when($company->address && $company->address->location_id, function ($query) use ($company): void {
             $query->where('id', '!=', $company->address->location_id);
         })
             ->take(10)
             ->get()
-            ->map(fn($location) => [
+            ->map(fn($location): array => [
                 'value' => $location->id,
                 'label' => $location->full_name,
             ]);
@@ -137,7 +138,7 @@ final class CompanyController extends Controller
             if ($companyIndustry) {
                 $industries->prepend([
                     'value' => $companyIndustry->id,
-                    'label' => $companyIndustry->name
+                    'label' => $companyIndustry->name,
                 ]);
             }
         }
@@ -147,7 +148,7 @@ final class CompanyController extends Controller
             if ($companyLocation) {
                 $locations->prepend([
                     'value' => $companyLocation->id,
-                    'label' => $companyLocation->full_name
+                    'label' => $companyLocation->full_name,
                 ]);
             }
         }
@@ -179,6 +180,7 @@ final class CompanyController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
             'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'match_score_cutoff' => 'required|integer|min:10|max:100',
         ]);
 
         $company->update($data);

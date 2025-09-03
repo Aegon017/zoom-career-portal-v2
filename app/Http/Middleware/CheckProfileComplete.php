@@ -26,7 +26,7 @@ final class CheckProfileComplete
         }
 
         if ($user->hasRole('jobseeker') && ! $this->isProfileComplete($user)) {
-            return to_route('jobseeker.profile.show', $user->id)->with('error', 'Complete your profile');
+            return to_route('jobseeker.profile.wizard')->with('error', 'Please complete your profile');
         }
 
         return $next($request);
@@ -35,9 +35,8 @@ final class CheckProfileComplete
     private function isProfileComplete($user): bool
     {
         return $user->profile &&
-            $user->profile->summary &&
             $user->skills->count() > 0 &&
             $user->educations->count() > 0 &&
-            $user->personal_detail && $user->userLanguages && $user->workPermits;
+            $user->personalDetail && $user->userLanguages && $user->workPermits;
     }
 }

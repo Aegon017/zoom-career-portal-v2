@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Enums\EmploymentTypeEnum;
 use App\Enums\JobApplicationStatusEnum;
 use App\Enums\VerificationStatusEnum;
+use App\Models\Company;
 use App\Models\Industry;
+use App\Models\Location;
 use App\Models\Opening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,14 +23,7 @@ final class JobseekerJobController extends Controller
         $query = Opening::query()
             ->where('verification_status', VerificationStatusEnum::Verified->value)
             ->where('expires_at', '>', now())
-            ->with('company.industry');
-
-        // Company filter
-        if ($request->filled('company')) {
-            $query->whereHas('company', function ($q) use ($request): void {
-                $q->where('name', 'like', '%'.$request->company.'%');
-            });
-        }
+            ->with('company.industry', 'address.location');
 
         // Job title filter
         if ($request->filled('job_title')) {
@@ -38,25 +33,23 @@ final class JobseekerJobController extends Controller
         // Employment types filter
         $employmentTypes = $request->input('employment_types', []);
         if (! empty($employmentTypes)) {
-            if (! is_array($employmentTypes)) {
-                $employmentTypes = [$employmentTypes];
-            }
-
             $query->whereIn('employment_type', $employmentTypes);
         }
 
-        // Industries filter - now using industry IDs
+        // Industries filter
         $industryIds = $request->input('industries', []);
         if (! empty($industryIds)) {
-            if (! is_array($industryIds)) {
-                $industryIds = [$industryIds];
-            }
-
             $query->whereHas('company', function ($q) use ($industryIds): void {
                 $q->whereHas('industry', function ($q) use ($industryIds): void {
                     $q->whereIn('id', $industryIds);
                 });
             });
+        }
+
+        // Selected companies filter
+        $selectedCompanies = $request->input('selected_companies', []);
+        if (! empty($selectedCompanies)) {
+            $query->whereIntegerInRaw('company_id', $selectedCompanies);
         }
 
         // Get distinct industries with active openings
@@ -68,17 +61,46 @@ final class JobseekerJobController extends Controller
             ->orderBy('name')
             ->get();
 
+        $companies = Company::get();
+
         $initialJobs = $query->latest()->paginate(10);
+
+        $locationIds = $request->input('locations', []);
+        if (! empty($locationIds)) {
+            $query->whereHas('address', function ($q) use ($locationIds): void {
+                $q->whereIntegerInRaw('location_id', $locationIds);
+            });
+        }
+
+        $locations = Location::whereHas('addresses', function ($q): void {
+            $q->whereHasMorph(
+                'addressable',
+                [Opening::class],
+                function ($q): void {
+                    $q->where('verification_status', VerificationStatusEnum::Verified->value)
+                        ->where('expires_at', '>', now());
+                }
+            );
+        })
+            ->select('id', 'country', 'state', 'city')
+            ->get()
+            ->map(fn($location): array => [
+                'id' => $location->id,
+                'full_name' => $location->full_name,
+            ]);
 
         return inertia('jobseeker/jobs/all-jobs', [
             'initialJobs' => $initialJobs,
             'employmentTypes' => EmploymentTypeEnum::options(),
-            'industries' => $industries, // Pass industries to frontend
+            'industries' => $industries,
+            'companies' => $companies,
+            'locations' => $locations,
             'filters' => [
-                'company' => $request->input('company', ''),
                 'job_title' => $request->input('job_title', ''),
                 'employment_types' => $employmentTypes,
-                'industries' => $industryIds, // Use IDs instead of names
+                'industries' => $industryIds,
+                'selected_companies' => $selectedCompanies,
+                'locations' => $locationIds,
             ],
         ]);
     }

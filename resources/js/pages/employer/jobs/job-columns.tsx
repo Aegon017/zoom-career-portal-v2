@@ -6,17 +6,21 @@ import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
-const handleEdit = (id: number) => {
-    router.get(`/employer/jobs/${id}/edit`);
+const handleEdit = ( id: number ) => {
+    router.get( `/employer/jobs/${ id }/edit` );
 };
 
-const handleDelete = (id: number) => {
-    router.delete(`/employer/jobs/${id}`, { preserveScroll: true });
+const handleDelete = ( id: number ) => {
+    router.delete( `/employer/jobs/${ id }`, { preserveScroll: true } );
 };
+
+const handleDuplicate = ( id: number ) => {
+    router.post( `/employer/jobs/${ id }/duplicate`, { preserveScroll: true } );
+}
 
 export const columns: ColumnDef<Opening>[] = [
     {
-        accessorFn: (row, index) => index + 1,
+        accessorFn: ( row, index ) => index + 1,
         header: 'S.No.',
         enableGlobalFilter: false,
     },
@@ -38,20 +42,25 @@ export const columns: ColumnDef<Opening>[] = [
         header: 'Status',
     },
     {
-        accessorKey: 'verification_status',
-        header: 'Verification status',
-    },
-    {
         accessorKey: 'published_at',
-        header: 'Published at',
-        cell: ({ row }) => {
-            return format(new Date(row.getValue('published_at')), 'dd MMM yyyy');
-        },
+        header: 'Published Date',
+        cell: ( { row } ) => {
+            const rawDate = row.getValue( 'published_at' );
+            if ( !rawDate ) return <span>Not published</span>;
+            const date = new Date( String( rawDate ) );
+            if ( isNaN( date.getTime() ) ) return <span>Invalid date</span>;
+            return format( date, 'dd MMM yyyy' );
+        }
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
-            return <DataTableActions onEdit={() => handleEdit(row.original.id)} onDelete={() => handleDelete(row.original.id)} />;
+        cell: ( { row } ) => {
+            return <DataTableActions
+                onEdit={ () => handleEdit( row.original.id ) }
+                onDelete={ () => handleDelete( row.original.id ) }
+                hasDuplicate={ true }
+                onDuplicate={ () => handleDuplicate( row.original.id ) }
+            />;
         },
     },
 ];

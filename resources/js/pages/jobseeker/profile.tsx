@@ -116,19 +116,6 @@ export default function Profile( { user }: Props ) {
                             </div>
                         </div>
                     </div>
-
-                    <div className="zc-profile-summary zc-card-style-2 mb-3">
-                        <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
-                            <h3 className="mb-0">Summary</h3>
-                            { isUpdatable && (
-                                <a onClick={ () => openModal( 'summary' ) } className="zc-btn-edit">
-                                    <i className="fa-solid fa-pencil"></i>
-                                </a>
-                            ) }
-                        </div>
-                        <div className="zc-card-content">{ user.profile?.summary ?? 'No summary added yet.' }</div>
-                    </div>
-
                     <div className="zc-profile-skills zc-card-style-2 mb-3">
                         <div className="zc-card-header d-flex align-items-center justify-content-between gap-2">
                             <h3 className="mb-0">Skills</h3>
@@ -160,8 +147,6 @@ export default function Profile( { user }: Props ) {
                     <Languages isUpdatable={ isUpdatable } user={ user } />
 
                     <ProfileModal user={ user } isActive={ activeModal === 'profile' } handleClose={ closeModal } />
-
-                    <SummaryModal defaultSummary={ user.profile?.summary } isActive={ activeModal === 'summary' } handleClose={ closeModal } />
 
                     <SkillsModal user={ user } isActive={ activeModal === 'skills' } handleClose={ closeModal } />
                 </div>

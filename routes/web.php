@@ -2,27 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\ApplicationsExportController;
 use App\Http\Controllers\Admin\CompanyController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\EmployeeController;
-use App\Http\Controllers\Admin\EmployerVerifyController;
-use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\IndustryController;
-use App\Http\Controllers\Admin\JobController;
-use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LanguageController;
-use App\Http\Controllers\Admin\LocationController as AdminLocationController;
-use App\Http\Controllers\Admin\OpeningTitleController;
-use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
-use App\Http\Controllers\Admin\StudentVerificationController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Employer\ApplicationsController;
 use App\Http\Controllers\Employer\CandidateMatchController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\FeedbackController;
-use App\Http\Controllers\Employer\JobDescriptionStreamController;
 use App\Http\Controllers\Employer\JobseekerController;
 use App\Http\Controllers\Employer\OnboardingController;
 use App\Http\Controllers\Employer\OpeningController;
@@ -41,12 +30,14 @@ use App\Http\Controllers\JobseekerJobController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OtpController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TempUploadController;
+use App\Jobs\ProcessResume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
 Route::get('/', fn() => view('home'))->name('home');
 
@@ -55,7 +46,7 @@ Route::redirect('/admin', '/admin/login');
 Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
 Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('auth','verified.phone')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -88,9 +79,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/notifications/markAllAsRead', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     // employer routes
-    Route::middleware('role:employer|super_admin')->prefix('employer')->name('employer.')->group(function (): void {
-        Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->middleware(['employer_is_verified'])->name('dashboard');
+    Route::prefix('employer')->name('employer.')->group(function (): void {
+        Route::get('/dashboard', (new EmployerDashboardController())->index(...))->middleware(['employer_is_verified'])->name('dashboard');
         Route::middleware('employer_is_verified')->resource('/jobs', OpeningController::class);
+        Route::middleware('employer_is_verified')->post('/jobs/{opening}/duplicate', [OpeningController::class, 'duplicate']);
 
         // on-boarding routes
         Route::middleware('employer.onboarding')->prefix('on-boarding')->name('on-boarding.')->group(function (): void {
@@ -109,14 +101,14 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             });
         });
 
-        Route::get('/company', [EmployerCompanyController::class, 'index'])->name('company.index');
-        Route::get('/company/edit', [EmployerCompanyController::class, 'edit'])->name('company.edit');
-        Route::put('/company/{company}', [EmployerCompanyController::class, 'update'])->name('company.update');
+        Route::get('/company', (new EmployerCompanyController())->index(...))->name('company.index');
+        Route::get('/company/edit', (new EmployerCompanyController())->edit(...))->name('company.edit');
+        Route::put('/company/{company}', (new EmployerCompanyController())->update(...))->name('company.update');
 
         Route::resource('/manage-profile', EmployerManageProfileController::class);
         Route::post('/profile/experience', [EmployerManageProfileController::class, 'storeExperience'])->name('profile.experience.store');
         Route::patch('/dashboard/profile', [EmployerManageProfileController::class, 'updateProfile'])->name('dashboard.profile.update');
-        Route::middleware(['auth', 'role:employer'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
+        Route::middleware(['auth'])->put('/profile/banner', [EmployerManageProfileController::class, 'updateBanner'])->name('profile.banner.update');
 
         Route::prefix('/jobseekers')->name('jobseekers.')->group(function (): void {
             Route::get('/', [JobseekerController::class, 'index'])->name('index');
@@ -126,20 +118,19 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::prefix('/applications')->name('applications.')->group(function (): void {
             Route::get('/', [ApplicationsController::class, 'index'])->name('index');
             Route::post('/', [ApplicationsController::class, 'store'])->name('store');
+            Route::get('/download-resumes', [ApplicationsController::class, 'downloadResumes'])->name('download-resumes');
         });
 
         Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
 
-        Route::post('/ai/job-description', [JobDescriptionStreamController::class, 'stream']);
-        Route::get('/ai/match-score/{application}', [CandidateMatchController::class, 'score']);
         Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
         Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
+        Route::get('/applications/export/{job}', ApplicationsExportController::class)->name('applications.export');
     });
 
     // jobseeker routes
-    Route::middleware('role:jobseeker')->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
-        Route::get('/dashboard', [JobseekerDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/explore', [JobseekerDashboardController::class, 'explore'])->name('dashboard.explore');
+    Route::middleware(['verified.phone', 'verified.student', 'profile.complete', 'resume.uploaded'])->prefix('jobseeker')->name('jobseeker.')->group(function (): void {
+        Route::get('/dashboard', (new JobseekerDashboardController())->index(...))->name('dashboard');
         Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])->name('profile.basic-details.store');
         Route::post('/profile/skills', [ProfileController::class, 'storeSkills'])->name('profile.skills.store');
         Route::post('/profile/summary', [ProfileController::class, 'storeSummary'])->name('profile.summary.store');
@@ -167,43 +158,36 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/employers/{company}', [EmployerController::class, 'show'])->name('employers.show');
         Route::get('/career-interests', [CareerInterestController::class, 'index'])->name('career-interests.index');
         Route::post('/career-interests/update', [CareerInterestController::class, 'update'])->name('career-interests.update');
+        Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
     });
 
-    Route::middleware('role:jobseeker')->get('/jobseeker/profile/{user}', [ProfileController::class, 'show'])->name('jobseeker.profile.show');
+    Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
+    Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
+    Route::get('/jobseeker/resume/upload', fn() => Inertia::render('jobseeker/resume-upload'))->name('jobseeker.resume.upload');
+    Route::post('/jobseeker/resume/upload', function (Request $request) {
+        $request->validate([
+            'resume' => 'required|string',
+        ]);
 
-    // admin routes
-    Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function (): void {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::resource('/roles', RoleController::class);
-        Route::resource('/job-titles', OpeningTitleController::class);
-        Route::resource('/skills', SkillController::class);
-        Route::resource('/users', UserController::class);
-        Route::resource('/employees', EmployeeController::class);
-        Route::get('/companies/export', [CompanyController::class, 'export']);
-        Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');
-        Route::resource('/companies', CompanyController::class);
-        Route::get('/students/export', [StudentController::class, 'export']);
-        Route::resource('/students', StudentController::class);
-        Route::resource('/jobs', JobController::class);
-        Route::get('/jobs/{job}/applications', [JobController::class, 'applications'])->name('jobs.applications.index');
-        Route::post('/jobs/{job}/applications', [JobController::class, 'storeApplications'])->name('jobs.applications.store');
-        Route::get('/employer/verify', [EmployerVerifyController::class, 'verify'])->name('employer.verify');
-        Route::post('/employer/verify', [EmployerVerifyController::class, 'store'])->name('employer.verify.store');
-        Route::get('/job/verify', [JobVerifyController::class, 'verify'])->name('job.verify');
-        Route::post('/job/verify/{opening}', [JobVerifyController::class, 'store'])->name('job.verify.store');
+        $path = $request->resume;
 
-        Route::resource('/industries', IndustryController::class);
-        Route::resource('/locations', AdminLocationController::class);
-        Route::resource('/languages', LanguageController::class);
+        $user = Auth::user();
 
-        Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site.settings');
-        Route::post('/site-settings', [SiteSettingController::class, 'store'])->name('site.settings.store');
-        Route::get('/students/verify/{student}', [StudentVerificationController::class, 'show'])->name('students.verify');
-        Route::post('/students/verify/{student}', [StudentVerificationController::class, 'verify'])->name('students.verify.approve');
-        Route::delete('/students/reject/{student}', [StudentVerificationController::class, 'reject'])->name('students.verify.reject');
-        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
-        Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
-    });
+        if (! Storage::exists($path)) {
+            return back()->withErrors(['resume' => 'File not found. Please upload again.']);
+        }
+
+        try {
+            $resume = $user->resumes()->create();
+            $resume->addMediaFromDisk($path)->toMediaCollection('resumes');
+            Storage::delete($path);
+            ProcessResume::dispatch($resume);
+
+            return to_route('jobseeker.dashboard');
+        } catch (FileCannotBeAdded $fileCannotBeAdded) {
+            return back()->withErrors(['resume' => 'Upload failed: ' . $fileCannotBeAdded->getMessage()]);
+        }
+    })->name('jobseeker.resume.upload');
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
@@ -212,4 +196,5 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
 require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';

@@ -12,7 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    skills: {
+    data: {
         data: Skill[];
         current_page: number;
         last_page: number;
@@ -25,24 +25,27 @@ interface Props {
     };
 }
 
-export default function SkillsListing({ skills, filters }: Props) {
+export default function SkillsListing({ data, filters }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Skills" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
                     columns={columns}
-                    data={skills.data}
+                    data={data?.data ?? []}
                     pagination={{
-                        current_page: skills.current_page,
-                        last_page: skills.last_page,
-                        per_page: skills.per_page,
-                        total: skills.total,
+                        current_page: data?.current_page,
+                        last_page: data?.last_page,
+                        per_page: data?.per_page,
+                        total: data?.total,
                     }}
                     filters={filters}
                     routeName="/admin/skills"
                     listingName="skill"
                     createUrl="/admin/skills/create"
+                    hasImport={ true }
+                    importUrl="/admin/skills/import"
+                    importColumns={['name']}
                 />
             </div>
         </AppLayout>

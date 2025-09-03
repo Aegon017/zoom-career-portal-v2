@@ -25,7 +25,11 @@ final class RemoteLoginController extends Controller
             $user = Auth::user();
             Session::regenerate();
 
-            return redirect($this->redirectToDashboard($user));
+            if ($request->header('X-Inertia')) {
+                return redirect($this->redirectToDashboard($user));
+            }
+
+            return response()->json(['status' => true]);
         }
 
         $remote_user = DB::connection('remote_mysql')
@@ -55,12 +59,20 @@ final class RemoteLoginController extends Controller
             Auth::login($user);
             Session::regenerate();
 
-            return redirect($this->redirectToDashboard($user));
+            if ($request->header('X-Inertia')) {
+                return redirect($this->redirectToDashboard($user));
+            }
+
+            return response()->json(['status' => true]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
-        ]);
+        if ($request->header('X-Inertia')) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
+        return response()->json(['status' => false]);
     }
 
     private function saveUser($user)
@@ -80,10 +92,9 @@ final class RemoteLoginController extends Controller
         $role = $user->getRoleNames()->first();
 
         return match ($role) {
-            'super_admin' => route('admin.dashboard'),
             'jobseeker' => route('jobseeker.dashboard'),
             'employer' => route('employer.dashboard'),
-            default => '/',
+            default => route('admin.dashboard'),
         };
     }
 }

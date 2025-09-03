@@ -7,7 +7,6 @@ import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
-import logo from '../../assets/images/logo.png';
 
 export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<typeof useSidebarToggle> }) {
     const cleanup = useMobileNavigation();
@@ -41,7 +40,7 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                 <i className="fa-solid fa-bars"></i>
             </button>
             <Link href="/jobseeker/explore" className="brand-logo">
-                <img src={logo} alt="Zoom Career" />
+                <img src='/logo.png' alt="Zoom Career" />
             </Link>
             <ul className="zc-top-nav-bar">
                 <li className="zc-nav-item zc-dropdown user-notification" ref={notificationNav.dropdownRef}>
@@ -116,18 +115,14 @@ export function AppSidebarHeader({ sidebarToggle }: { sidebarToggle: ReturnType<
                                 <i className="fa-solid fa-id-badge me-2"></i>
                                 Profile
                             </Link>
-                            <Link href="/jobseeker/jobs/your/applied" className="zc-dropdown-item">
-                                <i className="fa-solid fa-briefcase me-2"></i>
-                                My Jobs
-                            </Link>
                             <Link href="/jobseeker/resumes" className="zc-dropdown-item">
                                 <i className="fa-solid fa-file me-2"></i>
                                 My Resumes
                             </Link>
-                            <Link href="/jobseeker/career-interests" className="zc-dropdown-item">
+                            {/* <Link href="/jobseeker/career-interests" className="zc-dropdown-item">
                                 <i className="fa-solid fa-spa me-2"></i>
                                 My Career Interests
-                            </Link>
+                            </Link> */}
                             <Link className="zc-dropdown-item" method="post" href="/logout" as="button" onClick={handleLogout}>
                                 <i className="fa-solid fa-right-from-bracket me-2"></i>
                                 Logout

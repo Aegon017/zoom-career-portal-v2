@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Middleware\CheckProfileComplete;
 use App\Http\Middleware\EmployerVerified;
 use App\Http\Middleware\EnsurePhoneIsVerified;
+use App\Http\Middleware\EnsureResumeUploaded;
 use App\Http\Middleware\EnsureStudentIsVerified;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -18,6 +19,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
@@ -38,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified.phone' => EnsurePhoneIsVerified::class,
             'verified.student' => EnsureStudentIsVerified::class,
             'profile.complete' => CheckProfileComplete::class,
+            'resume.uploaded' => EnsureResumeUploaded::class,
         ]);
 
         $middleware->validateCsrfTokens(
@@ -48,9 +51,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 'employer/profile/image-remove',
                 'company/profile/logo-upload',
                 'company/profile/logo-remove',
-                'employer/ai/job-description',
-                'employer/ai/match-score/*',
                 'ai/summary',
+                '/remote/login',
             ]
         );
     })

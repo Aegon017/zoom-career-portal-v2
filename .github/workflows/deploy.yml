@@ -3,7 +3,7 @@ name: Deploy website on push
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   admin-app:
@@ -28,13 +28,13 @@ jobs:
         curl -sS https://getcomposer.org/installer | php
         sudo mv composer.phar /usr/local/bin/compose
 
-    - name: Installing PHP dependencies
-      run: composer install
+    # - name: Installing PHP dependencies
+    #   run: composer install
 
-    - name: Installing Node dependencies
-      run: |
-        npm i
-        npm run build
+    # - name: Installing Node dependencies
+    #   run: |
+    #     npm i
+    #     npm run build
 
     - name: Deploying project # copy files to specified FTP directory
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5

@@ -181,6 +181,13 @@ final class OpeningController extends Controller
         return to_route('employer.jobs.index')->with('success', 'Job record deleted successfully ');
     }
 
+    public function duplicate(Opening $opening)
+    {
+        $opening->duplicate();
+
+        return to_route('employer.jobs.index')->with('success', 'Job duplicated successfully.');
+    }
+
     private function sendNotification(User $user, Opening $opening): void
     {
         $admins = User::role('super_admin')->get();

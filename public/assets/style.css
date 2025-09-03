@@ -1,0 +1,309 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    overflow-x: hidden;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 26px;
+    color: #000000;
+}
+h1, h2, h3, h4, h5, h6{
+    font-family: "Montserrat", sans-serif;
+}
+.btn-1{
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #0464c8;
+    color: #ffffff;
+    padding: 8px 16px;
+    transition: all 0.4s;
+    border-radius: 30px;
+    position: relative;
+    z-index: 1;
+    text-decoration: none;
+}
+.btn-1.style2{
+    background: #fc6404;
+}
+.btn-1:hover{
+    color: #ffffff;
+    transition: all 0.4s;
+    transform: translateY(-5px);
+}
+.btn-1 span{
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    transition: all 0.4s;
+    line-height: 36px;
+    text-align: center;
+    background: #ffffff;
+    color: #0464c8;
+    transform: rotate(0deg);
+    position: relative;
+    z-index: 1;
+    right: -8px;
+}
+.btn-1.style2 span{
+    color: #fc6404;
+}
+.btn-1:hover span{
+    transform: rotate(45deg);
+    transition: all 0.4s;
+}
+.btn-1::after{
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 1px;
+    left: 50%;
+    transition: all 0.4s;
+    top: 0;
+    z-index: -1;
+    background: #fc6404;
+    border-radius: 30px;
+    visibility: hidden;
+    opacity: 0;
+}
+.btn-1.style2::after{
+    background: #0464c8;
+}
+.btn-1:hover::after{
+    visibility: visible;
+    opacity: 1;
+    width: 100%;
+    left: 0;
+    transition: all 0.4s;
+}
+.container{
+    display: block;
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto;
+    position: relative;
+}
+header.main-header{
+    display: block;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px 10px;
+    z-index: 9999;
+}
+header.main-header .header-wrapper{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+header.main-header .header-wrapper .logo a{
+    display: block;
+}
+header.main-header .header-wrapper .logo img{
+    display: block;
+    width: 100%;
+    max-width: 150px;
+}
+.button-group{
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+}
+.hero-section{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    max-height: auto;
+    position: relative;
+    background-image: url(hero-bg1.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+.hero-section::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+}
+.hero-section .hero-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 20px;
+    text-align: center;
+    color: #ffffff;
+    padding-top: 50px;
+}
+.hero-section .hero-content .sub-title{
+    text-transform: uppercase;
+    font-size: 20px;
+    line-height: 30px;
+}
+.hero-section .hero-content .main-title{
+    font-size: 40px;
+    line-height: 50px;
+    font-weight: 700;
+}
+.hero-section .hero-content .sub-title span.txt-primary{
+    color:#0464c8;
+}
+.hero-section .hero-content .sub-title span.txt-secondary{
+    color:#fc6404;
+}
+.hero-section .hero-content p{
+    color: #fff;
+    font-size: 18px;
+    line-height: 28px;
+    max-width: 60%;
+    margin: 0 auto;
+}
+.hero-section .button-group{
+    margin-top: 20px;
+}
+.hero-section .button-group .btn-1{
+    background: transparent;
+    border: 3px solid #0464c8;
+}
+.hero-section .button-group .btn-1.style2{
+    border-color: #fc6404;
+}
+.vision-mission-section{
+    display: flex;
+    width: 100%;
+}
+.vision-mission-section > div{
+    width: 50%;
+    padding: 30px;
+    min-height: 100vh;
+    max-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.vision-mission-section div .wrapper{
+    position: relative;
+    text-align: center;
+    color: #ffffff;
+    border:10px solid rgba(4, 100, 200, 0.8);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
+.vision-mission-section .vision-section{
+    background-image: url(vision.webp);
+    background-size:cover;
+    background-repeat: no-repeat;
+}
+.vision-mission-section .mission-section{
+    background-image: url(mission.webp);
+    background-size:cover;
+    background-repeat: no-repeat;
+}
+.vision-mission-section > div::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+.vision-mission-section div .wrapper h1{
+    display: block;
+    width: 100%;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+.vision-mission-section div.vision-section .wrapper h1{
+    color: #0464c8;
+}
+.vision-mission-section div.mission-section .wrapper h1{
+    color: #fc6404
+}
+.vision-mission-section div.mission-section .wrapper{
+    border-color: rgba(252, 100, 4, 0.8);
+}
+.vision-mission-section div .wrapper p{
+    display: block;
+    width: 100%;
+    font-size: 20px;
+    line-height: 30px;
+}
+.footer-copyright, .footer-top{
+    background: #1f1f1f;
+    padding: 10px;
+    text-align: center;
+    color: #ffffff;
+}
+.footer-top a{
+    color: #fc6404;
+}
+.footer-copyright p{
+    color: #ffffff;
+}
+.footer-copyright{
+    box-shadow: inset 0 7px 8px -10px #CCC;
+}
+
+/*** Responsive ***/
+@media(max-width:1080px){
+    .vision-mission-section > div{
+        padding: 50px;
+    }
+}
+@media(max-width:767px){
+    header.main-header .header-wrapper{
+        justify-content: center;
+    }
+    header.main-header .header-wrapper .button-group{
+        display: none;
+    }
+    .hero-section .hero-content p{
+        max-width: 90%;
+    }
+    .vision-mission-section{
+        flex-direction: column;
+    }
+    .vision-mission-section > div{
+        width: 100%;
+    }
+}
+@media(max-width:600px){
+    .hero-section .hero-content .main-title{
+        font-size: 30px;
+        line-height: 40px;
+    }
+    .hero-section .button-group{
+        flex-direction: column;
+        row-gap: 20px;
+    }
+    .vision-mission-section > div, .vision-mission-section div .wrapper{
+        padding: 20px;
+    }
+    .vision-mission-section > div{
+        align-items: center;
+        justify-content: center;
+    }
+    .hero-section .hero-content{
+        padding-top:150px;
+        padding-bottom:50px;
+    }
+}

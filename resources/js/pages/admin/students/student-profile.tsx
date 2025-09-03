@@ -10,23 +10,83 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { BreadcrumbItem, User } from '@/types';
+import { useForm } from 'react-hook-form';
+import { useEffect, useRef } from 'react';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'students', href: '/admin/students' },
     { title: 'profile', href: '' },
 ];
 
+interface StudentProfileFormData {
+    is_verified: boolean;
+}
+
 export default function StudentProfile( { user }: { user: User } ) {
     const getInitials = useInitials();
+    const form = useForm<StudentProfileFormData>( {
+        defaultValues: {
+            is_verified: user.profile?.is_verified ?? false,
+        },
+    } );
+
+    const { control, watch, handleSubmit } = form;
+
+    const verificationStatus = watch( 'is_verified' );
+
+    const onSubmit = ( data: StudentProfileFormData ) => {
+        router.patch( `/admin/students/${ user.id }/status`, {
+            is_verified: data.is_verified,
+        } );
+    };
+
+    const hasMounted = useRef( false );
+
+    useEffect( () => {
+        if ( hasMounted.current ) {
+            handleSubmit( onSubmit )();
+        } else {
+            hasMounted.current = true;
+        }
+    }, [ verificationStatus ] );
 
     return (
         <AppLayout breadcrumbs={ breadcrumbs }>
             <Head title={ `${ user.name }'s Profile` } />
             <div className="max-w-6xl mx-auto px-4 py-8">
-                <div className="relative mb-16">
+                <Form { ...form }>
+                    <form>
+                        <FormField
+                            control={ control }
+                            name="is_verified"
+                            render={ ( { field } ) => (
+                                <FormItem className="p-0">
+                                    <FormControl>
+                                        <Select
+                                            defaultValue={user.profile?.is_verified ? "true" : "false"}
+                                            onValueChange={value => field.onChange(value === "true")}
+                                        >
+                                            <SelectTrigger className="w-full sm:w-64">
+                                                <SelectValue placeholder="Select status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="false">Pending</SelectItem>
+                                                <SelectItem value="true">Verified</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            ) }
+                        />
+                    </form>
+                </Form>
+                <div className="relative mb-16 mt-8">
                     <div className="h-36 bg-gradient-to-r from-orange-700 to-blue-950 rounded-t-xl" />
                     <div className="absolute -bottom-20 md:-bottom-16 left-6 flex items-end">
                         <div className="relative">

@@ -23,7 +23,7 @@ interface RoleFormData {
     permissions: number[];
 }
 
-const CreateOrEditRole = ({ role, operation, permissions, operationLabel }: CreateOrEditRoleProps) => {
+const CreateOrEditRole = ( { role, operation, permissions, operationLabel }: CreateOrEditRoleProps ) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Roles',
@@ -35,100 +35,100 @@ const CreateOrEditRole = ({ role, operation, permissions, operationLabel }: Crea
         },
     ];
 
-    const form = useForm<RoleFormData>({
+    const form = useForm<RoleFormData>( {
         defaultValues: {
             name: role?.name ?? '',
-            permissions: role?.permissions?.map((p) => p.id) ?? [],
+            permissions: role?.permissions?.map( ( p ) => p.id ) ?? [],
         },
-    });
+    } );
 
     const { handleSubmit, control, setError, watch, setValue } = form;
-    const selectedPermissions = watch('permissions') || [];
+    const selectedPermissions = watch( 'permissions' ) || [];
 
-    const onSubmit = (data: RoleFormData) => {
-        const handleErrors = (errors: any) => {
-            if (errors && typeof errors === 'object') {
-                Object.entries(errors).forEach(([field, message]) => {
-                    setError(field as keyof RoleFormData, {
+    const onSubmit = ( data: RoleFormData ) => {
+        const handleErrors = ( errors: any ) => {
+            if ( errors && typeof errors === 'object' ) {
+                Object.entries( errors ).forEach( ( [ field, message ] ) => {
+                    setError( field as keyof RoleFormData, {
                         type: 'server',
                         message: message as string,
-                    });
-                });
+                    } );
+                } );
             }
         };
 
         const routes = {
-            Create: () => router.post('/admin/roles', { ...data }, { onError: handleErrors }),
-            Edit: () => router.put(`/admin/roles/${role.id}`, { ...data }, { onError: handleErrors }),
+            Create: () => router.post( '/admin/roles', { ...data }, { onError: handleErrors } ),
+            Edit: () => router.put( `/admin/roles/${ role.id }`, { ...data }, { onError: handleErrors } ),
         };
 
-        routes[operation]?.();
+        routes[ operation ]?.();
     };
 
-    const togglePermission = (id: number) => {
-        const updated = selectedPermissions.includes(id) ? selectedPermissions.filter((pid) => pid !== id) : [...selectedPermissions, id];
+    const togglePermission = ( id: number ) => {
+        const updated = selectedPermissions.includes( id ) ? selectedPermissions.filter( ( pid ) => pid !== id ) : [ ...selectedPermissions, id ];
 
-        setValue('permissions', updated);
+        setValue( 'permissions', updated );
     };
 
-    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-    const formatPermissionLabel = (str: string) => str.split('_').map(capitalize).join(' ');
+    const capitalize = ( str: string ) => str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+    const formatPermissionLabel = ( str: string ) => str.split( '_' ).map( capitalize ).join( ' ' );
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${operation} Role`} />
+        <AppLayout breadcrumbs={ breadcrumbs }>
+            <Head title={ `${ operation } Role` } />
             <div className="flex flex-col gap-4 p-4">
                 <div className="grid grid-cols-1 gap-4">
-                    <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                            {/* Role Details Card */}
+                    <Form { ...form }>
+                        <form onSubmit={ handleSubmit( onSubmit ) } className="space-y-8">
+                            {/* Role Details Card */ }
                             <Card className="p-8">
                                 <CardTitle>Role Details</CardTitle>
                                 <Separator className="my-4" />
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <FormField
-                                        control={control}
+                                        control={ control }
                                         name="name"
-                                        render={({ field }) => (
+                                        render={ ( { field } ) => (
                                             <FormItem>
                                                 <FormLabel>Role Name</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Enter role name" {...field} />
+                                                    <Input placeholder="Enter role name" { ...field } />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
-                                        )}
+                                        ) }
                                     />
                                 </div>
                             </Card>
 
-                            {/* Permissions Grid */}
+                            {/* Permissions Grid */ }
                             <div className="grid gap-4 md:grid-cols-2">
-                                {Object.entries(permissions).map(([group, perms]) => (
-                                    <Card key={group} className="p-8">
-                                        <CardTitle>{capitalize(group)} Permissions</CardTitle>
+                                { Object.entries( permissions ).map( ( [ group, perms ] ) => (
+                                    <Card key={ group } className="p-8">
+                                        <CardTitle>{ capitalize( group ) } Permissions</CardTitle>
                                         <Separator className="my-4" />
                                         <div className="flex flex-wrap gap-6">
-                                            {perms.map(({ id, name }) => (
-                                                <div key={id} className="flex items-center space-x-2">
+                                            { perms.map( ( { id, name } ) => (
+                                                <div key={ id } className="flex items-center space-x-2">
                                                     <Checkbox
-                                                        id={`perm-${id}`}
-                                                        checked={selectedPermissions.includes(id)}
-                                                        onCheckedChange={() => togglePermission(id)}
+                                                        id={ `perm-${ id }` }
+                                                        checked={ selectedPermissions.includes( id ) }
+                                                        onCheckedChange={ () => togglePermission( id ) }
                                                     />
-                                                    <label htmlFor={`perm-${id}`} className="text-sm font-medium">
-                                                        {formatPermissionLabel(name)}
+                                                    <label htmlFor={ `perm-${ id }` } className="text-sm font-medium">
+                                                        { formatPermissionLabel( name ) }
                                                     </label>
                                                 </div>
-                                            ))}
+                                            ) ) }
                                         </div>
                                     </Card>
-                                ))}
+                                ) ) }
                             </div>
 
-                            {/* Submit Button */}
+                            {/* Submit Button */ }
                             <Button type="submit" className="mt-6">
-                                {operationLabel}
+                                { operationLabel }
                             </Button>
                         </form>
                     </Form>

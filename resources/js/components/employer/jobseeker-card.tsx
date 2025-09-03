@@ -1,96 +1,236 @@
-import { User } from '@/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import type { User } from '@/types';
+import { CalendarDays, ChevronDown, ChevronUp, ExternalLink, FileText, Mail, Phone, Sparkles, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import MessageButton from '../message-button';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardTitle } from '../ui/card';
-import { Skeleton } from '../ui/skeleton';
-import { useQuery } from '@tanstack/react-query';
-import { router } from '@inertiajs/react';
 
 interface Props {
-    user: User;
-    selectedSkill?: string;
+    user: User & {
+        match_score?: number | null;
+        match_reason?: string | null;
+        shortlist_reason?: string | null;
+        is_shortlisted?: boolean | null;
+    };
 }
 
-const JobseekerCard = ( { user, selectedSkill }: Props ) => {
-    // Fetch AI summary using Inertia's router
-    const { data: aiSummary, isLoading, isError } = useQuery( {
-        queryKey: [ 'ai-summary', user.id, selectedSkill ],
-        queryFn: async () => {
-            if ( !selectedSkill ) return null;
+const JobseekerCard = ( { user }: Props ) => {
+    const [ expanded, setExpanded ] = useState( false );
+    const toggleExpand = () => setExpanded( !expanded );
 
-            const response = await fetch('/ai/summary', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: user.id,
-                    skill: selectedSkill
-                }),
-            });
+    const getMatchColor = ( score: number | null | undefined ) => {
+        if ( !score ) return 'bg-muted/50 text-muted-foreground border-muted';
+        if ( score >= 80 )
+            return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800';
+        if ( score >= 60 ) return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800';
+        if ( score >= 40 ) return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800';
+        return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800';
+    };
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch AI summary');
-            }
+    const getMatchLabel = ( score: number | null | undefined ) => {
+        if ( !score ) return 'Not scored';
+        if ( score >= 80 ) return 'Excellent';
+        if ( score >= 60 ) return 'Good';
+        if ( score >= 40 ) return 'Fair';
+        return 'Low';
+    };
 
-            return await response.json();
-        },
-        enabled: !!selectedSkill,
-        staleTime: 1000 * 60 * 5, // 5 minutes cache
-    } );
+    const formatDate = ( dateString: string ) => {
+        const date = new Date( dateString );
+        return date.toLocaleDateString( 'en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        } );
+    };
+
+    const getInitials = ( name: string ) => {
+        return name
+            .split( ' ' )
+            .map( ( n ) => n[ 0 ] )
+            .join( '' )
+            .toUpperCase()
+            .slice( 0, 2 );
+    };
 
     return (
-        <Card className="hover:bg-accent w-full rounded-none border-0 border-b shadow-none">
-            <CardContent className="flex items-center gap-4">
-                <Avatar className="h-12 w-12">
-                    <AvatarImage src={ user.avatar_url } alt={ user.name + 'avatar' } />
-                    <AvatarFallback>{ user.name ? user.name.charAt( 0 ) : '?' }</AvatarFallback>
-                </Avatar>
+        <Card className="group border-border/60 hover:border-primary/30 bg-background/95 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md">
+            <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                <div className="flex flex-col flex-1">
-                    <CardTitle className="text-base font-semibold">{ user.name }</CardTitle>
+            <CardHeader className="relative pb-4">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 flex-1 items-start gap-4">
+                        <div className="relative">
+                            <Avatar className="border-muted ring-primary/10 group-hover:ring-primary/20 h-12 w-12 border ring-1 transition-transform duration-300 group-hover:scale-105">
+                                <AvatarImage
+                                    src={ user.avatar_url }
+                                    alt={ user.name }
+                                    className="object-cover"
+                                />
+                                <AvatarFallback className="from-primary to-primary/80 text-primary-foreground bg-gradient-to-br text-sm font-semibold">
+                                    { getInitials( user.name ) }
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
 
-                    {/* Education details */ }
-                    { user.educations?.length > 0 && (
-                        <span className="text-sm text-muted-foreground">
-                            { user.educations[0].course_title } at { user.educations[0].institution }
-                        </span>
-                    ) }
-
-                    {/* AI Summary section */ }
-                    { selectedSkill && (
-                        <div className="mt-2">
-                            { isLoading ? (
-                                <div className="space-y-2">
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-4 w-3/4" />
-                                </div>
-                            ) : isError ? (
-                                <p className="text-sm text-muted-foreground">Could not generate summary</p>
-                            ) : (
-                                <div className="text-sm text-muted-foreground">
-                                    <p className="font-medium text-primary">
-                                        AI Summary for { selectedSkill }:
-                                    </p>
-                                    <p className="text-foreground">
-                                        { aiSummary?.summary || 'No relevant information found' }
-                                    </p>
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                            <Link href={ `/employer/jobseekers/${ user.id }` }>
+                                <h3 className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
+                                    { user.name }
+                                </h3>
+                            </Link>
+                            { user.phone && (
+                                <span className='text-muted-foreground flex items-center gap-1 text-xs'>
+                                    <Phone className="h-4 w-4" /> { user.phone }
+                                </span>
+                            ) }
+                            <span className='text-muted-foreground flex items-center gap-1 text-xs'>
+                                <Mail className="h-4 w-4" /> { user.email }
+                            </span>
+                            { user.created_at && (
+                                <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                                    <CalendarDays className="h-4 w-4" />
+                                    <span>Joined { formatDate( user.created_at ) }</span>
                                 </div>
                             ) }
                         </div>
+                    </div>
+
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                        <MessageButton userId={ user.id }>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="hover:bg-primary hover:text-primary-foreground hover:border-primary px-2 py-1 text-xs transition-colors ease-in-out"
+                            >
+                                <Mail className="h-4 w-4" />
+                                <span className="hidden sm:inline">Message</span>
+                            </Button>
+                        </MessageButton>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={ toggleExpand }
+                            className="text-muted-foreground hover:text-foreground hover:bg-muted h-8 w-8 rounded-md p-0"
+                            aria-label={ expanded ? 'Collapse details' : 'Expand details' }
+                        >
+                            { expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" /> }
+                        </Button>
+                    </div>
+                </div>
+                <Separator className='mt-6' />
+
+                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div className="space-y-2">
+                        <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                            <div className="bg-primary/10 rounded-md p-1.5">
+                                <FileText className="text-primary h-4 w-4" />
+                            </div>
+                            <span>Resume</span>
+                        </div>
+                        <div className="pl-7">
+                            { ( () => {
+                                const latestResume = user?.resumes?.sort( ( a, b ) =>
+                                    new Date( b.created_at ).getTime() - new Date( a.created_at ).getTime()
+                                )[ 0 ];
+
+                                const resumeUrl = latestResume?.resume_url ?? undefined; // Converts `null` to `undefined`
+
+                                return resumeUrl ? (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        asChild
+                                        className="rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400"
+                                    >
+                                        <a href={ resumeUrl } target="_blank" rel="noopener noreferrer">
+                                            <FileText className="h-4 w-4" />
+                                            <span>View Resume</span>
+                                            <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                    </Button>
+                                ) : (
+                                    <span className="text-muted-foreground text-sm">No resume available</span>
+                                );
+                            } )() }
+                        </div>
+                    </div>
+
+                    { user.match_score !== null && user.match_score !== undefined && (
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                                    <div className="bg-primary/10 rounded-md p-1.5">
+                                        <TrendingUp className="text-primary h-4 w-4" />
+                                    </div>
+                                    <span>Match Score</span>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-foreground text-xl font-semibold">{ user.match_score }</div>
+                                    <div className="text-muted-foreground text-xs">out of 100</div>
+                                </div>
+                            </div>
+                            <div className="space-y-2 pl-7">
+                                <Progress
+                                    value={ user.match_score }
+                                    className="bg-muted h-2 rounded-full"
+                                />
+                                <Badge
+                                    variant="outline"
+                                    className={ `rounded-full px-2 py-1 text-xs ${ getMatchColor( user.match_score ) }` }
+                                >
+                                    <Sparkles className="mr-1.5 h-3 w-3" />
+                                    { getMatchLabel( user.match_score ) } match
+                                </Badge>
+                            </div>
+                        </div>
                     ) }
                 </div>
+            </CardHeader>
 
-                <div className="ml-auto">
-                    <MessageButton userId={ Number( user.id ) }>
-                        <Button variant="outline" size="sm">
-                            Message
-                        </Button>
-                    </MessageButton>
-                </div>
-            </CardContent>
+            { expanded && (
+                <>
+                    <Separator />
+                    <CardContent className="bg-muted/10 space-y-5 rounded-b-xl p-4 sm:p-5">
+                        { user.match_reason && (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-primary rounded-md p-2 shadow">
+                                        <Sparkles className="h-4 w-4 text-white" />
+                                    </div>
+                                    <h4 className="text-foreground text-sm font-semibold">Match Analysis</h4>
+                                </div>
+                                <Card className="bg-card/50 border-0 shadow-sm backdrop-blur-sm">
+                                    <CardContent className="text-muted-foreground p-4 text-sm leading-relaxed">
+                                        { user.match_reason }
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ) }
+
+                        { user.shortlist_reason && user.is_shortlisted && (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-emerald-500 rounded-md p-2 shadow">
+                                        <Sparkles className="h-4 w-4 text-white" />
+                                    </div>
+                                    <h4 className="text-foreground text-sm font-semibold">Recommendation</h4>
+                                </div>
+                                <Card className="bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 border">
+                                    <CardContent className="text-emerald-700 dark:text-emerald-400 p-4 text-sm leading-relaxed">
+                                        { user.shortlist_reason }
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ) }
+                    </CardContent>
+                </>
+            ) }
         </Card>
     );
 };

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Enums\JobStatusEnum;
@@ -9,14 +11,9 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class SendJobClosureReminder implements ShouldQueue
+final class SendJobClosureReminder implements ShouldQueue
 {
     use Queueable;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct() {}
 
     /**
      * Execute the job.

@@ -27,6 +27,7 @@ interface FormValues {
     phone: string;
     email: string;
     verification_status: string;
+    match_score_cutoff: number;
 }
 
 interface Props {
@@ -55,6 +56,11 @@ const CreateOrEditCompany = ( {
         { title: operation, href: '' },
     ];
 
+    const cutoffOptions = Array.from( { length: 10 }, ( _, i ) => ( i + 1 ) * 10 ).map( i => ( {
+        value: i,
+        label: String( i )
+    } ) );
+
     const form = useForm<FormValues>( {
         defaultValues: {
             name: company?.name || '',
@@ -69,6 +75,7 @@ const CreateOrEditCompany = ( {
             phone: company?.phone || '',
             email: company?.email || '',
             verification_status: company?.verification_status || '',
+            match_score_cutoff: company?.match_score_cutoff || 50,
         }
     } );
 
@@ -375,6 +382,33 @@ const CreateOrEditCompany = ( {
                                                     </Button>
                                                 ) ) }
                                             </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                ) }
+                            />
+
+                            <FormField
+                                control={ form.control }
+                                name="match_score_cutoff"
+                                render={ ( { field } ) => (
+                                    <FormItem>
+                                        <FormLabel>Match Score Cutoff( % )</FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={ field.onChange } defaultValue={ String( field.value ) }>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    { cutoffOptions.map( option => (
+                                                        <SelectItem key={ option.value } value={ String( option.value ) }>
+                                                            { option.label }
+                                                        </SelectItem>
+                                                    ) ) }
+                                                </SelectContent>
+                                            </Select>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

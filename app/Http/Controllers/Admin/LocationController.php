@@ -7,19 +7,25 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OperationsEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class LocationController extends Controller
 {
+    public function __construct(private readonly User $user) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
+        Gate::authorize('view_any_location', $this->user);
+
         $locations = Location::query()
             ->when(
                 $request->search,
@@ -41,6 +47,8 @@ final class LocationController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create_location', $this->user);
+
         $operation = OperationsEnum::Create;
 
         return Inertia::render('admin/locations/create-or-edit-location', [
@@ -54,6 +62,8 @@ final class LocationController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create_location', $this->user);
+
         $data = $request->validate([
             'city' => ['required', 'string', 'max:255'],
             'state' => ['nullable', 'string', 'max:255'],
@@ -85,6 +95,8 @@ final class LocationController extends Controller
      */
     public function edit(Location $location): Response
     {
+        Gate::authorize('update_location', $this->user);
+
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/locations/create-or-edit-location', [
@@ -99,6 +111,8 @@ final class LocationController extends Controller
      */
     public function update(Request $request, Location $location): RedirectResponse
     {
+        Gate::authorize('update_location', $this->user);
+
         $data = $request->validate([
             'state' => ['nullable', 'string', 'max:255'],
             'country' => ['required', 'string', 'max:20'],
@@ -124,6 +138,8 @@ final class LocationController extends Controller
      */
     public function destroy(Location $location): RedirectResponse
     {
+        Gate::authorize('delete_location', $this->user);
+
         $location->delete();
 
         return to_route('admin.locations.index')->with('success', 'Location record deleted successfully.');
