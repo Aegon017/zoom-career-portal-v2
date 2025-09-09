@@ -38,15 +38,13 @@ final class ApplicationsController extends Controller
         $skills = collect();
 
         if ($job) {
-            $applicationsQuery = $job->applications()->with(['user.skills', 'resume']);
+            $applicationsQuery = $job->applications()->with(['user','resume']);
 
             if ($request->filled('status') && $request->status !== 'all') {
                 $applicationsQuery->where('status', $request->status);
             }
 
-            $applications = $applicationsQuery->where('match_score', '>=', $matchScoreCutoff)->orderBy('match_score', 'desc')->get();
-
-            $skills = $job->skills()->pluck('name')->unique()->values();
+            $applications = $applicationsQuery->where('match_score', '>=', $matchScoreCutoff ?? 0)->orderBy('match_score', 'desc')->get();
         }
 
         $statuses = JobApplicationStatusEnum::options();
@@ -56,8 +54,6 @@ final class ApplicationsController extends Controller
             'applications' => $applications,
             'job_id' => $request->job_id,
             'statuses' => $statuses,
-            'skills' => $skills,
-            'selectedSkill' => $request->skill ?? 'all',
             'exportUrl' => $request->job_id ? route('employer.applications.export', $request->job_id) : '',
             'hasExport' => true,
         ]);
@@ -106,11 +102,11 @@ final class ApplicationsController extends Controller
         $combinedMessage = sprintf('<strong>Subject:</strong> %s<br><br>%s', $request->subject, $safeMessage);
 
         foreach ($shortlistedUsers as $user) {
-            $chat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
-                ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
+            $chat = Chat::whereHas('participants', fn($q) => $q->where('user_id', Auth::id()))
+                ->whereHas('participants', fn($q) => $q->where('user_id', $user->id))
                 ->withCount('participants')
                 ->get()
-                ->first(fn ($chat): bool => $chat->participants_count === 2);
+                ->first(fn($chat): bool => $chat->participants_count === 2);
 
             if (! $chat) {
                 $chat = Chat::create();
@@ -138,13 +134,13 @@ final class ApplicationsController extends Controller
         Log::info('Download resumes initiated', ['request' => $request->all()]);
 
         $applications = OpeningApplication::query()
-            ->when($request->job_id, fn ($q) => $q->where('opening_id', $request->job_id))
-            ->when($request->status, fn ($q) => $q->where('status', $request->status))
-            ->when($request->skill, fn ($q) => $q->whereJsonContains('skills', $request->skill))
+            ->when($request->job_id, fn($q) => $q->where('opening_id', $request->job_id))
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->when($request->skill, fn($q) => $q->whereJsonContains('skills', $request->skill))
             ->with(['resume.media', 'user'])
             ->get();
 
-        Log::debug('Applications count: '.$applications->count());
+        Log::debug('Applications count: ' . $applications->count());
 
         if ($applications->isEmpty()) {
             Log::warning('No applications found for download');
@@ -153,15 +149,15 @@ final class ApplicationsController extends Controller
         }
 
         $zip = new ZipArchive();
-        $fileName = 'resumes-'.now()->format('Ymd-His').'.zip';
-        $path = storage_path('app/'.$fileName);
+        $fileName = 'resumes-' . now()->format('Ymd-His') . '.zip';
+        $path = storage_path('app/' . $fileName);
         $filesAdded = false;
 
-        Log::info('Creating zip file: '.$path);
+        Log::info('Creating zip file: ' . $path);
 
         try {
             if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-                $error = 'Failed to create zip file at: '.$path;
+                $error = 'Failed to create zip file at: ' . $path;
                 Log::error($error);
                 throw new Exception($error);
             }
@@ -194,7 +190,7 @@ final class ApplicationsController extends Controller
                     // Verify file exists at path
                     if (! file_exists($filePath)) {
                         ++$skippedCount;
-                        Log::warning('File not found: '.$filePath);
+                        Log::warning('File not found: ' . $filePath);
 
                         continue;
                     }
@@ -208,14 +204,14 @@ final class ApplicationsController extends Controller
                     if ($zip->addFile($filePath, $fileNameInZip)) {
                         ++$addedCount;
                         $filesAdded = true;
-                        Log::debug('Added to zip: '.$fileNameInZip);
+                        Log::debug('Added to zip: ' . $fileNameInZip);
                     } else {
                         ++$skippedCount;
-                        Log::warning('Failed to add to zip: '.$fileNameInZip);
+                        Log::warning('Failed to add to zip: ' . $fileNameInZip);
                     }
                 } catch (Exception $e) {
                     ++$skippedCount;
-                    Log::error(sprintf('Error processing application %s: ', $application->id).$e->getMessage());
+                    Log::error(sprintf('Error processing application %s: ', $application->id) . $e->getMessage());
                 }
             }
 
@@ -239,9 +235,9 @@ final class ApplicationsController extends Controller
         } catch (Exception $exception) {
             $zip->close();
 
-            Log::error('Zip creation failed: '.$exception->getMessage());
+            Log::error('Zip creation failed: ' . $exception->getMessage());
 
-            return back()->with('error', 'Error creating zip file: '.$exception->getMessage());
+            return back()->with('error', 'Error creating zip file: ' . $exception->getMessage());
         }
     }
 }
