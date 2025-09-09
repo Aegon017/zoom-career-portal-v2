@@ -67,5 +67,5 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/chat-logs', ChatLogController::class)->name('chat-logs');
     Route::resource('/courses', CourseController::class);
     Route::post('/courses/import', CourseImportController::class);
-    Route::post('/jobs/{job}/applications/resumes/download-selected', [JobController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
+    Route::get('/jobs/{job}/applications/resumes/download-selected', [JobController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
 });

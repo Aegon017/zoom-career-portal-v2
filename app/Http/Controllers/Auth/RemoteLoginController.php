@@ -87,7 +87,7 @@ final class RemoteLoginController extends Controller
         );
     }
 
-    private function redirectToDashboard(User $user)
+    private function redirectToDashboard(User $user): string
     {
         $role = $user->getRoleNames()->first();
 

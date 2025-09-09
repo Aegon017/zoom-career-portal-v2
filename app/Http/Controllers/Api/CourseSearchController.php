@@ -29,7 +29,7 @@ final class CourseSearchController extends Controller
         $courses = $query->orderBy('name')
             ->limit(10)
             ->get()
-            ->map(fn($course): array => [
+            ->map(fn ($course): array => [
                 'value' => (string) $course->id,
                 'label' => $course->name,
             ]);

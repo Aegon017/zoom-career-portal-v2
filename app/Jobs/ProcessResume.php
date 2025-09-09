@@ -25,7 +25,7 @@ final class ProcessResume implements ShouldQueue
     {
         $text = $parser->parseFile($this->resume->getFirstMediaPath('resumes'))->getText();
 
-        $this->resume->text = $text;
+        $this->resume->text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
 
         $this->resume->save();
     }

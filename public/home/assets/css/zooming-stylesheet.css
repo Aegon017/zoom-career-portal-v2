@@ -1,5 +1,7 @@
 body {
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	font-size: 18px;
 	line-height: 28px;
 }
@@ -9,17 +11,23 @@ body {
 }
 
 .navbar-header {
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 }
 
 .nav li {
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 }
 
 .navbar-default {
 	padding: 0px !important;
 	margin: 0px !important;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	border: 0px !important;
 	border-bottom: 1px solid #c8c8c8 !important;
 	border-radius: 0px !important;
@@ -33,12 +41,16 @@ body {
 
 .navbar {
 	margin: 0px !important;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	min-height: 33px !important;
 }
 
 .navbar-default a {
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	font-size: 14px !important;
 	color: #58585b !important;
 }
@@ -47,11 +59,13 @@ body {
 	color: #98c741 !important;
 }
 
-.navbar-nav>li>a {
+.navbar-nav > li > a {
 	padding: 0px !important;
 	padding-left: 15px !important;
 	padding-right: 15px !important;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	color: #58585b;
 	line-height: 33px !important;
 	border-left: 1px solid #c8c8c8 !important;
@@ -64,7 +78,9 @@ body {
 
 .slogan {
 	margin-top: 35px;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	color: #58585b !important;
 	font-size: 14px !important;
 }
@@ -73,22 +89,22 @@ body {
 	min-width: 250px;
 	padding: 14px 14px 0;
 	overflow: hidden;
-	background-color: rgba(255, 255, 255, .8);
+	background-color: rgba(255, 255, 255, 0.8);
 }
 
 #login-dp .help-block {
-	font-size: 12px
+	font-size: 12px;
 }
 
 #login-dp .bottom {
-	background-color: rgba(255, 255, 255, .8);
+	background-color: rgba(255, 255, 255, 0.8);
 	border-top: 1px solid #ddd;
 	clear: both;
 	padding: 14px;
 }
 
 #login-dp .social-buttons {
-	margin: 12px 0
+	margin: 12px 0;
 }
 
 #login-dp .social-buttons a {
@@ -110,7 +126,7 @@ body {
 
 .btn-fb:hover {
 	color: #fff;
-	background-color: #496ebc
+	background-color: #496ebc;
 }
 
 .btn-tw {
@@ -123,7 +139,7 @@ body {
 	background-color: #59b5fa;
 }
 
-@media(max-width:768px) {
+@media (max-width: 768px) {
 	#login-dp {
 		background-color: #ffffff;
 		color: #fff;
@@ -146,7 +162,9 @@ body {
 	margin: 0px;
 	padding: 0px;
 	margin-top: 25px;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	color: #58585b !important;
 	font-size: 16px !important;
 	background: #ffffff !important;
@@ -209,7 +227,7 @@ body {
 	color: #9aca44;
 }
 
-@media(min-width:768px) {
+@media (min-width: 768px) {
 	.mainPicture .hero-content p.description {
 		max-width: 80%;
 		margin: 0 auto;
@@ -227,7 +245,7 @@ body {
 	}
 }
 
-@media(max-width:768px) {
+@media (max-width: 768px) {
 	header .navbar-collapse {
 		position: absolute;
 		top: 100%;
@@ -267,7 +285,7 @@ body {
 	color: #58585b;
 	border: 5px solid transparent;
 	border-radius: 5px;
-	background: rgba(88, 88, 91, 0.5)
+	background: rgba(88, 88, 91, 0.5);
 }
 
 .jobseeker-login {
@@ -283,7 +301,7 @@ body {
 
 .js-heading {
 	padding-top: 8px;
-	font-family: 'Raleway', 'Open Sans', sans-serif;
+	font-family: "Raleway", "Open Sans", sans-serif;
 	font-size: 26px;
 	line-height: 1.3;
 	font-weight: 600;
@@ -292,7 +310,7 @@ body {
 
 .js-subHeading {
 	padding-top: 6px;
-	font-family: 'Open Sans', sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: 16px;
 	color: #141414;
 	line-height: 1.6;
@@ -309,7 +327,9 @@ body {
 
 .navbar-form p {
 	padding-top: 5px !important;
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	font-size: 13px;
 	color: #58585b;
 	line-height: auto !important;
@@ -317,7 +337,9 @@ body {
 }
 
 .success-green {
-	font-family: 'Open Sans', 'Raleway' sans-serif !important;
+	font-family:
+		"Open Sans",
+		"Raleway" sans-serif !important;
 	color: #fff;
 	font-weight: 600 !important;
 	text-transform: uppercase;
@@ -331,7 +353,7 @@ body {
 	height: 100%;
 }
 
-@media(min-width:992px) {
+@media (min-width: 992px) {
 	.vision-mission-section div {
 		min-height: 590px;
 	}
@@ -374,7 +396,7 @@ body {
 	border: 10px solid rgba(154, 202, 68, 0.8);
 }
 
-.vision-mission-section>div::before {
+.vision-mission-section > div::before {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -405,7 +427,7 @@ body {
 	line-height: 30px;
 }
 
-@media(max-width:600px) {
+@media (max-width: 600px) {
 	.vision-mission-section div .wrapper {
 		padding: 20px;
 	}
@@ -426,7 +448,7 @@ body {
 	width: auto;
 	height: 100px;
 	text-align: center;
-	background: rgba(0, 0, 0, 0.3)
+	background: rgba(0, 0, 0, 0.3);
 }
 
 .Corporate-Training-Main h2 {
@@ -436,7 +458,7 @@ body {
 	top: -30px;
 	display: inline-block;
 	position: relative;
-	font-family: 'Open Sans', 'Raleway', sans-serif;
+	font-family: "Open Sans", "Raleway", sans-serif;
 	color: #ffffff;
 	font-size: 16px;
 	line-height: auto;
@@ -450,7 +472,7 @@ body {
 	margin: 0px !important;
 	padding: 0px;
 	height: 60px !important;
-	font-family: 'Open Sans', 'Raleway', sans-serif;
+	font-family: "Open Sans", "Raleway", sans-serif;
 	line-height: 20px;
 	font-weight: 400;
 	text-align: center;
@@ -481,7 +503,7 @@ body {
 	text-align: justify;
 }
 
-@media(min-width:992px) {
+@media (min-width: 992px) {
 	.home-aboutus .row {
 		display: flex;
 		align-items: flex-end;
@@ -514,7 +536,7 @@ body {
 	padding: 15px;
 	width: 100%;
 	min-height: 240px;
-	font-family: 'Open Sans', 'Raleway', sans-serif;
+	font-family: "Open Sans", "Raleway", sans-serif;
 	font-size: 14px;
 	color: #ffffff;
 	text-align: justify;
@@ -531,7 +553,7 @@ body {
 	margin: 0px;
 	margin-bottom: 10px;
 	padding: 0px;
-	font-family: 'Open Sans', 'Raleway', sans-serif;
+	font-family: "Open Sans", "Raleway", sans-serif;
 	font-size: 18px;
 	text-align: left;
 	line-height: 24px;
@@ -572,7 +594,7 @@ body {
 	width: 100%;
 	min-height: 150px;
 	height: auto;
-	font-family: 'Open Sans', sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: 17px !important;
 	text-align: left;
 	line-height: 24px;
@@ -592,7 +614,7 @@ body {
 	padding: 0px;
 	padding: 0 15px;
 	top: -28px !important;
-	font-family: 'Open Sans', 'Raleway', sans-serif;
+	font-family: "Open Sans", "Raleway", sans-serif;
 	color: #000000;
 	font-size: 20px;
 	line-height: 30px;
@@ -621,19 +643,19 @@ body {
 }
 
 #clients-reviews .review span.name {
-	font-family: 'Lato', 'Open Sans', sans-serif;
+	font-family: "Lato", "Open Sans", sans-serif;
 	color: #98c741;
 }
 
 #clients-reviews .review span.post {
-	font-family: 'Lato', 'Open Sans', sans-serif;
+	font-family: "Lato", "Open Sans", sans-serif;
 	font-weight: 300;
 	font-size: 14px;
 	color: #58585b;
 	text-transform: none;
 }
 
-#clients-reviews .owl-theme .owl-controls .owl-nav [class*=owl-] {
+#clients-reviews .owl-theme .owl-controls .owl-nav [class*="owl-"] {
 	padding: 0 10px;
 	color: #58585b;
 	font-size: 14px;
@@ -674,7 +696,7 @@ body {
 .inPgSubContainer h1 {
 	margin: 0px !important;
 	padding: 0px !important;
-	font-family: 'Lato', 'Open Sans', sans-serif;
+	font-family: "Lato", "Open Sans", sans-serif;
 	font-size: 26px !important;
 	font-weight: 300 !important;
 	line-height: 75px !important;
@@ -699,7 +721,7 @@ body {
 	.inPgSubContainer h1 {
 		margin: 0px !important;
 		padding: 0px !important;
-		font-family: 'Lato', 'Open Sans', sans-serif;
+		font-family: "Lato", "Open Sans", sans-serif;
 		font-size: 18px !important;
 		font-weight: 400 !important;
 		line-height: 50px !important;
@@ -716,7 +738,7 @@ body {
 .contact-address li {
 	margin: 0px;
 	padding: 0px;
-	font-family: 'Open Sans', sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: 13px;
 	list-style: none;
 	display: block;
@@ -765,7 +787,7 @@ body {
 }
 
 .footer-copyright {
-	box-shadow: inset 0 7px 8px -10px #CCC;
+	box-shadow: inset 0 7px 8px -10px #ccc;
 }
 
 footer {
@@ -779,7 +801,7 @@ footer {
 footer p {
 	margin: 0px;
 	padding: 0px;
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 13px !important;
 	line-height: 30px !important;
 	color: #ffffff !important;
@@ -806,7 +828,7 @@ footer p {
 	padding: 0px;
 	padding-right: 15px;
 	list-style: none;
-	font-family: 'Open Sans', sans-serif;
+	font-family: "Open Sans", sans-serif;
 	color: #000000 !important;
 	line-height: 15px !important;
 	font-size: 13px;
@@ -836,7 +858,7 @@ footer p {
 	margin: 0px;
 	margin-bottom: 15px !important;
 	padding: 0px;
-	font-family: 'Open Sans', 'Raleway', sans-serif !important;
+	font-family: "Open Sans", "Raleway", sans-serif !important;
 	font-size: 16px !important;
 	color: #000000 !important;
 	line-height: 20px !important;
@@ -857,7 +879,7 @@ footer p {
 	footer p {
 		margin: 0px;
 		padding: 0px;
-		font-family: 'Open Sans', sans-serif !important;
+		font-family: "Open Sans", sans-serif !important;
 		font-size: 13px !important;
 		line-height: 20px !important;
 		color: #ffffff !important;
@@ -903,7 +925,7 @@ footer p {
 .h1 {
 	margin: 0px !important;
 	padding: 0px !important;
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 40px !important;
 	font-weight: 400 !important;
 	line-height: 33px !important;
@@ -913,7 +935,7 @@ footer p {
 .footer h2 {
 	margin: 0px;
 	padding: 0px;
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 20px !important;
 	font-weight: 300 !important;
 	line-height: 24px !important;
@@ -924,7 +946,7 @@ footer p {
 	margin: 0px !important;
 	margin-bottom: 5px !important;
 	padding: 0px !important;
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 18px !important;
 	font-weight: 400 !important;
 	line-height: 30px !important;
@@ -934,7 +956,7 @@ footer p {
 .footer h4 {
 	margin: 0px !important;
 	padding: 0px !important;
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 16px !important;
 	font-weight: 600 !important;
 	line-height: 24px !important;
@@ -942,7 +964,7 @@ footer p {
 }
 
 .footer ul li {
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-size: 13px !important;
 	font-weight: 400 !important;
 	line-height: 24px !important;
@@ -1003,7 +1025,7 @@ footer p {
 		height: auto;
 		color: #58585b;
 		border-radius: 5px;
-		background: rgba(88, 88, 91, 0.5)
+		background: rgba(88, 88, 91, 0.5);
 	}
 
 	.jobseeker-login {
@@ -1025,7 +1047,7 @@ footer p {
 		width: auto;
 		height: 100px;
 		text-align: center;
-		background: rgba(0, 0, 0, 0.3)
+		background: rgba(0, 0, 0, 0.3);
 	}
 
 	.home-aboutus {
@@ -1071,7 +1093,7 @@ footer p {
 	width: 30px;
 	height: 30px;
 	color: #ffffff;
-	background-color: #909AA0;
+	background-color: #909aa0;
 	font-size: 18px;
 	line-height: 30px;
 	text-align: center;
@@ -1100,19 +1122,19 @@ footer p {
 }
 
 .social .facebook {
-	background: #4060A5;
+	background: #4060a5;
 }
 
 .social .fa-facebook:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .twitter {
-	background: #00ABE3;
+	background: #00abe3;
 }
 
 .social .fa-twitter:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .google-plus {
@@ -1120,15 +1142,15 @@ footer p {
 }
 
 .social .fa-google-plus:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .youtube {
-	background: #FF1F25;
+	background: #ff1f25;
 }
 
 .social .fa-youtube:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .wordpress {
@@ -1136,7 +1158,7 @@ footer p {
 }
 
 .social .wordpress:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .fa-github:hover {
@@ -1148,15 +1170,15 @@ footer p {
 }
 
 .social .fa-linkedin {
-	background: #0094BC;
+	background: #0094bc;
 }
 
 .social .fa-linkedin:hover {
-	background: #909AA0;
+	background: #909aa0;
 }
 
 .social .fa-flickr:hover {
-	background: #FF57AE;
+	background: #ff57ae;
 }
 
 .social .fa-instagram:hover {
@@ -1164,15 +1186,15 @@ footer p {
 }
 
 .social .fa-vimeo-square:hover {
-	background: #83DAEB;
+	background: #83daeb;
 }
 
 .social .fa-stack-overflow:hover {
-	background: #FEA501;
+	background: #fea501;
 }
 
 .social .fa-dropbox:hover {
-	background: #017FE5;
+	background: #017fe5;
 }
 
 .social .fa-tumblr:hover {
@@ -1180,19 +1202,19 @@ footer p {
 }
 
 .social .fa-dribbble:hover {
-	background: #F46899;
+	background: #f46899;
 }
 
 .social .fa-skype:hover {
-	background: #00C6FF;
+	background: #00c6ff;
 }
 
 .social .fa-stack-exchange:hover {
-	background: #4D86C9;
+	background: #4d86c9;
 }
 
 .social .fa-xing:hover {
-	background: #005C5E;
+	background: #005c5e;
 }
 
 .social .fa-rss:hover {
@@ -1200,9 +1222,9 @@ footer p {
 }
 
 .social .fa-foursquare:hover {
-	background: #09B9E0;
+	background: #09b9e0;
 }
 
 .social .fa-youtube-play:hover {
-	background: #DF192A;
+	background: #df192a;
 }

@@ -9,9 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Opening;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Prism\Prism\Enums\Provider;
@@ -24,7 +27,7 @@ final class JobseekerController extends Controller
         $query = User::role('jobseeker')->with('skills', 'resumes');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $job = null;
@@ -35,10 +38,6 @@ final class JobseekerController extends Controller
 
             if ($job) {
                 $jobSkills = $job->skills->pluck('name')->toArray();
-                $query->with([
-                    'skills' => fn($q) => $q->whereIn('name', $jobSkills)
-                ]);
-                
             }
         }
 
@@ -47,26 +46,45 @@ final class JobseekerController extends Controller
             ->where('status', JobStatusEnum::Published)
             ->get();
 
-        $initialUsers = $query->paginate(10);
+        // Get all users that match the query
+        $allUsers = $query->get();
 
         if ($job && $jobSkills) {
-            $this->addMatchScores($initialUsers, $job, $jobSkills);
+            $this->addMatchScores($allUsers, $job);
         }
 
-        if ($request->filled('matching_score')) {
-            $range = explode('-', $request->matching_score);
-            $minScore = isset($range[0]) ? (int)$range[0] : 0;
-            $maxScore = isset($range[1]) ? (int)$range[1] : 100;
+        $filteredUsers = $allUsers;
 
-            $initialUsers->setCollection(
-                $initialUsers->getCollection()->filter(function ($user) use ($minScore, $maxScore) {
-                    return isset($user->match_score) && $user->match_score >= $minScore && $user->match_score <= $maxScore;
-                })->values()
+        if ($request->filled('matching_score') && $job && $jobSkills) {
+            [$minScore, $maxScore] = array_pad(explode('-', $request->matching_score), 2, null);
+            $minScore = is_numeric($minScore) ? (int) $minScore : 0;
+            $maxScore = is_numeric($maxScore) ? (int) $maxScore : 100;
+
+            $filteredUsers = $filteredUsers->filter(
+                fn ($user): bool => isset($user->match_score)
+                    && $user->match_score >= $minScore
+                    && $user->match_score <= $maxScore
             );
         }
 
+        if ($job && $jobSkills) {
+            $filteredUsers = $filteredUsers->sortByDesc('match_score');
+        }
+
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentItems = $filteredUsers->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginatedUsers = new LengthAwarePaginator(
+            $currentItems,
+            $filteredUsers->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return Inertia::render('employer/jobseekers-listing', [
-            'initialUsers' => $initialUsers,
+            'initialUsers' => $paginatedUsers,
             'jobs' => $jobs,
         ]);
     }
@@ -98,20 +116,28 @@ final class JobseekerController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'skill'   => 'required|string',
+            'skill' => 'required|string',
         ]);
+
+        $cacheKey = sprintf('user_summary:%s:%s', $validated['user_id'], $validated['skill']);
+
+        // Try to get from cache first
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'summary' => Cache::get($cacheKey),
+                'skill' => $validated['skill'],
+            ]);
+        }
 
         $user = User::findOrFail($validated['user_id']);
         $resumeText = $user->resumes()->latest()->value('text');
 
-        if (!$resumeText) {
+        if (! $resumeText) {
             return response()->json([
                 'summary' => 'No resume text available to analyze',
-                'skill'   => $validated['skill'],
+                'skill' => $validated['skill'],
             ], 400);
         }
-
-        $prompt = $this->createPromptFromResume($resumeText, $validated['skill']);
 
         try {
             $response = Prism::text()
@@ -119,46 +145,76 @@ final class JobseekerController extends Controller
                     Provider::OpenRouter,
                     'mistralai/mistral-small-3.2-24b-instruct:free'
                 )
-                ->withPrompt($prompt)
+                ->withPrompt("
+Summarize this candidate's resume with a focus on the skill: {$validated['skill']}.
+Keep it concise (2-3 sentences) highlighting:
+- Relevant roles or projects
+- Years of experience
+- Certifications or education related to {$validated['skill']}
+
+Resume: {$resumeText}
+
+If no relevant experience is found, reply exactly:
+\"No significant experience with {$validated['skill']} found.\"
+                ")
                 ->asText();
 
+            $summary = mb_trim($response->text);
+
+            // Cache the result for 24 hours
+            Cache::put($cacheKey, $summary, now()->addHours(24));
+
             return response()->json([
-                'summary' => trim($response->text),
-                'skill'   => $validated['skill'],
+                'summary' => $summary,
+                'skill' => $validated['skill'],
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
+            Log::error('AI Summary Generation Error: '.$exception->getMessage());
+
             return response()->json([
-                'summary' => 'Error generating summary',
-                'skill'   => $validated['skill'],
+                'summary' => 'Error generating summary. Please try again later.',
+                'skill' => $validated['skill'],
             ], 500);
         }
     }
 
-    private function addMatchScores(
-        LengthAwarePaginator $users,
-        Opening $job,
-        array $jobSkills
-    ): void {
-        $jobTitle     = $job->title;
-        $jobSkillsTxt = implode(', ', $jobSkills);
+    private function addMatchScores(Collection $users, Opening $job): void
+    {
+        $jobTitle = $job->title;
+        $jobDescription = $job->description ?? '';
 
-        $users->getCollection()->transform(
-            function ($user) use ($jobTitle, $jobSkillsTxt, $jobSkills) {
-                $candidateSkills     = $user->skills->pluck('name')->toArray();
-                $candidateSkillsText = implode(', ', $candidateSkills);
+        // Batch process users with resumes to minimize API calls
+        $usersWithResumes = $users->filter(fn($user): bool => ! empty($user->resumes()->latest()->value('text')));
 
-                if (empty($candidateSkills)) {
-                    $user->match_score = 0;
-                    return $user;
+        $usersWithoutResumes = $users->filter(fn($user): bool => empty($user->resumes()->latest()->value('text')));
+
+        // Set default scores for users without resumes
+        foreach ($usersWithoutResumes as $user) {
+            $user->match_score = 0;
+            $user->match_reason = 'No resume available';
+        }
+
+        // Process users with resumes in batches with delays to avoid rate limiting
+        $batchSize = 5; // Process 5 users at a time
+        $delayBetweenBatches = 1000000; // 1 second delay in microseconds
+
+        $usersWithResumes->chunk($batchSize)->each(function ($batch) use ($jobTitle, $jobDescription, $job, $delayBetweenBatches): void {
+            foreach ($batch as $user) {
+                $cacheKey = sprintf('user_match:%s:%s', $user->id, $job->id);
+
+                // Try to get from cache first
+                if (Cache::has($cacheKey)) {
+                    $cachedResult = Cache::get($cacheKey);
+                    $user->match_score = $cachedResult['score'];
+                    $user->match_reason = $cachedResult['reason'];
+
+                    continue;
                 }
 
+                $resumeText = $user->resumes()->latest()->value('text');
+
                 try {
-                    $prompt = $this->buildPrompt(
-                        $jobTitle,
-                        $jobSkillsTxt,
-                        $user->name,
-                        $candidateSkillsText
-                    );
+                    $prompt = $this->buildPrompt($jobTitle, $jobDescription, $resumeText);
 
                     $response = Prism::text()
                         ->using(
@@ -168,7 +224,9 @@ final class JobseekerController extends Controller
                         ->withPrompt($prompt)
                         ->asText();
 
-                    $responseText = $response->text;
+                    $responseText = mb_trim($response->text);
+                    $responseText = preg_replace('/```(json)?/i', '', $responseText);
+                    $responseText = mb_trim($responseText);
 
                     $jsonStart = mb_strpos($responseText, '{');
                     $jsonEnd = mb_strrpos($responseText, '}');
@@ -181,73 +239,48 @@ final class JobseekerController extends Controller
                             throw new Exception('Invalid JSON response from AI service');
                         }
 
-                        $user->match_score     = $result['score'] ?? 0;
-                        $user->match_reason    = $result['reason'] ?? '';
-                        $user->shortlist_reason = $result['shortlist_reason'] ?? '';
-                        $user->is_shortlisted  = $result['shortlist'] ?? false;
+                        $score = (int) ($result['score'] ?? 0);
+                        $reason = $result['summary'] ?? 'No summary provided';
+
+                        $user->match_score = $score;
+                        $user->match_reason = $reason;
+
+                        // Cache the result for 24 hours
+                        Cache::put($cacheKey, [
+                            'score' => $score,
+                            'reason' => $reason,
+                        ], now()->addHours(24));
                     } else {
                         throw new Exception('No JSON found in AI response');
                     }
-                } catch (Exception) {
-                    $user->match_score = $this->calculateSimpleMatch(
-                        $jobSkills,
-                        $candidateSkills
-                    );
+                } catch (Exception $e) {
+                    Log::error('AI Matching Error for user '.$user->id.': '.$e->getMessage());
+                    $user->match_score = 0;
+                    $user->match_reason = 'Error generating AI match: '.$e->getMessage();
                 }
-
-                return $user;
             }
-        );
+
+            // Add delay between batches to avoid rate limiting
+            usleep($delayBetweenBatches);
+        });
     }
 
-    private function buildPrompt(
-        string $jobTitle,
-        string $jobSkills,
-        string $candidateName,
-        string $candidateSkills
-    ): string {
+    private function buildPrompt(string $jobTitle, string $jobDescription, string $resumeText): string
+    {
         return <<<EOT
-Analyze the match between the job and candidate. Return JSON with:
-- score (0-100)
-- reason (string)
-- shortlist (boolean)
-- shortlist_reason (string)
+Analyze how well this candidate's resume matches the job requirements.
+Respond ONLY with a valid JSON object, no extra text, no code block.
 
-Job: {$jobTitle}
-Required Skills: {$jobSkills}
-Candidate: {$candidateName}
-Candidate Skills: {$candidateSkills}
+JSON Schema:
+{
+  "score": number (0-100),
+  "summary": "string"
+}
+
+JOB TITLE: {$jobTitle}
+JOB DESCRIPTION: {$jobDescription}
+
+CANDIDATE RESUME: {$resumeText}
 EOT;
-    }
-
-    private function calculateSimpleMatch(
-        array $jobSkills,
-        array $candidateSkills
-    ): int {
-        if (empty($jobSkills)) {
-            return 0;
-        }
-
-        $matched = count(array_intersect($jobSkills, $candidateSkills));
-
-        return (int) round(($matched / count($jobSkills)) * 100);
-    }
-
-    private function createPromptFromResume(
-        string $resumeText,
-        string $skill
-    ): string {
-        return <<<PROMPT
-Analyze this resume for experience with "{$skill}".
-Provide a concise 2-3 sentence summary focusing on:
-- Years of experience
-- Relevant roles/projects
-- Certifications/education
-
-Resume: {$resumeText}
-
-If no experience found, state:
-"No significant experience with {$skill} found."
-PROMPT;
     }
 }

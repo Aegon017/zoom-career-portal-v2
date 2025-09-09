@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
@@ -49,20 +50,33 @@ final class StudentRegisterController extends Controller
 
         $user->assignRole($role);
 
+        $remote_user = DB::connection('remote_mysql')
+            ->table('previous_users')
+            ->where('email', $data['email'])
+            ->first();
+
+        $isVerified = false;
+
+        if ($remote_user) {
+            $isVerified = true;
+        }
+
         $user->profile()->create([
             'course_completed' => $data['course_completed'] ?? null,
             'student_id' => $data['student_id'] ?? null,
             'completed_month' => $data['completed_month'] ?? null,
-            'is_verified' => false,
+            'is_verified' => $isVerified,
         ]);
 
-        $admins = User::role('super_admin')->get();
-        Notification::send($admins, new StudentVerifyNotification($user));
+        if (! $isVerified) {
+            $admins = User::role('super_admin')->get();
+            Notification::send($admins, new StudentVerifyNotification($user));
+        }
 
         Auth::login($user);
 
         event(new Registered($user));
 
-        return to_route('jobseeker.dashboard')->with('status', 'Registration successful. Please verify your email.');
+        return to_route('jobseeker.dashboard')->with('status', 'Registration successful.');
     }
 }

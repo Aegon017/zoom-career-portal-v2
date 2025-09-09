@@ -16,7 +16,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
 {
     private $jobTitle;
 
-    public function __construct(private readonly \App\Models\Opening $job)
+    public function __construct(private readonly Opening $job)
     {
         $this->jobTitle = $this->job->title;
     }
@@ -24,7 +24,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
     public function collection()
     {
         return $this->job->applications()
-            ->with(['user:id,name,email'])
+            ->with(['user:id,name,email,phone'])
             ->get([
                 'id',
                 'user_id',
@@ -41,6 +41,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
             'Job Title',
             'Candidate',
             'Email',
+            'Phone',
             'Status',
             'Match Score',
             'Applied At',
@@ -54,6 +55,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
             $this->jobTitle,
             $application->user->name,
             $application->user->email,
+            $application->user->phone,
             ucfirst((string) $application->status),
             $application->match_score ? round($application->match_score, 2) : 'N/A',
             $application->created_at->format('M d, Y H:i'),

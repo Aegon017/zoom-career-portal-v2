@@ -18,14 +18,14 @@ final class NotificationController extends Controller
         ]);
     }
 
-    public function markAsRead(string $notificationId)
+    public function markAsRead(string $notificationId): \Illuminate\Http\RedirectResponse
     {
         DatabaseNotification::find($notificationId)->markAsRead();
 
         return back();
     }
 
-    public function markAllAsRead()
+    public function markAllAsRead(): \Illuminate\Http\RedirectResponse
     {
         Auth::user()->notifications->markAsRead();
 

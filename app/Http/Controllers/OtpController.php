@@ -31,7 +31,7 @@ final class OtpController extends Controller
     public function send(Request $request, OtpService $otpService)
     {
         $request->validate([
-            'phone' => 'required|numeric',
+            'phone' => 'required|string|unique:users,phone,'.Auth::id(),
         ]);
 
         $user = Auth::user();

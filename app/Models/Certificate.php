@@ -12,7 +12,7 @@ final class Certificate extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'number'
+        'number',
     ];
 
     public function user(): BelongsTo

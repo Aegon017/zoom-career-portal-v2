@@ -32,7 +32,7 @@ final class AppServiceProvider extends ServiceProvider
 
     private function redirectAuthenticatedUser(): void
     {
-        RedirectIfAuthenticated::redirectUsing(function () {
+        RedirectIfAuthenticated::redirectUsing(function (): string {
             $user = Auth::user();
 
             if ($user) {

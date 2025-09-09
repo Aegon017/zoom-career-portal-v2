@@ -1,8 +1,7 @@
 .ddsmoothmenu {
-
 }
 .ddsmoothmenu ul {
-	z-index:100;
+	z-index: 100;
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
@@ -21,13 +20,16 @@
 	color: white;
 	text-decoration: none;
 }
-.ddsmoothmenu ul li a { /*IE6 hack to get sub menu links to behave correctly*/
+.ddsmoothmenu ul li a {
+	/*IE6 hack to get sub menu links to behave correctly*/
 	display: inline-block;
 }
-.ddsmoothmenu ul li a:link, .ddsmoothmenu ul li a:visited {
+.ddsmoothmenu ul li a:link,
+.ddsmoothmenu ul li a:visited {
 	color: white;
 }
-.ddsmoothmenu ul li a.selected { /*CSS class that's dynamically added to the currently active menu items' LI A element*/
+.ddsmoothmenu ul li a.selected {
+	/*CSS class that's dynamically added to the currently active menu items' LI A element*/
 	color: #000000;
 }
 .ddsmoothmenu ul li a:hover {
@@ -41,7 +43,9 @@
 	padding-bottom: 5px;
 	left: 0;
 	width: 170px;
-	font-family: "Roboto", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 'Source Sans Pro';
+	font-family:
+		"Roboto", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif,
+		"Source Sans Pro";
 	display: none; /*collapse all sub menus to begin with*/
 	visibility: hidden;
 	background: #014785;
@@ -69,8 +73,8 @@
 	background: #014785;
 }
 .ddsmoothmenu ul li ul li a:hover {
-    color: #5bc3f3;
-    background: none;
+	color: #5bc3f3;
+	background: none;
 }
 /* Holly Hack for IE \*/
 .ddsmoothmenu {
@@ -92,13 +96,15 @@
 
 /* ######### CSS for shadow added to sub menus  ######### */
 
-.ddshadow { /*shadow for NON CSS3 capable browsers*/
+.ddshadow {
+	/*shadow for NON CSS3 capable browsers*/
 	position: absolute;
 	left: 0;
 	top: 0;
 	width: 0;
 	height: 0;
 }
-.toplevelshadow { /*shadow opacity for NON CSS3 capable browsers. Doesn't work in IE*/
+.toplevelshadow {
+	/*shadow opacity for NON CSS3 capable browsers. Doesn't work in IE*/
 	opacity: 0.8;
 }

@@ -6,9 +6,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+use Log;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
-use Illuminate\Support\Str;
+use Throwable;
 
 final class Profile extends Model
 {
@@ -35,7 +37,7 @@ final class Profile extends Model
 
     protected static function booted(): void
     {
-        static::retrieved(function (Profile $profile): void {
+        self::retrieved(function (Profile $profile): void {
             if (empty($profile->summary)) {
                 $profile->summary = $profile->generateAISummary();
                 $profile->saveQuietly(); // Avoids triggering events again
@@ -54,15 +56,15 @@ final class Profile extends Model
         $prompt = "Write only the following — no title, no formatting, and no explanations.\n\n";
         $prompt .= "A concise, professional summary for a software developer profile with these details:\n";
         $prompt .= sprintf('Experience: %s%s', $this->experience, PHP_EOL);
-        $prompt .= 'Skills: ' . $user->skills->pluck('name')->implode(', ') . "\n";
-        $prompt .= 'Education: ' . $user->educations->map(fn($edu): string => sprintf(
+        $prompt .= 'Skills: '.$user->skills->pluck('name')->implode(', ')."\n";
+        $prompt .= 'Education: '.$user->educations->map(fn ($edu): string => sprintf(
             '%s at %s (%s',
             $edu->course_title,
             $edu->institution,
             $edu->start_date
-        ) .
-            ($edu->is_current ? ' - Present' : ' - ' . $edu->end_date) .
-            sprintf(', %s)', $edu->course_type))->implode(', ') . "\n\n";
+        ).
+            ($edu->is_current ? ' - Present' : ' - '.$edu->end_date).
+            sprintf(', %s)', $edu->course_type))->implode(', ')."\n\n";
         $prompt .= "Output ONLY the final summary text. Do NOT include any headings like 'Professional Summary' or any formatting.";
 
         try {
@@ -72,8 +74,8 @@ final class Profile extends Model
                 ->asText();
 
             return $summary->text ?? $this->staticFallbackSummary();
-        } catch (\Throwable $e) {
-            \Log::error('AI summary generation failed: ' . $e->getMessage());
+        } catch (Throwable $throwable) {
+            Log::error('AI summary generation failed: '.$throwable->getMessage());
 
             return $this->staticFallbackSummary();
         }
@@ -88,7 +90,7 @@ final class Profile extends Model
         $user = $this->user;
 
         $skills = $user->skills->pluck('name')
-            ->map(fn($skill) => Str::before($skill, ':'))
+            ->map(fn ($skill) => Str::before($skill, ':'))
             ->unique()
             ->values();
 
@@ -105,16 +107,16 @@ final class Profile extends Model
             'Windows Operating System',
             'SIEM',
             'Firewall',
-            'SOC'
+            'SOC',
         ])->take(3)->implode(', ');
 
         $experience = $this->experience ?: 'entry-level experience';
 
         $latestEducation = $user->educations->sortByDesc('end_date')->first();
         $educationText = $latestEducation
-            ? "Holds a {$latestEducation->course_title} from {$latestEducation->institution}"
+            ? sprintf('Holds a %s from %s', $latestEducation->course_title, $latestEducation->institution)
             : null;
 
-        return trim("Motivated and detail-oriented software developer with {$experience} in {$skillSummary}. {$educationText}.");
+        return mb_trim(sprintf('Motivated and detail-oriented software developer with %s in %s. %s.', $experience, $skillSummary, $educationText));
     }
 }

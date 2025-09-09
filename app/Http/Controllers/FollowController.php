@@ -53,7 +53,7 @@ final class FollowController extends Controller
         return back()->with('success', 'Unfollowed successfully.');
     }
 
-    public function toggle(Request $request)
+    public function toggle(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'followable_id' => 'required|integer',

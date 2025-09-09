@@ -51,7 +51,7 @@ final class UserController extends Controller
         Gate::authorize('create_user', $this->user);
 
         $operation = OperationsEnum::Create;
-        $roleOptions = Role::get()->map(fn($role): array => [
+        $roleOptions = Role::get()->map(fn ($role): array => [
             'value' => $role->id,
             'label' => $role->name,
         ]);
@@ -92,7 +92,7 @@ final class UserController extends Controller
         Gate::authorize('update_user', $this->user);
 
         $operation = OperationsEnum::Edit;
-        $roleOptions = Role::get()->map(fn($role): array => [
+        $roleOptions = Role::get()->map(fn ($role): array => [
             'value' => $role->id,
             'label' => $role->name,
         ]);

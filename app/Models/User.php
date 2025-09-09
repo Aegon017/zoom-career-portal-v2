@@ -67,12 +67,12 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         $this->addMediaCollection('banners')->singleFile();
     }
 
-    public function getAvatarUrlAttribute(): ?string
+    public function getAvatarUrlAttribute(): string
     {
         return $this->getFirstMediaUrl('avatars');
     }
 
-    public function getBannerUrlAttribute(): ?string
+    public function getBannerUrlAttribute(): string
     {
         return $this->getFirstMediaUrl('banners');
     }

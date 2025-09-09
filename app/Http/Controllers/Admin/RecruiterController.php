@@ -41,7 +41,7 @@ final class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Create->option();
 
-        $companyOptions = Company::pluck('name', 'id')->map(fn($name, $id): array => ['value' => $id, 'label' => $name])->values();
+        $companyOptions = Company::pluck('name', 'id')->map(fn ($name, $id): array => ['value' => $id, 'label' => $name])->values();
 
         return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
             'operation' => $operation,
@@ -55,7 +55,7 @@ final class RecruiterController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:20|unique:users,phone',
             'job_title' => 'nullable|string|max:255',
             'company_id' => 'required|exists:companies,id',
             'password' => 'required|string|min:8',
@@ -101,7 +101,7 @@ final class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Edit->option();
 
-        $companyOptions = Company::get()->map(fn($company): array => [
+        $companyOptions = Company::get()->map(fn ($company): array => [
             'value' => $company->id,
             'label' => $company->name,
         ]);
@@ -119,7 +119,7 @@ final class RecruiterController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$recruiter->id,
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:20|unique:users,phone,'.$recruiter->id,
             'job_title' => 'nullable|string|max:255',
             'company_id' => 'required|exists:companies,id',
             'verification_status' => ['required', Rule::in(VerificationStatusEnum::values())],
