@@ -44,7 +44,10 @@ final class ApplicationsController extends Controller
                 $applicationsQuery->where('status', $request->status);
             }
 
-            $applications = $applicationsQuery->where('match_score', '>=', $matchScoreCutoff)->orderBy('match_score', 'desc')->get();
+            $applications = $applicationsQuery
+                ->where('match_score', '>=', $matchScoreCutoff ?? 0)
+                ->orderBy('match_score', 'desc')
+                ->get();
 
             $skills = $job->skills()->pluck('name')->unique()->values();
         }

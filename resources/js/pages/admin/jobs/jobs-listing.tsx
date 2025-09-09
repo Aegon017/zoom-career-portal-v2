@@ -31,7 +31,7 @@ export default function jobsListing( { jobs, filters }: Props ) {
             <Head title="jobs" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <DataTable
-                    hasCreate={ false }
+                    hasCreate={ true }
                     columns={ columns }
                     data={ jobs.data }
                     pagination={ {
@@ -43,7 +43,7 @@ export default function jobsListing( { jobs, filters }: Props ) {
                     filters={ filters }
                     routeName=""
                     listingName="job"
-                    createUrl=""
+                    createUrl="/admin/jobs/create"
                 />
             </div>
         </AppLayout>

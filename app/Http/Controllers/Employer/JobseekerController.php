@@ -38,6 +38,7 @@ final class JobseekerController extends Controller
                 $query->with([
                     'skills' => fn($q) => $q->whereIn('name', $jobSkills)
                 ]);
+                
             }
         }
 

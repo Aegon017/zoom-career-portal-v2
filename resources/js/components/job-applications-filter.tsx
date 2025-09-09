@@ -117,7 +117,7 @@ const MessageDialog = ( {
                         value={ message }
                         onChange={ setMessage }
                         placeholder="Type your message..."
-                        disabled={false}
+                        disabled={ false }
                     />
                     <DialogFooter>
                         <DialogClose asChild>
@@ -209,79 +209,65 @@ export const JobApplicationsFilter = ( {
     const clearFilters = useCallback( () => reset( { job_id: '', skill: '', status: '' } ), [ reset ] );
 
     return (
-        <Card className="border-0 border-b-2 shadow-none rounded-none p-0">
-            <CardContent className="p-0 pb-4">
-                <Form { ...form }>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
-                            <div className="sm:w-1/3">
-                                <SelectPopoverField
-                                    control={ control }
-                                    name="job_id"
-                                    options={ jobOptions }
-                                    placeholder="Select job"
-                                    label="Job"
-                                />
-                            </div>
+        <div className="p-4 grid gap-4 grid-cols-1">
+            <Form { ...form }>
+                <SelectPopoverField
+                    control={ control }
+                    name="job_id"
+                    options={ jobOptions }
+                    placeholder="Select job"
+                    label="Job"
+                />
 
-                            { jobId && (
-                                <>
-                                    <div className="sm:w-1/3">
-                                        <SelectPopoverField
-                                            control={ control }
-                                            name="skill"
-                                            options={ skillOptions }
-                                            placeholder="Select skill"
-                                            label="Skill"
-                                        />
-                                    </div>
+                { jobId && (
+                    <>
+                        <SelectPopoverField
+                            control={ control }
+                            name="skill"
+                            options={ skillOptions }
+                            placeholder="Select skill"
+                            label="Skill"
+                        />
+                        <SelectPopoverField
+                            control={ control }
+                            name="status"
+                            options={ statusOptions }
+                            placeholder="Select status"
+                            label="Status"
+                        />
+                        <Dialog open={ isMessageOpen } onOpenChange={ setIsMessageOpen }>
+                            <DialogTrigger asChild>
+                                <Button variant="secondary">Message Shortlisted</Button>
+                            </DialogTrigger>
+                            <MessageDialog
+                                jobId={ jobId }
+                                open={ isMessageOpen }
+                                onOpenChange={ setIsMessageOpen }
+                                onSubmit={ handleMessageSubmit }
+                            />
+                        </Dialog>
 
-                                    <div className="sm:w-1/3">
-                                        <SelectPopoverField
-                                            control={ control }
-                                            name="status"
-                                            options={ statusOptions }
-                                            placeholder="Select status"
-                                            label="Status"
-                                        />
-                                    </div>
+                        <DownloadResumesButton
+                            jobId={ jobId }
+                            skill={ skill }
+                            status={ status }
+                        />
+                    </>
+                ) }
 
-                                    <Dialog open={ isMessageOpen } onOpenChange={ setIsMessageOpen }>
-                                        <DialogTrigger asChild>
-                                            <Button variant="secondary">Message Shortlisted</Button>
-                                        </DialogTrigger>
-                                        <MessageDialog
-                                            jobId={ jobId }
-                                            open={ isMessageOpen }
-                                            onOpenChange={ setIsMessageOpen }
-                                            onSubmit={ handleMessageSubmit }
-                                        />
-                                    </Dialog>
-
-                                    <DownloadResumesButton
-                                        jobId={ jobId }
-                                        skill={ skill }
-                                        status={ status }
-                                    />
-                                </>
-                            ) }
-
-                            { hasFilters && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={ clearFilters }
-                                    className="text-muted-foreground hover:text-foreground mt-1 sm:mt-0"
-                                >
-                                    <X className="mr-1 h-4 w-4" />
-                                    Clear
-                                </Button>
-                            ) }
-                        </div>
-                    </div>
-                </Form>
-            </CardContent>
-        </Card>
+                { hasFilters && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={ clearFilters }
+                        className="text-muted-foreground hover:text-foreground mt-1 sm:mt-0"
+                    >
+                        <X className="mr-1 h-4 w-4" />
+                        Clear
+                    </Button>
+                ) }
+            </Form>
+        </div>
     );
 };
