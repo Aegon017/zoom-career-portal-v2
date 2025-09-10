@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\ApplicationsExportController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Employer\ApplicationsController;
+use App\Http\Controllers\Admin\ApplicationsExportController;
 use App\Http\Controllers\Employer\CompanyController as EmployerCompanyController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
 use App\Http\Controllers\Employer\FeedbackController;
@@ -38,14 +38,14 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
-Route::get('/', fn (): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory => view('home'))->name('home');
+Route::get('/', fn(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory => view('home'))->name('home');
 
 Route::redirect('/admin', '/admin/login');
 
-Route::get('/admin/login', fn () => Inertia::render('auth/admin-login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('auth/admin-login'))->name('admin.login');
 
-Route::middleware('employer.onboarding')->get('/account/verification/notice', fn () => Inertia::render('account-verification-notice'))->name('account.verification.notice');
-Route::middleware('auth')->get('/student/verification/notice', fn () => Inertia::render('student-verification-notice'))->name('student.verification.notice');
+Route::middleware('employer.onboarding')->get('/account/verification/notice', fn() => Inertia::render('account-verification-notice'))->name('account.verification.notice');
+Route::middleware('auth')->get('/student/verification/notice', fn() => Inertia::render('student-verification-notice'))->name('student.verification.notice');
 
 // temporary file upload routes
 Route::post('/temp-upload', [TempUploadController::class, 'store']);
@@ -117,14 +117,15 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::prefix('/applications')->name('applications.')->group(function (): void {
             Route::get('/', [ApplicationsController::class, 'index'])->name('index');
             Route::post('/', [ApplicationsController::class, 'store'])->name('store');
-            Route::get('/download-resumes', [ApplicationsController::class, 'downloadResumes'])->name('download-resumes');
         });
+
+        Route::get('/jobs/{job}/applications/resumes/download-selected', [ApplicationsController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
 
         Route::post('/jobs/{job}/shortlisted/message', [ApplicationsController::class, 'messageShortlisted'])->name('jobs.shortlisted.message');
 
         Route::get('/jobs/{job}/feedback', [FeedbackController::class, 'create']);
         Route::post('/jobs/{job}/feedback', [FeedbackController::class, 'store']);
-        Route::get('/applications/export/{job}', ApplicationsExportController::class)->name('applications.export');
+        Route::get('/applications/export', ApplicationsExportController::class)->name('applications.export');
     });
 
     // jobseeker routes
@@ -162,7 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('/jobseeker/profile-wizard', [ProfileController::class, 'wizard'])->name('jobseeker.profile.wizard');
     Route::put('/jobseeker/profile-complete', [ProfileController::class, 'complete'])->name('jobseeker.profile.complete');
-    Route::get('/jobseeker/resume/upload', fn () => Inertia::render('jobseeker/resume-upload'))->name('jobseeker.resume.upload');
+    Route::get('/jobseeker/resume/upload', fn() => Inertia::render('jobseeker/resume-upload'))->name('jobseeker.resume.upload');
     Route::post('/jobseeker/resume/upload', function (Request $request) {
         $request->validate([
             'resume' => 'required|string',
@@ -184,7 +185,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
             return to_route('jobseeker.dashboard');
         } catch (FileCannotBeAdded $fileCannotBeAdded) {
-            return back()->withErrors(['resume' => 'Upload failed: '.$fileCannotBeAdded->getMessage()]);
+            return back()->withErrors(['resume' => 'Upload failed: ' . $fileCannotBeAdded->getMessage()]);
         }
     })->name('jobseeker.resume.upload');
 
@@ -192,8 +193,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
 });
 
-Route::middleware('auth')->get('/notifications', fn (Request $request) => $request->user()->unreadNotifications()->latest()->get());
+Route::middleware('auth')->get('/notifications', fn(Request $request) => $request->user()->unreadNotifications()->latest()->get());
 
-require __DIR__.'/settings.php';
-require __DIR__.'/admin.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';
+require __DIR__ . '/auth.php';

@@ -5,34 +5,29 @@ declare(strict_types=1);
 namespace App\Exports;
 
 use App\Models\Opening;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
+final class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
-    private $jobTitle;
+    public function __construct(
+        private readonly Opening $job,
+        private readonly ?string $status = null
+    ) {}
 
-    public function __construct(private readonly Opening $job)
+    public function query()
     {
-        $this->jobTitle = $this->job->title;
-    }
+        $query = $this->job->applications()->with('user:id,name,email,phone');
 
-    public function collection()
-    {
-        return $this->job->applications()
-            ->with(['user:id,name,email,phone'])
-            ->get([
-                'id',
-                'user_id',
-                'status',
-                'match_score',
-                'match_summary',
-                'created_at',
-            ]);
+        if ($this->status) {
+            $query->where('status', $this->status);
+        }
+
+        return $query;
     }
 
     public function headings(): array
@@ -54,7 +49,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
     {
         return [
             $application->id,
-            $this->jobTitle,
+            $this->job->title,
             $application->user->name,
             $application->user->email,
             $application->user->phone,
@@ -67,9 +62,11 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
 
     public function styles(Worksheet $sheet)
     {
+        $lastRow = $sheet->getHighestRow();
+
         return [
             1 => ['font' => ['bold' => true]],
-            'A1:G'.($sheet->getHighestRow()) => [
+            "A1:I{$lastRow}" => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
