@@ -1,9 +1,9 @@
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
-import { Download, Filter, Loader2, User, X } from 'lucide-react';
+import { Download, FileUp, Filter, Loader2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
+import { ComboboxField } from '@/components/combobox-field';
 import JobApplicationCard from '@/components/job-application-card';
 import TextEditor from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,6 @@ import {
 } from '@/components/ui/sheet';
 import AppLayout from '@/layouts/employer-layout';
 import type { Application, BreadcrumbItem, Opening, Option } from '@/types';
-import { ComboboxField } from '@/components/combobox-field';
 
 const breadcrumbs: BreadcrumbItem[] = [
 	{
@@ -54,23 +53,11 @@ interface Props {
 	exportUrl?: string;
 }
 
-interface JobOption extends Option {
-	value: string;
-	label: string;
-}
-
 interface FilterFormValues {
 	status: string;
 	job_id: string;
 }
 
-interface JobApplicationsFilterProps {
-	jobOptions: JobOption[];
-	statuses: Option[];
-	defaultValue?: number;
-}
-
-// Reusable Download Resumes Button Component
 const DownloadResumesButton = ( {
 	jobId,
 	status,
@@ -117,69 +104,17 @@ const DownloadResumesButton = ( {
 	);
 };
 
-// Reusable Message Dialog Component
-const MessageDialog = ( {
-	jobId,
-	open,
-	onOpenChange,
-	onSubmit,
-}: {
-	jobId: string;
-	open: boolean;
-	onOpenChange: ( open: boolean ) => void;
-	onSubmit: ( data: { subject: string; message: string } ) => void;
-} ) => {
-	const [ subject, setSubject ] = useState( '' );
-	const [ message, setMessage ] = useState( '' );
-
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		onSubmit( { subject, message } );
-	};
-
-	return (
-		<Dialog open={ open } onOpenChange={ onOpenChange }>
-			<DialogContent className="sm:max-w-2xl">
-				<DialogHeader>
-					<DialogTitle>Message Shortlisted Candidates</DialogTitle>
-					<DialogDescription>
-						Send a message to all shortlisted candidates for this job.
-					</DialogDescription>
-				</DialogHeader>
-				<form onSubmit={ handleSubmit } className="space-y-4">
-					<Input
-						value={ subject }
-						onChange={ ( e ) => setSubject( e.target.value ) }
-						placeholder="Subject"
-						required
-					/>
-					<TextEditor
-						value={ message }
-						onChange={ setMessage }
-						placeholder="Type your message..."
-						disabled={ false }
-					/>
-					<DialogFooter>
-						<DialogClose asChild>
-							<Button variant="outline">Cancel</Button>
-						</DialogClose>
-						<Button type="submit" disabled={ !subject.trim() || !message.trim() }>
-							Send
-						</Button>
-					</DialogFooter>
-				</form>
-			</DialogContent>
-		</Dialog>
-	);
-};
-
-// Reusable Filter Form Component
 const FilterForm = ( {
 	jobOptions,
 	statuses,
 	defaultValue,
 	onFilterChange,
-}: JobApplicationsFilterProps & { onFilterChange: ( data: FilterFormValues ) => void } ) => {
+}: {
+	jobOptions: Option[];
+	statuses: Option[];
+	defaultValue?: number;
+	onFilterChange: ( data: FilterFormValues ) => void;
+} ) => {
 	const form = useForm<FilterFormValues>( {
 		defaultValues: {
 			status: '',
@@ -191,24 +126,20 @@ const FilterForm = ( {
 	const [ jobId, status ] = watch( [ 'job_id', 'status' ] );
 	const timeoutRef = useRef<number | null>( null );
 
-	// Check if any filters are applied
 	const hasFilters = jobId || status;
 
-	// Memoized options
 	const statusOptions = useMemo(
 		() => [
 			{ value: '', label: 'All Statuses' },
-			...statuses.map( ( s ) => ( { value: s.value, label: s.label } ) ),
+			...statuses,
 		],
 		[ statuses ]
 	);
 
-	// Clear all filters
 	const clearFilters = useCallback( () => {
 		reset( { job_id: '', status: '' } );
 	}, [ reset ] );
 
-	// Debounced filter effect
 	useEffect( () => {
 		if ( timeoutRef.current ) {
 			clearTimeout( timeoutRef.current );
@@ -287,7 +218,6 @@ const FilterForm = ( {
 	);
 };
 
-// Empty State Component
 const ApplicationsEmptyState = ( { hasSelectedJob }: { hasSelectedJob: boolean } ) => (
 	<div className="flex flex-1 flex-col items-center justify-center gap-4 py-8">
 		<div className="rounded-full bg-muted p-4">
@@ -306,7 +236,6 @@ const ApplicationsEmptyState = ( { hasSelectedJob }: { hasSelectedJob: boolean }
 	</div>
 );
 
-// Export Button Component
 const ExportButton = ( { exportUrl }: { exportUrl?: string } ) => {
 	const [ isExporting, setIsExporting ] = useState( false );
 
@@ -345,7 +274,7 @@ const ExportButton = ( { exportUrl }: { exportUrl?: string } ) => {
 				</>
 			) : (
 				<>
-					<Download className="h-4 w-4" />
+					<FileUp className="h-4 w-4" />
 					<span>Export</span>
 				</>
 			) }
@@ -353,7 +282,6 @@ const ExportButton = ( { exportUrl }: { exportUrl?: string } ) => {
 	);
 };
 
-// Main Component
 export default function ApplicationsIndex( {
 	jobs,
 	job_id,
@@ -361,22 +289,20 @@ export default function ApplicationsIndex( {
 	statuses,
 	exportUrl,
 }: Props ) {
-	// State for filter values
 	const [ selectedJobId, setSelectedJobId ] = useState( job_id ? String( job_id ) : '' );
 	const [ selectedStatus, setSelectedStatus ] = useState( '' );
 	const [ isMessageOpen, setIsMessageOpen ] = useState( false );
+	const [ subject, setSubject ] = useState( '' );
+	const [ message, setMessage ] = useState( '' );
 
-	// Memoized derived values for performance
-	const hasApplications = useMemo( () => applications.length > 0, [ applications ] );
-	const hasSelectedJob = useMemo( () => Boolean( job_id ), [ job_id ] );
+	const hasApplications = applications.length > 0;
+	const hasSelectedJob = Boolean( job_id );
 
-	// Memoized job options to prevent unnecessary recalculations
 	const jobOptions = useMemo(
 		() => jobs.map( ( job ) => ( { value: String( job.id ), label: job.title } ) ),
 		[ jobs ]
 	);
 
-	// Handle filter changes
 	const handleFilterChange = useCallback( ( data: FilterFormValues ) => {
 		setSelectedJobId( data.job_id );
 		setSelectedStatus( data.status );
@@ -395,9 +321,9 @@ export default function ApplicationsIndex( {
 		);
 	}, [] );
 
-	// Handle message submission
 	const handleMessageSubmit = useCallback(
-		( { subject, message }: { subject: string; message: string } ) => {
+		( e: React.FormEvent ) => {
+			e.preventDefault();
 			router.post(
 				`/employer/jobs/${ selectedJobId }/shortlisted/message`,
 				{ message, subject },
@@ -407,7 +333,7 @@ export default function ApplicationsIndex( {
 				}
 			);
 		},
-		[ selectedJobId ]
+		[ selectedJobId, message, subject ]
 	);
 
 	return (
@@ -425,12 +351,36 @@ export default function ApplicationsIndex( {
 									<DialogTrigger asChild>
 										<Button variant="secondary">Message Shortlisted</Button>
 									</DialogTrigger>
-									<MessageDialog
-										jobId={ selectedJobId }
-										open={ isMessageOpen }
-										onOpenChange={ setIsMessageOpen }
-										onSubmit={ handleMessageSubmit }
-									/>
+									<DialogContent className="sm:max-w-2xl">
+										<DialogHeader>
+											<DialogTitle>Message Shortlisted Candidates</DialogTitle>
+											<DialogDescription>
+												Send a message to all shortlisted candidates for this job.
+											</DialogDescription>
+										</DialogHeader>
+										<form onSubmit={ handleMessageSubmit } className="space-y-4">
+											<Input
+												value={ subject }
+												onChange={ ( e ) => setSubject( e.target.value ) }
+												placeholder="Subject"
+												required
+											/>
+											<TextEditor
+												value={ message }
+												onChange={ setMessage }
+												placeholder="Type your message..."
+												disabled={ false }
+											/>
+											<DialogFooter>
+												<DialogClose asChild>
+													<Button variant="outline">Cancel</Button>
+												</DialogClose>
+												<Button type="submit" disabled={ !subject.trim() || !message.trim() }>
+													Send
+												</Button>
+											</DialogFooter>
+										</form>
+									</DialogContent>
 								</Dialog>
 
 								<DownloadResumesButton
@@ -442,7 +392,7 @@ export default function ApplicationsIndex( {
 
 						<Sheet>
 							<SheetTrigger asChild>
-								<Button variant="outline" type='button'>
+								<Button variant="outline" type="button">
 									<Filter className="h-4 w-4 mr-2" />
 									Filter
 								</Button>
@@ -458,7 +408,7 @@ export default function ApplicationsIndex( {
 									<FilterForm
 										jobOptions={ jobOptions }
 										statuses={ statuses }
-										defaultValue={ job_id ? job_id : undefined }
+										defaultValue={ job_id }
 										onFilterChange={ handleFilterChange }
 									/>
 								</div>

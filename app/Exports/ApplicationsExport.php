@@ -30,6 +30,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
                 'user_id',
                 'status',
                 'match_score',
+                'match_summary',
                 'created_at',
             ]);
     }
@@ -44,6 +45,7 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
             'Phone',
             'Status',
             'Match Score',
+            'Match Summary',
             'Applied At',
         ];
     }
@@ -57,7 +59,8 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
             $application->user->email,
             $application->user->phone,
             ucfirst((string) $application->status),
-            $application->match_score ? round($application->match_score, 2) : 'N/A',
+            $application->match_score ?? 0,
+            $application->match_summary,
             $application->created_at->format('M d, Y H:i'),
         ];
     }
