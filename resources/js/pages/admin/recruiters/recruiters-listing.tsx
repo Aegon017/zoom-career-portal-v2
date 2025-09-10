@@ -44,6 +44,13 @@ export default function RecruitersListing({ recruiters, filters }: Props) {
 					routeName="/admin/recruiters"
 					listingName="recruiter"
 					createUrl="/admin/recruiters/create"
+					hasExport={true}
+					exportUrl="/admin/recruiters/export"
+					exportFields={[
+						{ key: "name", label: "Full Name", selected: true },
+						{ key: "email", label: "Email", selected: true },
+						{ key: "phone", label: "Phone", selected: true },
+					]}
 				/>
 			</div>
 		</AppLayout>

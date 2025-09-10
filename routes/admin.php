@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\RecruiterController;
+use App\Http\Controllers\Admin\RecruiterExportController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\SkillsImportController;
@@ -37,6 +38,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::resource('/skills', SkillController::class);
     Route::post('/skills/import', SkillsImportController::class);
     Route::resource('/users', UserController::class);
+    Route::get('/recruiters/export', RecruiterExportController::class);
     Route::resource('/recruiters', RecruiterController::class);
     Route::get('/companies/export', [CompanyController::class, 'export']);
     Route::patch('/companies/{company}/status', [CompanyController::class, 'updateStatus'])->name('companies.updateStatus');

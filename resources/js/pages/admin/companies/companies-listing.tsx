@@ -47,6 +47,25 @@ export default function CompaniesListing({ companies, filters }: Props) {
 					createUrl="/admin/companies/create"
 					hasExport={true}
 					exportUrl="/admin/companies/export"
+					exportFields={[
+						{ key: "name", label: "Name", selected: true },
+						{ key: "email", label: "Email", selected: true },
+						{ key: "phone", label: "Phone", selected: true },
+						{ key: "industry_id", label: "Industry", selected: true },
+						{ key: "website_url", label: "Website", selected: true },
+						{ key: "size", label: "Company Size", selected: true },
+						{ key: "type", label: "Company Type", selected: true },
+						{
+							key: "verification_status",
+							label: "Verification Status",
+							selected: true,
+						},
+						{
+							key: "match_score_cutoff",
+							label: "Match Score Cutoff",
+							selected: true,
+						},
+					]}
 				/>
 			</div>
 		</AppLayout>

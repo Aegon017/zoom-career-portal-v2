@@ -74,6 +74,11 @@ export const columns: ColumnDef<Opening>[] = [
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
+							<Link href={`/admin/jobs/${job.id}/edit`} className="flex-1">
+								Edit
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
 							<Link href={`/admin/jobs/${job.id}`} className="flex-1">
 								Show
 							</Link>
