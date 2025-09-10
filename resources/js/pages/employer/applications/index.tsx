@@ -119,6 +119,7 @@ const DownloadResumesButton = ( {
 
 // Reusable Message Dialog Component
 const MessageDialog = ( {
+	jobId,
 	open,
 	onOpenChange,
 	onSubmit,
@@ -286,81 +287,6 @@ const FilterForm = ( {
 	);
 };
 
-// Main Filter Component
-const JobApplicationsFilter = ( {
-	jobOptions,
-	defaultValue,
-	statuses,
-}: JobApplicationsFilterProps ) => {
-	const [ isMessageOpen, setIsMessageOpen ] = useState( false );
-	const [ selectedJobId, setSelectedJobId ] = useState( '' );
-	const [ selectedStatus, setSelectedStatus ] = useState( '' );
-
-	const handleFilterChange = useCallback( ( data: FilterFormValues ) => {
-		setSelectedJobId( data.job_id );
-		setSelectedStatus( data.status );
-		router.get(
-			'/employer/applications',
-			{
-				job_id: data.job_id || undefined,
-				status: data.status || undefined,
-			},
-			{
-				preserveScroll: true,
-				preserveState: true,
-				replace: true,
-				only: [ 'applications', 'status' ],
-			}
-		);
-	}, [] );
-
-	const handleMessageSubmit = useCallback(
-		( { subject, message }: { subject: string; message: string } ) => {
-			router.post(
-				`/employer/jobs/${ selectedJobId }/shortlisted/message`,
-				{ message, subject },
-				{
-					onSuccess: () => setIsMessageOpen( false ),
-					onError: () => alert( 'Failed to send message' ),
-				}
-			);
-		},
-		[ selectedJobId ]
-	);
-
-	return (
-		<div className="p-4 grid gap-4">
-			<FilterForm
-				jobOptions={ jobOptions }
-				statuses={ statuses }
-				defaultValue={ defaultValue }
-				onFilterChange={ handleFilterChange }
-			/>
-
-			{ selectedJobId && (
-				<div className="flex flex-col gap-2 mt-4">
-					<Dialog open={ isMessageOpen } onOpenChange={ setIsMessageOpen }>
-						<DialogTrigger asChild>
-							<Button variant="secondary">Message Shortlisted</Button>
-						</DialogTrigger>
-						<MessageDialog
-							jobId={ selectedJobId }
-							open={ isMessageOpen }
-							onOpenChange={ setIsMessageOpen }
-							onSubmit={ handleMessageSubmit }
-						/>
-					</Dialog>
-
-					<DownloadResumesButton
-						jobId={ selectedJobId }
-						status={ selectedStatus }
-					/>
-				</div>
-			) }
-		</div>
-	);
-};
-
 // Empty State Component
 const ApplicationsEmptyState = ( { hasSelectedJob }: { hasSelectedJob: boolean } ) => (
 	<div className="flex flex-1 flex-col items-center justify-center gap-4 py-8">
@@ -435,6 +361,11 @@ export default function ApplicationsIndex( {
 	statuses,
 	exportUrl,
 }: Props ) {
+	// State for filter values
+	const [ selectedJobId, setSelectedJobId ] = useState( job_id ? String( job_id ) : '' );
+	const [ selectedStatus, setSelectedStatus ] = useState( '' );
+	const [ isMessageOpen, setIsMessageOpen ] = useState( false );
+
 	// Memoized derived values for performance
 	const hasApplications = useMemo( () => applications.length > 0, [ applications ] );
 	const hasSelectedJob = useMemo( () => Boolean( job_id ), [ job_id ] );
@@ -445,6 +376,40 @@ export default function ApplicationsIndex( {
 		[ jobs ]
 	);
 
+	// Handle filter changes
+	const handleFilterChange = useCallback( ( data: FilterFormValues ) => {
+		setSelectedJobId( data.job_id );
+		setSelectedStatus( data.status );
+		router.get(
+			'/employer/applications',
+			{
+				job_id: data.job_id || undefined,
+				status: data.status || undefined,
+			},
+			{
+				preserveScroll: true,
+				preserveState: true,
+				replace: true,
+				only: [ 'applications' ],
+			}
+		);
+	}, [] );
+
+	// Handle message submission
+	const handleMessageSubmit = useCallback(
+		( { subject, message }: { subject: string; message: string } ) => {
+			router.post(
+				`/employer/jobs/${ selectedJobId }/shortlisted/message`,
+				{ message, subject },
+				{
+					onSuccess: () => setIsMessageOpen( false ),
+					onError: () => alert( 'Failed to send message' ),
+				}
+			);
+		},
+		[ selectedJobId ]
+	);
+
 	return (
 		<AppLayout breadcrumbs={ breadcrumbs }>
 			<Head title="Applications" />
@@ -453,6 +418,28 @@ export default function ApplicationsIndex( {
 					<h1 className="text-2xl font-semibold">Candidate Applications</h1>
 					<div className="flex items-center gap-2">
 						<ExportButton exportUrl={ exportUrl } />
+
+						{ selectedJobId && (
+							<>
+								<Dialog open={ isMessageOpen } onOpenChange={ setIsMessageOpen }>
+									<DialogTrigger asChild>
+										<Button variant="secondary">Message Shortlisted</Button>
+									</DialogTrigger>
+									<MessageDialog
+										jobId={ selectedJobId }
+										open={ isMessageOpen }
+										onOpenChange={ setIsMessageOpen }
+										onSubmit={ handleMessageSubmit }
+									/>
+								</Dialog>
+
+								<DownloadResumesButton
+									jobId={ selectedJobId }
+									status={ selectedStatus }
+								/>
+							</>
+						) }
+
 						<Sheet>
 							<SheetTrigger asChild>
 								<Button variant="outline" type='button'>
@@ -467,11 +454,14 @@ export default function ApplicationsIndex( {
 										Filter applications by job and status
 									</SheetDescription>
 								</SheetHeader>
-								<JobApplicationsFilter
-									statuses={ statuses }
-									defaultValue={ job_id ? job_id : undefined }
-									jobOptions={ jobOptions }
-								/>
+								<div className="p-4">
+									<FilterForm
+										jobOptions={ jobOptions }
+										statuses={ statuses }
+										defaultValue={ job_id ? job_id : undefined }
+										onFilterChange={ handleFilterChange }
+									/>
+								</div>
 								<SheetFooter className="mt-4">
 									<SheetClose asChild>
 										<Button variant="outline">Close</Button>
