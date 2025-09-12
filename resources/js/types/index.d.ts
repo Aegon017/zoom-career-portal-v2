@@ -202,6 +202,13 @@ export interface AppNotification {
 export interface Skill {
 	id: number;
 	name: string;
+	domain_id: number | null;
+	domain?: Domain;
+}
+
+export interface Domain {
+	id: number;
+	name: string;
 }
 
 export interface Opening {

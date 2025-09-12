@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseImportController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DomainController;
+use App\Http\Controllers\Admin\DomainSearchController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\IndustriesImportController;
@@ -76,4 +78,6 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/students', [ReportsStudentController::class, 'index'])->name('students.index');
         Route::get('/jobs', [ReportsJobController::class, 'index'])->name('jobs.index');
     });
+    Route::get('/domains/search', DomainSearchController::class);
+    Route::resource('/domains', DomainController::class);
 });

@@ -88,7 +88,7 @@ final class SkillController extends Controller
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/skills/create-or-edit-skill', [
-            'skill' => SkillResource::make($skill),
+            'skill' => SkillResource::make($skill->load('domain')),
             'operation' => $operation->value,
             'operationLabel' => $operation->label(),
         ]);

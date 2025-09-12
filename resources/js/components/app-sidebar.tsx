@@ -37,7 +37,7 @@ import {
 export function AppSidebar() {
 	const { auth } = usePage<SharedData>().props;
 	const permissions = auth?.permissions || [];
-	const can = (permission: string) => permissions.includes(permission);
+	const can = ( permission: string ) => permissions.includes( permission );
 
 	const mainNavItems: NavItem[] = [
 		{
@@ -45,16 +45,16 @@ export function AppSidebar() {
 			href: "/admin/dashboard",
 			icon: LayoutGrid,
 		},
-		can("view_any_user") &&
-			can("view_any_role") && {
-				title: "User Management",
-				href: "",
-				icon: Users2,
-				items: [
-					can("view_any_user") && { title: "Users", href: "/admin/users" },
-					can("view_any_role") && { title: "Roles", href: "/admin/roles" },
-				],
-			},
+		can( "view_any_user" ) &&
+		can( "view_any_role" ) && {
+			title: "User Management",
+			href: "",
+			icon: Users2,
+			items: [
+				can( "view_any_user" ) && { title: "Users", href: "/admin/users" },
+				can( "view_any_role" ) && { title: "Roles", href: "/admin/roles" },
+			],
+		},
 		{
 			title: "Employer",
 			href: "",
@@ -74,32 +74,36 @@ export function AppSidebar() {
 			href: "/admin/jobs",
 			icon: BriefcaseBusiness,
 		},
-		can("view_any_skill") && {
-			title: "Skills",
-			href: "/admin/skills",
-			icon: CodeXml,
+		can( "view_any_skill" ) && {
+			title: "Skill Management",
+			href: "",
+			icon: Users2,
+			items: [
+				{ title: "domains", href: "/admin/domains" },
+				{ title: "Skills", href: "/admin/skills" },
+			],
 		},
-		can("view_any_opening_title") && {
+		can( "view_any_opening_title" ) && {
 			title: "Job Titles",
 			href: "/admin/job-titles",
 			icon: ChartBar,
 		},
-		can("view_any_industry") && {
+		can( "view_any_industry" ) && {
 			title: "Industries",
 			href: "/admin/industries",
 			icon: Factory,
 		},
-		can("view_any_location") && {
+		can( "view_any_location" ) && {
 			title: "Locations",
 			href: "/admin/locations",
 			icon: MapPin,
 		},
-		can("view_any_language") && {
+		can( "view_any_language" ) && {
 			title: "Languages",
 			href: "/admin/languages",
 			icon: Languages,
 		},
-		can("view_any_feedback") && {
+		can( "view_any_feedback" ) && {
 			title: "Feedback",
 			href: "/admin/feedback",
 			icon: Notebook,
@@ -118,7 +122,7 @@ export function AppSidebar() {
 				{ title: "Jobs", href: "/admin/reports/jobs" },
 			],
 		},
-	].filter(Boolean) as NavItem[];
+	].filter( Boolean ) as NavItem[];
 
 	const footerNavItems: NavItem[] = [
 		{
@@ -146,12 +150,12 @@ export function AppSidebar() {
 			</SidebarHeader>
 
 			<SidebarContent>
-				<NavMain items={mainNavItems} groupName="Admin Panel" />
+				<NavMain items={ mainNavItems } groupName="Admin Panel" />
 			</SidebarContent>
 
 			<SidebarFooter>
 				<Separator />
-				<NavFooter items={footerNavItems} className="mt-auto" />
+				<NavFooter items={ footerNavItems } className="mt-auto" />
 				<Separator />
 				<NavUser />
 			</SidebarFooter>

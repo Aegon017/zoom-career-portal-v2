@@ -28,6 +28,7 @@ final class UpdateSkillRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:skills,name,'.$this->skill->id,
+            'domain_id' => 'nullable|exists:domains,id',
         ];
     }
 }
