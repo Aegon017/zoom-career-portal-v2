@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\OpeningTitleController;
 use App\Http\Controllers\Admin\RecruiterController;
 use App\Http\Controllers\Admin\RecruiterExportController;
+use App\Http\Controllers\Admin\Reports\JobController as ReportsJobController;
+use App\Http\Controllers\Admin\Reports\StudentController as ReportsStudentController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\SkillsImportController;
@@ -70,4 +72,8 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::resource('/courses', CourseController::class);
     Route::post('/courses/import', CourseImportController::class);
     Route::get('/jobs/{job}/applications/resumes/download-selected', [JobController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
+    Route::prefix('/reports')->name('reports.')->group(function () {
+        Route::get('/students', [ReportsStudentController::class, 'index'])->name('students.index');
+        Route::get('/jobs', [ReportsJobController::class, 'index'])->name('jobs.index');
+    });
 });

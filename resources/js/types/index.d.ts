@@ -52,7 +52,7 @@ export interface SharedData {
 		people_feature: boolean;
 	};
 	sidebarOpen: boolean;
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 }
 
 export interface User {
@@ -83,7 +83,7 @@ export interface User {
 	profile_completed: number;
 	created_at: string;
 	updated_at: string;
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 }
 
 export interface PersonalDetail {
@@ -148,7 +148,7 @@ export interface Company {
 	is_followed: boolean;
 	created_at: string;
 	updated_at: string;
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 }
 
 export interface CompanyUser {
@@ -232,6 +232,9 @@ export interface Opening {
 	has_applied: boolean;
 	application_status: string;
 	application_created_at: string;
+	total_applied?: number;
+	total_shortlisted?: number;
+	total_hired?: number;
 }
 
 export interface Application {
@@ -396,7 +399,7 @@ export interface Option {
 	label: string;
 	disable?: boolean;
 	fixed?: boolean;
-	[key: string]: string | boolean | undefined;
+	[ key: string ]: string | boolean | undefined;
 }
 
 export interface Role {

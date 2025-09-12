@@ -6,6 +6,7 @@ import {
 	ChartBar,
 	CodeXml,
 	Factory,
+	FileChartColumn,
 	GraduationCap,
 	History,
 	Hourglass,
@@ -107,6 +108,15 @@ export function AppSidebar() {
 			title: "Courses",
 			href: "/admin/courses",
 			icon: GraduationCap,
+		},
+		{
+			title: "Reports",
+			href: "",
+			icon: FileChartColumn,
+			items: [
+				{ title: "Students", href: "/admin/reports/students" },
+				{ title: "Jobs", href: "/admin/reports/jobs" },
+			],
 		},
 	].filter(Boolean) as NavItem[];
 
