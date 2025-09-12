@@ -20,7 +20,7 @@ final class SkillResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'domain_id' => $this->domain_id,
-            'domain' => $this->whenLoaded('domain', fn() => [
+            'domain' => $this->whenLoaded('domain', fn (): array => [
                 'id' => $this->domain->id,
                 'name' => $this->domain->name,
             ]),

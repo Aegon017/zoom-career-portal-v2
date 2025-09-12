@@ -16,14 +16,14 @@ final class ApplicationsExportController extends Controller
     {
         $request->validate([
             'job_id' => 'required|exists:openings,id',
-            'status' => 'sometimes|string'
+            'status' => 'sometimes|string',
         ]);
 
         $job = Opening::findOrFail($request->query('job_id'));
 
         return Excel::download(
             new ApplicationsExport($job, $request->query('status')),
-            "applications-{$job->id}.xlsx"
+            sprintf('applications-%s.xlsx', $job->id)
         );
     }
 }

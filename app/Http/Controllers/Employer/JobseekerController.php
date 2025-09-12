@@ -184,9 +184,9 @@ If no relevant experience is found, reply exactly:
         $jobDescription = $job->description ?? '';
 
         // Batch process users with resumes to minimize API calls
-        $usersWithResumes = $users->filter(fn($user): bool => ! empty($user->resumes()->latest()->value('text')));
+        $usersWithResumes = $users->filter(fn ($user): bool => ! empty($user->resumes()->latest()->value('text')));
 
-        $usersWithoutResumes = $users->filter(fn($user): bool => empty($user->resumes()->latest()->value('text')));
+        $usersWithoutResumes = $users->filter(fn ($user): bool => empty($user->resumes()->latest()->value('text')));
 
         // Set default scores for users without resumes
         foreach ($usersWithoutResumes as $user) {

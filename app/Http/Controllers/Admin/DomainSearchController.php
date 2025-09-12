@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Domain;
 use Illuminate\Http\Request;
 
-class DomainSearchController extends Controller
+final class DomainSearchController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -16,7 +18,7 @@ class DomainSearchController extends Controller
         $search = $request->get('search');
 
         $domains = Domain::query()
-            ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
+            ->when($search, fn ($query) => $query->where('name', 'like', sprintf('%%%s%%', $search)))
             ->limit(10)
             ->get(['id', 'name']);
 

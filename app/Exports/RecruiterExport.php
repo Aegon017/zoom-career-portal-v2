@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class RecruiterExport implements FromCollection, WithHeadings
+final readonly class RecruiterExport implements FromCollection, WithHeadings
 {
     public function __construct(private array $fields = []) {}
 
@@ -16,6 +18,7 @@ class RecruiterExport implements FromCollection, WithHeadings
     public function collection()
     {
         $users = User::Role('employer')->get();
+
         return $users->map(function ($user, $index): array {
             $row = ['serial' => $index + 1];
 

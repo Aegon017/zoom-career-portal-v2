@@ -8,7 +8,7 @@ use App\Models\Company;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-final class EmployerExport implements FromCollection, WithHeadings
+final readonly class EmployerExport implements FromCollection, WithHeadings
 {
     public function __construct(private array $fields = []) {}
 

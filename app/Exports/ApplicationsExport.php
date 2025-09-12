@@ -6,24 +6,24 @@ namespace App\Exports;
 
 use App\Models\Opening;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-final class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+final readonly class ApplicationsExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function __construct(
-        private readonly Opening $job,
-        private readonly ?string $status = null
+        private Opening $job,
+        private ?string $status = null
     ) {}
 
     public function query()
     {
         $query = $this->job->applications()->with('user:id,name,email,phone');
 
-        if ($this->status) {
+        if ($this->status !== null && $this->status !== '' && $this->status !== '0') {
             $query->where('status', $this->status);
         }
 
@@ -66,7 +66,7 @@ final class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, 
 
         return [
             1 => ['font' => ['bold' => true]],
-            "A1:I{$lastRow}" => [
+            'A1:I' . $lastRow => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

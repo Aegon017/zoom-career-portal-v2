@@ -46,6 +46,12 @@ export const columns: ColumnDef<Skill>[] = [
 		enableGlobalFilter: true,
 	},
 	{
+		accessorFn: (row) => row.domain?.name ?? "-",
+		id: "domain",
+		header: "Domain",
+		enableGlobalFilter: true,
+	},
+	{
 		id: "actions",
 		cell: ({ row }) => {
 			return (

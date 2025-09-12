@@ -35,7 +35,7 @@ final class ApplicationsController extends Controller
         $matchScoreCutoff = $job?->company?->match_score_cutoff;
 
         $applications = collect();
-        $skills = collect();
+        collect();
 
         if ($job) {
             $applicationsQuery = $job->applications()->with(['user', 'resume']);
@@ -102,11 +102,11 @@ final class ApplicationsController extends Controller
         $combinedMessage = sprintf('<strong>Subject:</strong> %s<br><br>%s', $request->subject, $safeMessage);
 
         foreach ($shortlistedUsers as $user) {
-            $chat = Chat::whereHas('participants', fn($q) => $q->where('user_id', Auth::id()))
-                ->whereHas('participants', fn($q) => $q->where('user_id', $user->id))
+            $chat = Chat::whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
+                ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
                 ->withCount('participants')
                 ->get()
-                ->first(fn($chat): bool => $chat->participants_count === 2);
+                ->first(fn ($chat): bool => $chat->participants_count === 2);
 
             if (! $chat) {
                 $chat = Chat::create();
@@ -136,7 +136,7 @@ final class ApplicationsController extends Controller
         $validated = $request->validate([
             'application_ids' => 'nullable|array',
             'application_ids.*' => 'integer|exists:opening_applications,id',
-            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
         ]);
 
         $query = $job->applications()->with(['user', 'resume.media']);
@@ -154,8 +154,8 @@ final class ApplicationsController extends Controller
         }
 
         $isAllApplications = ! isset($validated['application_ids']) || empty($validated['application_ids']);
-        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_') . $job->id . '_' . now()->timestamp . '.zip';
-        $zipPath = storage_path('app/' . $zipFileName);
+        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_').$job->id.'_'.now()->timestamp.'.zip';
+        $zipPath = storage_path('app/'.$zipFileName);
 
         if (! file_exists(storage_path('app'))) {
             mkdir(storage_path('app'), 0755, true);
@@ -180,7 +180,7 @@ final class ApplicationsController extends Controller
                 }
 
                 try {
-                    $safeName = Str::slug($application->user->name) . '_' . $application->id . '.' . $media->extension;
+                    $safeName = Str::slug($application->user->name).'_'.$application->id.'.'.$media->extension;
                     $filePath = $media->getPath();
 
                     if (file_exists($filePath)) {
@@ -188,7 +188,7 @@ final class ApplicationsController extends Controller
                         ++$addedFiles;
                     }
                 } catch (Exception $e) {
-                    Log::error('Error adding file to zip: ' . $e->getMessage());
+                    Log::error('Error adding file to zip: '.$e->getMessage());
 
                     continue;
                 }

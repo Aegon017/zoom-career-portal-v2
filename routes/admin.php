@@ -74,9 +74,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::resource('/courses', CourseController::class);
     Route::post('/courses/import', CourseImportController::class);
     Route::get('/jobs/{job}/applications/resumes/download-selected', [JobController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
-    Route::prefix('/reports')->name('reports.')->group(function () {
-        Route::get('/students', [ReportsStudentController::class, 'index'])->name('students.index');
-        Route::get('/jobs', [ReportsJobController::class, 'index'])->name('jobs.index');
+    Route::prefix('/reports')->name('reports.')->group(function (): void {
+        Route::get('/students', (new ReportsStudentController())->index(...))->name('students.index');
+        Route::get('/jobs', (new ReportsJobController())->index(...))->name('jobs.index');
     });
     Route::get('/domains/search', DomainSearchController::class);
     Route::resource('/domains', DomainController::class);

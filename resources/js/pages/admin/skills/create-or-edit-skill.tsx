@@ -20,7 +20,12 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+	Command,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
 interface Domain {
@@ -29,7 +34,7 @@ interface Domain {
 }
 type FormDataConvertible = string | number | boolean | File | Blob | null;
 
-const CreateOrEditSkill = ( {
+const CreateOrEditSkill = ({
 	skill,
 	operation,
 	operationLabel,
@@ -37,59 +42,60 @@ const CreateOrEditSkill = ( {
 	skill: Skill;
 	operation: string;
 	operationLabel: string;
-} ) => {
+}) => {
 	const breadcrumbs = useMemo<BreadcrumbItem[]>(
 		() => [
 			{ title: "Skills", href: "/admin/skills" },
 			{ title: operation, href: "" },
 		],
-		[ operation ]
+		[operation],
 	);
 
-	const form = useForm<Skill & { domain_id: number | null }>( {
+	const form = useForm<Skill & { domain_id: number | null }>({
 		defaultValues: {
 			name: skill?.name ?? "",
 			domain_id: skill?.domain_id ?? null,
 		},
-	} );
+	});
 
-	const [ domains, setDomains ] = useState<Domain[]>( [] );
-	const [ searchTerm, setSearchTerm ] = useState( "" );
-	const [ loadingDomains, setLoadingDomains ] = useState( false );
-	const [ alertOpen, setAlertOpen ] = useState( false );
+	const [domains, setDomains] = useState<Domain[]>([]);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [loadingDomains, setLoadingDomains] = useState(false);
+	const [alertOpen, setAlertOpen] = useState(false);
 
 	const fetchDomains = useCallback(
-		async ( signal: AbortSignal ) => {
-			setLoadingDomains( true );
+		async (signal: AbortSignal) => {
+			setLoadingDomains(true);
 			try {
-				const { data } = await axios.get( "/admin/domains/search", {
+				const { data } = await axios.get("/admin/domains/search", {
 					params: { search: searchTerm },
 					signal,
-				} );
-				setDomains( data );
-			} catch ( error ) {
-				if ( !axios.isCancel( error ) ) console.error( "Error fetching domains", error );
+				});
+				setDomains(data);
+			} catch (error) {
+				if (!axios.isCancel(error))
+					console.error("Error fetching domains", error);
 			} finally {
-				setLoadingDomains( false );
+				setLoadingDomains(false);
 			}
 		},
-		[ searchTerm ]
+		[searchTerm],
 	);
 
-	useEffect( () => {
+	useEffect(() => {
 		const controller = new AbortController();
-		const timeout = setTimeout( () => fetchDomains( controller.signal ), 300 );
+		const timeout = setTimeout(() => fetchDomains(controller.signal), 300);
 		return () => {
 			controller.abort();
-			clearTimeout( timeout );
+			clearTimeout(timeout);
 		};
-	}, [ fetchDomains ] );
+	}, [fetchDomains]);
 
 	const onSubmit = useCallback(
-		( data: Skill & { domain_id: number | null } ) => {
-			const handleErrors = ( errors: Record<string, string> ) => {
-				Object.entries( errors ).forEach( ( [ field, message ] ) =>
-					form.setError( field as keyof Skill, { type: "server", message } )
+		(data: Skill & { domain_id: number | null }) => {
+			const handleErrors = (errors: Record<string, string>) => {
+				Object.entries(errors).forEach(([field, message]) =>
+					form.setError(field as keyof Skill, { type: "server", message }),
 				);
 			};
 
@@ -98,74 +104,80 @@ const CreateOrEditSkill = ( {
 				domain_id: data.domain_id,
 			};
 
-			if ( operation === "Create" ) {
-				router.post( "/admin/skills", payload, { onError: handleErrors } );
+			if (operation === "Create") {
+				router.post("/admin/skills", payload, { onError: handleErrors });
 			} else {
-				router.put( `/admin/skills/${ skill.id }`, payload, { onError: handleErrors } );
+				router.put(`/admin/skills/${skill.id}`, payload, {
+					onError: handleErrors,
+				});
 			}
 		},
-		[ operation, skill?.id, form ]
+		[operation, skill?.id, form],
 	);
 
-
 	const handleDelete = useCallback(
-		() => router.delete( `/admin/skills/${ skill.id }` ),
-		[ skill?.id ]
+		() => router.delete(`/admin/skills/${skill.id}`),
+		[skill?.id],
 	);
 
 	const selectedDomain = useMemo(
-		() => domains.find( ( d ) => d.id === form.watch( "domain_id" ) ),
-		[ domains, form.watch( "domain_id" ) ]
+		() => domains.find((d) => d.id === form.watch("domain_id")),
+		[domains, form.watch("domain_id")],
 	);
 
-	useEffect( () => {
-		if ( skill?.domain && !domains.find( d => d.id === skill.domain?.id ) ) {
-			setDomains( prev => [ ...prev, skill.domain as Domain ] );
+	useEffect(() => {
+		if (skill?.domain && !domains.find((d) => d.id === skill.domain?.id)) {
+			setDomains((prev) => [...prev, skill.domain as Domain]);
 		}
-	}, [ skill?.domain, domains ] );
-
+	}, [skill?.domain, domains]);
 
 	return (
-		<AppLayout breadcrumbs={ breadcrumbs }>
-			<Head title={ `${ operation } Skill` } />
+		<AppLayout breadcrumbs={breadcrumbs}>
+			<Head title={`${operation} Skill`} />
 			<div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-				<Form { ...form }>
-					<form onSubmit={ form.handleSubmit( onSubmit ) } className="space-y-8 p-4">
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-8 p-4"
+					>
 						<div className="flex justify-between">
-							<h1 className="text-2xl font-bold">{ operation } Skill</h1>
-							{ operation === "Edit" && (
+							<h1 className="text-2xl font-bold">{operation} Skill</h1>
+							{operation === "Edit" && (
 								<>
-									<Button variant="destructive" onClick={ () => setAlertOpen( true ) }>
+									<Button
+										variant="destructive"
+										onClick={() => setAlertOpen(true)}
+									>
 										Delete
 									</Button>
 									<DeleteAlert
-										alertOpen={ alertOpen }
-										setAlertOpen={ setAlertOpen }
-										onDelete={ handleDelete }
+										alertOpen={alertOpen}
+										setAlertOpen={setAlertOpen}
+										onDelete={handleDelete}
 									/>
 								</>
-							) }
+							)}
 						</div>
 
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
-								control={ form.control }
+								control={form.control}
 								name="name"
-								render={ ( { field } ) => (
+								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Skill Name</FormLabel>
 										<FormControl>
-											<Input { ...field } autoComplete="name" />
+											<Input {...field} autoComplete="name" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
-								) }
+								)}
 							/>
 
 							<FormField
-								control={ form.control }
+								control={form.control}
 								name="domain_id"
-								render={ ( { field } ) => (
+								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Domain</FormLabel>
 										<Popover>
@@ -174,12 +186,12 @@ const CreateOrEditSkill = ( {
 													<Button
 														variant="outline"
 														role="combobox"
-														className={ cn(
+														className={cn(
 															"w-full justify-between",
-															!selectedDomain && "text-muted-foreground"
-														) }
+															!selectedDomain && "text-muted-foreground",
+														)}
 													>
-														{ selectedDomain?.name || "Select domain" }
+														{selectedDomain?.name || "Select domain"}
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
@@ -187,40 +199,42 @@ const CreateOrEditSkill = ( {
 												<Command>
 													<CommandInput
 														placeholder="Search domains..."
-														onValueChange={ setSearchTerm }
+														onValueChange={setSearchTerm}
 													/>
 													<CommandList>
-														{ domains.length > 0 ? (
-															domains.map( ( domain ) => (
+														{domains.length > 0 ? (
+															domains.map((domain) => (
 																<CommandItem
-																	key={ domain.id }
-																	value={ domain.name }
-																	onSelect={ () => field.onChange( domain.id ) }
+																	key={domain.id}
+																	value={domain.name}
+																	onSelect={() => field.onChange(domain.id)}
 																>
-																	{ domain.name }
+																	{domain.name}
 																</CommandItem>
-															) )
+															))
 														) : (
 															<CommandItem disabled>
-																{ loadingDomains ? "Loading..." : "No domains found." }
+																{loadingDomains
+																	? "Loading..."
+																	: "No domains found."}
 															</CommandItem>
-														) }
+														)}
 													</CommandList>
 												</Command>
 											</PopoverContent>
 										</Popover>
 										<FormMessage />
 									</FormItem>
-								) }
+								)}
 							/>
 						</div>
 
 						<div className="flex gap-4">
-							<Button type="submit">{ operationLabel }</Button>
+							<Button type="submit">{operationLabel}</Button>
 							<Button
 								type="button"
 								variant="outline"
-								onClick={ () => router.get( "/admin/skills" ) }
+								onClick={() => router.get("/admin/skills")}
 							>
 								Cancel
 							</Button>

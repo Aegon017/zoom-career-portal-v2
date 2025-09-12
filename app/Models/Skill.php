@@ -14,7 +14,7 @@ final class Skill extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','domain_id'];
+    protected $fillable = ['name', 'domain_id'];
 
     public function domain(): BelongsTo
     {

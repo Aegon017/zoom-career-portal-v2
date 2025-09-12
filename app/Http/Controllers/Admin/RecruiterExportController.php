@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\RecruiterExport;
@@ -7,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-class RecruiterExportController extends Controller
+final class RecruiterExportController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -22,7 +24,7 @@ class RecruiterExportController extends Controller
 
         return Excel::download(
             new RecruiterExport($selectedFields),
-            "recruiters.xlsx"
+            'recruiters.xlsx'
         );
     }
 }

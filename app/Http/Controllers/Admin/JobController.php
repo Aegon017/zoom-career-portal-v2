@@ -45,7 +45,7 @@ final class JobController extends Controller
             ->with('company', 'user')
             ->when(
                 $request->search,
-                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -68,7 +68,7 @@ final class JobController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn($skill): array => [
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -120,6 +120,7 @@ final class JobController extends Controller
             'job' => $job->load('address.location'),
         ]);
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -132,7 +133,7 @@ final class JobController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn($skill): array => [
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -178,13 +179,12 @@ final class JobController extends Controller
         return to_route('admin.jobs.index')->with('success', 'Job record updated successfully');
     }
 
-
     public function applications(Opening $job, Request $request)
     {
         $statuses = JobApplicationStatusEnum::options();
 
         $validated = $request->validate([
-            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
             'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
         ]);
 
@@ -211,7 +211,7 @@ final class JobController extends Controller
         $users = User::role('jobseeker')
             ->whereNotIn('id', $appliedUserIds)
             ->get()
-            ->map(fn($user): array => [
+            ->map(fn ($user): array => [
                 'value' => $user->id,
                 'label' => $user->email,
             ]);
@@ -251,7 +251,7 @@ final class JobController extends Controller
         $validated = $request->validate([
             'application_ids' => 'nullable|array',
             'application_ids.*' => 'integer|exists:opening_applications,id',
-            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
             'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
         ]);
 
@@ -279,8 +279,8 @@ final class JobController extends Controller
 
         // Create zip file
         $isAllApplications = ! isset($validated['application_ids']) || empty($validated['application_ids']);
-        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_') . $job->id . '_' . now()->timestamp . '.zip';
-        $zipPath = storage_path('app/' . $zipFileName);
+        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_').$job->id.'_'.now()->timestamp.'.zip';
+        $zipPath = storage_path('app/'.$zipFileName);
 
         // Ensure the temp directory exists
         if (! file_exists(storage_path('app'))) {
@@ -308,7 +308,7 @@ final class JobController extends Controller
                 }
 
                 try {
-                    $safeName = Str::slug($application->user->name) . '_' . $application->id . '.' . $media->extension;
+                    $safeName = Str::slug($application->user->name).'_'.$application->id.'.'.$media->extension;
                     $filePath = $media->getPath();
 
                     if (file_exists($filePath)) {
@@ -316,7 +316,7 @@ final class JobController extends Controller
                         ++$addedFiles;
                     }
                 } catch (Exception $e) {
-                    Log::error('Error adding file to zip: ' . $e->getMessage());
+                    Log::error('Error adding file to zip: '.$e->getMessage());
 
                     continue;
                 }
