@@ -9,9 +9,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.3",
-		"@laravel/echo-react": "^2.1.6",
+		"@laravel/echo-react": "^2.2.0",
 		"@types/node": "^22.13.5",
-		"laravel-echo": "^2.1.6",
+		"laravel-echo": "^2.2.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-organize-imports": "^4.1.0",
 		"prettier-plugin-tailwindcss": "^0.6.11",
