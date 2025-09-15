@@ -30,6 +30,8 @@ final class EditOpeningRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_id' => 'nullable|integer|exists:companies,id',
+            'recruiter_id' => 'nullable|integer|exists:users,id',
             'title' => 'required|string|max:255',
             'skills' => 'required|array',
             'skills.*' => 'required|exists:skills,id',

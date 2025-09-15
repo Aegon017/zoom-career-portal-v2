@@ -45,7 +45,7 @@ final class JobController extends Controller
             ->with('company', 'user')
             ->when(
                 $request->search,
-                fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('title', 'like', '%' . $request->search . '%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -68,7 +68,7 @@ final class JobController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn ($skill): array => [
+        $skillOptions = Skill::get()->map(fn($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -96,17 +96,13 @@ final class JobController extends Controller
             $data['published_at'] = now();
         }
 
-        $data['user_id'] = $user->id;
-        $company = $user->companies()->latest()->first();
-        $data['company_id'] = $company->id;
-        $data['verification_status'] = VerificationStatusEnum::Pending->value;
+        $data['user_id'] = $data['recruiter_id'] ?? $user->id;
+        $data['verification_status'] = VerificationStatusEnum::Verified->value;
         $job = Opening::create($data);
         $job->skills()->sync($data['skills']);
         $job->address()->create([
             'location_id' => $data['location_id'],
         ]);
-
-        $this->sendNotification($job->user, $job);
 
         return to_route('admin.jobs.index')->with('success', 'Job record created successfully');
     }
@@ -133,7 +129,7 @@ final class JobController extends Controller
         $currencyOptions = CurrencyEnum::options();
         $jobStatusOptions = JobStatusEnum::options();
 
-        $skillOptions = Skill::get()->map(fn ($skill): array => [
+        $skillOptions = Skill::get()->map(fn($skill): array => [
             'value' => $skill->id,
             'label' => $skill->name,
         ])->toArray();
@@ -156,11 +152,13 @@ final class JobController extends Controller
      */
     public function update(EditOpeningRequest $editOpeningRequest, Opening $job)
     {
+        $user = Auth::user();
         $data = $editOpeningRequest->validated();
+        $data['user_id'] = $data['recruiter_id'] ?? $user->id;
 
         $job->update([
             ...$data,
-            'verification_status' => VerificationStatusEnum::Pending->value,
+            'verification_status' => VerificationStatusEnum::Verified->value,
         ]);
 
         if ($job->status !== JobStatusEnum::Published->value && $data['status'] === JobStatusEnum::Published->value) {
@@ -174,8 +172,6 @@ final class JobController extends Controller
             'location_id' => $data['location_id'],
         ]);
 
-        $this->sendNotification($job->user, $job);
-
         return to_route('admin.jobs.index')->with('success', 'Job record updated successfully');
     }
 
@@ -184,7 +180,7 @@ final class JobController extends Controller
         $statuses = JobApplicationStatusEnum::options();
 
         $validated = $request->validate([
-            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
             'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
         ]);
 
@@ -211,7 +207,7 @@ final class JobController extends Controller
         $users = User::role('jobseeker')
             ->whereNotIn('id', $appliedUserIds)
             ->get()
-            ->map(fn ($user): array => [
+            ->map(fn($user): array => [
                 'value' => $user->id,
                 'label' => $user->email,
             ]);
@@ -251,7 +247,7 @@ final class JobController extends Controller
         $validated = $request->validate([
             'application_ids' => 'nullable|array',
             'application_ids.*' => 'integer|exists:opening_applications,id',
-            'status' => 'nullable|string|in:'.implode(',', array_keys($statuses)),
+            'status' => 'nullable|string|in:' . implode(',', array_keys($statuses)),
             'matching_score_range' => 'nullable|string|in:1-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100',
         ]);
 
@@ -279,8 +275,8 @@ final class JobController extends Controller
 
         // Create zip file
         $isAllApplications = ! isset($validated['application_ids']) || empty($validated['application_ids']);
-        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_').$job->id.'_'.now()->timestamp.'.zip';
-        $zipPath = storage_path('app/'.$zipFileName);
+        $zipFileName = ($isAllApplications ? 'resumes_' : 'selected_resumes_') . $job->id . '_' . now()->timestamp . '.zip';
+        $zipPath = storage_path('app/' . $zipFileName);
 
         // Ensure the temp directory exists
         if (! file_exists(storage_path('app'))) {
@@ -308,7 +304,7 @@ final class JobController extends Controller
                 }
 
                 try {
-                    $safeName = Str::slug($application->user->name).'_'.$application->id.'.'.$media->extension;
+                    $safeName = Str::slug($application->user->name) . '_' . $application->id . '.' . $media->extension;
                     $filePath = $media->getPath();
 
                     if (file_exists($filePath)) {
@@ -316,7 +312,7 @@ final class JobController extends Controller
                         ++$addedFiles;
                     }
                 } catch (Exception $e) {
-                    Log::error('Error adding file to zip: '.$e->getMessage());
+                    Log::error('Error adding file to zip: ' . $e->getMessage());
 
                     continue;
                 }
@@ -334,26 +330,5 @@ final class JobController extends Controller
         }
 
         return response()->download($zipPath, $zipFileName)->deleteFileAfterSend();
-    }
-
-    private function sendNotification(User $user, Opening $opening): void
-    {
-        $admins = User::role('super_admin')->get();
-
-        $company_name = $opening->company->name;
-        $posted_by = $user->name;
-        $job_title = $opening->title;
-        $review_link = route('admin.job.verify', [
-            'job' => $opening->id,
-        ]);
-        $status = $opening->verification_status;
-
-        Mail::to($user)->send(new JobVerificationStatusMail($job_title, $status));
-
-        foreach ($admins as $admin) {
-            Mail::to($admin)->send(new JobVerifyMail($job_title, $company_name, $posted_by, $review_link));
-        }
-
-        Notification::send($admins, new JobPostedNotification($user, $opening));
     }
 }

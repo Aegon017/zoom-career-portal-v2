@@ -80,4 +80,5 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     });
     Route::get('/domains/search', DomainSearchController::class);
     Route::resource('/domains', DomainController::class);
+    Route::get('/domains/{domain}/skills', [DomainController::class, 'skills']);
 });

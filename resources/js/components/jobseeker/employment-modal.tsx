@@ -86,7 +86,7 @@ export default function EmploymentModal({
 		if (!input) return [];
 		try {
 			const { data } = await axios.get(
-				`/companies?search=${encodeURIComponent(input)}`,
+				`/companies/search?search=${encodeURIComponent(input)}`,
 			);
 			return data.map((c: { id: number; name: string }) => ({
 				label: c.name,

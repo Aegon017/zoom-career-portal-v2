@@ -61,7 +61,7 @@ export default function WorkExperiences({ user, isUpdatable }: Props) {
 
 		const delayDebounce = setTimeout(() => {
 			axios
-				.get<{ id: number; name: string }[]>("/companies", {
+				.get<{ id: number; name: string }[]>("/companies/search", {
 					params: { search: searchTerm },
 				})
 				.then((res) => {
