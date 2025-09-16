@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\IndustriesImportController;
 use App\Http\Controllers\Admin\IndustryController;
 use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobReportExportController;
 use App\Http\Controllers\Admin\JobTitlesImportController;
 use App\Http\Controllers\Admin\JobVerifyController;
 use App\Http\Controllers\Admin\LanguageController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Admin\SkillExportController;
 use App\Http\Controllers\Admin\SkillsImportController;
+use App\Http\Controllers\Admin\StudentReportExportController;
 use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerificationController;
@@ -79,8 +81,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::post('/courses/import', CourseImportController::class);
     Route::get('/jobs/{job}/applications/resumes/download-selected', [JobController::class, 'downloadSelectedResumes'])->name('jobs.applications.resumes.download-selected');
     Route::prefix('/reports')->name('reports.')->group(function (): void {
-        Route::get('/students', (new ReportsStudentController())->index(...))->name('students.index');
-        Route::get('/jobs', (new ReportsJobController())->index(...))->name('jobs.index');
+        Route::get('/students/export', StudentReportExportController::class);
+        Route::get('/students', [ReportsStudentController::class, 'index'])->name('students.index');
+        Route::get('/jobs/export', JobReportExportController::class);
+        Route::get('/jobs', [ReportsJobController::class, 'index'])->name('jobs.index');
     });
     Route::get('/domains/search', DomainSearchController::class);
     Route::get('/domains/export', DomainExportController::class);
