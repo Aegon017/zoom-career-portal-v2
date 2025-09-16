@@ -18,13 +18,17 @@ final class StudentController extends Controller
             ->role('jobseeker')
             ->withCount([
                 'openingApplications as total_applied',
-                'openingApplications as total_shortlisted' => fn ($q) => $q->where('status', 'shortlisted'),
-                'openingApplications as total_hired' => fn ($q) => $q->where('status', 'hired'),
+                'openingApplications as total_shortlisted' => fn($q) => $q->where('status', 'shortlisted'),
+                'openingApplications as total_hired' => fn($q) => $q->where('status', 'hired'),
             ])
             ->when(
                 $request->search,
-                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('email', 'like', '%'.$request->search.'%')
+                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%')
+            )
+            ->when(
+                $request->sortColumn,
+                fn($q) => $q->orderBy($request->sortColumn, $request->sortDirection)
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();

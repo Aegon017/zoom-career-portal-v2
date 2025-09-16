@@ -25,7 +25,6 @@ const formatEnum = (value?: string) =>
 
 const CompanyDetails = ({ company }: Props) => {
 	const { auth } = usePage<SharedData>().props;
-	console.log(company);
 
 	return (
 		<div className="container">

@@ -5,32 +5,39 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<User>[] = [
 	{
-		accessorFn: (row, index) => index + 1,
+		accessorFn: ( row, index ) => index + 1,
 		header: "S.No.",
 	},
 	{
 		accessorKey: "name",
 		header: "Name",
 		enableGlobalFilter: true,
+		enableSorting: true
 	},
 	{
 		accessorKey: "email",
 		header: "Email",
 		enableGlobalFilter: true,
+		enableSorting: true
+	},
+	{
+		accessorKey: "phone",
+		header: "Phone",
+		enableGlobalFilter: true,
 	},
 	{
 		accessorKey: "total_applied",
 		header: "Jobs Applied",
-		cell: ({ row }) => row.original.total_applied ?? 0,
+		cell: ( { row } ) => row.original.total_applied ?? 0,
 	},
 	{
 		accessorKey: "total_shortlisted",
 		header: "Shortlisted",
-		cell: ({ row }) => row.original.total_shortlisted ?? 0,
+		cell: ( { row } ) => row.original.total_shortlisted ?? 0,
 	},
 	{
 		accessorKey: "total_hired",
 		header: "Hired",
-		cell: ({ row }) => row.original.total_hired ?? 0,
+		cell: ( { row } ) => row.original.total_hired ?? 0,
 	},
 ];

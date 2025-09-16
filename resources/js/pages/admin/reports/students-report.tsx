@@ -23,7 +23,6 @@ interface Props {
 }
 
 const StudentsReport = ({ data, filters }: Props) => {
-	console.log(data);
 	return (
 		<AppLayout breadcrumbs={breadcrumbs}>
 			<Head title="Students Report" />
@@ -39,7 +38,7 @@ const StudentsReport = ({ data, filters }: Props) => {
 						per_page: data.per_page,
 						total: data.total,
 					}}
-					filters={filters}
+					filters={ filters }
 				/>
 			</div>
 		</AppLayout>

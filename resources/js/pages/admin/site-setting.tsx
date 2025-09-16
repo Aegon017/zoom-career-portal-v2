@@ -48,7 +48,6 @@ const SiteSetting = ({ settings }: Props) => {
 	});
 
 	const onSubmit = (data: Record<string, boolean>) => {
-		console.log("Submitted data:", data);
 		router.post("/admin/site-settings", { settings: data });
 	};
 
