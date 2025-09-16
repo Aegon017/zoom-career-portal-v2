@@ -109,15 +109,18 @@ export const columns: ColumnDef<User>[] = [
 		accessorKey: "total_applied",
 		header: "Jobs Applied",
 		cell: ( { row } ) => row.original.total_applied ?? 0,
+		enableSorting: true
 	},
 	{
 		accessorKey: "total_shortlisted",
 		header: "Shortlisted",
 		cell: ( { row } ) => row.original.total_shortlisted ?? 0,
+		enableSorting: true
 	},
 	{
 		accessorKey: "total_hired",
 		header: "Hired",
 		cell: ( { row } ) => row.original.total_hired ?? 0,
+		enableSorting: true
 	},
 ];
