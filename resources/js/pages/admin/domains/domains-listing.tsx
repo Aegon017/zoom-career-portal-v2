@@ -25,25 +25,30 @@ interface Props {
 	};
 }
 
-export default function DomainsListing({ data, filters }: Props) {
+export default function DomainsListing( { data, filters }: Props ) {
 	return (
-		<AppLayout breadcrumbs={breadcrumbs}>
+		<AppLayout breadcrumbs={ breadcrumbs }>
 			<Head title="Job titles" />
 			<div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
 				<DataTable
-					columns={columns}
-					data={data.data}
-					pagination={{
+					columns={ columns }
+					data={ data.data }
+					pagination={ {
 						current_page: data.current_page,
 						last_page: data.last_page,
 						per_page: data.per_page,
 						total: data.total,
-					}}
-					filters={filters}
+					} }
+					filters={ filters }
 					routeName="/admin/domains"
 					listingName="domain"
 					createUrl="/admin/domains/create"
-					hasImport={true}
+					hasImport={ true }
+					importUrl="/admin/domains/import"
+					importColumns={ [ 'Name' ] }
+					hasExport={ true }
+					exportUrl="/admin/domains/export"
+					exportFields={ [ { key: "name", label: "Name", selected: true } ] }
 				/>
 			</div>
 		</AppLayout>

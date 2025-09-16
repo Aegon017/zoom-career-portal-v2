@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseImportController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DomainController;
+use App\Http\Controllers\Admin\DomainExportController;
+use App\Http\Controllers\Admin\DomainImportController;
 use App\Http\Controllers\Admin\DomainSearchController;
 use App\Http\Controllers\Admin\EmployerVerifyController;
 use App\Http\Controllers\Admin\FeedbackController;
@@ -79,6 +81,8 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/jobs', (new ReportsJobController())->index(...))->name('jobs.index');
     });
     Route::get('/domains/search', DomainSearchController::class);
+    Route::get('/domains/export', DomainExportController::class);
+    Route::post('/domains/import', DomainImportController::class);
     Route::resource('/domains', DomainController::class);
     Route::get('/domains/{domain}/skills', [DomainController::class, 'skills']);
 });
