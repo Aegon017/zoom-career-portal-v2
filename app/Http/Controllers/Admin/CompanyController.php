@@ -25,7 +25,7 @@ final class CompanyController extends Controller
         $companies = Company::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -39,12 +39,12 @@ final class CompanyController extends Controller
     public function create()
     {
         $operation = OperationsEnum::Create;
-        $industries = Industry::take(10)->get()->map(fn($industry): array => [
+        $industries = Industry::take(10)->get()->map(fn ($industry): array => [
             'value' => $industry->id,
             'label' => $industry->name,
         ]);
 
-        $locations = Location::take(10)->get()->map(fn($location): array => [
+        $locations = Location::take(10)->get()->map(fn ($location): array => [
             'value' => $location->id,
             'label' => $location->full_name,
         ]);
@@ -70,11 +70,11 @@ final class CompanyController extends Controller
             'description' => 'required|string',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'size' => 'required|in:' . implode(',', CompanySizeEnum::values()),
-            'type' => 'required|in:' . implode(',', CompanyTypeEnum::values()),
+            'size' => 'required|in:'.implode(',', CompanySizeEnum::values()),
+            'type' => 'required|in:'.implode(',', CompanyTypeEnum::values()),
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
-            'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'verification_status' => 'required|in:'.implode(',', VerificationStatusEnum::values()),
             'match_score_cutoff' => 'required|integer|min:10|max:100',
         ]);
 
@@ -85,13 +85,13 @@ final class CompanyController extends Controller
         ]);
 
         if (! empty($data['logo_url']) && Storage::exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }
@@ -118,7 +118,7 @@ final class CompanyController extends Controller
         })
             ->take(10)
             ->get()
-            ->map(fn($industry): array => [
+            ->map(fn ($industry): array => [
                 'value' => $industry->id,
                 'label' => $industry->name,
             ]);
@@ -128,7 +128,7 @@ final class CompanyController extends Controller
         })
             ->take(10)
             ->get()
-            ->map(fn($location): array => [
+            ->map(fn ($location): array => [
                 'value' => $location->id,
                 'label' => $location->full_name,
             ]);
@@ -175,11 +175,11 @@ final class CompanyController extends Controller
             'description' => 'required|string',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'size' => 'required|in:' . implode(',', CompanySizeEnum::values()),
-            'type' => 'required|in:' . implode(',', CompanyTypeEnum::values()),
+            'size' => 'required|in:'.implode(',', CompanySizeEnum::values()),
+            'type' => 'required|in:'.implode(',', CompanyTypeEnum::values()),
             'industry_id' => 'required|exists:industries,id',
             'location_id' => 'required|exists:locations,id',
-            'verification_status' => 'required|in:' . implode(',', VerificationStatusEnum::values()),
+            'verification_status' => 'required|in:'.implode(',', VerificationStatusEnum::values()),
             'match_score_cutoff' => 'required|integer|min:10|max:100',
         ]);
 
@@ -188,13 +188,13 @@ final class CompanyController extends Controller
         $company->address()->update(['location_id' => $data['location_id']]);
 
         if (! empty($data['logo_url']) && Storage::exists($data['logo_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['logo_url']))
+            $company->addMedia(storage_path('app/public/'.$data['logo_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('logos');
         }
 
         if (! empty($data['banner_url']) && Storage::exists($data['banner_url'])) {
-            $company->addMedia(storage_path('app/public/' . $data['banner_url']))
+            $company->addMedia(storage_path('app/public/'.$data['banner_url']))
                 ->preservingOriginal()
                 ->toMediaCollection('banners');
         }
@@ -224,7 +224,7 @@ final class CompanyController extends Controller
         $search = $request->get('search');
 
         $companies = Company::query()
-            ->when($search, fn($query) => $query->where('name', 'like', sprintf('%%%s%%', $search)))
+            ->when($search, fn ($query) => $query->where('name', 'like', sprintf('%%%s%%', $search)))
             ->limit(10)
             ->get(['id', 'name']);
 

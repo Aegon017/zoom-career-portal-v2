@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,7 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-class DomainImportController extends Controller
+final class DomainImportController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -18,7 +20,7 @@ class DomainImportController extends Controller
         try {
             Excel::import(new DomainImport, $request->file('file'));
         } catch (Exception $exception) {
-            return back()->with('error', 'Failed to import - ' . $exception->getMessage());
+            return back()->with('error', 'Failed to import - '.$exception->getMessage());
         }
 
         return back()->with('success', 'Domains imported successfully');

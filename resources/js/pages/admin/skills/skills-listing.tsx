@@ -25,27 +25,33 @@ interface Props {
 	};
 }
 
-export default function SkillsListing({ data, filters }: Props) {
+export default function SkillsListing( { data, filters }: Props ) {
 	return (
-		<AppLayout breadcrumbs={breadcrumbs}>
+		<AppLayout breadcrumbs={ breadcrumbs }>
 			<Head title="Skills" />
 			<div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
 				<DataTable
-					columns={columns}
-					data={data?.data ?? []}
-					pagination={{
+					columns={ columns }
+					data={ data?.data ?? [] }
+					pagination={ {
 						current_page: data?.current_page,
 						last_page: data?.last_page,
 						per_page: data?.per_page,
 						total: data?.total,
-					}}
-					filters={filters}
+					} }
+					filters={ filters }
 					routeName="/admin/skills"
 					listingName="skill"
 					createUrl="/admin/skills/create"
-					hasImport={true}
+					hasImport={ true }
 					importUrl="/admin/skills/import"
-					importColumns={["name"]}
+					importColumns={ [ "name", "domain" ] }
+					hasExport={ true }
+					exportUrl="/admin/skills/export"
+					exportFields={ [
+						{ key: 'name', label: 'Name', selected: true },
+						{ key: 'domain.name', label: 'Domain', selected: true }
+					] }
 				/>
 			</div>
 		</AppLayout>

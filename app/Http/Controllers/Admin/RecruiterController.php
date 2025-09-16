@@ -25,8 +25,8 @@ final class RecruiterController extends Controller
         $recruiters = User::query()->Role('employer')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -41,7 +41,7 @@ final class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Create->option();
 
-        $companyOptions = Company::pluck('name', 'id')->map(fn($name, $id): array => ['value' => $id, 'label' => $name])->values();
+        $companyOptions = Company::pluck('name', 'id')->map(fn ($name, $id): array => ['value' => $id, 'label' => $name])->values();
 
         return Inertia::render('admin/recruiters/create-or-edit-recruiter', [
             'operation' => $operation,
@@ -101,7 +101,7 @@ final class RecruiterController extends Controller
     {
         $operation = OperationsEnum::Edit->option();
 
-        $companyOptions = Company::get()->map(fn($company): array => [
+        $companyOptions = Company::get()->map(fn ($company): array => [
             'value' => $company->id,
             'label' => $company->name,
         ]);
@@ -118,8 +118,8 @@ final class RecruiterController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $recruiter->id,
-            'phone' => 'required|string|max:20|unique:users,phone,' . $recruiter->id,
+            'email' => 'required|email|unique:users,email,'.$recruiter->id,
+            'phone' => 'required|string|max:20|unique:users,phone,'.$recruiter->id,
             'job_title' => 'nullable|string|max:255',
             'company_id' => 'required|exists:companies,id',
             'verification_status' => ['required', Rule::in(VerificationStatusEnum::values())],
@@ -160,7 +160,7 @@ final class RecruiterController extends Controller
 
             return to_route('admin.recruiters.index')->with('success', 'Recruiter deleted successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to delete recruiter: ' . $exception->getMessage());
+            Log::error('Failed to delete recruiter: '.$exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to delete recruiter. Please try again.']);
         }
@@ -171,7 +171,7 @@ final class RecruiterController extends Controller
         $search = $request->get('search');
 
         $recruiters = User::query()->Role('employer')
-            ->when($search, fn($query) => $query->where('name', 'like', sprintf('%%%s%%', $search)))
+            ->when($search, fn ($query) => $query->where('name', 'like', sprintf('%%%s%%', $search)))
             ->limit(10)
             ->get(['id', 'name']);
 

@@ -28,7 +28,7 @@ final class DomainController extends Controller
         $domains = Domain::query()
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -102,7 +102,7 @@ final class DomainController extends Controller
         Gate::authorize('update_skill', $this->user);
 
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:domains,name,' . $domain->id,
+            'name' => 'required|string|max:255|unique:domains,name,'.$domain->id,
         ]);
 
         $domain->update($data);

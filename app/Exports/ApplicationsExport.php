@@ -66,7 +66,7 @@ final readonly class ApplicationsExport implements FromQuery, ShouldAutoSize, Wi
 
         return [
             1 => ['font' => ['bold' => true]],
-            'A1:I' . $lastRow => [
+            'A1:I'.$lastRow => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

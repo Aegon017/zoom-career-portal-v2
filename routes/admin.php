@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\Reports\JobController as ReportsJobController;
 use App\Http\Controllers\Admin\Reports\StudentController as ReportsStudentController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Admin\SkillExportController;
 use App\Http\Controllers\Admin\SkillsImportController;
 use App\Http\Controllers\Admin\StudentVerificationController;
 use App\Http\Controllers\Admin\UserController;
@@ -41,6 +42,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::resource('/roles', RoleController::class);
     Route::resource('/job-titles', OpeningTitleController::class);
     Route::post('/job-titles/import', JobTitlesImportController::class);
+    Route::get('/skills/export', SkillExportController::class);
     Route::resource('/skills', SkillController::class);
     Route::post('/skills/import', SkillsImportController::class);
     Route::resource('/users', UserController::class);

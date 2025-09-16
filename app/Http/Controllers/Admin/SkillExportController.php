@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\DomainExport;
+use App\Exports\SkillExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-final class DomainExportController extends Controller
+final class SkillExportController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -22,6 +22,6 @@ final class DomainExportController extends Controller
 
         $selectedFields = array_filter($selectedFields);
 
-        return Excel::download(new DomainExport($selectedFields), 'domains.xlsx');
+        return Excel::download(new SkillExport($selectedFields), 'skills.xlsx');
     }
 }
