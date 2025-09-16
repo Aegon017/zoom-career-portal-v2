@@ -15,6 +15,7 @@ final class StudentController extends Controller
     public function index(Request $request): Response
     {
         $students = User::query()
+            ->with('openingApplications.opening.company')
             ->role('jobseeker')
             ->withCount([
                 'openingApplications as total_applied',
