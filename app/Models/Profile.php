@@ -6,8 +6,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Log;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 use Throwable;
