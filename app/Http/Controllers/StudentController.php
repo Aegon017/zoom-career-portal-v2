@@ -104,7 +104,6 @@ final class StudentController extends Controller
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
-            'profile.summary' => 'nullable|string|max:2000',
 
             // Skills
             'skills' => 'nullable|array',
@@ -378,7 +377,6 @@ final class StudentController extends Controller
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
-            'profile.summary' => 'nullable|string|max:2000',
 
             // Skills
             'skills' => 'nullable|array',

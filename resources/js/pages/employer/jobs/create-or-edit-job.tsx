@@ -222,7 +222,6 @@ const CreateOrEditJob = ( {
 													value={ field.value }
 													onChange={ field.onChange }
 													onSearch={ searchDomains }
-													maxSelected={ 1 }
 													triggerSearchOnFocus
 													placeholder="Search domain..."
 													loadingIndicator={

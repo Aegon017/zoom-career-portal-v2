@@ -51,7 +51,6 @@ interface FormValues {
 		job_title?: string;
 		experience?: string;
 		notice_period?: string;
-		summary?: string;
 	};
 	skills: string[];
 	work_permits: string[];
@@ -112,7 +111,6 @@ const CreateOrEditStudent = ( { student, locations, operation, operationLabel, s
 				job_title: student?.profile?.job_title || "",
 				experience: student?.profile?.experience || "",
 				notice_period: student?.profile?.notice_period || "",
-				summary: student?.profile?.summary || "",
 			},
 			skills: student?.skills?.map( ( skill ) => skill.id.toString() ) || [],
 			work_permits: student?.work_permits?.map( ( wp ) => wp.country ) || [],
@@ -186,7 +184,7 @@ const CreateOrEditStudent = ( { student, locations, operation, operationLabel, s
 		const fieldToTabMapping: Record<string, number> = {
 			name: 0, email: 0, phone: 0, password: 0, avatar_url: 0,
 			"address.location_id": 1, "personal_detail.gender": 1, "personal_detail.date_of_birth": 1, "personal_detail.marital_status": 1, "personal_detail.differently_abled": 1,
-			"profile.job_title": 2, "profile.experience": 2, "profile.notice_period": 2, "profile.summary": 2,
+			"profile.job_title": 2, "profile.experience": 2, "profile.notice_period": 2,
 			skills: 3, work_permits: 4, work_experiences: 4, educations: 5, certificates: 6, user_languages: 7
 		};
 
@@ -371,9 +369,6 @@ const CreateOrEditStudent = ( { student, locations, operation, operationLabel, s
 										<FormField control={ control } name="profile.job_title" render={ ( { field } ) => (
 											<FormItem><FormLabel>Job Title</FormLabel><FormControl><Input type="text" { ...field } data-error={ hasFieldError( "profile.job_title" ) ? "true" : "false" } /></FormControl><FormMessage /></FormItem>
 										) } />
-										<FormField control={ control } name="profile.summary" render={ ( { field } ) => (
-											<FormItem className="md:col-span-2"><FormLabel>Summary</FormLabel><FormControl><Textarea { ...field } data-error={ hasFieldError( "profile.summary" ) ? "true" : "false" } /></FormControl><FormMessage /></FormItem>
-										) } />
 									</div>
 								</Card>
 								<div className="flex justify-between mt-4">
@@ -387,7 +382,7 @@ const CreateOrEditStudent = ( { student, locations, operation, operationLabel, s
 									<CardTitle>Skills</CardTitle>
 									<Separator />
 									<FormField name="domain_id" control={ control } render={ ( { field } ) => (
-										<FormItem><FormLabel>Select Domain</FormLabel><FormControl><MultipleSelector value={ field.value } onChange={ field.onChange } onSearch={ searchDomains } maxSelected={ 1 } triggerSearchOnFocus placeholder="Search domain..." loadingIndicator={ <p className="text-muted-foreground py-2 text-center">Searching domains...</p> } emptyIndicator={ <p className="text-muted-foreground w-full text-center">No domains found</p> } /></FormControl><FormMessage /></FormItem>
+										<FormItem><FormLabel>Select Domain</FormLabel><FormControl><MultipleSelector value={ field.value } onChange={ field.onChange } onSearch={ searchDomains } triggerSearchOnFocus placeholder="Search domain..." loadingIndicator={ <p className="text-muted-foreground py-2 text-center">Searching domains...</p> } emptyIndicator={ <p className="text-muted-foreground w-full text-center">No domains found</p> } /></FormControl><FormMessage /></FormItem>
 									) } />
 									<FormField control={ control } name="skills" render={ ( { field } ) => (
 										<FormItem><FormLabel>Skills</FormLabel><FormControl><MultipleSelector options={ skillOptions } value={ skillOptions.filter( opt => field.value.includes( opt.value ) ) } onChange={ opts => field.onChange( opts.map( opt => opt.value ) ) } triggerSearchOnFocus placeholder="Search skill..." loadingIndicator={ <p className="text-muted-foreground py-2 text-center">Searching skills...</p> } emptyIndicator={ <p className="text-muted-foreground w-full text-center">No skills found</p> } data-error={ hasFieldError( "skills" ) ? "true" : "false" } /></FormControl><FormMessage /></FormItem>
@@ -559,7 +554,7 @@ const CreateOrEditStudent = ( { student, locations, operation, operationLabel, s
 									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										<div><h3 className="font-medium">Account Details</h3><p><strong>Name:</strong> { watch( "name" ) }</p><p><strong>Email:</strong> { watch( "email" ) }</p><p><strong>Phone:</strong> { watch( "phone" ) }</p><p><strong>Password:</strong> { watch( "password" ) ? "Set" : "Not Set" }</p></div>
 										<div><h3 className="font-medium">Personal Details</h3><p><strong>Gender:</strong> { watch( "personal_detail.gender" ) }</p><p><strong>Marital Status:</strong> { watch( "personal_detail.marital_status" ) }</p><p><strong>Date of Birth:</strong> { formatDateSafely( watch( "personal_detail.date_of_birth" ) ) }</p><p><strong>Differently Abled:</strong> { watch( "personal_detail.differently_abled" ) ? "Yes" : "No" }</p><p><strong>Address:</strong> { locationOptions.find( loc => loc.value === watch( "address.location_id" ) )?.label || "N/A" }</p></div>
-										<div><h3 className="font-medium">Profile</h3><p><strong>Job Title:</strong> { watch( "profile.job_title" ) }</p><p><strong>Experience:</strong> { watch( "profile.experience" ) }</p><p><strong>Notice Period:</strong> { watch( "profile.notice_period" ) }</p><p><strong>Summary:</strong> { watch( "profile.summary" ) }</p></div>
+										<div><h3 className="font-medium">Profile</h3><p><strong>Job Title:</strong> { watch( "profile.job_title" ) }</p><p><strong>Experience:</strong> { watch( "profile.experience" ) }</p><p><strong>Notice Period:</strong> { watch( "profile.notice_period" ) }</p></div>
 										<div>
 											<h3 className="font-medium">Skills</h3>
 											<p>
