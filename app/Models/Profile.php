@@ -56,26 +56,26 @@ final class Profile extends Model
         $prompt = "Write only the following — no title, no formatting, and no explanations.\n\n";
         $prompt .= "A concise, professional summary for a software developer profile with these details:\n";
         $prompt .= sprintf('Experience: %s%s', $this->experience, PHP_EOL);
-        $prompt .= 'Skills: '.$user->skills->pluck('name')->implode(', ')."\n";
-        $prompt .= 'Education: '.$user->educations->map(fn ($edu): string => sprintf(
+        $prompt .= 'Skills: ' . $user->skills->pluck('name')->implode(', ') . "\n";
+        $prompt .= 'Education: ' . $user->educations->map(fn($edu): string => sprintf(
             '%s at %s (%s',
             $edu->course_title,
             $edu->institution,
             $edu->start_date
-        ).
-            ($edu->is_current ? ' - Present' : ' - '.$edu->end_date).
-            sprintf(', %s)', $edu->course_type))->implode(', ')."\n\n";
+        ) .
+            ($edu->is_current ? ' - Present' : ' - ' . $edu->end_date) .
+            sprintf(', %s)', $edu->course_type))->implode(', ') . "\n\n";
         $prompt .= "Output ONLY the final summary text. Do NOT include any headings like 'Professional Summary' or any formatting.";
 
         try {
             $summary = Prism::text()
-                ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
+                ->using(Provider::Gemini, 'gemini-2.5-flash-lite')
                 ->withPrompt($prompt)
                 ->asText();
 
             return $summary->text ?? $this->staticFallbackSummary();
         } catch (Throwable $throwable) {
-            Log::error('AI summary generation failed: '.$throwable->getMessage());
+            Log::error('AI summary generation failed: ' . $throwable->getMessage());
 
             return $this->staticFallbackSummary();
         }
@@ -90,7 +90,7 @@ final class Profile extends Model
         $user = $this->user;
 
         $skills = $user->skills->pluck('name')
-            ->map(fn ($skill) => Str::before($skill, ':'))
+            ->map(fn($skill) => Str::before($skill, ':'))
             ->unique()
             ->values();
 

@@ -28,7 +28,7 @@ final class CalculateApplicationMatch implements ShouldQueue
     {
         try {
             $response = $prism->text()
-                ->using(Provider::OpenRouter, 'mistralai/mistral-small-3.2-24b-instruct:free')
+                ->using(Provider::Gemini, 'gemini-2.5-flash-lite')
                 ->withPrompt($this->buildPrompt())
                 ->asText();
 

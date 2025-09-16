@@ -27,7 +27,7 @@ final class JobseekerController extends Controller
         $query = User::role('jobseeker')->with('skills', 'resumes');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         $job = null;
@@ -61,7 +61,7 @@ final class JobseekerController extends Controller
             $maxScore = is_numeric($maxScore) ? (int) $maxScore : 100;
 
             $filteredUsers = $filteredUsers->filter(
-                fn ($user): bool => isset($user->match_score)
+                fn($user): bool => isset($user->match_score)
                     && $user->match_score >= $minScore
                     && $user->match_score <= $maxScore
             );
@@ -142,8 +142,8 @@ final class JobseekerController extends Controller
         try {
             $response = Prism::text()
                 ->using(
-                    Provider::OpenRouter,
-                    'mistralai/mistral-small-3.2-24b-instruct:free'
+                    Provider::Gemini,
+                    'gemini-2.5-flash-lite'
                 )
                 ->withPrompt("
 Summarize this candidate's resume with a focus on the skill: {$validated['skill']}.
@@ -169,7 +169,7 @@ If no relevant experience is found, reply exactly:
                 'skill' => $validated['skill'],
             ]);
         } catch (Exception $exception) {
-            Log::error('AI Summary Generation Error: '.$exception->getMessage());
+            Log::error('AI Summary Generation Error: ' . $exception->getMessage());
 
             return response()->json([
                 'summary' => 'Error generating summary. Please try again later.',
@@ -184,9 +184,9 @@ If no relevant experience is found, reply exactly:
         $jobDescription = $job->description ?? '';
 
         // Batch process users with resumes to minimize API calls
-        $usersWithResumes = $users->filter(fn ($user): bool => ! empty($user->resumes()->latest()->value('text')));
+        $usersWithResumes = $users->filter(fn($user): bool => ! empty($user->resumes()->latest()->value('text')));
 
-        $usersWithoutResumes = $users->filter(fn ($user): bool => empty($user->resumes()->latest()->value('text')));
+        $usersWithoutResumes = $users->filter(fn($user): bool => empty($user->resumes()->latest()->value('text')));
 
         // Set default scores for users without resumes
         foreach ($usersWithoutResumes as $user) {
@@ -218,8 +218,8 @@ If no relevant experience is found, reply exactly:
 
                     $response = Prism::text()
                         ->using(
-                            Provider::OpenRouter,
-                            'mistralai/mistral-small-3.2-24b-instruct:free'
+                            Provider::Gemini,
+                            'gemini-2.5-flash-lite'
                         )
                         ->withPrompt($prompt)
                         ->asText();
@@ -254,9 +254,9 @@ If no relevant experience is found, reply exactly:
                         throw new Exception('No JSON found in AI response');
                     }
                 } catch (Exception $e) {
-                    Log::error('AI Matching Error for user '.$user->id.': '.$e->getMessage());
+                    Log::error('AI Matching Error for user ' . $user->id . ': ' . $e->getMessage());
                     $user->match_score = 0;
-                    $user->match_reason = 'Error generating AI match: '.$e->getMessage();
+                    $user->match_reason = 'Error generating AI match: ' . $e->getMessage();
                 }
             }
 
