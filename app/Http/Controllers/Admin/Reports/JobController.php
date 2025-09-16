@@ -15,10 +15,11 @@ final class JobController extends Controller
     public function index(Request $request): Response
     {
         $openings = Opening::query()
+            ->with(['applications.user', 'company'])
             ->withCount([
                 'applications as total_applied',
-                'applications as total_shortlisted' => fn ($q) => $q->where('status', 'shortlisted'),
-                'applications as total_hired' => fn ($q) => $q->where('status', 'hired'),
+                'applications as total_shortlisted' => fn($q) => $q->where('status', 'shortlisted'),
+                'applications as total_hired' => fn($q) => $q->where('status', 'hired'),
             ])
             ->paginate($request->input('perPage', 10))
             ->withQueryString();

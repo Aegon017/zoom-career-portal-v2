@@ -243,6 +243,7 @@ export interface Opening {
 	total_applied?: number;
 	total_shortlisted?: number;
 	total_hired?: number;
+	applications: Application[];
 }
 
 export interface Application {
