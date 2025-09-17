@@ -20,15 +20,16 @@ final class SendJobClosureReminder implements ShouldQueue
      */
     public function handle(): void
     {
-        $jobs = Opening::where('status', JobStatusEnum::Closed)
-            ->whereDate('expires_at', Carbon::now()->subWeek()->toDateString())
+        Opening::where('status', JobStatusEnum::Closed)
+            ->where('closure_reminder_sent', false)
             ->with('user')
-            ->get();
-
-        foreach ($jobs as $job) {
-            if ($job->user) {
-                $job->user->notify(new JobClosureFeedbackReminderNotification($job));
-            }
-        }
+            ->chunk(50, function ($jobs) {
+                foreach ($jobs as $job) {
+                    if ($job->user) {
+                        $job->user->notify(new JobClosureFeedbackReminderNotification($job));
+                        $job->update(['closure_reminder_sent' => true]);
+                    }
+                }
+            });
     }
 }

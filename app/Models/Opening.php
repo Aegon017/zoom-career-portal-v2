@@ -38,6 +38,7 @@ final class Opening extends Model
         'apply_link',
         'status',
         'verification_status',
+        'closure_reminder_sent'
     ];
 
     protected $casts = [
@@ -45,6 +46,7 @@ final class Opening extends Model
         'salary_max' => 'decimal:2',
         'published_at' => 'datetime',
         'expires_at' => 'date',
+        'closure_reminder_sent' => 'boolean'
     ];
 
     protected $appends = ['is_saved', 'has_applied', 'application_status', 'application_created_at'];
