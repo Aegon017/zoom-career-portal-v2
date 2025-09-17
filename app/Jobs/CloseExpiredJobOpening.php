@@ -18,8 +18,10 @@ final class CloseExpiredJobOpening implements ShouldQueue
      */
     public function handle(): void
     {
-        Opening::whereNot('status', JobStatusEnum::Closed->value)
-            ->where('expires_at', '<=', now())
-            ->update(['status' => JobStatusEnum::Closed->value]);
+        Opening::where('expires_at', '<=', now())
+            ->update([
+                'status' => JobStatusEnum::Closed->value,
+                'closure_reminder_sent' => false
+            ]);
     }
 }
