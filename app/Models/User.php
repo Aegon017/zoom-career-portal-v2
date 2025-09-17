@@ -236,6 +236,11 @@ final class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(WorkPermit::class);
     }
 
+    public function openingUserMatches(): HasMany
+    {
+        return $this->hasMany(OpeningUserMatch::class);
+    }
+
     public function hasCompleteProfile(): bool
     {
         return filled($this->name)

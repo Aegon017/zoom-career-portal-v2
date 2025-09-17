@@ -9,3 +9,5 @@ use Illuminate\Support\Facades\Schedule;
 // Schedule::job(new CloseExpiredJobOpening())->everyMinute();
 
 // Schedule::job(new SendJobClosureReminder())->everyMinute();
+
+Schedule::command('app:process-pending-matches')->everyMinute();
