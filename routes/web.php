@@ -189,7 +189,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         } catch (FileCannotBeAdded $fileCannotBeAdded) {
             return back()->withErrors(['resume' => 'Upload failed: '.$fileCannotBeAdded->getMessage()]);
         }
-    })->name('jobseeker.resume.upload');
+    })->name('jobseeker.resume.upload.store');
 
     Route::get('/inbox', (new ControllersInboxController())->index(...))->name('inbox.index');
     Route::post('/inbox/send-message', (new ControllersInboxController())->sendMessage(...))->name('inbox.send-message');
