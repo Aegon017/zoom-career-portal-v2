@@ -25,6 +25,7 @@ final class StoreSkillRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:skills,name',
+            'domain_id' => 'nullable|exists:domains,id',
         ];
     }
 }

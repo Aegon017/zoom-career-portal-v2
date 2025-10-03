@@ -5,33 +5,29 @@ declare(strict_types=1);
 namespace App\Exports;
 
 use App\Models\Opening;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
+final readonly class ApplicationsExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
-    private $jobTitle;
+    public function __construct(
+        private Opening $job,
+        private ?string $status = null
+    ) {}
 
-    public function __construct(private readonly \App\Models\Opening $job)
+    public function query()
     {
-        $this->jobTitle = $this->job->title;
-    }
+        $query = $this->job->applications()->with('user:id,name,email,phone');
 
-    public function collection()
-    {
-        return $this->job->applications()
-            ->with(['user:id,name,email'])
-            ->get([
-                'id',
-                'user_id',
-                'status',
-                'match_score',
-                'created_at',
-            ]);
+        if ($this->status !== null && $this->status !== '' && $this->status !== '0') {
+            $query->where('status', $this->status);
+        }
+
+        return $query;
     }
 
     public function headings(): array
@@ -41,8 +37,10 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
             'Job Title',
             'Candidate',
             'Email',
+            'Phone',
             'Status',
             'Match Score',
+            'Match Summary',
             'Applied At',
         ];
     }
@@ -51,20 +49,24 @@ final class ApplicationsExport implements FromCollection, ShouldAutoSize, WithHe
     {
         return [
             $application->id,
-            $this->jobTitle,
+            $this->job->title,
             $application->user->name,
             $application->user->email,
+            $application->user->phone,
             ucfirst((string) $application->status),
-            $application->match_score ? round($application->match_score, 2) : 'N/A',
+            $application->match_score ?? 0,
+            $application->match_summary,
             $application->created_at->format('M d, Y H:i'),
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
+        $lastRow = $sheet->getHighestRow();
+
         return [
             1 => ['font' => ['bold' => true]],
-            'A1:G'.($sheet->getHighestRow()) => [
+            'A1:I'.$lastRow => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

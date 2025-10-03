@@ -29,6 +29,7 @@ final class SkillController extends Controller
         Gate::authorize('view_any_skill', $this->user);
 
         $data = Skill::query()
+            ->with('domain')
             ->when(
                 $request->search,
                 fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
@@ -88,7 +89,7 @@ final class SkillController extends Controller
         $operation = OperationsEnum::Edit;
 
         return Inertia::render('admin/skills/create-or-edit-skill', [
-            'skill' => SkillResource::make($skill),
+            'skill' => SkillResource::make($skill->load('domain')),
             'operation' => $operation->value,
             'operationLabel' => $operation->label(),
         ]);

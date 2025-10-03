@@ -1,31 +1,32 @@
-import { Toaster } from '@/components/ui/sonner';
-import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
-import { type BreadcrumbItem } from '@/types';
-import { usePage } from '@inertiajs/react';
-import { useEffect, type ReactNode } from 'react';
-import { toast } from 'sonner';
+import { Toaster } from "@/components/ui/sonner";
+import AppLayoutTemplate from "@/layouts/app/app-sidebar-layout";
+import { type BreadcrumbItem } from "@/types";
+import { usePage } from "@inertiajs/react";
+import { useEffect, type ReactNode } from "react";
+import { toast } from "sonner";
 
 interface AppLayoutProps {
-    children: ReactNode;
-    breadcrumbs?: BreadcrumbItem[];
+	children: ReactNode;
+	breadcrumbs?: BreadcrumbItem[];
 }
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
-    const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
+	const { flash } = usePage<{ flash?: { success?: string; error?: string } }>()
+		.props;
 
-    useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success);
-        }
-        if (flash?.error) {
-            toast.error(flash.error);
-        }
-    }, [flash]);
+	useEffect(() => {
+		if (flash?.success) {
+			toast.success(flash.success);
+		}
+		if (flash?.error) {
+			toast.error(flash.error);
+		}
+	}, [flash]);
 
-    return (
-        <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
-            {children}
-            <Toaster richColors position="bottom-right" closeButton={true} />
-        </AppLayoutTemplate>
-    );
+	return (
+		<AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+			{children}
+			<Toaster richColors position="bottom-right" closeButton={true} />
+		</AppLayoutTemplate>
+	);
 };

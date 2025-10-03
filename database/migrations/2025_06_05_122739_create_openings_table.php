@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('apply_link')->nullable();
             $table->string('status');
             $table->string('verification_status');
+            $table->boolean('closure_reminder_sent')->default(false);
             $table->timestamps();
         });
     }

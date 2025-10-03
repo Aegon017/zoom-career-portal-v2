@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\OpeningObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+#[ObservedBy([OpeningObserver::class])]
 final class Opening extends Model
 {
     use HasFactory;
@@ -35,6 +38,7 @@ final class Opening extends Model
         'apply_link',
         'status',
         'verification_status',
+        'closure_reminder_sent'
     ];
 
     protected $casts = [
@@ -42,6 +46,7 @@ final class Opening extends Model
         'salary_max' => 'decimal:2',
         'published_at' => 'datetime',
         'expires_at' => 'date',
+        'closure_reminder_sent' => 'boolean'
     ];
 
     protected $appends = ['is_saved', 'has_applied', 'application_status', 'application_created_at'];
@@ -145,6 +150,11 @@ final class Opening extends Model
         return $this->hasMany(Feedback::class);
     }
 
+    public function openingUserMatches(): HasMany
+    {
+        return $this->hasMany(OpeningUserMatch::class);
+    }
+
     public function duplicate(): self
     {
         return DB::transaction(function () {
@@ -153,7 +163,7 @@ final class Opening extends Model
             $excluded = ['id', 'created_at', 'updated_at', 'published_at', 'verification_status'];
             $attributes = array_diff_key($attributes, array_flip($excluded));
 
-            $attributes['title'] = 'Copy of '.$this->title;
+            $attributes['title'] = 'Copy of ' . $this->title;
             $attributes['published_at'] = null;
             $attributes['verification_status'] = 'pending';
             $attributes['user_id'] = Auth::id();

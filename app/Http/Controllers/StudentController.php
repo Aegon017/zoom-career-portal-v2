@@ -32,7 +32,7 @@ final class StudentController extends Controller
             ->role('jobseeker')
             ->when(
                 $request->search,
-                fn($q) => $q->where('name', 'like', '%' . $request->search . '%')
+                fn ($q) => $q->where('name', 'like', '%'.$request->search.'%')
             )
             ->paginate($request->perPage ?? 10)
             ->withQueryString();
@@ -48,17 +48,17 @@ final class StudentController extends Controller
      */
     public function create(): Response
     {
-        $locations = Location::take(100)->get()->map(fn($location): array => [
+        $locations = Location::take(100)->get()->map(fn ($location): array => [
             'value' => (string) $location->id,
             'label' => $location->full_name,
         ]);
 
-        $skillOptions = Skill::get()->map(fn($skill): array => [
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
             'value' => (string) $skill->id,
             'label' => $skill->name,
         ]);
 
-        $languages = Language::get()->map(fn($language): array => [
+        $languages = Language::get()->map(fn ($language): array => [
             'value' => (string) $language->id,
             'label' => $language->name,
         ]);
@@ -104,7 +104,6 @@ final class StudentController extends Controller
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
-            'profile.summary' => 'nullable|string|max:2000',
 
             // Skills
             'skills' => 'nullable|array',
@@ -187,7 +186,7 @@ final class StudentController extends Controller
 
                 // Create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], fn($value): bool => ! is_null($value) && $value !== '');
+                    $profileData = array_filter($validated['profile'], fn ($value): bool => ! is_null($value) && $value !== '');
 
                     if ($profileData !== []) {
                         $user->profile()->create([
@@ -276,7 +275,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student created successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to create student: ' . $exception->getMessage());
+            Log::error('Failed to create student: '.$exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to create student. Please try again.'])->withInput();
         }
@@ -322,17 +321,17 @@ final class StudentController extends Controller
             'userLanguages.language',
         ]);
 
-        $locations = Location::take(100)->get()->map(fn($location): array => [
+        $locations = Location::take(100)->get()->map(fn ($location): array => [
             'value' => (string) $location->id,
             'label' => $location->full_name,
         ]);
 
-        $skillOptions = Skill::get()->map(fn($skill): array => [
+        $skillOptions = Skill::get()->map(fn ($skill): array => [
             'value' => (string) $skill->id,
             'label' => $skill->name,
         ]);
 
-        $languages = Language::get()->map(fn($language): array => [
+        $languages = Language::get()->map(fn ($language): array => [
             'value' => (string) $language->id,
             'label' => $language->name,
         ]);
@@ -378,7 +377,6 @@ final class StudentController extends Controller
             'profile.job_title' => 'nullable|string|max:255',
             'profile.experience' => 'nullable|string|max:255',
             'profile.notice_period' => 'nullable|string|max:255',
-            'profile.summary' => 'nullable|string|max:2000',
 
             // Skills
             'skills' => 'nullable|array',
@@ -468,7 +466,7 @@ final class StudentController extends Controller
 
                 // Update or create profile
                 if (isset($validated['profile'])) {
-                    $profileData = array_filter($validated['profile'], fn($value): bool => ! is_null($value) && $value !== '');
+                    $profileData = array_filter($validated['profile'], fn ($value): bool => ! is_null($value) && $value !== '');
 
                     if ($profileData !== []) {
                         $student->profile()->updateOrCreate(
@@ -566,7 +564,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student updated successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to update student: ' . $exception->getMessage());
+            Log::error('Failed to update student: '.$exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to update student. Please try again.'])->withInput();
         }
@@ -601,7 +599,7 @@ final class StudentController extends Controller
 
             return to_route('admin.students.index')->with('success', 'Student deleted successfully.');
         } catch (Exception $exception) {
-            Log::error('Failed to delete student: ' . $exception->getMessage());
+            Log::error('Failed to delete student: '.$exception->getMessage());
 
             return back()->withErrors(['error' => 'Failed to delete student. Please try again.']);
         }
@@ -621,7 +619,7 @@ final class StudentController extends Controller
     public function updateStatus(Request $request, User $user)
     {
         $user->profile->update([
-            "is_verified" => $request->is_verified
+            'is_verified' => $request->is_verified,
         ]);
 
         return back()->with('success', 'Verification status updated successfully');

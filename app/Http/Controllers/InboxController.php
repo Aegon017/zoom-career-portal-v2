@@ -62,7 +62,7 @@ final class InboxController extends Controller
         ]);
     }
 
-    public function sendMessage(Request $request)
+    public function sendMessage(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'message' => 'required|string',

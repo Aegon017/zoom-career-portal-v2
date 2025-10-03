@@ -1,0 +1,62 @@
+import { DataTable } from "@/components/data-table";
+import AppLayout from "@/layouts/app-layout";
+import { BreadcrumbItem, Opening } from "@/types";
+import { Head } from "@inertiajs/react";
+import { columns } from "./job-columns";
+
+const breadcrumbs: BreadcrumbItem[] = [
+	{ title: "Jobs Report", href: "/admin/reports/jobs" },
+];
+
+interface Props {
+	data: {
+		data: Opening[];
+		current_page: number;
+		last_page: number;
+		per_page: number;
+		total: number;
+	};
+	filters: {
+		search?: string;
+		perPage?: number;
+	};
+}
+
+const JobsReport = ( { data, filters }: Props ) => {
+	const exportFields = [
+		{ key: "id", label: "ID", selected: false },
+		{ key: "title", label: "Title", selected: true },
+		{ key: "company", label: "Company", selected: true },
+		{ key: "total_applied", label: "Students Applied", selected: true },
+		{ key: "total_shortlisted", label: "Shortlisted", selected: true },
+		{ key: "total_hired", label: "Hired", selected: true },
+		{ key: "created_at", label: "Created Date", selected: false },
+		{ key: "updated_at", label: "Last Updated", selected: false },
+	];
+
+	return (
+		<AppLayout breadcrumbs={ breadcrumbs }>
+			<Head title="Jobs Report" />
+			<div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+				<DataTable
+					columns={ columns }
+					data={ data.data }
+					routeName="/admin/reports/jobs"
+					listingName="job"
+					pagination={ {
+						current_page: data.current_page,
+						last_page: data.last_page,
+						per_page: data.per_page,
+						total: data.total,
+					} }
+					filters={ filters }
+					hasExport={ true }
+					exportUrl="/admin/reports/jobs/export"
+					exportFields={ exportFields }
+				/>
+			</div>
+		</AppLayout>
+	);
+};
+
+export default JobsReport;

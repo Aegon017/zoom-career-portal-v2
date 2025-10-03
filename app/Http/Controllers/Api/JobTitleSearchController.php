@@ -29,7 +29,7 @@ final class JobTitleSearchController extends Controller
         $jobTitles = $query->orderBy('name')
             ->limit(10)
             ->get()
-            ->map(fn($jobTitle): array => [
+            ->map(fn ($jobTitle): array => [
                 'value' => (string) $jobTitle->id,
                 'label' => $jobTitle->name,
             ]);

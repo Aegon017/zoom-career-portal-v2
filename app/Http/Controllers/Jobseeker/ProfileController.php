@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Jobseeker;
 
-use App\Enums\ProficiencyEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use App\Models\Education;
@@ -18,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 final class ProfileController extends Controller
@@ -39,15 +37,15 @@ final class ProfileController extends Controller
 
         return Inertia::render('jobseeker/profile-wizard', [
             'student' => $user,
-            'skillOptions' => Skill::all()->map(fn($skill): array => [
+            'skillOptions' => Skill::all()->map(fn ($skill): array => [
                 'value' => (string) $skill->id,
                 'label' => $skill->name,
             ]),
-            'locations' => Location::take(100)->get()->map(fn($location): array => [
+            'locations' => Location::take(100)->get()->map(fn ($location): array => [
                 'value' => (string) $location->id,
                 'label' => $location->full_name,
             ]),
-            'languages' => Language::all()->map(fn($language): array => [
+            'languages' => Language::all()->map(fn ($language): array => [
                 'value' => (string) $language->id,
                 'label' => $language->name,
             ]),
@@ -60,7 +58,7 @@ final class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
             'phone' => 'nullable|string|max:20',
             'address.location_id' => 'nullable|exists:locations,id',
             'personal_detail.gender' => 'required|string|in:Male,Female,Other',
@@ -418,7 +416,7 @@ final class ProfileController extends Controller
     private function updateProfile(User $user, array $validated): void
     {
         if (isset($validated['profile'])) {
-            $profileData = array_filter($validated['profile'], fn($value): bool => ! empty($value));
+            $profileData = array_filter($validated['profile'], fn ($value): bool => ! empty($value));
 
             if ($profileData !== []) {
                 $user->profile()->updateOrCreate(
@@ -442,8 +440,8 @@ final class ProfileController extends Controller
             $user->workPermits()->delete();
 
             $workPermits = array_map(
-                fn($country): array => ['country' => $country],
-                array_filter($validated['work_permits'], fn($country): bool => ! empty($country))
+                fn ($country): array => ['country' => $country],
+                array_filter($validated['work_permits'], fn ($country): bool => ! empty($country))
             );
 
             $user->workPermits()->createMany($workPermits);
@@ -455,7 +453,7 @@ final class ProfileController extends Controller
         if (! empty($validated['work_experiences'])) {
             $user->workExperiences()->delete();
 
-            $workExperiences = array_map(function ($experience): array {
+            $workExperiences = array_map(function (array $experience): array {
                 $endDate = (! empty($experience['end_date']) && ! ($experience['is_current'] ?? false))
                     ? Carbon::parse($experience['end_date'])->format('Y-m-d')
                     : null;
@@ -478,7 +476,7 @@ final class ProfileController extends Controller
         if (! empty($validated['educations'])) {
             $user->educations()->delete();
 
-            $educations = array_map(function ($education): array {
+            $educations = array_map(function (array $education): array {
                 $endDate = (! empty($education['end_date']) && ! ($education['is_current'] ?? false))
                     ? Carbon::parse($education['end_date'])->format('Y-m-d')
                     : null;
@@ -503,11 +501,11 @@ final class ProfileController extends Controller
             $user->certificates()->delete();
 
             $certificates = array_map(
-                fn($certificate): array => [
+                fn (array $certificate): array => [
                     'name' => $certificate['name'],
-                    'number' => $certificate['number']
+                    'number' => $certificate['number'],
                 ],
-                array_filter($validated['certificates'], fn($certificate): bool => ! empty($certificate['name']))
+                array_filter($validated['certificates'], fn (array $certificate): bool => ! empty($certificate['name']))
             );
 
             $user->certificates()->createMany($certificates);
@@ -519,7 +517,7 @@ final class ProfileController extends Controller
         if (! empty($validated['user_languages'])) {
             $user->userLanguages()->delete();
 
-            $userLanguages = array_map(fn($language): array => [
+            $userLanguages = array_map(fn (array $language): array => [
                 'language_id' => (int) $language['language_id'],
                 'proficiency' => $language['proficiency'],
                 'can_read' => $language['can_read'] ?? false,

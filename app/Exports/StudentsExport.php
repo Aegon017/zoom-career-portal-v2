@@ -10,9 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 final readonly class StudentsExport implements FromCollection, WithHeadings
 {
-    public function __construct(private array $fields = [])
-    {
-    }
+    public function __construct(private array $fields = []) {}
 
     /**
      * @return \Illuminate\Support\Collection
@@ -33,7 +31,7 @@ final readonly class StudentsExport implements FromCollection, WithHeadings
             ])
             ->get();
 
-        return $users->map(function ($user, $index) {
+        return $users->map(function ($user, $index): array {
             $row = ['serial' => $index + 1];
 
             foreach ($this->fields as $field) {
@@ -129,20 +127,24 @@ final readonly class StudentsExport implements FromCollection, WithHeadings
             }
 
             if ($mainField === 'work_experiences') {
-                return $user->workExperiences->map(fn($exp) => $exp->{$subField})->implode(', ');
+                return $user->workExperiences->map(fn ($exp) => $exp->{$subField})->implode(', ');
             }
+
             if ($mainField === 'educations') {
-                return $user->educations->map(fn($edu) => $edu->{$subField})->implode(', ');
+                return $user->educations->map(fn ($edu) => $edu->{$subField})->implode(', ');
             }
+
             if ($mainField === 'certificates') {
-                return $user->certificates->map(fn($cert) => $cert->{$subField})->implode(', ');
+                return $user->certificates->map(fn ($cert) => $cert->{$subField})->implode(', ');
             }
+
             if ($mainField === 'user_languages') {
                 // Handle language relationship
                 if ($subField === 'language_id' && isset($user->userLanguages)) {
-                    return $user->userLanguages->map(fn($userLang) => $userLang->language->name ?? null)->filter()->implode(', ');
+                    return $user->userLanguages->map(fn ($userLang) => $userLang->language->name ?? null)->filter()->implode(', ');
                 }
-                return $user->userLanguages->map(fn($lang) => $lang->{$subField})->implode(', ');
+
+                return $user->userLanguages->map(fn ($lang) => $lang->{$subField})->implode(', ');
             }
         }
 

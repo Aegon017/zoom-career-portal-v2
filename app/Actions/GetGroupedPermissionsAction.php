@@ -39,7 +39,7 @@ final readonly class GetGroupedPermissionsAction
 
             return $name;
         })
-            ->mapWithKeys(function ($permissions, $group) {
+            ->mapWithKeys(function ($permissions, $group): array {
                 $transformedGroup = $this->str->of($group)
                     ->replace('_', ' ')
                     ->ucfirst()

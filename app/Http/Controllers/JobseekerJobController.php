@@ -84,7 +84,7 @@ final class JobseekerJobController extends Controller
         })
             ->select('id', 'country', 'state', 'city')
             ->get()
-            ->map(fn($location): array => [
+            ->map(fn ($location): array => [
                 'id' => $location->id,
                 'full_name' => $location->full_name,
             ]);
