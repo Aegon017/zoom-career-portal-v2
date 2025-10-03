@@ -3,7 +3,7 @@ name: Deploy website on push
 on:
   push:
     branches:
-      - deploy
+      - main
 
 jobs:
   admin-app:
@@ -13,12 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
-    - name: Use Node.js # installs the specified version of nodejs
+    - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22'
 
-    - name: Use PHP # installs the specified version of php
+    - name: Use PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.4'
@@ -28,16 +28,16 @@ jobs:
         curl -sS https://getcomposer.org/installer | php
         sudo mv composer.phar /usr/local/bin/compose
 
-    # - name: Installing PHP dependencies
-    #   run: composer install
+    - name: Installing PHP dependencies
+      run: composer install
 
-    # - name: Installing Node dependencies
-    #   run: |
-    #     npm i
-    #     npm run build
+    - name: Installing Node dependencies
+      run: |
+        npm i
+        npm run build
 
-    - name: Deploying project # copy files to specified FTP directory
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+    - name: Deploying project
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
